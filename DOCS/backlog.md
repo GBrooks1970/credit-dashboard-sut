@@ -1,6 +1,6 @@
 ---
-version: 19
-created: 2026-10-05T20:41Z
+version: 20
+created: 2026-10-05T23:15Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 19 (CDS-09 complete: this repository seeded; Phase 1 items CDS-14 to CDS-16 added)
+**Version:** 20 (records the CDS-09 evidence: seed CI green; portfolio root PR #266 merged)
 **Last Updated:** 2026-10-04
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -135,7 +135,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-09 and CDS-10
 
-**CDS-09 COMPLETE (2026-10-05).** This repository was seeded from the accepted Phase 0 pack: current files only, renamed to their Phase 1 paths, cross-links rewritten (three links that pointed at older versions now resolve to the current files), security scenarios moved to `features-shared/security/`, contract v8 with `info.license` (MIT) and the `info-license` rule re-enabled, Node pinned (`.nvmrc` 24.18.0), CI running the three checks. Deviation from the Phase 0 README: the lint config stays `redocly.yaml`, because Redocly CLI 2.57.0 does not read `.redocly.yaml`. **CDS-10** (portfolio onboarding) is next.
+**CDS-09 COMPLETE (2026-10-05; seed commit `ed6e9f9`; portfolio root freeze merged as test-automation-portfolio #266, squash `0a34a8e`).** CI on the seed passed on attempt 2 of run 37371747846; attempt 1 was cancelled by GitHub because no hosted runner picked the job up ('not acquired by Runner of type hosted'), so none of its steps ran. This repository was seeded from the accepted Phase 0 pack: current files only, renamed to their Phase 1 paths, cross-links rewritten (three links that pointed at older versions now resolve to the current files), security scenarios moved to `features-shared/security/`, contract v8 with `info.license` (MIT) and the `info-license` rule re-enabled, Node pinned (`.nvmrc` 24.18.0), CI running the three checks. Deviation from the Phase 0 README: the lint config stays `redocly.yaml`, because Redocly CLI 2.57.0 does not read `.redocly.yaml`. **CDS-10** (portfolio onboarding) is next.
 
 ### CDS-14 to CDS-16: Phase 1
 

@@ -1,6 +1,6 @@
 ---
-version: 20
-created: 2026-10-05T23:15Z
+version: 21
+created: 2026-10-05T23:38Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 20 (records the CDS-09 evidence: seed CI green; portfolio root PR #266 merged)
+**Version:** 21 (CDS-10 complete: onboarded to the portfolio registry and landing page; CDS-17 added)
 **Last Updated:** 2026-10-04
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -29,13 +29,14 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | CDS-07 | Step glossary and three-amigos review of all feature files | 2 | COMPLETE (2026-10-05) | none |
 | CDS-08 | Persona fixtures (7) written and validated against the contract schemas | 2 | COMPLETE (2026-10-04) | none |
 | CDS-09 | Freeze Phase 0 and lift into `credit-dashboard-sut/` at the portfolio root as its own repo, per the README 'Phase 1 target layout' | 1 | COMPLETE (2026-10-05) | none |
-| CDS-10 | Onboard to the portfolio: `portfolio-prompts/registry.yml` row, portfolio README row, worklist | 1 | READY TO START | none |
+| CDS-10 | Onboard to the portfolio: `portfolio-prompts/registry.yml` row, portfolio README row, worklist | 1 | COMPLETE (2026-10-05) | none |
 | CDS-11 | Fold the My Profile API needs into `openapi.yaml` and the API spec; add the profile route to the UI spec page catalogue | 0 or 1 | COMPLETE (2026-10-04) | none (address, employment, finances are stretch, DR-022) |
 | CDS-12 | Decide whether to survey the source profile sub-pages (structure only) or keep the proposed designs | 0 | COMPLETE (2026-10-04) | none |
 | CDS-13 | Arrange data no persona holds: test-control overrides (DR-020) | 2 | COMPLETE (2026-10-04) | none |
 | CDS-14 | Prism mock serves every operation from the contract examples (Phase 1 exit gate) | 1 | READY TO START | none |
 | CDS-15 | Generate the typed TypeScript client into `packages/api-client` from the contract | 1 | READY TO START | none |
 | CDS-16 | Pin the remaining versions as each project is created: .NET SDK (`global.json`), React, Vite (DR-009) | 1 | READY TO START | none |
+| CDS-17 | Convert this backlog's summary table to the portfolio `auth-table` dialect so the shared Kanban generator can build a board | 1 | READY TO START | none (owner chooses when a board is wanted) |
 
 ## Items
 
@@ -136,6 +137,14 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 ### CDS-09 and CDS-10
 
 **CDS-09 COMPLETE (2026-10-05; seed commit `ed6e9f9`; portfolio root freeze merged as test-automation-portfolio #266, squash `0a34a8e`).** CI on the seed passed on attempt 2 of run 37371747846; attempt 1 was cancelled by GitHub because no hosted runner picked the job up ('not acquired by Runner of type hosted'), so none of its steps ran. This repository was seeded from the accepted Phase 0 pack: current files only, renamed to their Phase 1 paths, cross-links rewritten (three links that pointed at older versions now resolve to the current files), security scenarios moved to `features-shared/security/`, contract v8 with `info.license` (MIT) and the `info-license` rule re-enabled, Node pinned (`.nvmrc` 24.18.0), CI running the three checks. Deviation from the Phase 0 README: the lint config stays `redocly.yaml`, because Redocly CLI 2.57.0 does not read `.redocly.yaml`. **CDS-10** (portfolio onboarding) is next.
+
+### CDS-10: Portfolio onboarding
+
+**COMPLETE (2026-10-05).** Onboarded with the portfolio `onboard-project` workflow, the owner's contract approved: registry row in NeoCognitus70/portfolio-prompts#109 (`1c191a3`): `active`, `showcase`, `sdd`, `orchestration_target: false` until the Phase 1 exit gate, the three CI checks as gates, and deviations for the upper-case `DOCS/` layout (backlog, decision register, implementation logs). Landing card in GBrooks1970/portfolio#54 (`51c5e08`) with two verified evidence links: the CI workflow and the API specification. No scaffold PR was needed here. Worklists are not part of onboarding; `derive-worklist` creates one when wanted.
+
+### CDS-17: Kanban dialect
+
+Added at onboarding (owner's choice). The summary table above (ID, Item, Phase, Status, Blocked by) matches neither Kanban dialect (`auth-table` needs seven columns with backticked IDs; `risk-block` needs scored risk headings), so the shared generator would build an empty board. Convert when a board is wanted, and set the registry's `backlog_dialect` to match.
 
 ### CDS-14 to CDS-16: Phase 1
 

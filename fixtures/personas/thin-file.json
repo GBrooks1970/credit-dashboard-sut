@@ -1,0 +1,107 @@
+{
+  "persona": "thin-file",
+  "purpose": "No accounts, no searches, no changes, no notifications, a mostly empty score history and an empty profile: every empty state.",
+  "asAt": "2026-10-03T09:00:00Z",
+  "behaviour": {
+    "latencyMs": 0,
+    "failReportEndpoints": false
+  },
+  "profile": {
+    "memberSince": "2026-08-20",
+    "preferredName": null,
+    "emailStatus": "unverified",
+    "mobile": null,
+    "address": null,
+    "employment": null,
+    "finances": {
+      "added": false
+    }
+  },
+  "bureaux": [
+    {
+      "id": "bureau-a",
+      "name": "Bureau A",
+      "nextRefreshDate": "2026-10-17",
+      "score": {
+        "current": 480,
+        "max": 1000,
+        "nationalAverage": 600,
+        "localAverage": 615
+      },
+      "scoreHistory": [
+        {
+          "month": "2025-11",
+          "score": null
+        },
+        {
+          "month": "2025-12",
+          "score": null
+        },
+        {
+          "month": "2026-01",
+          "score": null
+        },
+        {
+          "month": "2026-02",
+          "score": null
+        },
+        {
+          "month": "2026-03",
+          "score": null
+        },
+        {
+          "month": "2026-04",
+          "score": null
+        },
+        {
+          "month": "2026-05",
+          "score": null
+        },
+        {
+          "month": "2026-06",
+          "score": null
+        },
+        {
+          "month": "2026-07",
+          "score": null
+        },
+        {
+          "month": "2026-08",
+          "score": 470
+        },
+        {
+          "month": "2026-09",
+          "score": 475
+        },
+        {
+          "month": "2026-10",
+          "score": 480
+        }
+      ],
+      "summary": {
+        "text": "There is not much on your report yet.",
+        "feedback": "none"
+      },
+      "changes": [],
+      "impact": {
+        "actionNeeded": 0,
+        "monitor": 0,
+        "doingWell": 0
+      },
+      "searches": [],
+      "personalDetails": {
+        "addresses": [
+          {
+            "line1": "4 Specimen Court",
+            "town": "Exampleton",
+            "postcode": "ZZ4 4ZZ",
+            "current": true
+          }
+        ],
+        "electoralRoll": false
+      },
+      "accounts": []
+    }
+  ],
+  "notifications": []
+}

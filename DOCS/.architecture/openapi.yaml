@@ -1,0 +1,1624 @@
+# version: 8
+# created: 2026-10-05T20:41Z
+# supersedes: v7 (2026-10-05T20:28Z), the accepted Phase 0 baseline (DR-038); earlier versions are kept in the
+# portfolio's Phase 0 pack, not in this repository
+# change: info.license added (MIT) when the project became its own repository (CDS-09)
+# project: credit-dashboard-sut
+# type: architecture-doc
+# language: en-GB
+openapi: 3.1.0
+info:
+  title: Credit Dashboard SUT API
+  version: 0.6.1
+  license:
+    name: MIT
+    identifier: MIT
+  summary: Fictional credit-report service used as a system under test. All data is synthetic.
+  description: |
+    Phase 0 draft contract. Business rule IDs (BR-xx) refer to the API specification;
+    profile rule IDs (PR-xx) refer to the My Profile UI feature spec.
+    Test-control paths are tagged `test-control` and exist only when TEST_CONTROL=true.
+    Lint ruleset: `redocly.yaml` at the repository root.
+servers:
+  - url: http://localhost:4000/api/v1
+    description: Local service
+  - url: http://localhost:4010/api/v1
+    description: Prism mock
+security:
+  - bearerAuth: []
+tags:
+  - name: session
+    description: Sign-in, sign-out and the current user
+  - name: report
+    description: Read-only views of one bureau report
+  - name: accounts
+    description: Account lists, totals, detail and user-supplied details
+  - name: profile
+    description: The customer's own account profile (My Profile UI feature spec, rules PR-01 to PR-11)
+  - name: supporting
+    description: Debt, notifications, summary feedback and the mock assistant
+  - name: test-control
+    description: State set-up for tests; present only when TEST_CONTROL=true, otherwise every path returns 404 (DR-008)
+
+paths:
+  /auth/login:
+    post:
+      tags: [session]
+      operationId: login
+      summary: Exchange test credentials for a token
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+            example: { username: alex, password: demo-only }
+      responses:
+        '200':
+          description: Token issued
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoginResponse' }
+              example: { token: tok_demo_123, expiresAt: '2026-10-03T18:15:00Z' }
+        '400': { $ref: '#/components/responses/Validation' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+  /auth/logout:
+    post:
+      tags: [session]
+      operationId: logout
+      summary: Revoke the current token
+      responses:
+        '204': { description: Token revoked }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+  /me:
+    get:
+      tags: [session]
+      operationId: getMe
+      summary: Current user and default bureau
+      responses:
+        '200':
+          description: Current user
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+              example: { id: usr_01, displayName: Alex Example, greetingName: Al, defaultBureauId: bureau-a }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /me/profile:
+    get:
+      tags: [profile]
+      operationId: getProfile
+      summary: Identity header, preferred name and tile summaries
+      description: |
+        Feeds the My Profile page. Legal name and date of birth are read-only (PR-01).
+        Tile summaries never carry finance figures (PR-07) or a full mobile number.
+      responses:
+        '200':
+          description: The caller's profile
+          content:
+            application/json:
+              example:
+                legalName: Alex Example
+                dateOfBirth: '1985-03-12'
+                memberSince: '2021-06-01'
+                preferredName: Al
+                email:
+                  address: alex.example@example.com
+                  status: verified
+                mobile:
+                  lastDigits: '123'
+                  status: verified
+                address:
+                  line1: 1 Example Street
+                  postcode: ZZ1 1ZZ
+                  previousCount: 1
+                employment:
+                  status: employed-full-time
+                finances:
+                  added: true
+              schema: { $ref: '#/components/schemas/Profile' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+  /me/profile/preferred-name:
+    patch:
+      tags: [profile]
+      operationId: updatePreferredName
+      summary: Set or clear the preferred name
+      description: |
+        The service trims the value, then applies PR-02. An empty string or null clears it.
+        A value that breaks PR-02 after trimming returns 422.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PreferredNameUpdate' }
+            example: { preferredName: '  Sam  ' }
+      responses:
+        '200':
+          description: Stored value after trimming; null when cleared (PR-02)
+          content:
+            application/json:
+              example:
+                preferredName: Sam
+              schema: { $ref: '#/components/schemas/PreferredName' }
+        '400': { $ref: '#/components/responses/Validation' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '422': { $ref: '#/components/responses/RuleViolation' }
+
+  /me/profile/email:
+    put:
+      tags: [profile]
+      operationId: changeEmail
+      summary: Change the email address
+      description: >-
+        A different address is stored as unverified and a verification link is sent (PR-04); the link starts the
+        resend window (PR-09). The address already held is not a change: address and status are kept and the
+        current state is returned (PR-04, DR-027).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EmailChange' }
+            example: { address: alex.new@example.com }
+      responses:
+        '200':
+          description: The email as now held
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EmailContact' }
+              example: { address: alex.new@example.com, status: unverified }
+        '400': { $ref: '#/components/responses/Validation' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /me/profile/email/verification:
+    post:
+      tags: [profile]
+      operationId: resendEmailVerification
+      summary: Send the verification link again
+      description: >-
+        Allowed once at least 60 seconds have passed since the last link was sent, on the controlled clock
+        (PR-09). Sooner is a 429 with Retry-After. An email that is already verified is a 422 and nothing is sent.
+      responses:
+        '202':
+          description: Link sent
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VerificationSent' }
+              example: { sentAt: '2026-10-03T10:01:00Z', nextResendAt: '2026-10-03T10:02:00Z' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '422': { $ref: '#/components/responses/RuleViolation' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+
+  /me/profile/mobile:
+    put:
+      tags: [profile]
+      operationId: changeMobile
+      summary: Add or change the mobile number
+      description: >-
+        A UK number (PR-06) is stored at once, normalised to +44, as unverified, and a six-digit code is issued
+        (PR-10). The demo sends no message: the code is always 123456. A number outside PR-06 is a 422.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MobileChange' }
+            example: { number: '07700 900456' }
+      responses:
+        '200':
+          description: Number held as unverified; a code is pending
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MobileChallenge' }
+              example: { lastDigits: '456', status: unverified, expiresAt: '2026-10-03T10:10:00Z', attemptsRemaining: 3 }
+        '400': { $ref: '#/components/responses/Validation' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '422': { $ref: '#/components/responses/RuleViolation' }
+
+  /me/profile/mobile/verification:
+    post:
+      tags: [profile]
+      operationId: verifyMobile
+      summary: Submit the one-time code
+      description: >-
+        The correct code, while less than 10 minutes have passed since issue, marks the number verified (PR-10).
+        A wrong code is a 422 with the attempts remaining; the third wrong code voids the challenge (PR-11). An
+        expired or voided code, or a code with nothing pending, is a 422 asking for a new code.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MobileVerification' }
+            example: { code: '123456' }
+      responses:
+        '200':
+          description: Number verified
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MobileContact' }
+              example: { lastDigits: '456', status: verified }
+        '400': { $ref: '#/components/responses/Validation' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '422': { $ref: '#/components/responses/RuleViolation' }
+
+  /bureaux:
+    get:
+      tags: [report]
+      operationId: listBureaux
+      summary: Bureaux available to the user
+      responses:
+        '200':
+          description: Bureaux
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Bureau' }
+              example:
+                - { id: bureau-a, name: Bureau A, nextUpdateInDays: 1 }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /reports/{bureauId}/overview:
+    get:
+      tags: [report]
+      operationId: getReportOverview
+      summary: Overview page aggregate
+      parameters: [ { $ref: '#/components/parameters/BureauId' } ]
+      responses:
+        '200':
+          description: Aggregate for the overview page
+          content:
+            application/json:
+              example:
+                bureau:
+                  id: bureau-a
+                  name: Bureau A
+                  nextUpdateInDays: 1
+                score:
+                  current: 720
+                  max: 1000
+                  nationalAverage: 600
+                  localAverage: 615
+                summary:
+                  text: Your score is good and steady. Paying on time is helping.
+                  feedback: none
+                recentChanges:
+                - id: chg_2b7k9
+                  title: A credit card balance went down
+                  sentiment: positive
+                  impact: low
+                  date: '2026-09-28'
+                - id: chg_8d1x4
+                  title: A new hard search was recorded
+                  sentiment: negative
+                  impact: medium
+                  date: '2026-09-14'
+                changesTotal: 2
+                impact:
+                  actionNeeded: 0
+                  monitor: 1
+                  doingWell: 10
+                debt:
+                  total:
+                    amountMinor: 1294760
+                    currency: GBP
+                  trend: steady
+                accountTypes:
+                - type: creditcard
+                  balance:
+                    amountMinor: 42360
+                    currency: GBP
+                  limit:
+                    amountMinor: 510000
+                    currency: GBP
+                  utilisation: 8
+                  includedCount: 1
+                  excluded: []
+                - type: loan
+                  balance:
+                    amountMinor: 1252400
+                    currency: GBP
+                  limit:
+                    amountMinor: 1500000
+                    currency: GBP
+                  utilisation: 83
+                  includedCount: 1
+                  excluded:
+                  - id: acc_9x2m1
+                    provider: Harbour Bank
+                    maskedNumber: '*6902'
+                    balance:
+                      amountMinor: 116100
+                      currency: GBP
+                payments:
+                  newMissed: 0
+                  onReport: 0
+              schema: { $ref: '#/components/schemas/ReportOverview' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/Internal' }
+
+  /reports/{bureauId}/score:
+    get:
+      tags: [report]
+      operationId: getScore
+      summary: Current score and benchmarks
+      parameters: [ { $ref: '#/components/parameters/BureauId' } ]
+      responses:
+        '200':
+          description: Current score (BR-01)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Score' }
+              example: { current: 720, max: 1000, nationalAverage: 600, localAverage: 615 }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /reports/{bureauId}/score/history:
+    get:
+      tags: [report]
+      operationId: getScoreHistory
+      summary: Monthly score history for a range
+      parameters:
+        - { $ref: '#/components/parameters/BureauId' }
+        - name: range
+          in: query
+          required: true
+          schema: { type: string, enum: [3m, 6m, 1y] }
+      responses:
+        '200':
+          description: Monthly points, oldest first (BR-02)
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ScorePoint' }
+              example:
+                - { month: '2026-08', score: 700 }
+                - { month: '2026-09', score: null }
+                - { month: '2026-10', score: 720 }
+        '400': { $ref: '#/components/responses/Validation' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /reports/{bureauId}/changes:
+    get:
+      tags: [report]
+      operationId: listChanges
+      summary: Report changes, newest first
+      parameters:
+        - { $ref: '#/components/parameters/BureauId' }
+        - { name: tags, in: query, schema: { type: string } }
+        - { name: sentiment, in: query, schema: { $ref: '#/components/schemas/Sentiment' } }
+        - { $ref: '#/components/parameters/Page' }
+        - { $ref: '#/components/parameters/PageSize' }
+      responses:
+        '200':
+          description: Changes, newest first (BR-11)
+          content:
+            application/json:
+              example:
+                page: 1
+                pageSize: 20
+                total: 2
+                items:
+                - id: chg_2b7k9
+                  title: A credit card balance went down
+                  sentiment: positive
+                  impact: low
+                  date: '2026-09-28'
+                - id: chg_8d1x4
+                  title: A new hard search was recorded
+                  sentiment: negative
+                  impact: medium
+                  date: '2026-09-14'
+              schema: { $ref: '#/components/schemas/ChangePage' }
+        '400': { $ref: '#/components/responses/Validation' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /reports/{bureauId}/impact:
+    get:
+      tags: [report]
+      operationId: getImpact
+      summary: Topic counts per category
+      parameters: [ { $ref: '#/components/parameters/BureauId' } ]
+      responses:
+        '200':
+          description: Topic counts
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Impact' }
+              example: { actionNeeded: 0, monitor: 1, doingWell: 10 }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /reports/{bureauId}/payment-history:
+    get:
+      tags: [report]
+      operationId: getReportPaymentHistory
+      summary: Missed payments across all accounts
+      parameters:
+        - { $ref: '#/components/parameters/BureauId' }
+        - { $ref: '#/components/parameters/Year' }
+      responses:
+        '200':
+          description: Seven-year summary plus missed payments for the selected year (BR-12)
+          content:
+            application/json:
+              example:
+                years:
+                - year: 2026
+                  status: on-time
+                - year: 2025
+                  status: on-time
+                - year: 2024
+                  status: on-time
+                - year: 2023
+                  status: on-time
+                - year: 2022
+                  status: on-time
+                - year: 2021
+                  status: on-time
+                - year: 2020
+                  status: no-data
+                selectedYear: 2026
+                missed: []
+              schema: { $ref: '#/components/schemas/PaymentHistory' }
+        '400': { $ref: '#/components/responses/Validation' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /reports/{bureauId}/searches:
+    get:
+      tags: [report]
+      operationId: listSearches
+      summary: Hard or soft search records
+      parameters:
+        - { $ref: '#/components/parameters/BureauId' }
+        - name: kind
+          in: query
+          required: true
+          schema: { type: string, enum: [hard, soft] }
+        - { $ref: '#/components/parameters/Page' }
+        - { $ref: '#/components/parameters/PageSize' }
+      responses:
+        '200':
+          description: Search records
+          content:
+            application/json:
+              example:
+                page: 1
+                pageSize: 20
+                total: 1
+                items:
+                - id: srch_5n2c8
+                  kind: hard
+                  organisation: Lender Y
+                  purpose: Loan application
+                  date: '2026-09-14'
+              schema: { $ref: '#/components/schemas/SearchPage' }
+        '400': { $ref: '#/components/responses/Validation' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /reports/{bureauId}/personal-details:
+    get:
+      tags: [report]
+      operationId: getPersonalDetails
+      summary: Personal details held on the report
+      parameters: [ { $ref: '#/components/parameters/BureauId' } ]
+      responses:
+        '200':
+          description: Synthetic personal details (Release 3)
+          content:
+            application/json:
+              example:
+                name: Alex Example
+                electoralRoll: true
+                addresses:
+                - line1: 1 Example Street
+                  town: Exampleton
+                  postcode: ZZ1 1ZZ
+                  current: true
+                - line1: 22 Sample Road
+                  town: Exampleton
+                  postcode: ZZ2 2ZZ
+                  current: false
+              schema: { $ref: '#/components/schemas/PersonalDetails' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /reports/{bureauId}/accounts:
+    get:
+      tags: [accounts]
+      operationId: listAccounts
+      summary: Account rows for a type or the closed list
+      parameters:
+        - { $ref: '#/components/parameters/BureauId' }
+        - { name: type, in: query, schema: { $ref: '#/components/schemas/AccountType' } }
+        - name: status
+          in: query
+          schema: { type: string, enum: [open, closed], default: open }
+      responses:
+        '200':
+          description: Account rows
+          content:
+            application/json:
+              example:
+                - id: acc_7f3k2q
+                  type: creditcard
+                  provider: Lender X
+                  logoUrl: null
+                  maskedNumber: '*4821'
+                  balance:
+                    amountMinor: 42360
+                    currency: GBP
+                  limit:
+                    amountMinor: 510000
+                    currency: GBP
+                  utilisation: 8
+                  includedInTotals: true
+                  status: normal
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/AccountSummary' }
+        '400': { $ref: '#/components/responses/Validation' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /reports/{bureauId}/accounts/totals:
+    get:
+      tags: [accounts]
+      operationId: getAccountTotals
+      summary: Summary card figures for one account type
+      parameters:
+        - { $ref: '#/components/parameters/BureauId' }
+        - name: type
+          in: query
+          required: true
+          schema: { $ref: '#/components/schemas/AccountType' }
+      responses:
+        '200':
+          description: Summary card figures (BR-04, BR-05)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AccountTotals' }
+              example:
+                type: loan
+                balance: { amountMinor: 1252400, currency: GBP }
+                limit: { amountMinor: 1500000, currency: GBP }
+                utilisation: 83
+                includedCount: 1
+                excluded:
+                  - id: acc_9x2m1
+                    provider: Harbour Bank
+                    maskedNumber: '*6902'
+                    balance: { amountMinor: 116100, currency: GBP }
+        '400': { $ref: '#/components/responses/Validation' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /accounts/{accountId}:
+    get:
+      tags: [accounts]
+      operationId: getAccount
+      summary: Account detail
+      parameters: [ { $ref: '#/components/parameters/AccountId' } ]
+      responses:
+        '200':
+          description: Account detail
+          content:
+            application/json:
+              example:
+                id: acc_7f3k2q
+                type: creditcard
+                provider: Lender X
+                logoUrl: null
+                maskedNumber: '*4821'
+                balance:
+                  amountMinor: 42360
+                  currency: GBP
+                limit:
+                  amountMinor: 510000
+                  currency: GBP
+                utilisation: 8
+                includedInTotals: true
+                status: normal
+                openedDate: '2019-04-15'
+                closedDate: null
+                updateFrequency: monthly
+                lastUpdated: '2026-09-30'
+                utilisationRaw: 8
+                details:
+                  apr: 24.9
+                  interestRate: null
+                  promoPeriodMonths: null
+                  minPayment: null
+                  paymentMethod: direct-debit
+                closed: false
+              schema: { $ref: '#/components/schemas/Account' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /accounts/{accountId}/balance-history:
+    get:
+      tags: [accounts]
+      operationId: getBalanceHistory
+      summary: Last six months of balances
+      parameters: [ { $ref: '#/components/parameters/AccountId' } ]
+      responses:
+        '200':
+          description: Last 6 months, oldest first
+          content:
+            application/json:
+              example:
+                - month: 2026-05
+                  balance:
+                    amountMinor: 61200
+                    currency: GBP
+                  limit:
+                    amountMinor: 510000
+                    currency: GBP
+                - month: 2026-06
+                  balance:
+                    amountMinor: 55840
+                    currency: GBP
+                  limit:
+                    amountMinor: 510000
+                    currency: GBP
+                - month: 2026-07
+                  balance:
+                    amountMinor: 50110
+                    currency: GBP
+                  limit:
+                    amountMinor: 510000
+                    currency: GBP
+                - month: 2026-08
+                  balance:
+                    amountMinor: 47930
+                    currency: GBP
+                  limit:
+                    amountMinor: 510000
+                    currency: GBP
+                - month: 2026-09
+                  balance:
+                    amountMinor: 44000
+                    currency: GBP
+                  limit:
+                    amountMinor: 510000
+                    currency: GBP
+                - month: 2026-10
+                  balance:
+                    amountMinor: 42360
+                    currency: GBP
+                  limit:
+                    amountMinor: 510000
+                    currency: GBP
+              schema:
+                type: array
+                maxItems: 6
+                items: { $ref: '#/components/schemas/BalancePoint' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /accounts/{accountId}/payment-history:
+    get:
+      tags: [accounts]
+      operationId: getAccountPaymentHistory
+      summary: Payment history for one account
+      parameters:
+        - { $ref: '#/components/parameters/AccountId' }
+        - { $ref: '#/components/parameters/Year' }
+      responses:
+        '200':
+          description: Payment history for one account
+          content:
+            application/json:
+              example:
+                years:
+                - year: 2026
+                  status: on-time
+                - year: 2025
+                  status: on-time
+                - year: 2024
+                  status: on-time
+                - year: 2023
+                  status: on-time
+                - year: 2022
+                  status: on-time
+                - year: 2021
+                  status: on-time
+                - year: 2020
+                  status: no-data
+                selectedYear: 2026
+                missed: []
+              schema: { $ref: '#/components/schemas/PaymentHistory' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /accounts/{accountId}/details:
+    patch:
+      tags: [accounts]
+      operationId: updateAccountDetail
+      summary: Set one user-supplied account detail
+      parameters: [ { $ref: '#/components/parameters/AccountId' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DetailUpdate' }
+            example: { field: interestRate, value: 29.9 }
+      responses:
+        '200':
+          description: Updated details (BR-14)
+          content:
+            application/json:
+              example:
+                apr: 24.9
+                interestRate: 29.9
+                promoPeriodMonths: null
+                minPayment: null
+                paymentMethod: direct-debit
+              schema: { $ref: '#/components/schemas/AccountDetails' }
+        '400': { $ref: '#/components/responses/Validation' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '422': { $ref: '#/components/responses/RuleViolation' }
+
+  /debt/overview:
+    get:
+      tags: [supporting]
+      operationId: getDebtOverview
+      summary: Total debt and trend
+      responses:
+        '200':
+          description: Total debt and trend (BR-07)
+          content:
+            application/json:
+              example:
+                total:
+                  amountMinor: 1294760
+                  currency: GBP
+                trend: steady
+              schema: { $ref: '#/components/schemas/DebtOverview' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /notifications:
+    get:
+      tags: [supporting]
+      operationId: listNotifications
+      summary: Notifications, unread first
+      parameters:
+        - { $ref: '#/components/parameters/Page' }
+        - { $ref: '#/components/parameters/PageSize' }
+      responses:
+        '200':
+          description: Notifications, unread first
+          content:
+            application/json:
+              example:
+                page: 1
+                pageSize: 20
+                total: 1
+                unread: 1
+                items:
+                - id: ntf_3q9w1
+                  title: Your Bureau A report has been updated
+                  read: false
+                  createdAt: '2026-10-03T07:00:00Z'
+              schema: { $ref: '#/components/schemas/NotificationPage' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+  /notifications/{notificationId}:
+    patch:
+      tags: [supporting]
+      operationId: markNotificationRead
+      summary: Mark a notification read
+      parameters:
+        - { name: notificationId, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              read: true
+            schema:
+              type: object
+              required: [read]
+              properties: { read: { type: boolean } }
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              example:
+                id: ntf_3q9w1
+                title: Your Bureau A report has been updated
+                read: true
+                createdAt: '2026-10-03T07:00:00Z'
+              schema: { $ref: '#/components/schemas/Notification' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /reports/{bureauId}/summary/feedback:
+    put:
+      tags: [supporting]
+      operationId: setSummaryFeedback
+      summary: Like, dislike or clear the summary
+      parameters: [ { $ref: '#/components/parameters/BureauId' } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              value: like
+            schema: { $ref: '#/components/schemas/Feedback' }
+      responses:
+        '200':
+          description: Stored (BR-10)
+          content:
+            application/json:
+              example:
+                value: like
+              schema: { $ref: '#/components/schemas/Feedback' }
+        '400': { $ref: '#/components/responses/Validation' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /assistant/messages:
+    post:
+      tags: [supporting]
+      operationId: sendAssistantMessage
+      summary: Send a message to the mock assistant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              message: Why did my score change?
+            schema:
+              type: object
+              required: [message]
+              properties:
+                message: { type: string, minLength: 1, maxLength: 500 }
+      responses:
+        '200':
+          description: Canned reply
+          content:
+            application/json:
+              example:
+                reply: Your score is 720 out of 1000, which is above the national average of 600.
+                disclaimer: Demo assistant with canned replies. It does not give financial advice.
+              schema:
+                type: object
+                required: [reply, disclaimer]
+                properties:
+                  reply: { type: string }
+                  disclaimer: { type: string }
+        '400': { $ref: '#/components/responses/Validation' }
+        '401': { $ref: '#/components/responses/Unauthenticated' }
+
+  /__test/reset:
+    post:
+      tags: [test-control]
+      operationId: testReset
+      summary: Reset fixtures, flags, clock and latency
+      security: [ { testControlKey: [] } ]
+      responses:
+        '204': { description: 'Fixtures reloaded; flags, clock and latency cleared' }
+        '404': { $ref: '#/components/responses/TestControlDisabled' }
+  /__test/users/{username}/persona:
+    put:
+      tags: [test-control]
+      operationId: testBindPersona
+      summary: Bind a test user to a persona, optionally with data overrides
+      description: >-
+        Binds the user to the persona. Optional `overrides` arrange data no persona holds (DR-020): each list
+        named for a bureau replaces that bureau's list, for this user only, until rebound or reset. Overrides are
+        source data in the fixture format (API spec section 9.1); derived values are recomputed from them. A body
+        that fails the schema is a 400; overrides that break a business rule (for example a stored utilisation
+        that does not match its balance and limit, BR-03) are a 422; an unknown bureau ID is a 404.
+      security: [ { testControlKey: [] } ]
+      parameters:
+        - { name: username, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            examples:
+              plain:
+                summary: Bind only
+                value:
+                  persona: drilldown
+              withOverrides:
+                summary: One credit card, for a BR-03 outline row
+                value:
+                  persona: drilldown
+                  overrides:
+                    bureaux:
+                    - id: bureau-a
+                      accounts:
+                      - id: acc_ovcc01
+                        type: creditcard
+                        provider: Lender X
+                        logoUrl: null
+                        maskedNumber: '*0001'
+                        balance: { amountMinor: 4950, currency: GBP }
+                        limit: { amountMinor: 10000, currency: GBP }
+                        utilisation: 50
+                        includedInTotals: true
+                        status: normal
+                        openedDate: '2024-01-15'
+                        closedDate: null
+                        updateFrequency: monthly
+                        lastUpdated: '2026-09-30'
+                        utilisationRaw: 50
+                        details: { apr: null, interestRate: null, promoPeriodMonths: null, minPayment: null, paymentMethod: null }
+                        closed: false
+                        missedMonths: []
+                        balanceHistory:
+                        - { month: '2026-09', balance: { amountMinor: 4950, currency: GBP }, limit: { amountMinor: 10000, currency: GBP } }
+            schema:
+              type: object
+              additionalProperties: false
+              required: [persona]
+              properties:
+                persona: { $ref: '#/components/schemas/Persona' }
+                overrides: { $ref: '#/components/schemas/PersonaOverrides' }
+      responses:
+        '204': { description: Bound }
+        '400': { $ref: '#/components/responses/Validation' }
+        '404': { $ref: '#/components/responses/TestControlDisabled' }
+        '422': { $ref: '#/components/responses/RuleViolation' }
+  /__test/bugs:
+    put:
+      tags: [test-control]
+      operationId: testSetBugs
+      summary: Set the active bug flags
+      security: [ { testControlKey: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              flags:
+              - util-mismatch
+              - minor-units-label
+            schema:
+              type: object
+              required: [flags]
+              properties:
+                flags:
+                  type: array
+                  uniqueItems: true
+                  items: { type: string }
+      responses:
+        '204': { description: Flags set }
+        '400': { $ref: '#/components/responses/Validation' }
+        '404': { $ref: '#/components/responses/TestControlDisabled' }
+  /__test/clock:
+    put:
+      tags: [test-control]
+      operationId: testSetClock
+      summary: Freeze server time
+      security: [ { testControlKey: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              now: '2026-10-03T09:00:00Z'
+            schema:
+              type: object
+              required: [now]
+              properties: { now: { type: string, format: date-time } }
+      responses:
+        '204': { description: Clock frozen }
+        '400': { $ref: '#/components/responses/Validation' }
+        '404': { $ref: '#/components/responses/TestControlDisabled' }
+  /__test/latency:
+    put:
+      tags: [test-control]
+      operationId: testSetLatency
+      summary: Set artificial latency
+      security: [ { testControlKey: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              fixedMs: 3000
+            schema:
+              type: object
+              properties:
+                fixedMs: { type: integer, minimum: 0, maximum: 10000 }
+                minMs: { type: integer, minimum: 0 }
+                maxMs: { type: integer, maximum: 10000 }
+      responses:
+        '204': { description: Latency set }
+        '400': { $ref: '#/components/responses/Validation' }
+        '404': { $ref: '#/components/responses/TestControlDisabled' }
+  /__test/state:
+    get:
+      tags: [test-control]
+      operationId: testGetState
+      summary: Read the current test-control state
+      security: [ { testControlKey: [] } ]
+      responses:
+        '200':
+          description: Current control state
+          content:
+            application/json:
+              example:
+                personas:
+                  alex: excellent
+                overridden:
+                  alex: false
+                flags: []
+                now: null
+                latency: {}
+              schema:
+                type: object
+                properties:
+                  personas: { type: object, additionalProperties: { $ref: '#/components/schemas/Persona' } }
+                  overridden:
+                    description: Whether each bound user has overrides in force (DR-020)
+                    type: object
+                    additionalProperties: { type: boolean }
+                  flags: { type: array, items: { type: string } }
+                  now: { type: [string, 'null'], format: date-time }
+                  latency: { type: object }
+        '404': { $ref: '#/components/responses/TestControlDisabled' }
+  /__test/verify-email:
+    post:
+      tags: [test-control]
+      operationId: testVerifyEmail
+      summary: Mark a test user's email verified without the link
+      security: [ { testControlKey: [] } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example: { username: alex }
+            schema:
+              type: object
+              additionalProperties: false
+              required: [username]
+              properties:
+                username: { type: string }
+      responses:
+        '204': { description: Email marked verified }
+        '400': { $ref: '#/components/responses/Validation' }
+        '404': { $ref: '#/components/responses/TestControlDisabled' }
+
+components:
+  securitySchemes:
+    bearerAuth: { type: http, scheme: bearer }
+    testControlKey: { type: apiKey, in: header, name: X-Test-Control-Key }
+
+  parameters:
+    BureauId: { name: bureauId, in: path, required: true, schema: { type: string, example: bureau-a } }
+    AccountId: { name: accountId, in: path, required: true, schema: { type: string, pattern: '^acc_[a-z0-9]{5,}$' } }
+    Year: { name: year, in: query, schema: { type: integer, minimum: 2000, maximum: 2100 } }
+    Page: { name: page, in: query, schema: { type: integer, minimum: 1, default: 1 } }
+    PageSize: { name: pageSize, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+
+  responses:
+    Validation:
+      description: Request failed validation
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: /problems/validation
+            title: Request failed validation
+            status: 400
+            detail: One or more fields are invalid.
+            instance: /api/v1/reports/bureau-a/score/history
+            errors:
+            - field: range
+              message: must be one of 3m, 6m, 1y
+    Unauthenticated:
+      description: Missing or invalid token
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: /problems/unauthenticated
+            title: Missing or invalid token
+            status: 401
+            detail: The token has expired.
+            instance: /api/v1/me
+    NotFound:
+      description: Not found, or owned by another user (BR-15)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: /problems/not-found
+            title: Not found
+            status: 404
+            detail: No account with this ID was found.
+            instance: /api/v1/accounts/acc_zz9zz
+    RuleViolation:
+      description: Breaks a business rule
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: /problems/rule-violation
+            title: Breaks a business rule
+            status: 422
+            detail: interestRate must be between 0 and 100 (BR-14).
+            instance: /api/v1/accounts/acc_7f3k2q/details
+            errors:
+            - field: value
+              message: must be between 0 and 100
+    RateLimited:
+      description: Too many requests; try again after Retry-After seconds
+      headers:
+        Retry-After:
+          description: Seconds until the request is allowed
+          schema: { type: integer, minimum: 1 }
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: /problems/rate-limited
+            title: Too many requests
+            status: 429
+            detail: A verification link was sent less than 60 seconds ago (PR-09).
+            instance: /api/v1/me/profile/email/verification
+    Internal:
+      description: Server fault
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: /problems/internal
+            title: Server fault
+            status: 500
+            detail: The report could not be loaded.
+            instance: /api/v1/reports/bureau-a/overview
+    TestControlDisabled:
+      description: Test control is disabled (TEST_CONTROL is not true), or the target does not exist (DR-008)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: /problems/not-found
+            title: Not found
+            status: 404
+            detail: Test control is not enabled.
+            instance: /api/v1/__test/reset
+
+  schemas:
+    Money:
+      type: object
+      required: [amountMinor, currency]
+      properties:
+        amountMinor: { type: integer, description: Minor units (pence). Negative means a credit balance. }
+        currency: { type: string, enum: [GBP] }
+    Utilisation:
+      type: [integer, 'null']
+      minimum: 0
+      description: >-
+        Balance over limit, x 100, rounded half up (BR-03). No upper bound: above 100 means over
+        the limit (DR-013). Floored at 0 for a negative balance (BR-06). Null when the limit is zero or absent.
+    Sentiment: { type: string, enum: [positive, neutral, negative] }
+    AccountType: { type: string, enum: [creditcard, loan, mortgage, currentaccount, telecomsandutilities, lineofcredit] }
+    AccountStatus: { type: string, enum: [normal, arrears, default, settled, closed] }
+    PaymentStatus: { type: string, enum: [on-time, missed, no-data] }
+    Persona: { type: string, enum: [excellent, struggling, thin-file, boundary, drilldown, error, slow] }
+    MaskedNumber: { type: string, pattern: '^\*[A-Z0-9]{4}$' }
+
+    VerificationStatus: { type: string, enum: [verified, unverified] }
+    EmploymentStatus:
+      type: string
+      enum: [employed-full-time, employed-part-time, self-employed, unemployed, retired, student, other]
+    PreferredNameValue:
+      description: PR-02 after trimming; 1 to 30 letters, spaces, hyphens or apostrophes, no leading or trailing space
+      type: string
+      minLength: 1
+      maxLength: 30
+      pattern: "^[\\p{L}'-]([\\p{L}' -]*[\\p{L}'-])?$"
+    Profile:
+      type: object
+      required: [legalName, dateOfBirth, memberSince, preferredName, email, mobile, address, employment, finances]
+      properties:
+        legalName: { type: string, description: Read-only in the app (PR-01) }
+        dateOfBirth: { type: string, format: date, description: Read-only in the app (PR-01) }
+        memberSince: { type: string, format: date }
+        preferredName:
+          oneOf: [ { $ref: '#/components/schemas/PreferredNameValue' }, { type: 'null' } ]
+        email: { $ref: '#/components/schemas/EmailContact' }
+        mobile:
+          description: Null when no number is held. Only the last three digits leave the service.
+          oneOf:
+            - { $ref: '#/components/schemas/MobileContact' }
+            - { type: 'null' }
+        address:
+          description: Current address summary; null when none is held
+          oneOf:
+            - type: object
+              required: [line1, postcode, previousCount]
+              properties:
+                line1: { type: string }
+                postcode: { type: string }
+                previousCount: { type: integer, minimum: 0 }
+            - { type: 'null' }
+        employment:
+          description: Null when not added
+          oneOf:
+            - type: object
+              required: [status]
+              properties:
+                status: { $ref: '#/components/schemas/EmploymentStatus' }
+            - { type: 'null' }
+        finances:
+          description: Whether finance details are held; never the figures (PR-07)
+          type: object
+          required: [added]
+          properties:
+            added: { type: boolean }
+    EmailContact:
+      type: object
+      required: [address, status]
+      properties:
+        address: { type: string, format: email }
+        status: { $ref: '#/components/schemas/VerificationStatus' }
+    EmailChange:
+      type: object
+      additionalProperties: false
+      required: [address]
+      properties:
+        address: { type: string, format: email, maxLength: 254 }
+    VerificationSent:
+      type: object
+      required: [sentAt, nextResendAt]
+      properties:
+        sentAt: { type: string, format: date-time }
+        nextResendAt: { type: string, format: date-time, description: sentAt plus 60 seconds (PR-09) }
+    MobileContact:
+      type: object
+      required: [lastDigits, status]
+      properties:
+        lastDigits: { type: string, pattern: '^[0-9]{3}$' }
+        status: { $ref: '#/components/schemas/VerificationStatus' }
+    MobileChange:
+      type: object
+      additionalProperties: false
+      required: [number]
+      properties:
+        number: { type: string, minLength: 1, maxLength: 20, description: Checked against PR-06 by the service (422) }
+    MobileChallenge:
+      allOf:
+        - { $ref: '#/components/schemas/MobileContact' }
+        - type: object
+          required: [expiresAt, attemptsRemaining]
+          properties:
+            expiresAt: { type: string, format: date-time, description: Issue time plus 10 minutes (PR-10) }
+            attemptsRemaining: { type: integer, minimum: 0, maximum: 3, description: PR-11 }
+    MobileVerification:
+      type: object
+      additionalProperties: false
+      required: [code]
+      properties:
+        code: { type: string, pattern: '^[0-9]{6}$' }
+    PreferredNameUpdate:
+      type: object
+      required: [preferredName]
+      properties:
+        preferredName:
+          description: Raw input; trimmed by the service before PR-02 is applied
+          type: [string, 'null']
+          maxLength: 100
+    PreferredName:
+      type: object
+      required: [preferredName]
+      properties:
+        preferredName:
+          oneOf: [ { $ref: '#/components/schemas/PreferredNameValue' }, { type: 'null' } ]
+
+    LoginRequest:
+      type: object
+      required: [username, password]
+      properties: { username: { type: string }, password: { type: string } }
+    LoginResponse:
+      type: object
+      required: [token, expiresAt]
+      properties: { token: { type: string }, expiresAt: { type: string, format: date-time } }
+    User:
+      type: object
+      required: [id, displayName, greetingName, defaultBureauId]
+      properties:
+        id: { type: string }
+        displayName: { type: string, description: The legal name }
+        greetingName:
+          type: string
+          minLength: 1
+          description: >-
+            The name the app greets the customer by (PR-03): the preferred name when set, otherwise the first word
+            of the legal name (DR-036).
+        defaultBureauId: { type: string }
+    Bureau:
+      type: object
+      required: [id, name, nextUpdateInDays]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        nextUpdateInDays: { type: integer, minimum: 0, description: BR-08 }
+    Score:
+      type: object
+      required: [current, max, nationalAverage, localAverage]
+      properties:
+        current: { type: integer, minimum: 0, maximum: 1000 }
+        max: { type: integer, const: 1000 }
+        nationalAverage: { type: integer, minimum: 0, maximum: 1000 }
+        localAverage: { type: integer, minimum: 0, maximum: 1000 }
+    ScorePoint:
+      type: object
+      required: [month, score]
+      properties:
+        month: { type: string, pattern: '^\d{4}-\d{2}$' }
+        score: { type: [integer, 'null'], minimum: 0, maximum: 1000 }
+    Change:
+      type: object
+      required: [id, title, sentiment, impact, date]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        sentiment: { $ref: '#/components/schemas/Sentiment' }
+        impact: { type: string, enum: [low, medium, high] }
+        date: { type: string, format: date }
+    ChangePage:
+      allOf:
+        - { $ref: '#/components/schemas/PageMeta' }
+        - type: object
+          required: [items]
+          properties: { items: { type: array, items: { $ref: '#/components/schemas/Change' } } }
+    Impact:
+      type: object
+      required: [actionNeeded, monitor, doingWell]
+      properties:
+        actionNeeded: { type: integer, minimum: 0 }
+        monitor: { type: integer, minimum: 0 }
+        doingWell: { type: integer, minimum: 0 }
+    Summary:
+      type: object
+      required: [text, feedback]
+      properties:
+        text: { type: string }
+        feedback: { type: string, enum: [like, dislike, none] }
+    ReportOverview:
+      type: object
+      required: [bureau, score, summary, recentChanges, changesTotal, impact, debt, accountTypes, payments]
+      properties:
+        bureau: { $ref: '#/components/schemas/Bureau' }
+        score: { $ref: '#/components/schemas/Score' }
+        summary: { $ref: '#/components/schemas/Summary' }
+        recentChanges: { type: array, maxItems: 3, items: { $ref: '#/components/schemas/Change' } }
+        changesTotal: { type: integer, minimum: 0 }
+        impact: { $ref: '#/components/schemas/Impact' }
+        debt: { $ref: '#/components/schemas/DebtOverview' }
+        accountTypes: { type: array, items: { $ref: '#/components/schemas/AccountTotals' } }
+        payments:
+          type: object
+          required: [newMissed, onReport]
+          properties:
+            newMissed: { type: integer, minimum: 0 }
+            onReport: { type: integer, minimum: 0 }
+    AccountSummary:
+      type: object
+      required: [id, type, provider, maskedNumber, balance, includedInTotals, status]
+      properties:
+        id: { type: string }
+        type: { $ref: '#/components/schemas/AccountType' }
+        provider: { type: string }
+        logoUrl: { type: [string, 'null'], format: uri }
+        maskedNumber: { $ref: '#/components/schemas/MaskedNumber' }
+        balance: { $ref: '#/components/schemas/Money' }
+        limit: { oneOf: [ { $ref: '#/components/schemas/Money' }, { type: 'null' } ] }
+        utilisation: { $ref: '#/components/schemas/Utilisation' }
+        includedInTotals: { type: boolean }
+        status: { $ref: '#/components/schemas/AccountStatus' }
+    AccountTotals:
+      type: object
+      required: [type, balance, includedCount, excluded]
+      properties:
+        type: { $ref: '#/components/schemas/AccountType' }
+        balance: { $ref: '#/components/schemas/Money' }
+        limit: { oneOf: [ { $ref: '#/components/schemas/Money' }, { type: 'null' } ] }
+        utilisation: { $ref: '#/components/schemas/Utilisation' }
+        includedCount: { type: integer, minimum: 0 }
+        excluded:
+          type: array
+          items:
+            type: object
+            required: [id, provider, maskedNumber, balance]
+            properties:
+              id: { type: string }
+              provider: { type: string }
+              maskedNumber: { $ref: '#/components/schemas/MaskedNumber' }
+              balance: { $ref: '#/components/schemas/Money' }
+    AccountDetails:
+      type: object
+      properties:
+        apr: { type: [number, 'null'], minimum: 0, maximum: 100 }
+        interestRate: { type: [number, 'null'], minimum: 0, maximum: 100 }
+        promoPeriodMonths: { type: [integer, 'null'], minimum: 0, maximum: 60 }
+        minPayment:
+          type: [object, 'null']
+          properties:
+            amount: { $ref: '#/components/schemas/Money' }
+            percent: { type: number, minimum: 0, maximum: 100 }
+        paymentMethod: { type: [string, 'null'], enum: [direct-debit, manual, null] }
+    Account:
+      allOf:
+        - { $ref: '#/components/schemas/AccountSummary' }
+        - type: object
+          required: [openedDate, updateFrequency, lastUpdated, details, closed]
+          properties:
+            openedDate: { type: string, format: date }
+            closedDate: { type: [string, 'null'], format: date }
+            updateFrequency: { type: string, enum: [monthly, quarterly] }
+            lastUpdated: { type: string, format: date }
+            utilisationRaw: { type: [integer, 'null'], description: Unfloored value (BR-06) }
+            details: { $ref: '#/components/schemas/AccountDetails' }
+            closed: { type: boolean }
+    DetailUpdate:
+      type: object
+      required: [field, value]
+      properties:
+        field: { type: string, enum: [apr, interestRate, promoPeriodMonths, minPayment, paymentMethod] }
+        value: {}
+    BalancePoint:
+      type: object
+      required: [month, balance]
+      properties:
+        month: { type: string, pattern: '^\d{4}-\d{2}$' }
+        balance: { $ref: '#/components/schemas/Money' }
+        limit: { oneOf: [ { $ref: '#/components/schemas/Money' }, { type: 'null' } ] }
+    FixtureAccount:
+      description: >-
+        An account as source data (API spec section 9.1): the contract Account plus the inputs the service derives
+        from. Used by persona fixtures and by test-control overrides (DR-020).
+      allOf:
+        - { $ref: '#/components/schemas/Account' }
+        - type: object
+          required: [missedMonths, balanceHistory]
+          properties:
+            sourceMask: { type: string, minLength: 1, description: BR-09 input as the source supplies it }
+            missedMonths:
+              description: BR-12 source
+              type: array
+              uniqueItems: true
+              items: { type: string, pattern: '^\d{4}-(0[1-9]|1[0-2])$' }
+            balanceHistory:
+              description: Oldest first; also the BR-07 trend source
+              type: array
+              maxItems: 6
+              items: { $ref: '#/components/schemas/BalancePoint' }
+    PersonaOverrides:
+      description: >-
+        Test-control data for one binding (DR-020). Each list named for a bureau replaces that list; lists not
+        named are kept from the persona.
+      type: object
+      additionalProperties: false
+      required: [bureaux]
+      properties:
+        bureaux:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            additionalProperties: false
+            required: [id]
+            minProperties: 2
+            properties:
+              id: { type: string }
+              accounts: { type: array, items: { $ref: '#/components/schemas/FixtureAccount' } }
+              changes: { type: array, items: { $ref: '#/components/schemas/Change' } }
+              searches: { type: array, items: { $ref: '#/components/schemas/Search' } }
+    PaymentHistory:
+      type: object
+      required: [years, selectedYear, missed]
+      properties:
+        years:
+          type: array
+          minItems: 7
+          maxItems: 7
+          items:
+            type: object
+            required: [year, status]
+            properties:
+              year: { type: integer }
+              status: { $ref: '#/components/schemas/PaymentStatus' }
+        selectedYear: { type: integer }
+        missed:
+          type: array
+          items:
+            type: object
+            required: [accountId, provider, month]
+            properties:
+              accountId: { type: string }
+              provider: { type: string }
+              month: { type: string, pattern: '^\d{4}-\d{2}$' }
+    Search:
+      type: object
+      required: [id, kind, organisation, date]
+      properties:
+        id: { type: string }
+        kind: { type: string, enum: [hard, soft] }
+        organisation: { type: string }
+        purpose: { type: string }
+        date: { type: string, format: date }
+    SearchPage:
+      allOf:
+        - { $ref: '#/components/schemas/PageMeta' }
+        - type: object
+          required: [items]
+          properties: { items: { type: array, items: { $ref: '#/components/schemas/Search' } } }
+    PersonalDetails:
+      type: object
+      required: [name, addresses, electoralRoll]
+      properties:
+        name: { type: string }
+        addresses:
+          type: array
+          items:
+            type: object
+            required: [line1, postcode, current]
+            properties:
+              line1: { type: string }
+              town: { type: string }
+              postcode: { type: string }
+              current: { type: boolean }
+        electoralRoll: { type: boolean }
+    DebtOverview:
+      type: object
+      required: [total, trend]
+      properties:
+        total: { $ref: '#/components/schemas/Money' }
+        trend:
+          type: string
+          enum: [up, down, steady]
+          description: >-
+            Against total debt three months earlier (BR-07). Steady when the unrounded change is at most
+            1% either way; if the earlier total was zero, steady when now zero, otherwise up (DR-011).
+    Notification:
+      type: object
+      required: [id, title, read, createdAt]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        read: { type: boolean }
+        createdAt: { type: string, format: date-time }
+    NotificationPage:
+      allOf:
+        - { $ref: '#/components/schemas/PageMeta' }
+        - type: object
+          required: [items, unread]
+          properties:
+            items: { type: array, items: { $ref: '#/components/schemas/Notification' } }
+            unread: { type: integer, minimum: 0 }
+    Feedback:
+      type: object
+      required: [value]
+      properties: { value: { type: string, enum: [like, dislike, none] } }
+    PageMeta:
+      type: object
+      required: [page, pageSize, total]
+      properties:
+        page: { type: integer, minimum: 1 }
+        pageSize: { type: integer, minimum: 1 }
+        total: { type: integer, minimum: 0 }
+    Problem:
+      type: object
+      required: [type, title, status]
+      properties:
+        type: { type: string, format: uri-reference }
+        title: { type: string }
+        status: { type: integer }
+        detail: { type: string }
+        instance: { type: string }
+        errors:
+          type: array
+          items:
+            type: object
+            properties: { field: { type: string }, message: { type: string } }

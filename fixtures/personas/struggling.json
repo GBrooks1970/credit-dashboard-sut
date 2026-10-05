@@ -1,0 +1,603 @@
+{
+  "persona": "struggling",
+  "purpose": "Missed payments, arrears and default statuses, card utilisation above 90%, one card over its limit (115%, DR-013), recent hard searches, a closed account.",
+  "asAt": "2026-10-03T09:00:00Z",
+  "behaviour": {
+    "latencyMs": 0,
+    "failReportEndpoints": false
+  },
+  "profile": {
+    "memberSince": "2023-02-14",
+    "preferredName": null,
+    "emailStatus": "unverified",
+    "mobile": {
+      "lastDigits": "456",
+      "status": "unverified"
+    },
+    "address": {
+      "line1": "9 Placeholder Lane",
+      "postcode": "ZZ3 3ZZ",
+      "previousCount": 0
+    },
+    "employment": {
+      "status": "employed-part-time"
+    },
+    "finances": {
+      "added": true
+    }
+  },
+  "bureaux": [
+    {
+      "id": "bureau-a",
+      "name": "Bureau A",
+      "nextRefreshDate": "2026-10-10",
+      "score": {
+        "current": 412,
+        "max": 1000,
+        "nationalAverage": 600,
+        "localAverage": 615
+      },
+      "scoreHistory": [
+        {
+          "month": "2025-11",
+          "score": 468
+        },
+        {
+          "month": "2025-12",
+          "score": 465
+        },
+        {
+          "month": "2026-01",
+          "score": 461
+        },
+        {
+          "month": "2026-02",
+          "score": 455
+        },
+        {
+          "month": "2026-03",
+          "score": 450
+        },
+        {
+          "month": "2026-04",
+          "score": 446
+        },
+        {
+          "month": "2026-05",
+          "score": 440
+        },
+        {
+          "month": "2026-06",
+          "score": 436
+        },
+        {
+          "month": "2026-07",
+          "score": 431
+        },
+        {
+          "month": "2026-08",
+          "score": 425
+        },
+        {
+          "month": "2026-09",
+          "score": 418
+        },
+        {
+          "month": "2026-10",
+          "score": 412
+        }
+      ],
+      "summary": {
+        "text": "Missed payments are lowering your score. Two cards are close to their limits.",
+        "feedback": "none"
+      },
+      "changes": [
+        {
+          "id": "chg_st04",
+          "title": "A payment was missed on a utility account",
+          "sentiment": "negative",
+          "impact": "high",
+          "date": "2026-09-30"
+        },
+        {
+          "id": "chg_st03",
+          "title": "A new hard search was recorded",
+          "sentiment": "negative",
+          "impact": "medium",
+          "date": "2026-09-02"
+        },
+        {
+          "id": "chg_st02",
+          "title": "A credit card went into arrears",
+          "sentiment": "negative",
+          "impact": "high",
+          "date": "2026-08-31"
+        },
+        {
+          "id": "chg_st01",
+          "title": "A closed account is still on your report",
+          "sentiment": "neutral",
+          "impact": "low",
+          "date": "2026-07-15"
+        }
+      ],
+      "impact": {
+        "actionNeeded": 3,
+        "monitor": 2,
+        "doingWell": 2
+      },
+      "searches": [
+        {
+          "id": "srch_st03",
+          "kind": "hard",
+          "organisation": "Lender Z",
+          "purpose": "Credit card application",
+          "date": "2026-09-02"
+        },
+        {
+          "id": "srch_st02",
+          "kind": "hard",
+          "organisation": "Northgate Finance",
+          "purpose": "Loan application",
+          "date": "2026-07-19"
+        },
+        {
+          "id": "srch_st01",
+          "kind": "hard",
+          "organisation": "Lender X",
+          "purpose": "Credit card application",
+          "date": "2026-05-06"
+        }
+      ],
+      "personalDetails": {
+        "addresses": [
+          {
+            "line1": "9 Placeholder Lane",
+            "town": "Sampleford",
+            "postcode": "ZZ3 3ZZ",
+            "current": true
+          }
+        ],
+        "electoralRoll": false
+      },
+      "accounts": [
+        {
+          "id": "acc_stcc01",
+          "type": "creditcard",
+          "provider": "Lender X",
+          "logoUrl": "https://logos.scoreharbour.example/lender-x.svg",
+          "maskedNumber": "*7702",
+          "balance": {
+            "amountMinor": 475000,
+            "currency": "GBP"
+          },
+          "limit": {
+            "amountMinor": 500000,
+            "currency": "GBP"
+          },
+          "utilisation": 95,
+          "includedInTotals": true,
+          "status": "arrears",
+          "openedDate": "2021-01-20",
+          "closedDate": null,
+          "updateFrequency": "monthly",
+          "lastUpdated": "2026-09-30",
+          "utilisationRaw": 95,
+          "details": {
+            "apr": null,
+            "interestRate": null,
+            "promoPeriodMonths": null,
+            "minPayment": null,
+            "paymentMethod": null
+          },
+          "closed": false,
+          "missedMonths": [
+            "2026-06",
+            "2026-08"
+          ],
+          "balanceHistory": [
+            {
+              "month": "2026-05",
+              "balance": {
+                "amountMinor": 465000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 500000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-06",
+              "balance": {
+                "amountMinor": 467000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 500000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-07",
+              "balance": {
+                "amountMinor": 469000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 500000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-08",
+              "balance": {
+                "amountMinor": 471000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 500000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-09",
+              "balance": {
+                "amountMinor": 473000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 500000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-10",
+              "balance": {
+                "amountMinor": 475000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 500000,
+                "currency": "GBP"
+              }
+            }
+          ]
+        },
+        {
+          "id": "acc_stcc02",
+          "type": "creditcard",
+          "provider": "Northgate Finance",
+          "logoUrl": "https://logos.scoreharbour.example/northgate-finance.svg",
+          "maskedNumber": "*3391",
+          "balance": {
+            "amountMinor": 115000,
+            "currency": "GBP"
+          },
+          "limit": {
+            "amountMinor": 100000,
+            "currency": "GBP"
+          },
+          "utilisation": 115,
+          "includedInTotals": true,
+          "status": "normal",
+          "openedDate": "2022-03-11",
+          "closedDate": null,
+          "updateFrequency": "monthly",
+          "lastUpdated": "2026-09-30",
+          "utilisationRaw": 115,
+          "details": {
+            "apr": null,
+            "interestRate": null,
+            "promoPeriodMonths": null,
+            "minPayment": null,
+            "paymentMethod": null
+          },
+          "closed": false,
+          "missedMonths": [
+            "2025-11"
+          ],
+          "balanceHistory": [
+            {
+              "month": "2026-05",
+              "balance": {
+                "amountMinor": 107500,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 100000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-06",
+              "balance": {
+                "amountMinor": 109000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 100000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-07",
+              "balance": {
+                "amountMinor": 110500,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 100000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-08",
+              "balance": {
+                "amountMinor": 112000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 100000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-09",
+              "balance": {
+                "amountMinor": 113500,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 100000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-10",
+              "balance": {
+                "amountMinor": 115000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 100000,
+                "currency": "GBP"
+              }
+            }
+          ]
+        },
+        {
+          "id": "acc_stln01",
+          "type": "loan",
+          "provider": "Lender Y",
+          "logoUrl": "https://logos.scoreharbour.example/lender-y.svg",
+          "maskedNumber": "*4410",
+          "balance": {
+            "amountMinor": 640000,
+            "currency": "GBP"
+          },
+          "limit": {
+            "amountMinor": 800000,
+            "currency": "GBP"
+          },
+          "utilisation": 80,
+          "includedInTotals": true,
+          "status": "default",
+          "openedDate": "2022-09-01",
+          "closedDate": null,
+          "updateFrequency": "monthly",
+          "lastUpdated": "2026-09-30",
+          "utilisationRaw": 80,
+          "details": {
+            "apr": null,
+            "interestRate": null,
+            "promoPeriodMonths": null,
+            "minPayment": null,
+            "paymentMethod": null
+          },
+          "closed": false,
+          "missedMonths": [
+            "2024-02",
+            "2024-03",
+            "2024-04"
+          ],
+          "balanceHistory": [
+            {
+              "month": "2026-05",
+              "balance": {
+                "amountMinor": 640000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 800000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-06",
+              "balance": {
+                "amountMinor": 640000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 800000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-07",
+              "balance": {
+                "amountMinor": 640000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 800000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-08",
+              "balance": {
+                "amountMinor": 640000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 800000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-09",
+              "balance": {
+                "amountMinor": 640000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 800000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-10",
+              "balance": {
+                "amountMinor": 640000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 800000,
+                "currency": "GBP"
+              }
+            }
+          ]
+        },
+        {
+          "id": "acc_sttu01",
+          "type": "telecomsandutilities",
+          "provider": "Brightline Mobile",
+          "logoUrl": "https://logos.scoreharbour.example/brightline-mobile.svg",
+          "maskedNumber": "*5521",
+          "balance": {
+            "amountMinor": 4500,
+            "currency": "GBP"
+          },
+          "limit": null,
+          "utilisation": null,
+          "includedInTotals": true,
+          "status": "arrears",
+          "openedDate": "2023-05-01",
+          "closedDate": null,
+          "updateFrequency": "monthly",
+          "lastUpdated": "2026-09-30",
+          "utilisationRaw": null,
+          "details": {
+            "apr": null,
+            "interestRate": null,
+            "promoPeriodMonths": null,
+            "minPayment": null,
+            "paymentMethod": null
+          },
+          "closed": false,
+          "missedMonths": [
+            "2026-09"
+          ],
+          "balanceHistory": [
+            {
+              "month": "2026-05",
+              "balance": {
+                "amountMinor": -3000,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-06",
+              "balance": {
+                "amountMinor": -1500,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-07",
+              "balance": {
+                "amountMinor": 0,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-08",
+              "balance": {
+                "amountMinor": 1500,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-09",
+              "balance": {
+                "amountMinor": 3000,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-10",
+              "balance": {
+                "amountMinor": 4500,
+                "currency": "GBP"
+              },
+              "limit": null
+            }
+          ]
+        },
+        {
+          "id": "acc_stcl01",
+          "type": "creditcard",
+          "provider": "Harbour Bank",
+          "logoUrl": "https://logos.scoreharbour.example/harbour-bank.svg",
+          "maskedNumber": "*0918",
+          "balance": {
+            "amountMinor": 0,
+            "currency": "GBP"
+          },
+          "limit": null,
+          "utilisation": null,
+          "includedInTotals": true,
+          "status": "closed",
+          "openedDate": "2018-06-01",
+          "closedDate": "2022-05-31",
+          "updateFrequency": "monthly",
+          "lastUpdated": "2026-09-30",
+          "utilisationRaw": null,
+          "details": {
+            "apr": null,
+            "interestRate": null,
+            "promoPeriodMonths": null,
+            "minPayment": null,
+            "paymentMethod": null
+          },
+          "closed": true,
+          "missedMonths": [
+            "2021-11"
+          ],
+          "balanceHistory": []
+        }
+      ]
+    }
+  ],
+  "notifications": [
+    {
+      "id": "ntf_st02",
+      "title": "A payment was missed",
+      "read": false,
+      "createdAt": "2026-09-30T08:00:00Z"
+    },
+    {
+      "id": "ntf_st01",
+      "title": "Your score went down",
+      "read": false,
+      "createdAt": "2026-09-03T07:00:00Z"
+    }
+  ]
+}

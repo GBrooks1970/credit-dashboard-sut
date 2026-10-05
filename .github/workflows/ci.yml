@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  specification:
+    # The three checks that keep the specification green (README 'Checks').
+    name: Specification (contract lint, fixtures, Gherkin)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: fixtures/package-lock.json
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
+      - name: Contract lint
+        run: npx --yes @redocly/cli@2.57.0 lint
+
+      - name: Fixture check
+        working-directory: fixtures
+        run: |
+          npm ci
+          npm run check
+
+      - name: Gherkin parse and rule coverage
+        run: |
+          pip install gherkin-official==29.0.0
+          python tools/check-gherkin.py

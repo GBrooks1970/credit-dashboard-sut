@@ -1,0 +1,188 @@
+{
+  "base": "drilldown",
+  "arranges": "'{actor}'s report has {count} changes': ui/report-changes.feature, 25 changes for the 20-per-page boundary",
+  "overrides": {
+    "bureaux": [
+      {
+        "id": "bureau-a",
+        "changes": [
+          {
+            "id": "chg_ov01",
+            "title": "Report change 1 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-30"
+          },
+          {
+            "id": "chg_ov02",
+            "title": "Report change 2 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-29"
+          },
+          {
+            "id": "chg_ov03",
+            "title": "Report change 3 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-28"
+          },
+          {
+            "id": "chg_ov04",
+            "title": "Report change 4 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-27"
+          },
+          {
+            "id": "chg_ov05",
+            "title": "Report change 5 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-26"
+          },
+          {
+            "id": "chg_ov06",
+            "title": "Report change 6 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-25"
+          },
+          {
+            "id": "chg_ov07",
+            "title": "Report change 7 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-24"
+          },
+          {
+            "id": "chg_ov08",
+            "title": "Report change 8 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-23"
+          },
+          {
+            "id": "chg_ov09",
+            "title": "Report change 9 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-22"
+          },
+          {
+            "id": "chg_ov10",
+            "title": "Report change 10 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-21"
+          },
+          {
+            "id": "chg_ov11",
+            "title": "Report change 11 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-20"
+          },
+          {
+            "id": "chg_ov12",
+            "title": "Report change 12 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-19"
+          },
+          {
+            "id": "chg_ov13",
+            "title": "Report change 13 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-18"
+          },
+          {
+            "id": "chg_ov14",
+            "title": "Report change 14 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-17"
+          },
+          {
+            "id": "chg_ov15",
+            "title": "Report change 15 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-16"
+          },
+          {
+            "id": "chg_ov16",
+            "title": "Report change 16 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-15"
+          },
+          {
+            "id": "chg_ov17",
+            "title": "Report change 17 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-14"
+          },
+          {
+            "id": "chg_ov18",
+            "title": "Report change 18 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-13"
+          },
+          {
+            "id": "chg_ov19",
+            "title": "Report change 19 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-12"
+          },
+          {
+            "id": "chg_ov20",
+            "title": "Report change 20 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-11"
+          },
+          {
+            "id": "chg_ov21",
+            "title": "Report change 21 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-10"
+          },
+          {
+            "id": "chg_ov22",
+            "title": "Report change 22 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-09"
+          },
+          {
+            "id": "chg_ov23",
+            "title": "Report change 23 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-08"
+          },
+          {
+            "id": "chg_ov24",
+            "title": "Report change 24 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-07"
+          },
+          {
+            "id": "chg_ov25",
+            "title": "Report change 25 of 25",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-09-06"
+          }
+        ]
+      }
+    ]
+  }
+}

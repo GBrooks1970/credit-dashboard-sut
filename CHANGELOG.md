@@ -1,0 +1,15 @@
+# Changelog
+
+All notable changes to this project. Dates are UTC.
+
+## 2026-10-05: repository seeded (Phase 1 starts)
+
+- Seeded from the accepted Phase 0 pack (DR-001, DR-038): contract, API, UI and My Profile specifications, page
+  survey, decision register (DR-001 to DR-038), decision briefs 1 to 5, glossary, step glossary, backlog, persona
+  fixtures, override samples and 21 feature files.
+- Specifications renamed to their Phase 1 paths under `DOCS/.design/`; cross-links rewritten, which also corrects
+  three links that pointed at older versions in the Phase 0 pack.
+- Contract v8 (`info.version` 0.6.1): `info.license` added (MIT); the `info-license` lint rule re-enabled as an error.
+- Lint config kept as `redocly.yaml`: Redocly CLI 2.57.0 does not read `.redocly.yaml`.
+- Security scenarios moved to `features-shared/security/` (BR-15 access control; open-redirect guard).
+- Node pinned to 24.18.0 (`.nvmrc`, DR-009). CI runs the three specification checks on every push.

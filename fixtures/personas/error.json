@@ -1,0 +1,114 @@
+{
+  "persona": "error",
+  "purpose": "Every report endpoint returns 500. The stored report is minimal and valid; profile and session endpoints still work.",
+  "asAt": "2026-10-03T09:00:00Z",
+  "behaviour": {
+    "latencyMs": 0,
+    "failReportEndpoints": true
+  },
+  "profile": {
+    "memberSince": "2024-04-04",
+    "preferredName": null,
+    "emailStatus": "verified",
+    "mobile": null,
+    "address": null,
+    "employment": null,
+    "finances": {
+      "added": false
+    }
+  },
+  "bureaux": [
+    {
+      "id": "bureau-a",
+      "name": "Bureau A",
+      "nextRefreshDate": "2026-10-04",
+      "score": {
+        "current": 600,
+        "max": 1000,
+        "nationalAverage": 600,
+        "localAverage": 615
+      },
+      "scoreHistory": [
+        {
+          "month": "2025-11",
+          "score": 600
+        },
+        {
+          "month": "2025-12",
+          "score": 600
+        },
+        {
+          "month": "2026-01",
+          "score": 600
+        },
+        {
+          "month": "2026-02",
+          "score": 600
+        },
+        {
+          "month": "2026-03",
+          "score": 600
+        },
+        {
+          "month": "2026-04",
+          "score": 600
+        },
+        {
+          "month": "2026-05",
+          "score": 600
+        },
+        {
+          "month": "2026-06",
+          "score": 600
+        },
+        {
+          "month": "2026-07",
+          "score": 600
+        },
+        {
+          "month": "2026-08",
+          "score": 600
+        },
+        {
+          "month": "2026-09",
+          "score": 600
+        },
+        {
+          "month": "2026-10",
+          "score": 600
+        }
+      ],
+      "summary": {
+        "text": "Not shown: report endpoints fail.",
+        "feedback": "none"
+      },
+      "changes": [],
+      "impact": {
+        "actionNeeded": 0,
+        "monitor": 0,
+        "doingWell": 0
+      },
+      "searches": [],
+      "personalDetails": {
+        "addresses": [
+          {
+            "line1": "2 Fault Street",
+            "town": "Exampleton",
+            "postcode": "ZZ9 9ZZ",
+            "current": true
+          }
+        ],
+        "electoralRoll": true
+      },
+      "accounts": []
+    }
+  ],
+  "notifications": [
+    {
+      "id": "ntf_er01",
+      "title": "Your report is unavailable",
+      "read": false,
+      "createdAt": "2026-10-03T06:00:00Z"
+    }
+  ]
+}

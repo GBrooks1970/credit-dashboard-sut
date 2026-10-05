@@ -1,0 +1,1060 @@
+{
+  "persona": "drilldown",
+  "purpose": "Every account type, an excluded loan, missing logos, a credit balance (BR-06, display pending DR-005), source masks that need normalising (BR-09), a closed account, a missed mortgage payment.",
+  "asAt": "2026-10-03T09:00:00Z",
+  "behaviour": {
+    "latencyMs": 0,
+    "failReportEndpoints": false
+  },
+  "profile": {
+    "memberSince": "2020-11-30",
+    "preferredName": null,
+    "emailStatus": "verified",
+    "mobile": {
+      "lastDigits": "789",
+      "status": "unverified"
+    },
+    "address": {
+      "line1": "7 Example Street",
+      "postcode": "ZZ6 6ZZ",
+      "previousCount": 2
+    },
+    "employment": {
+      "status": "self-employed"
+    },
+    "finances": {
+      "added": true
+    }
+  },
+  "bureaux": [
+    {
+      "id": "bureau-a",
+      "name": "Bureau A",
+      "nextRefreshDate": "2026-10-08",
+      "score": {
+        "current": 655,
+        "max": 1000,
+        "nationalAverage": 600,
+        "localAverage": 615
+      },
+      "scoreHistory": [
+        {
+          "month": "2025-11",
+          "score": 640
+        },
+        {
+          "month": "2025-12",
+          "score": 642
+        },
+        {
+          "month": "2026-01",
+          "score": null
+        },
+        {
+          "month": "2026-02",
+          "score": 645
+        },
+        {
+          "month": "2026-03",
+          "score": 648
+        },
+        {
+          "month": "2026-04",
+          "score": 650
+        },
+        {
+          "month": "2026-05",
+          "score": 651
+        },
+        {
+          "month": "2026-06",
+          "score": 649
+        },
+        {
+          "month": "2026-07",
+          "score": 652
+        },
+        {
+          "month": "2026-08",
+          "score": 654
+        },
+        {
+          "month": "2026-09",
+          "score": 653
+        },
+        {
+          "month": "2026-10",
+          "score": 655
+        }
+      ],
+      "summary": {
+        "text": "Your score is fair. Your mortgage payment in February 2025 was missed.",
+        "feedback": "none"
+      },
+      "changes": [
+        {
+          "id": "chg_dd05",
+          "title": "A credit card is in credit",
+          "sentiment": "neutral",
+          "impact": "low",
+          "date": "2026-09-29"
+        },
+        {
+          "id": "chg_dd04",
+          "title": "A line of credit balance went down",
+          "sentiment": "positive",
+          "impact": "low",
+          "date": "2026-09-20"
+        },
+        {
+          "id": "chg_dd03",
+          "title": "A new account was opened",
+          "sentiment": "neutral",
+          "impact": "medium",
+          "date": "2026-08-11"
+        },
+        {
+          "id": "chg_dd02",
+          "title": "A loan balance went down",
+          "sentiment": "positive",
+          "impact": "low",
+          "date": "2026-07-30"
+        },
+        {
+          "id": "chg_dd01",
+          "title": "An account was closed",
+          "sentiment": "neutral",
+          "impact": "low",
+          "date": "2026-06-15"
+        }
+      ],
+      "impact": {
+        "actionNeeded": 1,
+        "monitor": 3,
+        "doingWell": 7
+      },
+      "searches": [
+        {
+          "id": "srch_dd01",
+          "kind": "hard",
+          "organisation": "Lender Z",
+          "purpose": "Mortgage application",
+          "date": "2025-12-04"
+        },
+        {
+          "id": "srch_dd02",
+          "kind": "soft",
+          "organisation": "Lender X",
+          "purpose": "Eligibility check",
+          "date": "2026-08-18"
+        }
+      ],
+      "personalDetails": {
+        "addresses": [
+          {
+            "line1": "7 Example Street",
+            "town": "Exampleton",
+            "postcode": "ZZ6 6ZZ",
+            "current": true
+          },
+          {
+            "line1": "3 Trial Avenue",
+            "town": "Sampleford",
+            "postcode": "ZZ7 7ZZ",
+            "current": false
+          },
+          {
+            "line1": "15 Mock Row",
+            "town": "Sampleford",
+            "postcode": "ZZ8 8ZZ",
+            "current": false
+          }
+        ],
+        "electoralRoll": true
+      },
+      "accounts": [
+        {
+          "id": "acc_ddcc01",
+          "type": "creditcard",
+          "provider": "Lender X",
+          "logoUrl": "https://logos.scoreharbour.example/lender-x.svg",
+          "maskedNumber": "*4821",
+          "balance": {
+            "amountMinor": 42360,
+            "currency": "GBP"
+          },
+          "limit": {
+            "amountMinor": 510000,
+            "currency": "GBP"
+          },
+          "utilisation": 8,
+          "includedInTotals": true,
+          "status": "normal",
+          "openedDate": "2019-04-15",
+          "closedDate": null,
+          "updateFrequency": "monthly",
+          "lastUpdated": "2026-09-30",
+          "utilisationRaw": 8,
+          "details": {
+            "apr": 24.9,
+            "interestRate": null,
+            "promoPeriodMonths": 6,
+            "minPayment": null,
+            "paymentMethod": "manual"
+          },
+          "closed": false,
+          "sourceMask": "4821",
+          "missedMonths": [],
+          "balanceHistory": [
+            {
+              "month": "2026-05",
+              "balance": {
+                "amountMinor": 61360,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 510000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-06",
+              "balance": {
+                "amountMinor": 57560,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 510000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-07",
+              "balance": {
+                "amountMinor": 53760,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 510000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-08",
+              "balance": {
+                "amountMinor": 49960,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 510000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-09",
+              "balance": {
+                "amountMinor": 46160,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 510000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-10",
+              "balance": {
+                "amountMinor": 42360,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 510000,
+                "currency": "GBP"
+              }
+            }
+          ]
+        },
+        {
+          "id": "acc_ddcc02",
+          "type": "creditcard",
+          "provider": "Harbour Bank",
+          "logoUrl": "https://logos.scoreharbour.example/harbour-bank.svg",
+          "maskedNumber": "*5544",
+          "balance": {
+            "amountMinor": -4400,
+            "currency": "GBP"
+          },
+          "limit": {
+            "amountMinor": 100000,
+            "currency": "GBP"
+          },
+          "utilisation": 0,
+          "includedInTotals": true,
+          "status": "normal",
+          "openedDate": "2019-04-15",
+          "closedDate": null,
+          "updateFrequency": "monthly",
+          "lastUpdated": "2026-09-30",
+          "utilisationRaw": -4,
+          "details": {
+            "apr": null,
+            "interestRate": null,
+            "promoPeriodMonths": null,
+            "minPayment": null,
+            "paymentMethod": null
+          },
+          "closed": false,
+          "sourceMask": "5544",
+          "missedMonths": [],
+          "balanceHistory": [
+            {
+              "month": "2026-05",
+              "balance": {
+                "amountMinor": -4400,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 100000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-06",
+              "balance": {
+                "amountMinor": -4400,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 100000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-07",
+              "balance": {
+                "amountMinor": -4400,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 100000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-08",
+              "balance": {
+                "amountMinor": -4400,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 100000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-09",
+              "balance": {
+                "amountMinor": -4400,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 100000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-10",
+              "balance": {
+                "amountMinor": -4400,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 100000,
+                "currency": "GBP"
+              }
+            }
+          ]
+        },
+        {
+          "id": "acc_ddln01",
+          "type": "loan",
+          "provider": "Lender Y",
+          "logoUrl": "https://logos.scoreharbour.example/lender-y.svg",
+          "maskedNumber": "*1177",
+          "balance": {
+            "amountMinor": 1252400,
+            "currency": "GBP"
+          },
+          "limit": {
+            "amountMinor": 1500000,
+            "currency": "GBP"
+          },
+          "utilisation": 83,
+          "includedInTotals": true,
+          "status": "normal",
+          "openedDate": "2024-03-01",
+          "closedDate": null,
+          "updateFrequency": "monthly",
+          "lastUpdated": "2026-09-30",
+          "utilisationRaw": 83,
+          "details": {
+            "apr": null,
+            "interestRate": null,
+            "promoPeriodMonths": null,
+            "minPayment": null,
+            "paymentMethod": null
+          },
+          "closed": false,
+          "missedMonths": [],
+          "balanceHistory": [
+            {
+              "month": "2026-05",
+              "balance": {
+                "amountMinor": 1267400,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 1500000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-06",
+              "balance": {
+                "amountMinor": 1264400,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 1500000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-07",
+              "balance": {
+                "amountMinor": 1261400,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 1500000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-08",
+              "balance": {
+                "amountMinor": 1258400,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 1500000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-09",
+              "balance": {
+                "amountMinor": 1255400,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 1500000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-10",
+              "balance": {
+                "amountMinor": 1252400,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 1500000,
+                "currency": "GBP"
+              }
+            }
+          ]
+        },
+        {
+          "id": "acc_ddln02",
+          "type": "loan",
+          "provider": "Harbour Bank",
+          "logoUrl": "https://logos.scoreharbour.example/harbour-bank.svg",
+          "maskedNumber": "*6902",
+          "balance": {
+            "amountMinor": 116100,
+            "currency": "GBP"
+          },
+          "limit": null,
+          "utilisation": null,
+          "includedInTotals": false,
+          "status": "normal",
+          "openedDate": "2023-07-10",
+          "closedDate": null,
+          "updateFrequency": "monthly",
+          "lastUpdated": "2026-09-30",
+          "utilisationRaw": null,
+          "details": {
+            "apr": null,
+            "interestRate": null,
+            "promoPeriodMonths": null,
+            "minPayment": null,
+            "paymentMethod": null
+          },
+          "closed": false,
+          "missedMonths": [],
+          "balanceHistory": [
+            {
+              "month": "2026-05",
+              "balance": {
+                "amountMinor": 126100,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-06",
+              "balance": {
+                "amountMinor": 124100,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-07",
+              "balance": {
+                "amountMinor": 122100,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-08",
+              "balance": {
+                "amountMinor": 120100,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-09",
+              "balance": {
+                "amountMinor": 118100,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-10",
+              "balance": {
+                "amountMinor": 116100,
+                "currency": "GBP"
+              },
+              "limit": null
+            }
+          ]
+        },
+        {
+          "id": "acc_ddmg01",
+          "type": "mortgage",
+          "provider": "Lender Z",
+          "logoUrl": null,
+          "maskedNumber": "*9031",
+          "balance": {
+            "amountMinor": 18500000,
+            "currency": "GBP"
+          },
+          "limit": {
+            "amountMinor": 22000000,
+            "currency": "GBP"
+          },
+          "utilisation": 84,
+          "includedInTotals": true,
+          "status": "normal",
+          "openedDate": "2021-08-27",
+          "closedDate": null,
+          "updateFrequency": "monthly",
+          "lastUpdated": "2026-09-30",
+          "utilisationRaw": 84,
+          "details": {
+            "apr": null,
+            "interestRate": null,
+            "promoPeriodMonths": null,
+            "minPayment": null,
+            "paymentMethod": null
+          },
+          "closed": false,
+          "missedMonths": [
+            "2025-02"
+          ],
+          "balanceHistory": [
+            {
+              "month": "2026-05",
+              "balance": {
+                "amountMinor": 18800000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 22000000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-06",
+              "balance": {
+                "amountMinor": 18740000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 22000000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-07",
+              "balance": {
+                "amountMinor": 18680000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 22000000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-08",
+              "balance": {
+                "amountMinor": 18620000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 22000000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-09",
+              "balance": {
+                "amountMinor": 18560000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 22000000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-10",
+              "balance": {
+                "amountMinor": 18500000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 22000000,
+                "currency": "GBP"
+              }
+            }
+          ]
+        },
+        {
+          "id": "acc_ddca01",
+          "type": "currentaccount",
+          "provider": "Northgate Finance",
+          "logoUrl": "https://logos.scoreharbour.example/northgate-finance.svg",
+          "maskedNumber": "*0010",
+          "balance": {
+            "amountMinor": 0,
+            "currency": "GBP"
+          },
+          "limit": {
+            "amountMinor": 50000,
+            "currency": "GBP"
+          },
+          "utilisation": 0,
+          "includedInTotals": true,
+          "status": "normal",
+          "openedDate": "2012-02-02",
+          "closedDate": null,
+          "updateFrequency": "monthly",
+          "lastUpdated": "2026-09-30",
+          "utilisationRaw": 0,
+          "details": {
+            "apr": null,
+            "interestRate": null,
+            "promoPeriodMonths": null,
+            "minPayment": null,
+            "paymentMethod": null
+          },
+          "closed": false,
+          "sourceMask": "**10",
+          "missedMonths": [],
+          "balanceHistory": [
+            {
+              "month": "2026-05",
+              "balance": {
+                "amountMinor": 0,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 50000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-06",
+              "balance": {
+                "amountMinor": 0,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 50000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-07",
+              "balance": {
+                "amountMinor": 0,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 50000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-08",
+              "balance": {
+                "amountMinor": 0,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 50000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-09",
+              "balance": {
+                "amountMinor": 0,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 50000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-10",
+              "balance": {
+                "amountMinor": 0,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 50000,
+                "currency": "GBP"
+              }
+            }
+          ]
+        },
+        {
+          "id": "acc_ddtu01",
+          "type": "telecomsandutilities",
+          "provider": "Brightline Mobile",
+          "logoUrl": null,
+          "maskedNumber": "*5521",
+          "balance": {
+            "amountMinor": 3200,
+            "currency": "GBP"
+          },
+          "limit": null,
+          "utilisation": null,
+          "includedInTotals": true,
+          "status": "normal",
+          "openedDate": "2023-05-01",
+          "closedDate": null,
+          "updateFrequency": "monthly",
+          "lastUpdated": "2026-09-30",
+          "utilisationRaw": null,
+          "details": {
+            "apr": null,
+            "interestRate": null,
+            "promoPeriodMonths": null,
+            "minPayment": null,
+            "paymentMethod": null
+          },
+          "closed": false,
+          "missedMonths": [],
+          "balanceHistory": [
+            {
+              "month": "2026-05",
+              "balance": {
+                "amountMinor": 3200,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-06",
+              "balance": {
+                "amountMinor": 3200,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-07",
+              "balance": {
+                "amountMinor": 3200,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-08",
+              "balance": {
+                "amountMinor": 3200,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-09",
+              "balance": {
+                "amountMinor": 3200,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-10",
+              "balance": {
+                "amountMinor": 3200,
+                "currency": "GBP"
+              },
+              "limit": null
+            }
+          ]
+        },
+        {
+          "id": "acc_ddtu02",
+          "type": "telecomsandutilities",
+          "provider": "Riverside Energy",
+          "logoUrl": "https://logos.scoreharbour.example/riverside-energy.svg",
+          "maskedNumber": "*0412",
+          "balance": {
+            "amountMinor": 0,
+            "currency": "GBP"
+          },
+          "limit": null,
+          "utilisation": null,
+          "includedInTotals": true,
+          "status": "normal",
+          "openedDate": "2022-10-01",
+          "closedDate": null,
+          "updateFrequency": "quarterly",
+          "lastUpdated": "2026-09-30",
+          "utilisationRaw": null,
+          "details": {
+            "apr": null,
+            "interestRate": null,
+            "promoPeriodMonths": null,
+            "minPayment": null,
+            "paymentMethod": null
+          },
+          "closed": false,
+          "missedMonths": [],
+          "balanceHistory": [
+            {
+              "month": "2026-05",
+              "balance": {
+                "amountMinor": 0,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-06",
+              "balance": {
+                "amountMinor": 0,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-07",
+              "balance": {
+                "amountMinor": 0,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-08",
+              "balance": {
+                "amountMinor": 0,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-09",
+              "balance": {
+                "amountMinor": 0,
+                "currency": "GBP"
+              },
+              "limit": null
+            },
+            {
+              "month": "2026-10",
+              "balance": {
+                "amountMinor": 0,
+                "currency": "GBP"
+              },
+              "limit": null
+            }
+          ]
+        },
+        {
+          "id": "acc_ddlc01",
+          "type": "lineofcredit",
+          "provider": "Lender X",
+          "logoUrl": "https://logos.scoreharbour.example/lender-x.svg",
+          "maskedNumber": "*AB3F",
+          "balance": {
+            "amountMinor": 30000,
+            "currency": "GBP"
+          },
+          "limit": {
+            "amountMinor": 120000,
+            "currency": "GBP"
+          },
+          "utilisation": 25,
+          "includedInTotals": true,
+          "status": "normal",
+          "openedDate": "2025-01-15",
+          "closedDate": null,
+          "updateFrequency": "monthly",
+          "lastUpdated": "2026-09-30",
+          "utilisationRaw": 25,
+          "details": {
+            "apr": null,
+            "interestRate": null,
+            "promoPeriodMonths": null,
+            "minPayment": null,
+            "paymentMethod": null
+          },
+          "closed": false,
+          "sourceMask": "ab3f",
+          "missedMonths": [],
+          "balanceHistory": [
+            {
+              "month": "2026-05",
+              "balance": {
+                "amountMinor": 42500,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 120000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-06",
+              "balance": {
+                "amountMinor": 40000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 120000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-07",
+              "balance": {
+                "amountMinor": 37500,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 120000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-08",
+              "balance": {
+                "amountMinor": 35000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 120000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-09",
+              "balance": {
+                "amountMinor": 32500,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 120000,
+                "currency": "GBP"
+              }
+            },
+            {
+              "month": "2026-10",
+              "balance": {
+                "amountMinor": 30000,
+                "currency": "GBP"
+              },
+              "limit": {
+                "amountMinor": 120000,
+                "currency": "GBP"
+              }
+            }
+          ]
+        },
+        {
+          "id": "acc_ddcl01",
+          "type": "creditcard",
+          "provider": "Lender Y",
+          "logoUrl": "https://logos.scoreharbour.example/lender-y.svg",
+          "maskedNumber": "*2207",
+          "balance": {
+            "amountMinor": 0,
+            "currency": "GBP"
+          },
+          "limit": null,
+          "utilisation": null,
+          "includedInTotals": true,
+          "status": "closed",
+          "openedDate": "2017-03-03",
+          "closedDate": "2023-01-31",
+          "updateFrequency": "monthly",
+          "lastUpdated": "2026-09-30",
+          "utilisationRaw": null,
+          "details": {
+            "apr": null,
+            "interestRate": null,
+            "promoPeriodMonths": null,
+            "minPayment": null,
+            "paymentMethod": null
+          },
+          "closed": true,
+          "missedMonths": [],
+          "balanceHistory": []
+        }
+      ]
+    }
+  ],
+  "notifications": [
+    {
+      "id": "ntf_dd01",
+      "title": "A credit card is in credit",
+      "read": false,
+      "createdAt": "2026-09-29T07:00:00Z"
+    }
+  ]
+}

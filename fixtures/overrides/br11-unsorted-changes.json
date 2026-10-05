@@ -1,0 +1,34 @@
+{
+  "base": "excellent",
+  "arranges": "'{actor}'s report changes arrive dated {date}, {date} and {date}': api/report-changes.feature, BR-11 changes out of date order",
+  "overrides": {
+    "bureaux": [
+      {
+        "id": "bureau-a",
+        "changes": [
+          {
+            "id": "chg_ov31",
+            "title": "A new search was recorded",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-07-15"
+          },
+          {
+            "id": "chg_ov32",
+            "title": "A balance went down",
+            "sentiment": "positive",
+            "impact": "low",
+            "date": "2026-09-28"
+          },
+          {
+            "id": "chg_ov33",
+            "title": "An address was confirmed",
+            "sentiment": "neutral",
+            "impact": "low",
+            "date": "2026-08-31"
+          }
+        ]
+      }
+    ]
+  }
+}

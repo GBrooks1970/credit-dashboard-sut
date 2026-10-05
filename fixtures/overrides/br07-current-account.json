@@ -1,0 +1,213 @@
+{
+  "base": "drilldown",
+  "arranges": "'{actor}'s only accounts are a credit card owing {money} and a current account overdrawn by {money}': api/debt.feature, BR-07 current accounts excluded",
+  "overrides": {
+    "bureaux": [
+      {
+        "id": "bureau-a",
+        "accounts": [
+          {
+            "id": "acc_ovcc05",
+            "type": "creditcard",
+            "provider": "Lender X",
+            "logoUrl": null,
+            "maskedNumber": "*0005",
+            "balance": {
+              "amountMinor": 42360,
+              "currency": "GBP"
+            },
+            "limit": {
+              "amountMinor": 510000,
+              "currency": "GBP"
+            },
+            "utilisation": 8,
+            "includedInTotals": true,
+            "status": "normal",
+            "openedDate": "2020-01-15",
+            "closedDate": null,
+            "updateFrequency": "monthly",
+            "lastUpdated": "2026-09-30",
+            "utilisationRaw": 8,
+            "details": {
+              "apr": null,
+              "interestRate": null,
+              "promoPeriodMonths": null,
+              "minPayment": null,
+              "paymentMethod": null
+            },
+            "closed": false,
+            "missedMonths": [],
+            "balanceHistory": [
+              {
+                "month": "2026-05",
+                "balance": {
+                  "amountMinor": 42360,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 510000,
+                  "currency": "GBP"
+                }
+              },
+              {
+                "month": "2026-06",
+                "balance": {
+                  "amountMinor": 42360,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 510000,
+                  "currency": "GBP"
+                }
+              },
+              {
+                "month": "2026-07",
+                "balance": {
+                  "amountMinor": 42360,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 510000,
+                  "currency": "GBP"
+                }
+              },
+              {
+                "month": "2026-08",
+                "balance": {
+                  "amountMinor": 42360,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 510000,
+                  "currency": "GBP"
+                }
+              },
+              {
+                "month": "2026-09",
+                "balance": {
+                  "amountMinor": 42360,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 510000,
+                  "currency": "GBP"
+                }
+              },
+              {
+                "month": "2026-10",
+                "balance": {
+                  "amountMinor": 42360,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 510000,
+                  "currency": "GBP"
+                }
+              }
+            ]
+          },
+          {
+            "id": "acc_ovca01",
+            "type": "currentaccount",
+            "provider": "Northgate Finance",
+            "logoUrl": null,
+            "maskedNumber": "*0006",
+            "balance": {
+              "amountMinor": 25000,
+              "currency": "GBP"
+            },
+            "limit": {
+              "amountMinor": 50000,
+              "currency": "GBP"
+            },
+            "utilisation": 50,
+            "includedInTotals": true,
+            "status": "normal",
+            "openedDate": "2020-01-15",
+            "closedDate": null,
+            "updateFrequency": "monthly",
+            "lastUpdated": "2026-09-30",
+            "utilisationRaw": 50,
+            "details": {
+              "apr": null,
+              "interestRate": null,
+              "promoPeriodMonths": null,
+              "minPayment": null,
+              "paymentMethod": null
+            },
+            "closed": false,
+            "missedMonths": [],
+            "balanceHistory": [
+              {
+                "month": "2026-05",
+                "balance": {
+                  "amountMinor": 25000,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 50000,
+                  "currency": "GBP"
+                }
+              },
+              {
+                "month": "2026-06",
+                "balance": {
+                  "amountMinor": 25000,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 50000,
+                  "currency": "GBP"
+                }
+              },
+              {
+                "month": "2026-07",
+                "balance": {
+                  "amountMinor": 25000,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 50000,
+                  "currency": "GBP"
+                }
+              },
+              {
+                "month": "2026-08",
+                "balance": {
+                  "amountMinor": 25000,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 50000,
+                  "currency": "GBP"
+                }
+              },
+              {
+                "month": "2026-09",
+                "balance": {
+                  "amountMinor": 25000,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 50000,
+                  "currency": "GBP"
+                }
+              },
+              {
+                "month": "2026-10",
+                "balance": {
+                  "amountMinor": 25000,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 50000,
+                  "currency": "GBP"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

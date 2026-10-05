@@ -1,0 +1,115 @@
+{
+  "base": "struggling",
+  "arranges": "'{actor}'s payments in {year} were {payment pattern}': api/payment-history.feature, BR-12 row 'on time, apart from one missed month'",
+  "overrides": {
+    "bureaux": [
+      {
+        "id": "bureau-a",
+        "accounts": [
+          {
+            "id": "acc_ovln01",
+            "type": "loan",
+            "provider": "Lender Y",
+            "logoUrl": null,
+            "maskedNumber": "*0003",
+            "balance": {
+              "amountMinor": 500000,
+              "currency": "GBP"
+            },
+            "limit": {
+              "amountMinor": 800000,
+              "currency": "GBP"
+            },
+            "utilisation": 63,
+            "includedInTotals": true,
+            "status": "normal",
+            "openedDate": "2019-01-01",
+            "closedDate": null,
+            "updateFrequency": "monthly",
+            "lastUpdated": "2026-09-30",
+            "utilisationRaw": 63,
+            "details": {
+              "apr": null,
+              "interestRate": null,
+              "promoPeriodMonths": null,
+              "minPayment": null,
+              "paymentMethod": null
+            },
+            "closed": false,
+            "missedMonths": [
+              "2025-04"
+            ],
+            "balanceHistory": [
+              {
+                "month": "2026-05",
+                "balance": {
+                  "amountMinor": 520000,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 800000,
+                  "currency": "GBP"
+                }
+              },
+              {
+                "month": "2026-06",
+                "balance": {
+                  "amountMinor": 516000,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 800000,
+                  "currency": "GBP"
+                }
+              },
+              {
+                "month": "2026-07",
+                "balance": {
+                  "amountMinor": 512000,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 800000,
+                  "currency": "GBP"
+                }
+              },
+              {
+                "month": "2026-08",
+                "balance": {
+                  "amountMinor": 508000,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 800000,
+                  "currency": "GBP"
+                }
+              },
+              {
+                "month": "2026-09",
+                "balance": {
+                  "amountMinor": 504000,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 800000,
+                  "currency": "GBP"
+                }
+              },
+              {
+                "month": "2026-10",
+                "balance": {
+                  "amountMinor": 500000,
+                  "currency": "GBP"
+                },
+                "limit": {
+                  "amountMinor": 800000,
+                  "currency": "GBP"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

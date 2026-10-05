@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://scoreharbour.example/schemas/persona.schema.json",
+  "title": "credit-dashboard-sut persona and test-user fixtures",
+  "description": "Version 2, 2026-10-04. Format defined in API specification v6, section 9.1. FixtureAccount now lives in the contract (DR-020). References of the form contract#/components/schemas/X resolve to DOCS/.architecture/openapi.yaml.",
+  "$ref": "#/$defs/PersonaFile",
+  "$defs": {
+    "PersonaFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["persona", "purpose", "asAt", "behaviour", "profile", "bureaux", "notifications"],
+      "properties": {
+        "persona": { "$ref": "contract#/components/schemas/Persona" },
+        "purpose": { "type": "string", "minLength": 1 },
+        "asAt": { "type": "string", "format": "date-time" },
+        "behaviour": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["latencyMs", "failReportEndpoints"],
+          "properties": {
+            "latencyMs": { "type": "integer", "minimum": 0, "maximum": 10000 },
+            "failReportEndpoints": { "type": "boolean" }
+          }
+        },
+        "profile": { "$ref": "#/$defs/PersonaProfile" },
+        "bureaux": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/BureauReport" } },
+        "notifications": { "type": "array", "items": { "$ref": "contract#/components/schemas/Notification" } }
+      }
+    },
+    "PersonaProfile": {
+      "description": "Contract Profile without the identity fields, which come from the test user (section 9.1)",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["memberSince", "preferredName", "emailStatus", "mobile", "address", "employment", "finances"],
+      "properties": {
+        "memberSince": { "type": "string", "format": "date" },
+        "preferredName": { "$ref": "contract#/components/schemas/Profile/properties/preferredName" },
+        "emailStatus": { "$ref": "contract#/components/schemas/VerificationStatus" },
+        "mobile": { "$ref": "contract#/components/schemas/Profile/properties/mobile" },
+        "address": { "$ref": "contract#/components/schemas/Profile/properties/address" },
+        "employment": { "$ref": "contract#/components/schemas/Profile/properties/employment" },
+        "finances": { "$ref": "contract#/components/schemas/Profile/properties/finances" }
+      }
+    },
+    "BureauReport": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "nextRefreshDate", "score", "scoreHistory", "summary", "changes", "impact", "searches", "personalDetails", "accounts"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "nextRefreshDate": { "type": "string", "format": "date", "description": "BR-08 input" },
+        "score": { "$ref": "contract#/components/schemas/Score" },
+        "scoreHistory": { "type": "array", "minItems": 12, "maxItems": 12, "items": { "$ref": "contract#/components/schemas/ScorePoint" } },
+        "summary": { "$ref": "contract#/components/schemas/Summary" },
+        "changes": { "type": "array", "items": { "$ref": "contract#/components/schemas/Change" } },
+        "impact": { "$ref": "contract#/components/schemas/Impact" },
+        "searches": { "type": "array", "items": { "$ref": "contract#/components/schemas/Search" } },
+        "personalDetails": {
+          "description": "Contract PersonalDetails without name, which is the test user's legal name",
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["addresses", "electoralRoll"],
+          "properties": {
+            "addresses": { "$ref": "contract#/components/schemas/PersonalDetails/properties/addresses" },
+            "electoralRoll": { "type": "boolean" }
+          }
+        },
+        "accounts": { "type": "array", "items": { "$ref": "#/$defs/FixtureAccount" } }
+      }
+    },
+    "FixtureAccount": { "$ref": "contract#/components/schemas/FixtureAccount" },
+    "OverrideSample": {
+      "description": "A sample test-control override (API spec v6 section 6.5), applied to its base persona by the fixture check",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["base", "arranges", "overrides"],
+      "properties": {
+        "base": { "$ref": "contract#/components/schemas/Persona" },
+        "arranges": { "type": "string", "minLength": 1, "description": "The step glossary pattern and rule this sample arranges" },
+        "overrides": { "$ref": "contract#/components/schemas/PersonaOverrides" }
+      }
+    },
+    "UsersFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["users"],
+      "properties": {
+        "users": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/TestUser" } }
+      }
+    },
+    "TestUser": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["username", "password", "id", "displayName", "legalName", "dateOfBirth", "email", "defaultPersona"],
+      "properties": {
+        "username": { "type": "string", "pattern": "^[a-z]+$" },
+        "password": { "type": "string", "const": "demo-only", "description": "Synthetic demo value, shown on the login page (UI spec 6.1)" },
+        "id": { "type": "string", "pattern": "^usr_[0-9]{2,}$" },
+        "displayName": { "type": "string" },
+        "legalName": { "type": "string" },
+        "dateOfBirth": { "type": "string", "format": "date" },
+        "email": { "type": "string", "format": "email", "pattern": "@example\\.com$" },
+        "defaultPersona": { "$ref": "contract#/components/schemas/Persona" }
+      }
+    }
+  }
+}

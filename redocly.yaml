@@ -1,0 +1,29 @@
+# version: 2
+# created: 2026-10-05T20:41Z
+# project: credit-dashboard-sut
+# type: lint-ruleset
+# language: en-GB
+#
+# House lint ruleset for DOCS/.architecture/openapi.yaml (backlog CDS-04).
+# Run from the repository root:  npx --yes @redocly/cli@2.57.0 lint
+# Kept as 'redocly.yaml', not '.redocly.yaml' as the Phase 0 README planned: Redocly CLI 2.57.0 does not read
+# the dot-name and falls back to its default rules (verified 5 October 2026, CDS-09).
+apis:
+  credit-dashboard-sut:
+    root: DOCS/.architecture/openapi.yaml
+extends:
+  - recommended
+rules:
+  # The service is a local system under test by design; both servers are localhost.
+  no-server-example.com: off
+  # Re-enabled at CDS-09, in the same change that added info.license (MIT).
+  info-license: error
+  # API spec principle 1: every example must validate against its schema (CDS-05).
+  no-invalid-media-type-examples:
+    severity: error
+    allowAdditionalProperties: false
+  no-invalid-schema-examples:
+    severity: error
+    allowAdditionalProperties: false
+  operation-4xx-response: error
+  tag-description: error

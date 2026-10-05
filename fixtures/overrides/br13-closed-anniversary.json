@@ -1,0 +1,43 @@
+{
+  "base": "struggling",
+  "arranges": "'{actor} has a credit card that closed on {date}': api/closed-accounts.feature, BR-13 row 3 October 2020 (not listed on the anniversary)",
+  "overrides": {
+    "bureaux": [
+      {
+        "id": "bureau-a",
+        "accounts": [
+          {
+            "id": "acc_ovcl01",
+            "type": "creditcard",
+            "provider": "Harbour Bank",
+            "logoUrl": null,
+            "maskedNumber": "*0004",
+            "balance": {
+              "amountMinor": 0,
+              "currency": "GBP"
+            },
+            "limit": null,
+            "utilisation": null,
+            "includedInTotals": true,
+            "status": "closed",
+            "openedDate": "2015-02-01",
+            "closedDate": "2020-10-03",
+            "updateFrequency": "monthly",
+            "lastUpdated": "2026-09-30",
+            "utilisationRaw": null,
+            "details": {
+              "apr": null,
+              "interestRate": null,
+              "promoPeriodMonths": null,
+              "minPayment": null,
+              "paymentMethod": null
+            },
+            "closed": true,
+            "missedMonths": [],
+            "balanceHistory": []
+          }
+        ]
+      }
+    ]
+  }
+}

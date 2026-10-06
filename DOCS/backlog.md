@@ -1,6 +1,6 @@
 ---
-version: 27
-created: 2026-10-06T17:54Z
+version: 28
+created: 2026-10-06T18:30Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 27 (housekeeping: fan-outs include this project; plan convention adopted portfolio-wide)
+**Version:** 28 (CDS-16 complete: remaining versions resolved, DR-044; Phase 1 items complete except CDS-17)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -35,7 +35,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | CDS-13 | Arrange data no persona holds: test-control overrides (DR-020) | 2 | COMPLETE (2026-10-04) | none |
 | CDS-14 | Prism mock serves every operation from the contract examples (Phase 1 exit gate) | 1 | COMPLETE (2026-10-06) | none |
 | CDS-15 | Generate the typed TypeScript client into `packages/api-client` from the contract | 1 | COMPLETE (2026-10-06) | none |
-| CDS-16 | Pin the remaining versions as each project is created: .NET SDK (`global.json`), React, Vite (DR-009) | 1 | READY TO START | none |
+| CDS-16 | Pin the remaining versions as each project is created: .NET SDK (`global.json`), React, Vite (DR-009) | 1 | COMPLETE (2026-10-06) | none |
 | CDS-17 | Convert this backlog's summary table to the portfolio `auth-table` dialect so the shared Kanban generator can build a board | 1 | READY TO START | none (owner chooses when a board is wanted) |
 
 ## Items
@@ -161,6 +161,10 @@ Added at onboarding (owner's choice). The summary table above (ID, Item, Phase, 
 **Unblocked (2026-10-06).** Decision brief 6 decided: the harness is independent of the client (DR-042), and the client is a standalone package with its own lock and scripts (DR-043); a root `npm run verify` runs all five checks and becomes the registry gate. Next: the revised plan for approval, written to file (DR-041).
 
 **Was BLOCKED (2026-10-06) by decision brief 6.** The plan was presented with spike evidence (`openapi-typescript` 7.13.0 generates all 36 operations; strict `tsc` with TypeScript 5.9.3 catches a wrong enum and a wrong type; an `openapi-fetch` 0.17.0 client called the Prism mock under Node 24.18.0). Three decisions are agreed: TypeScript 5.9.3 (the generator requires `^5.x`; revisit when it supports 7), generated types committed with a CI drift check, and a root `npm run verify` that becomes the registry gate. The package layout (npm workspaces or standalone) is deferred to decision brief 6 (#6). The plan is written to `DOCS/implementation-plans/` once fully agreed (DR-041).
+
+### CDS-16: Remaining version pins
+
+**COMPLETE (2026-10-06, #11).** Implemented to the approved plan (`DOCS/implementation-plans/2026-10-06_cds-16-version-pins.md`) after an owner interview. DR-044 resolves the versions now and creates the files when each project is scaffolded: .NET SDK 10.0.401 with `rollForward: latestPatch` (service, Phase 3); `react` and `react-dom` 19.3.0, `vite` 8.3.3, `@vitejs/plugin-react` 6.1.2 and TypeScript 5.9.3, aligned with the client (UI, Phase 4). On scaffold day the latest patch of the same major.minor is taken. Versions were queried live from npm and the .NET releases index, then queried again before implementation, unchanged. The .NET 10 SDK is not yet installed on the owner's machine (8 and 9 only); install before Phase 3. API specification v11, UI specification v8. **Every Phase 1 item is complete except CDS-17** (Kanban dialect, owner's timing).
 
 ### Process: implementation plans (DR-041)
 

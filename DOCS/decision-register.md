@@ -1,7 +1,7 @@
 ---
-version: 9
-created: 2026-10-06T16:08Z
-supersedes: v8 (2026-10-06T09:43Z), extended in place
+version: 10
+created: 2026-10-06T18:30Z
+supersedes: v9 (2026-10-06T16:08Z), extended in place
 project: credit-dashboard-sut
 type: decision-register
 language: en-GB
@@ -56,3 +56,4 @@ DR-001 and DR-003 to DR-010 were accepted or superseded by 5 October 2026 (DR-00
 | DR-041 | Every implementation plan is written to `DOCS/implementation-plans/YYYY-MM-DD_<item>-<slug>.md` from `DOCS/templates/implementation-plan.template.md` before implementation starts, indexed in `_index.md`, and kept: once approved its body is not edited, an Outcome section is appended after delivery, and a changed plan is a new version | Accepted (2026-10-06) | Plans are recorded and tracked like decisions and logs; the owner's instruction | Plans only in the working session (as CDS-14 was until this decision) |
 | DR-042 | The Serenity/JS harness consumes the API independently of the generated client: its own `CallAnApi` ability, requests built from the contract and fixtures, and every response validated against the contract at run time; it imports neither the generated types nor `openapi-fetch`. 'Directly' in API specification section 1 means this | Accepted (2026-10-06) | A check that shares code with what it checks can share that code's faults; matches the accepted specification | Types only (recommended in the brief); the full client; decide in Phase 3 (decision brief 6 D0) |
 | DR-043 | The generated client is a standalone package, `packages/api-client`, with its own `package.json` and lock and its own generation and check scripts; how the UI consumes it (a `file:` dependency or npm workspaces) is decided in Phase 4 | Accepted (2026-10-06) | One consumer (DR-042); no coupling of future toolchains to the generator's TypeScript 5 pin | npm workspaces now; generate into the UI; postpone CDS-15 (decision brief 6 D1) |
+| DR-044 | Versions resolved for the projects not yet created (CDS-16, DR-009), recorded now and pinned in files when each project is scaffolded: service .NET SDK 10.0.401 in `global.json` with `rollForward: latestPatch`; UI `react` and `react-dom` 19.3.0, `vite` 8.3.3, `@vitejs/plugin-react` 6.1.2 (exact pins) and TypeScript 5.9.3, aligned with `packages/api-client`, the two moving to 7 together. On the day a project is scaffolded the latest patch of the same major.minor is taken and recorded in that PR; a major or minor change needs a new entry. Already pinned: Node 24.18.0 (`.nvmrc`), Redocly CLI 2.57.0, Prism 5.16.0, Ajv 8.20.0, ajv-formats 3.0.1, yaml 2.9.1, gherkin-official 29.0.0 on Python 3.12 (CI), `openapi-typescript` 7.13.0, `openapi-fetch` 0.17.0 and TypeScript 5.9.3 (client) | Accepted (2026-10-06) | Decide once while the facts are fresh, without empty projects beside the specification; patches stay current at scaffold; one aligned compiler across the UI-client link (DR-043) | Pin files now; defer to Phase 3 and 4; `latestFeature` or exact SDK roll-forward; caret ranges; TypeScript 7 for the UI |

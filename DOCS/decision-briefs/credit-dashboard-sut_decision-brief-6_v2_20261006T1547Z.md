@@ -7,7 +7,7 @@ brief: 6
 subject: Who uses the generated client (D0), and how TypeScript packages sit in the repository (D1)
 blocks: CDS-15 (generated TypeScript client); later the UI (Phase 4) and the harness (Phase 3)
 approver: the project owner (Gary Brooks)
-status: awaiting-decision
+status: decided
 supersedes: credit-dashboard-sut_decision-brief-6_v1_20261006T1020Z.md
 language: en-GB
 ---
@@ -134,15 +134,31 @@ The README's Phase 1 target layout says "npm workspaces", but it was written as 
 
 ## 7. Decision record
 
-Filled only when the owner decides. **Not pre-filled.**
+Filled when the owner decided, on 6 October 2026, by interview: D0 first, then D1 with its options re-put in the light of D0.
 
 ### 7.1 Read-back
+
+Read back before recording, with five conditions:
+
+1. The package owns its generation and check scripts (`npm run generate`, `npm run check` inside `packages/api-client`); the README layout's `tools/generate-client.mjs` is not created, and the layout is updated.
+2. A root `npm run verify` installs the two sub-packages (`fixtures`, `packages/api-client`) and runs all five checks (contract lint, fixtures, Gherkin, mock smoke, client); the registry gate becomes `npm ci && npm run verify`; it assumes Python's `gherkin-official` is installed, and the README says so.
+3. CI calls `npm run verify` instead of separate steps, so local and CI run the same thing.
+4. Order: this brief, DR-042 and DR-043 and the backlog first; then the CDS-15 plan, revised for D0 and D1, for approval and written to file (DR-041); then implementation.
+5. Merge authority: PR #6 (this brief) is merged once its CI is green; the CDS-15 PR's merge is not yet authorised.
+
+Owner's reply, 6 October 2026: "All agreed as recommended; merge #6 when CI is green."
 
 ### 7.2 Decisions
 
 | Ref | Item | Decision | Conditions | Who | When |
 |---|---|---|---|---|---|
-| D0 | Harness and the client | | | | |
-| D1 | Package layout | | | | |
+| D0 | Harness and the client | **Option 2.** Independent: own `CallAnApi`, requests from the contract and fixtures, every response validated at run time; no generated types, no `openapi-fetch` | API specification section 1 unchanged | Gary Brooks | 2026-10-06 |
+| D1 | Package layout | **Option 3** (re-put after D0 as 'standalone package now'). `packages/api-client` with its own `package.json` and lock; the UI's link to it is decided in Phase 4 | Conditions 1 to 3 | Gary Brooks | 2026-10-06 |
+
+**Recorded, not argued away.** D0 went against the recommendation (option 3, types only). The case for it stands: the harness will now notice a contract change only when its scenarios run, not when it compiles, and its request bodies are untyped while being written. The owner chose independence and the specification's wording as it stands. D0 then left the client with one consumer, so D1's recommendation was revised from workspaces now to a standalone package now; the argument against workspaces (hoisting, a TypeScript 5 pin shared across every package, every install carrying every package) carries no counterweight while nothing else shares the client.
+
+**Left unresolved.** How the UI consumes the package (a `file:` dependency or workspaces), decided in Phase 4 (DR-043); whether `fixtures/` joins any workspace (Q2, carried forward).
 
 ### 7.3 Corrections after decision
+
+None.

@@ -1,4 +1,4 @@
-// version: 1 | created: 2026-10-06T16:33Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 1 | created: 2026-10-06T16:41Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // One command for every check that keeps the repository green (CDS-15; README 'Checks'). Installs the two
 // sub-packages, runs each check in turn whatever the previous result, prints one result line per check and exits
 // non-zero if any failed. Needs Python with gherkin-official 29.0.0 for the Gherkin check (PYTHON overrides 'python').

@@ -1,4 +1,4 @@
-// version: 1 | created: 2026-10-06T16:33Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 1 | created: 2026-10-06T16:41Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Client smoke run (CDS-15): typed calls through packages/api-client against the Prism mock. Proves the generated
 // client, the mock and the contract agree at run time; the package's own check proves it at compile time.
 // Run from the repository root:  npm run check:client-smoke   (Node runs this TypeScript file directly)

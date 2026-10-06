@@ -1,4 +1,4 @@
-// version: 2 | created: 2026-10-06T16:33Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 2 | created: 2026-10-06T16:41Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Mock smoke run (CDS-14; API specification section 11, 'Mock parity').
 // Starts the Prism mock from the contract with --errors, calls every operation with values taken from the
 // contract, and requires: the operation's documented 2xx status, no contract violation reported by Prism, and a

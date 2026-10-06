@@ -1,4 +1,4 @@
-// version: 1 | created: 2026-10-06T16:33Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 1 | created: 2026-10-06T16:41Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Starts and stops the pinned Prism mock (CDS-14, CDS-15). Prism is started directly with Node from the root
 // install, never through npx or a shell, so it can always be stopped (CDS-14 spike).
 import { spawn } from 'node:child_process';

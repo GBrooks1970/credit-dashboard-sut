@@ -1,6 +1,6 @@
 ---
-version: 26
-created: 2026-10-06T16:50Z
+version: 27
+created: 2026-10-06T17:54Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 26 (CDS-15 merged and recorded; registry gate is `npm run verify`)
+**Version:** 27 (housekeeping: fan-outs include this project; plan convention adopted portfolio-wide)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -141,6 +141,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 ### CDS-10: Portfolio onboarding
 
 **COMPLETE (2026-10-05).** Onboarded with the portfolio `onboard-project` workflow, the owner's contract approved: registry row in NeoCognitus70/portfolio-prompts#109 (`1c191a3`): `active`, `showcase`, `sdd`, `orchestration_target: false` until the Phase 1 exit gate, the three CI checks as gates, and deviations for the upper-case `DOCS/` layout (backlog, decision register, implementation logs). Landing card in GBrooks1970/portfolio#54 (`51c5e08`) with two verified evidence links: the CI workflow and the API specification. No scaffold PR was needed here. Worklists are not part of onboarding; `derive-worklist` creates one when wanted.
+
+**Fan-outs (2026-10-06).** The owner set `orchestration_target: true`, because the trigger set at onboarding (the Phase 1 exit gate) is met and the gate is the single command `npm ci && npm run verify`. This was done in NeoCognitus70/portfolio-prompts#114 (`9c582d7`). The same PR adopted this project's DR-041 plan convention portfolio-wide: `project-layout.md` Working norms, a default `implementation_plans` path, and this project's `DOCS/implementation-plans/` deviation. The shared template is at the portfolio root (`templates/implementation-plan.template.md`, test-automation-portfolio#271, `dea15ed`).
+
+**Timestamp correction (2026-10-06).** Some `created` stamps were written before the clock was read. Backlog v26 and the plans index v3 said 16:50Z; the commit that made them is from 16:47Z, and the index now says so (v26's header was replaced by this version). Four tool files said 16:33Z, the time the plan was written, but were committed at 16:41Z (`tools/lib/prism.mjs`, `tools/client-smoke.ts`, `tools/verify.mjs`, `tools/mock-smoke.mjs` v2). Each stamp is now its commit time.
 
 ### CDS-17: Kanban dialect
 

@@ -1,6 +1,6 @@
 ---
 version: 3
-created: 2026-10-06T16:50Z
+created: 2026-10-06T16:47Z
 project: credit-dashboard-sut
 type: implementation-plan-index
 language: en-GB

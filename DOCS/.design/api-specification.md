@@ -1,6 +1,6 @@
 ---
-version: 10
-created: 2026-10-06T16:33Z
+version: 11
+created: 2026-10-06T18:30Z
 supersedes: v9 (2026-10-06T09:06Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v11:** the runtime version is resolved (CDS-16, DR-044): section 3 'Runtime' row.
 **Changes in v10:** the generated TypeScript client (CDS-15): section 3 'Client' row and section 11 'Client' check; the harness does not use it (DR-042, DR-043).
 **Changes in v9:** the Prism mock is pinned, smoke-tested over every operation and reachable without the `/api/v1` prefix (CDS-14, DR-039; contract v9, `info.version` 0.6.2); sections 3 and 11.
 **Changes in v8:** decision brief 5 (owner review, CDS-01): `GET /me` gains `greetingName` (DR-036; contract v7, `info.version` 0.6.0); no general rate limit, 429 is PR-09's resend limit only (DR-035); the overview stays one aggregate call (DR-034). Accepted as the Phase 0 baseline (DR-038).
@@ -44,7 +45,7 @@ Out of scope: real credit scoring, real open-banking consent, persistent storage
 
 | Concern | Decision | Status |
 | --- | --- | --- |
-| Runtime | .NET, current LTS (today .NET 10), C#; version pinned when Phase 1 starts (DR-009) | Accepted (DR-017) |
+| Runtime | .NET 10 (LTS), C#: SDK 10.0.401, pinned in the service's `global.json` with `rollForward: latestPatch` when the service is scaffolded, taking the latest 10.0.4xx patch on that day (DR-044). Building it needs the .NET 10 SDK installed | Accepted (DR-017, DR-044) |
 | Framework | ASP.NET Core minimal API. Contract first: C# request and response types generated from `openapi.yaml`; requests validated against the contract at the edge; no code-first contract generation | Accepted (DR-017) |
 | Business rules | A C# library inside the service, unit-tested with NUnit, each test tagged with its BR ID | Accepted (DR-017) |
 | Data | In-memory store, loaded from `fixtures/personas/*.json` at start and on reset | Proposed |

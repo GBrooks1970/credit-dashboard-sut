@@ -23,7 +23,7 @@ seeded this repository. No service, UI or harness code exists yet; see [`DOCS/ba
 | [`DOCS/.design/ui-specification.md`](DOCS/.design/ui-specification.md) | UI specification: page catalogue, test hooks, component states, UI bug flags |
 | [`DOCS/.design/ui-feature-profile.md`](DOCS/.design/ui-feature-profile.md) | My Profile feature spec: rules PR-01 to PR-11 |
 | [`DOCS/.design/page-survey.md`](DOCS/.design/page-survey.md) | Structure survey that informed the specifications (input, not a specification) |
-| [`DOCS/decision-register.md`](DOCS/decision-register.md) | Decisions DR-001 to DR-043 |
+| [`DOCS/decision-register.md`](DOCS/decision-register.md) | Decisions DR-001 to DR-044 |
 | [`DOCS/decision-briefs/`](DOCS/decision-briefs/_index.md) | The reasoning behind decisions: options, a recommendation and the argument against |
 | [`DOCS/glossary.md`](DOCS/glossary.md), [`DOCS/step-glossary.md`](DOCS/step-glossary.md) | Normative vocabulary and agreed Gherkin steps |
 | [`DOCS/backlog.md`](DOCS/backlog.md) | Backlog: the source of truth for status |

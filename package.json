@@ -6,8 +6,11 @@
   "license": "MIT",
   "type": "module",
   "scripts": {
+    "verify": "node tools/verify.mjs",
     "mock": "prism mock DOCS/.architecture/openapi.yaml -p 4010 --errors",
-    "check:mock": "node tools/mock-smoke.mjs"
+    "check:mock": "node tools/mock-smoke.mjs",
+    "check:client": "npm --prefix packages/api-client run check",
+    "check:client-smoke": "node tools/client-smoke.ts"
   },
   "devDependencies": {
     "@stoplight/prism-cli": "5.16.0",

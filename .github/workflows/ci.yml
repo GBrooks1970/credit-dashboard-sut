@@ -15,8 +15,8 @@ concurrency:
 
 jobs:
   specification:
-    # The three checks that keep the specification green (README 'Checks').
-    name: Specification (contract lint, fixtures, Gherkin, mock smoke)
+    # Every check that keeps the repository green, through the one command (README 'Checks', CDS-15).
+    name: Verify (contract lint, fixtures, Gherkin, mock smoke, client check, client smoke)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -31,26 +31,16 @@ jobs:
           cache-dependency-path: |
             package-lock.json
             fixtures/package-lock.json
+            packages/api-client/package-lock.json
 
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
 
-      - name: Contract lint
-        run: npx --yes @redocly/cli@2.57.0 lint
+      - name: Python prerequisite for the Gherkin check
+        run: pip install gherkin-official==29.0.0
 
-      - name: Fixture check
-        working-directory: fixtures
+      - name: Verify
         run: |
           npm ci
-          npm run check
-
-      - name: Gherkin parse and rule coverage
-        run: |
-          pip install gherkin-official==29.0.0
-          python tools/check-gherkin.py
-
-      - name: Mock smoke (every operation)
-        run: |
-          npm ci
-          npm run check:mock
+          npm run verify

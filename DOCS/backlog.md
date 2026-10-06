@@ -1,6 +1,6 @@
 ---
-version: 24
-created: 2026-10-06T16:08Z
+version: 25
+created: 2026-10-06T16:40Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,8 +8,8 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 24 (decision brief 6 decided: CDS-15 unblocked)
-**Last Updated:** 2026-10-04
+**Version:** 25 (CDS-15 complete: generated client and `npm run verify`)
+**Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
 This backlog is the source of truth for status. It moved here from the portfolio's Phase 0 pack when this repository was seeded (CDS-09, 5 October 2026); paths below that name Phase 0 files refer to that pack.
@@ -34,7 +34,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | CDS-12 | Decide whether to survey the source profile sub-pages (structure only) or keep the proposed designs | 0 | COMPLETE (2026-10-04) | none |
 | CDS-13 | Arrange data no persona holds: test-control overrides (DR-020) | 2 | COMPLETE (2026-10-04) | none |
 | CDS-14 | Prism mock serves every operation from the contract examples (Phase 1 exit gate) | 1 | COMPLETE (2026-10-06) | none |
-| CDS-15 | Generate the typed TypeScript client into `packages/api-client` from the contract | 1 | READY TO START | none (plan to be approved, DR-041) |
+| CDS-15 | Generate the typed TypeScript client into `packages/api-client` from the contract | 1 | COMPLETE (2026-10-06) | none |
 | CDS-16 | Pin the remaining versions as each project is created: .NET SDK (`global.json`), React, Vite (DR-009) | 1 | READY TO START | none |
 | CDS-17 | Convert this backlog's summary table to the portfolio `auth-table` dialect so the shared Kanban generator can build a board | 1 | READY TO START | none (owner chooses when a board is wanted) |
 
@@ -151,6 +151,8 @@ Added at onboarding (owner's choice). The summary table above (ID, Item, Phase, 
 **COMPLETE (2026-10-06; merged in #3, squash `ed63834`; implementation log in #4, `64c8c8f`; plan written to file in #5, `7a08fdf`).** Planned and approved before implementation. A spike showed Prism 5.16.0 serves the contract without its `/api/v1` base path (DR-039), answers malformed requests with 422 where the specification says 400, and must be started with `node` rather than through `npx` and a shell, or it outlives its caller. Delivered: contract v9 (path-parameter examples; Prism server entry), API specification v9 (sections 3, 11), root `package.json` with exact pins, `tools/mock-smoke.mjs`, a CI step. Evidence: 36 of 36 operations pass, and a call without a token gets 401; a planted bad example (`greetingName: ''`) fails the run on exactly `GET /me`; port 4010 is free after both passing and failing runs. **The Phase 1 exit gate is met**: lint clean, every example valid, the mock serves every operation. CDS-15 and CDS-16 remain Phase 1 work outside the gate.
 
 ### CDS-15: Generated TypeScript client
+
+**COMPLETE (2026-10-06, #8).** Implemented to the approved plan (`DOCS/implementation-plans/2026-10-06_cds-15-api-client.md`). Delivered: the standalone package `packages/api-client` (DR-043) with committed generated types (2,672 lines), a drift check and strict `tsc` with three negative type cases; `tools/client-smoke.ts` (four typed calls against Prism, all pass); `tools/lib/prism.mjs` shared with the mock smoke; `npm run verify` running eight steps (two installs, six checks), now the single CI step; API specification v10, UI specification v7. Probes: a contract description changed without regenerating fails exactly the client check (verify exits 1) and the restore is byte-identical; removing one `@ts-expect-error` fails `tsc` with TS2741; no Prism process and port 4010 free after passing and failing runs. Next: the registry gate becomes `npm ci && npm run verify`.
 
 **Unblocked (2026-10-06).** Decision brief 6 decided: the harness is independent of the client (DR-042), and the client is a standalone package with its own lock and scripts (DR-043); a root `npm run verify` runs all five checks and becomes the registry gate. Next: the revised plan for approval, written to file (DR-041).
 

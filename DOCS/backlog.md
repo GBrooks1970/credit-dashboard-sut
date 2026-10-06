@@ -1,6 +1,6 @@
 ---
-version: 23
-created: 2026-10-06T10:32Z
+version: 24
+created: 2026-10-06T16:08Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 23 (records the merges of #3, #4 and #5; CDS-15 blocked by decision brief 6)
+**Version:** 24 (decision brief 6 decided: CDS-15 unblocked)
 **Last Updated:** 2026-10-04
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -34,7 +34,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | CDS-12 | Decide whether to survey the source profile sub-pages (structure only) or keep the proposed designs | 0 | COMPLETE (2026-10-04) | none |
 | CDS-13 | Arrange data no persona holds: test-control overrides (DR-020) | 2 | COMPLETE (2026-10-04) | none |
 | CDS-14 | Prism mock serves every operation from the contract examples (Phase 1 exit gate) | 1 | COMPLETE (2026-10-06) | none |
-| CDS-15 | Generate the typed TypeScript client into `packages/api-client` from the contract | 1 | BLOCKED | Decision brief 6 (D1, package layout) |
+| CDS-15 | Generate the typed TypeScript client into `packages/api-client` from the contract | 1 | READY TO START | none (plan to be approved, DR-041) |
 | CDS-16 | Pin the remaining versions as each project is created: .NET SDK (`global.json`), React, Vite (DR-009) | 1 | READY TO START | none |
 | CDS-17 | Convert this backlog's summary table to the portfolio `auth-table` dialect so the shared Kanban generator can build a board | 1 | READY TO START | none (owner chooses when a board is wanted) |
 
@@ -152,7 +152,9 @@ Added at onboarding (owner's choice). The summary table above (ID, Item, Phase, 
 
 ### CDS-15: Generated TypeScript client
 
-**BLOCKED (2026-10-06) by decision brief 6.** The plan was presented with spike evidence (`openapi-typescript` 7.13.0 generates all 36 operations; strict `tsc` with TypeScript 5.9.3 catches a wrong enum and a wrong type; an `openapi-fetch` 0.17.0 client called the Prism mock under Node 24.18.0). Three decisions are agreed: TypeScript 5.9.3 (the generator requires `^5.x`; revisit when it supports 7), generated types committed with a CI drift check, and a root `npm run verify` that becomes the registry gate. The package layout (npm workspaces or standalone) is deferred to decision brief 6 (#6). The plan is written to `DOCS/implementation-plans/` once fully agreed (DR-041).
+**Unblocked (2026-10-06).** Decision brief 6 decided: the harness is independent of the client (DR-042), and the client is a standalone package with its own lock and scripts (DR-043); a root `npm run verify` runs all five checks and becomes the registry gate. Next: the revised plan for approval, written to file (DR-041).
+
+**Was BLOCKED (2026-10-06) by decision brief 6.** The plan was presented with spike evidence (`openapi-typescript` 7.13.0 generates all 36 operations; strict `tsc` with TypeScript 5.9.3 catches a wrong enum and a wrong type; an `openapi-fetch` 0.17.0 client called the Prism mock under Node 24.18.0). Three decisions are agreed: TypeScript 5.9.3 (the generator requires `^5.x`; revisit when it supports 7), generated types committed with a CI drift check, and a root `npm run verify` that becomes the registry gate. The package layout (npm workspaces or standalone) is deferred to decision brief 6 (#6). The plan is written to `DOCS/implementation-plans/` once fully agreed (DR-041).
 
 ### Process: implementation plans (DR-041)
 

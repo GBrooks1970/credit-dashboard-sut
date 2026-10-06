@@ -1,6 +1,6 @@
 ---
-version: 28
-created: 2026-10-06T18:30Z
+version: 29
+created: 2026-10-06T18:31Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 28 (CDS-16 complete: remaining versions resolved, DR-044; Phase 1 items complete except CDS-17)
+**Version:** 29 (CDS-16 merged and recorded)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -164,7 +164,7 @@ Added at onboarding (owner's choice). The summary table above (ID, Item, Phase, 
 
 ### CDS-16: Remaining version pins
 
-**COMPLETE (2026-10-06, #11).** Implemented to the approved plan (`DOCS/implementation-plans/2026-10-06_cds-16-version-pins.md`) after an owner interview. DR-044 resolves the versions now and creates the files when each project is scaffolded: .NET SDK 10.0.401 with `rollForward: latestPatch` (service, Phase 3); `react` and `react-dom` 19.3.0, `vite` 8.3.3, `@vitejs/plugin-react` 6.1.2 and TypeScript 5.9.3, aligned with the client (UI, Phase 4). On scaffold day the latest patch of the same major.minor is taken. Versions were queried live from npm and the .NET releases index, then queried again before implementation, unchanged. The .NET 10 SDK is not yet installed on the owner's machine (8 and 9 only); install before Phase 3. API specification v11, UI specification v8. **Every Phase 1 item is complete except CDS-17** (Kanban dialect, owner's timing).
+**COMPLETE (2026-10-06; merged in #11, squash `b0fbb3f`, CI run 37511724429; plan Outcome and implementation log in #12).** Implemented to the approved plan (`DOCS/implementation-plans/2026-10-06_cds-16-version-pins.md`) after an owner interview. DR-044 resolves the versions now and creates the files when each project is scaffolded: .NET SDK 10.0.401 with `rollForward: latestPatch` (service, Phase 3); `react` and `react-dom` 19.3.0, `vite` 8.3.3, `@vitejs/plugin-react` 6.1.2 and TypeScript 5.9.3, aligned with the client (UI, Phase 4). On scaffold day the latest patch of the same major.minor is taken. Versions were queried live from npm and the .NET releases index, then queried again before implementation, unchanged. The .NET 10 SDK is not yet installed on the owner's machine (8 and 9 only); install before Phase 3. API specification v11, UI specification v8. Backlog v28 and the three specification headers said 18:30Z, written before the clock was read; their commit is from 18:29Z, and the specification headers are corrected (v28's header was replaced by this version). **Every Phase 1 item is complete except CDS-17** (Kanban dialect, owner's timing).
 
 ### Process: implementation plans (DR-041)
 

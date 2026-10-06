@@ -4,9 +4,9 @@ created: 2026-10-06T18:02Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-16
-status: approved
+status: implemented
 approved: 2026-10-06, Gary Brooks; merges of the CDS-16 PR and its records PR authorised once each one's own CI run reports success
-delivered: not yet
+delivered: "#11, squash b0fbb3f (2026-10-06); no registry change"
 language: en-GB
 ---
 
@@ -63,4 +63,11 @@ Branch `claude/cds16-version-pins`, one PR, merged once its own CI run reports s
 
 ## Outcome
 
-Appended after delivery.
+Delivered as planned in #11 (squash `b0fbb3f`; CI run 37511724429 green, `verify` 8 of 8, job 20 s). The versions were queried again at 18:27Z and had not changed. Every Phase 1 item is complete except CDS-17.
+
+Differences from the plan:
+
+- **README.** Its decision range was updated to DR-044 (not listed in the steps).
+- **Timestamps.** The plan's `created` (18:02Z) and the "presented at 18:02Z" in its history were not read from the clock. The presentation fell between 17:56Z and 18:27Z, the last two clock readings either side of it. The approved body is left as written. The four document headers written in #11 said 18:30Z; their commit is from 18:29Z, and they were corrected in the records PR.
+
+Full record: [`DOCS/implementation-logs/2026-10-06_cds-16-version-pins.md`](../implementation-logs/2026-10-06_cds-16-version-pins.md).

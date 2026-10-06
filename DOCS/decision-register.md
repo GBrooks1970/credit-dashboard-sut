@@ -1,6 +1,6 @@
 ---
 version: 10
-created: 2026-10-06T18:30Z
+created: 2026-10-06T18:29Z
 supersedes: v9 (2026-10-06T16:08Z), extended in place
 project: credit-dashboard-sut
 type: decision-register

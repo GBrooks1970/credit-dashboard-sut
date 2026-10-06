@@ -1,6 +1,6 @@
 ---
 version: 11
-created: 2026-10-06T18:30Z
+created: 2026-10-06T18:29Z
 supersedes: v9 (2026-10-06T09:06Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec

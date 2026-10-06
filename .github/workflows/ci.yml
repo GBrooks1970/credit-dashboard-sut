@@ -16,7 +16,7 @@ concurrency:
 jobs:
   specification:
     # The three checks that keep the specification green (README 'Checks').
-    name: Specification (contract lint, fixtures, Gherkin)
+    name: Specification (contract lint, fixtures, Gherkin, mock smoke)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -28,7 +28,9 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
-          cache-dependency-path: fixtures/package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            fixtures/package-lock.json
 
       - uses: actions/setup-python@v6
         with:
@@ -47,3 +49,8 @@ jobs:
         run: |
           pip install gherkin-official==29.0.0
           python tools/check-gherkin.py
+
+      - name: Mock smoke (every operation)
+        run: |
+          npm ci
+          npm run check:mock

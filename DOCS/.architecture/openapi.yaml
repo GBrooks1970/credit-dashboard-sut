@@ -1,15 +1,15 @@
-# version: 8
-# created: 2026-10-05T20:41Z
-# supersedes: v7 (2026-10-05T20:28Z), the accepted Phase 0 baseline (DR-038); earlier versions are kept in the
-# portfolio's Phase 0 pack, not in this repository
-# change: info.license added (MIT) when the project became its own repository (CDS-09)
+# version: 9
+# created: 2026-10-06T09:06Z
+# supersedes: v8 (2026-10-05T20:41Z); earlier versions are in git history (DR-040) and, up to v7, in the
+# portfolio's Phase 0 pack
+# change: path-parameter examples for the mock smoke run; the Prism server entry has no /api/v1 prefix (DR-039, CDS-14)
 # project: credit-dashboard-sut
 # type: architecture-doc
 # language: en-GB
 openapi: 3.1.0
 info:
   title: Credit Dashboard SUT API
-  version: 0.6.1
+  version: 0.6.2
   license:
     name: MIT
     identifier: MIT
@@ -22,8 +22,8 @@ info:
 servers:
   - url: http://localhost:4000/api/v1
     description: Local service
-  - url: http://localhost:4010/api/v1
-    description: Prism mock
+  - url: http://localhost:4010
+    description: Prism mock. Prism serves the paths without the /api/v1 base path (DR-039)
 security:
   - bearerAuth: []
 tags:
@@ -811,7 +811,7 @@ paths:
       operationId: markNotificationRead
       summary: Mark a notification read
       parameters:
-        - { name: notificationId, in: path, required: true, schema: { type: string } }
+        - { name: notificationId, in: path, required: true, schema: { type: string, example: ntf_3q9w1 } }
       requestBody:
         required: true
         content:
@@ -915,7 +915,7 @@ paths:
         that does not match its balance and limit, BR-03) are a 422; an unknown bureau ID is a 404.
       security: [ { testControlKey: [] } ]
       parameters:
-        - { name: username, in: path, required: true, schema: { type: string } }
+        - { name: username, in: path, required: true, schema: { type: string, example: alex } }
       requestBody:
         required: true
         content:
@@ -1093,7 +1093,7 @@ components:
 
   parameters:
     BureauId: { name: bureauId, in: path, required: true, schema: { type: string, example: bureau-a } }
-    AccountId: { name: accountId, in: path, required: true, schema: { type: string, pattern: '^acc_[a-z0-9]{5,}$' } }
+    AccountId: { name: accountId, in: path, required: true, schema: { type: string, pattern: '^acc_[a-z0-9]{5,}$', example: acc_7f3k2q } }
     Year: { name: year, in: query, schema: { type: integer, minimum: 2000, maximum: 2100 } }
     Page: { name: page, in: query, schema: { type: integer, minimum: 1, default: 1 } }
     PageSize: { name: pageSize, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }

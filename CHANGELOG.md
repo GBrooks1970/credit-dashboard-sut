@@ -2,6 +2,14 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-06: Prism mock serves every operation (CDS-14)
+
+- Prism 5.16.0 pinned in a root `package.json`; `npm run mock` serves the contract on port 4010.
+- `npm run check:mock` (`tools/mock-smoke.mjs`) calls all 36 operations and requires the documented 2xx, no contract violation and a valid body; a call without a token must get 401. Added to CI.
+- Contract v9 (`info.version` 0.6.2): path-parameter examples; the Prism server entry has no `/api/v1` prefix (DR-039).
+- API specification v9: sections 3 and 11 describe the mock, its smoke run and its two known limits.
+- DR-039 (mock address) and DR-040 (specifications edited in place; git keeps history).
+
 ## 2026-10-05: repository seeded (Phase 1 starts)
 
 - Seeded from the accepted Phase 0 pack (DR-001, DR-038): contract, API, UI and My Profile specifications, page

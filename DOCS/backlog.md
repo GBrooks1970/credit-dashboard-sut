@@ -1,6 +1,6 @@
 ---
-version: 21
-created: 2026-10-05T23:38Z
+version: 22
+created: 2026-10-06T09:06Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 21 (CDS-10 complete: onboarded to the portfolio registry and landing page; CDS-17 added)
+**Version:** 22 (CDS-14 complete: the Prism mock serves every operation; the Phase 1 exit gate is met)
 **Last Updated:** 2026-10-04
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -33,7 +33,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | CDS-11 | Fold the My Profile API needs into `openapi.yaml` and the API spec; add the profile route to the UI spec page catalogue | 0 or 1 | COMPLETE (2026-10-04) | none (address, employment, finances are stretch, DR-022) |
 | CDS-12 | Decide whether to survey the source profile sub-pages (structure only) or keep the proposed designs | 0 | COMPLETE (2026-10-04) | none |
 | CDS-13 | Arrange data no persona holds: test-control overrides (DR-020) | 2 | COMPLETE (2026-10-04) | none |
-| CDS-14 | Prism mock serves every operation from the contract examples (Phase 1 exit gate) | 1 | READY TO START | none |
+| CDS-14 | Prism mock serves every operation from the contract examples (Phase 1 exit gate) | 1 | COMPLETE (2026-10-06) | none |
 | CDS-15 | Generate the typed TypeScript client into `packages/api-client` from the contract | 1 | READY TO START | none |
 | CDS-16 | Pin the remaining versions as each project is created: .NET SDK (`global.json`), React, Vite (DR-009) | 1 | READY TO START | none |
 | CDS-17 | Convert this backlog's summary table to the portfolio `auth-table` dialect so the shared Kanban generator can build a board | 1 | READY TO START | none (owner chooses when a board is wanted) |
@@ -145,6 +145,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 ### CDS-17: Kanban dialect
 
 Added at onboarding (owner's choice). The summary table above (ID, Item, Phase, Status, Blocked by) matches neither Kanban dialect (`auth-table` needs seven columns with backticked IDs; `risk-block` needs scored risk headings), so the shared generator would build an empty board. Convert when a board is wanted, and set the registry's `backlog_dialect` to match.
+
+### CDS-14: Prism mock
+
+**COMPLETE (2026-10-06).** Planned and approved before implementation. A spike showed Prism 5.16.0 serves the contract without its `/api/v1` base path (DR-039), answers malformed requests with 422 where the specification says 400, and must be started with `node` rather than through `npx` and a shell, or it outlives its caller. Delivered: contract v9 (path-parameter examples; Prism server entry), API specification v9 (sections 3, 11), root `package.json` with exact pins, `tools/mock-smoke.mjs`, a CI step. Evidence: 36 of 36 operations pass, and a call without a token gets 401; a planted bad example (`greetingName: ''`) fails the run on exactly `GET /me`; port 4010 is free after both passing and failing runs. **The Phase 1 exit gate is met**: lint clean, every example valid, the mock serves every operation. CDS-15 and CDS-16 remain Phase 1 work outside the gate.
 
 ### CDS-14 to CDS-16: Phase 1
 

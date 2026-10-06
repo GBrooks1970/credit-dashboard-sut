@@ -1,7 +1,7 @@
 ---
-version: 7
-created: 2026-10-06T09:06Z
-supersedes: v6 (2026-10-05T20:28Z), extended in place
+version: 8
+created: 2026-10-06T09:43Z
+supersedes: v7 (2026-10-06T09:06Z), extended in place
 project: credit-dashboard-sut
 type: decision-register
 language: en-GB
@@ -53,3 +53,4 @@ DR-001 and DR-003 to DR-010 were accepted or superseded by 5 October 2026 (DR-00
 | DR-038 | Phase 0 baseline accepted: contract v7, API spec v8, UI spec v6, My Profile spec v4, README v13, with the glossaries, fixtures and feature files as they stand on 5 October 2026 | Accepted (2026-10-05) | CDS-01 complete; CDS-09 may freeze and lift the pack | Amend first; not yet (Decision brief 5 D6) |
 | DR-039 | The Prism mock is addressed at `http://localhost:4010` without the `/api/v1` base path, which Prism does not serve; the real service keeps `/api/v1` on port 4000, and clients take their base URL per environment | Accepted (2026-10-06) | Prism 5.16.0 ignores a server base path (CDS-14 spike); no extra moving part | A proxy that strips the prefix; dropping `/api/v1` everywhere (CDS-14 plan, owner's choice) |
 | DR-040 | Specifications at stable paths are edited in place: the frontmatter version and a 'Changes in vN' line record the change, CHANGELOG records it, and git history keeps earlier versions | Accepted (2026-10-06) | Stable Phase 1 paths are the point of the layout; no duplicate files | Superseded copies in `DOCS/.design/superseded/` (CDS-14 plan, owner's choice) |
+| DR-041 | Every implementation plan is written to `DOCS/implementation-plans/YYYY-MM-DD_<item>-<slug>.md` from `DOCS/templates/implementation-plan.template.md` before implementation starts, indexed in `_index.md`, and kept: once approved its body is not edited, an Outcome section is appended after delivery, and a changed plan is a new version | Accepted (2026-10-06) | Plans are recorded and tracked like decisions and logs; the owner's instruction | Plans only in the working session (as CDS-14 was until this decision) |

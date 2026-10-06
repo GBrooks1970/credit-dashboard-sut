@@ -2,6 +2,11 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-06: implementation plans are recorded (DR-041)
+
+- New `DOCS/implementation-plans/` with an index and a template (`DOCS/templates/implementation-plan.template.md`).
+- The CDS-14 plan written to file after delivery, as presented and approved, with its outcome appended.
+
 ## 2026-10-06: Prism mock serves every operation (CDS-14)
 
 - Prism 5.16.0 pinned in a root `package.json`; `npm run mock` serves the contract on port 4010.

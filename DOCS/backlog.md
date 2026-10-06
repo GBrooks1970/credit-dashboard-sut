@@ -1,6 +1,6 @@
 ---
-version: 25
-created: 2026-10-06T16:40Z
+version: 26
+created: 2026-10-06T16:50Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 25 (CDS-15 complete: generated client and `npm run verify`)
+**Version:** 26 (CDS-15 merged and recorded; registry gate is `npm run verify`)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -152,7 +152,7 @@ Added at onboarding (owner's choice). The summary table above (ID, Item, Phase, 
 
 ### CDS-15: Generated TypeScript client
 
-**COMPLETE (2026-10-06, #8).** Implemented to the approved plan (`DOCS/implementation-plans/2026-10-06_cds-15-api-client.md`). Delivered: the standalone package `packages/api-client` (DR-043) with committed generated types (2,672 lines), a drift check and strict `tsc` with three negative type cases; `tools/client-smoke.ts` (four typed calls against Prism, all pass); `tools/lib/prism.mjs` shared with the mock smoke; `npm run verify` running eight steps (two installs, six checks), now the single CI step; API specification v10, UI specification v7. Probes: a contract description changed without regenerating fails exactly the client check (verify exits 1) and the restore is byte-identical; removing one `@ts-expect-error` fails `tsc` with TS2741; no Prism process and port 4010 free after passing and failing runs. Next: the registry gate becomes `npm ci && npm run verify`.
+**COMPLETE (2026-10-06; merged in #8, squash `81f16be`, CI run 37497743081; registry NeoCognitus70/portfolio-prompts#113, `9b1547f`; plan Outcome and implementation log in #9).** Implemented to the approved plan (`DOCS/implementation-plans/2026-10-06_cds-15-api-client.md`). Delivered: the standalone package `packages/api-client` (DR-043) with committed generated types (2,672 lines), a drift check and strict `tsc` with three negative type cases; `tools/client-smoke.ts` (four typed calls against Prism, all pass); `tools/lib/prism.mjs` shared with the mock smoke; `npm run verify` running eight steps (two installs, six checks), now the single CI step; API specification v10, UI specification v7. Probes: a contract description changed without regenerating fails exactly the client check (verify exits 1) and the restore is byte-identical; removing one `@ts-expect-error` fails `tsc` with TS2741, and making a negative case valid fails it with TS2578; no Prism process and port 4010 free after passing and failing runs. The registry gate is now `npm ci && npm run verify`.
 
 **Unblocked (2026-10-06).** Decision brief 6 decided: the harness is independent of the client (DR-042), and the client is a standalone package with its own lock and scripts (DR-043); a root `npm run verify` runs all five checks and becomes the registry gate. Next: the revised plan for approval, written to file (DR-041).
 

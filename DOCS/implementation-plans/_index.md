@@ -1,6 +1,6 @@
 ---
-version: 2
-created: 2026-10-06T16:33Z
+version: 3
+created: 2026-10-06T16:50Z
 project: credit-dashboard-sut
 type: implementation-plan-index
 language: en-GB
@@ -13,4 +13,4 @@ Every implementation plan is written to a file here before implementation starts
 | Plan | Item | Presented | Status | Delivered |
 |---|---|---|---|---|
 | [`2026-10-05_cds-14-prism-mock.md`](2026-10-05_cds-14-prism-mock.md) | CDS-14 Prism mock serves every operation | 2026-10-05 | implemented (recorded after delivery) | #3, `ed63834` |
-| [`2026-10-06_cds-15-api-client.md`](2026-10-06_cds-15-api-client.md) | CDS-15 Generated TypeScript client | 2026-10-06 | approved | not yet |
+| [`2026-10-06_cds-15-api-client.md`](2026-10-06_cds-15-api-client.md) | CDS-15 Generated TypeScript client | 2026-10-06 | implemented | #8, `81f16be` |

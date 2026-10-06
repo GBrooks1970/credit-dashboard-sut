@@ -4,9 +4,9 @@ created: 2026-10-06T16:10Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-15
-status: approved
+status: implemented
 approved: 2026-10-06, Gary Brooks; merges of the CDS-15 PR and the registry follow-up authorised once each one's own CI run reports success
-delivered: not yet
+delivered: "#8, squash 81f16be (2026-10-06); registry follow-up NeoCognitus70/portfolio-prompts#113, 9b1547f"
 language: en-GB
 ---
 
@@ -59,4 +59,15 @@ Branch `claude/cds15-api-client`, one PR, merged once its own CI run reports suc
 
 ## Outcome
 
-Appended after delivery.
+Delivered in #8 (squash `81f16be`; CI run 37497743081 green, `verify` 8 of 8, job 25 s). Registry follow-up in NeoCognitus70/portfolio-prompts#113 (`9b1547f`). All verification met: the drift probe failed exactly the client check, removing a `@ts-expect-error` failed `tsc` (TS2741), and Prism left no process and no listener on port 4010.
+
+Differences from the plan:
+
+- **Client smoke assertion.** The first run passed 3 of 4. Prism returns the static example (`type: loan`) whatever the query, so the totals call now asserts the status and the figures rather than the echoed type.
+- **Type-checking the smoke.** `tools/client-smoke.ts` is in the package's `tsc` include, typed through a new `tools/lib/prism.d.mts`.
+- **An extra probe.** Making a negative case valid failed with TS2578 (unused directive), the mechanism the Verification section names; removing a directive gives TS2741 instead. Both are recorded.
+- **Extra scripts.** `check:client` and `check:client-smoke` at the root, so each check can run on its own.
+- **README.** It has no layout tree, so step 1's layout change became rows in "What is here"; the decision range was corrected to DR-043.
+- **CI job renamed** "Verify (…)"; no branch protection depended on the old name.
+
+Full record: [`DOCS/implementation-logs/2026-10-06_cds-15-api-client.md`](../implementation-logs/2026-10-06_cds-15-api-client.md).

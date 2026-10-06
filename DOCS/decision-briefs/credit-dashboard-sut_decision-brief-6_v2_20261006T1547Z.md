@@ -1,14 +1,14 @@
 ---
-version: 1
-created: 2026-10-06T10:20Z
+version: 2
+created: 2026-10-06T15:47Z
 project: credit-dashboard-sut
 type: decision-brief
 brief: 6
-subject: How TypeScript packages sit in the repository (npm workspaces or standalone)
+subject: Who uses the generated client (D0), and how TypeScript packages sit in the repository (D1)
 blocks: CDS-15 (generated TypeScript client); later the UI (Phase 4) and the harness (Phase 3)
 approver: the project owner (Gary Brooks)
-status: superseded
-supersedes: none
+status: awaiting-decision
+supersedes: credit-dashboard-sut_decision-brief-6_v1_20261006T1020Z.md
 language: en-GB
 ---
 
@@ -19,11 +19,13 @@ language: en-GB
   TEMPLATE: templates/decision-brief.template.md (portfolio root)
 -->
 
-# Decision brief 6: how TypeScript packages sit in the repository
+# Decision brief 6: who uses the generated client, and how TypeScript packages sit in the repository
 
-**Items to decide:** D1 the package layout for `packages/api-client` and the TypeScript packages that follow it.
+**Items to decide:** D0 whether the Serenity/JS harness uses the generated client; D1 the package layout for `packages/api-client` and the TypeScript packages that follow it. **Decide D0 first**: it sets how many consumers the client has, which is what D1 turns on.
 **Blocks:** CDS-15 (its plan is otherwise agreed: TypeScript 5.9.3, generated types committed with a CI drift check, a root `npm run verify`). Later, the React UI (Phase 4) and the Serenity/JS harness (Phase 3).
-**Reply with:** "D1: option n", with any conditions; they are read back before anything is recorded.
+**Reply with:** "D0: option n" and "D1: option n", with any conditions; they are read back before anything is recorded.
+
+**Changes in v2.** D0 added at the owner's request after an explanation of what the client is, and the accepted specification's wording on the harness recorded as background (B7). D1 is unchanged except for how its options depend on D0 (section 4, 'How D0 shapes D1').
 
 **How this brief came about.** The CDS-15 plan recommended npm workspaces; the owner deferred that choice and asked for a brief with an in-depth case for and against. This brief is written **before** the decision, as the template intends.
 
@@ -50,15 +52,46 @@ The README's Phase 1 target layout says "npm workspaces", but it was written as 
 | B4 | The client generator `openapi-typescript` 7.13.0 requires TypeScript `^5.x`; TypeScript's latest is 7.0.2; CDS-15 pins 5.9.3 | CDS-15 spike; npm registry, 2026-10-06 |
 | B5 | Only one consumer of the client exists before Phase 3: its own smoke test. The UI arrives in Phase 4; the harness in Phase 3 may use the client or its own `CallTheCreditApi` ability | README layout; DR-006 |
 | B6 | npm 11.16.0 and Node 24.18.0 on the host and in CI | `npm --version`; `.nvmrc` |
+| B7 | The accepted API specification (DR-038 baseline) says: "The UI consumes it through a client generated from the contract. The test harness consumes it directly, for API-level scenarios and for arranging state through the test-control endpoints." 'Directly' most naturally reads as 'not through the generated client'; it could also mean 'not through the UI' | API specification v9, section 1 |
+| B8 | The generated client is two parts: compile-time types (`schema.d.ts`, no runtime code) and a small request library (`openapi-fetch`). Serenity/JS has its own `CallAnApi` ability (HTTP through axios) for API work, and the Phase 3 gate requires every API scenario response to be validated against the contract at run time | CDS-15 spike; DR-006; API specification section 11 |
 
 ## 3. Open questions
 
 | Ref | Question as received | Restatement | Decidable now? | Disposition |
 |---|---|---|---|---|
+| Q0 | Should the harness use the generated client? | Restated: three different things can be shared: nothing, the types only, or the types and the request library. Each is a separate option | Yes | D0 |
 | Q1 | npm workspaces from now, or a standalone package? | Restated: it is a timing question as much as a layout one. "Workspaces" can start now or when a second consumer exists, and "standalone" can be permanent or temporary | Yes | D1 |
 | Q2 | Should `fixtures/` join a workspace? | Follows from D1; not needed for CDS-15 | No (after D1) | Carried forward: revisit in CDS-15's outcome or the first package that consumes fixtures |
 
 ## 4. Decision item
+
+### D0. Does the harness use the generated client?
+
+**What is being decided.** Whether the Serenity/JS harness (Phase 3) builds its API calls on the generated client, and if so how much of it.
+
+**Why it matters.** It decides whether the client has one consumer (the UI) or two, which is the evidence D1 turns on. It also decides how independent the harness is from code the UI uses, which is a testing principle in its own right: a check that shares code with what it checks can share that code's faults.
+
+| # | Option | Consequence | Standing |
+|---|---|---|---|
+| 1 | **Full client.** The harness's `CallTheCreditApi` ability wraps `openapi-fetch` with the generated types | Typed calls; a contract change breaks the harness at compile time. The harness shares the UI's request code, so a fault in `openapi-fetch` (for example how it encodes a query) would be made identically by both and could hide; amends the accepted specification's "directly" (B7) | Considered |
+| 2 | **Independent.** The harness uses Serenity/JS's own `CallAnApi`, builds requests from the contract and fixtures, and validates every response against the contract at run time (as `tools/mock-smoke.mjs` already does) | Matches the specification as written (B7); no code shared with the UI; the client keeps one consumer. A contract change shows up when scenarios run, not when they compile; request bodies are untyped while authoring | Considered |
+| 3 | **Types only.** The harness uses Serenity/JS's own `CallAnApi` and runtime validation as in option 2, and also imports the generated *types* (not `openapi-fetch`) to type its requests and responses | Compile-time breakage on contract change, while the transport and the assertions stay independent of the UI. The types come from the contract, not from UI code, so sharing them is close to both reading the same contract. The client then has two consumers (of different parts); clarifies the specification's "directly" as "through its own transport" | **Recommended** |
+| 4 | **Do nothing yet.** Decide when the harness is built (Phase 3) | No decision now. D1 then has to be decided without knowing the consumer count, or deferred too | Considered |
+| 5 | **Reframe: test the API only through the UI.** No harness API calls at all | Removes the question. Contradicts the specification's API-level scenarios and the Phase 3 gate; the planted API defects could not be caught directly | Rejected: listed because it is where a 'UI-only' testing shortcut leads |
+
+**Recommendation: option 3.** The evidence: the harness must validate responses at run time anyway (B8), so independence where it matters most, the transport and the assertions, comes free with Serenity/JS's own ability; and the generated types are derived from the contract, not from UI code (B8), so importing them shares the contract, not the UI. The judgement: that compile-time breakage in the harness, when the contract changes, is worth a second consumer of the types.
+
+**The argument against.** Option 3 amends an accepted specification (B7) for a convenience, and the convenience is partly illusory: types vanish at run time, so a harness that compiles cleanly against the types can still receive a response that does not match them; only the runtime validation it needs anyway catches that, which is exactly option 2. Option 3 also ties the harness to the generator's TypeScript 5 pin (B4) and to whatever D1 decides about packaging, coupling the test code's build to the UI's tooling. And a type-level mistake in the generator would be shared by the UI and the harness alike. Option 2 is simpler, matches the specification word for word, keeps the harness's build independent, and loses only authoring-time convenience. **Option 2 is the stronger answer if harness independence is valued above compile-time feedback.**
+
+**What would change the recommendation.** A reading of the specification's "directly" as a deliberate independence rule (then option 2), or a Serenity/JS limitation that makes typed requests awkward in `CallAnApi` (found at Phase 3).
+
+### How D0 shapes D1
+
+| D0 answer | Consumers of the client | What it means for D1 |
+|---|---|---|
+| Option 1 or 3 | UI and harness | Two consumers: a shared package, so D1 option 1 (workspaces now) or option 3 (standalone until the second consumer) |
+| Option 2 or 5 | UI only | One consumer: D1 option 5 (generate the types into the UI) becomes credible, and the workspace question can wait for any other shared package |
+| Option 4 | Unknown | D1 decided without the consumer count, or deferred with D0 |
 
 ### D1. The package layout
 
@@ -91,7 +124,8 @@ The README's Phase 1 target layout says "npm workspaces", but it was written as 
 
 | File | Section | Change required | Done |
 |---|---|---|---|
-| `DOCS/decision-register.md` | New DR-042 | The chosen layout, citing this brief | [ ] |
+| `DOCS/decision-register.md` | New DR-042 and DR-043 | D0 and D1, citing this brief | [ ] |
+| `DOCS/.design/api-specification.md` | Section 1 | Clarify how the harness consumes the API, if D0 is option 1 or 3 | [ ] |
 | `DOCS/implementation-plans/` | The CDS-15 plan file | Written once agreed, with D1's outcome in its steps | [ ] |
 | Root `package.json`, lock files, `.github/workflows/ci.yml` | Workspaces or standalone | As chosen | [ ] |
 | `README.md` | 'How it is built'; checks | The layout as chosen | [ ] |
@@ -108,6 +142,7 @@ Filled only when the owner decides. **Not pre-filled.**
 
 | Ref | Item | Decision | Conditions | Who | When |
 |---|---|---|---|---|---|
+| D0 | Harness and the client | | | | |
 | D1 | Package layout | | | | |
 
 ### 7.3 Corrections after decision

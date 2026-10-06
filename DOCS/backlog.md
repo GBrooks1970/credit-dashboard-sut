@@ -1,6 +1,6 @@
 ---
-version: 22
-created: 2026-10-06T09:06Z
+version: 23
+created: 2026-10-06T10:32Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 22 (CDS-14 complete: the Prism mock serves every operation; the Phase 1 exit gate is met)
+**Version:** 23 (records the merges of #3, #4 and #5; CDS-15 blocked by decision brief 6)
 **Last Updated:** 2026-10-04
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -34,7 +34,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | CDS-12 | Decide whether to survey the source profile sub-pages (structure only) or keep the proposed designs | 0 | COMPLETE (2026-10-04) | none |
 | CDS-13 | Arrange data no persona holds: test-control overrides (DR-020) | 2 | COMPLETE (2026-10-04) | none |
 | CDS-14 | Prism mock serves every operation from the contract examples (Phase 1 exit gate) | 1 | COMPLETE (2026-10-06) | none |
-| CDS-15 | Generate the typed TypeScript client into `packages/api-client` from the contract | 1 | READY TO START | none |
+| CDS-15 | Generate the typed TypeScript client into `packages/api-client` from the contract | 1 | BLOCKED | Decision brief 6 (D1, package layout) |
 | CDS-16 | Pin the remaining versions as each project is created: .NET SDK (`global.json`), React, Vite (DR-009) | 1 | READY TO START | none |
 | CDS-17 | Convert this backlog's summary table to the portfolio `auth-table` dialect so the shared Kanban generator can build a board | 1 | READY TO START | none (owner chooses when a board is wanted) |
 
@@ -148,7 +148,15 @@ Added at onboarding (owner's choice). The summary table above (ID, Item, Phase, 
 
 ### CDS-14: Prism mock
 
-**COMPLETE (2026-10-06).** Planned and approved before implementation. A spike showed Prism 5.16.0 serves the contract without its `/api/v1` base path (DR-039), answers malformed requests with 422 where the specification says 400, and must be started with `node` rather than through `npx` and a shell, or it outlives its caller. Delivered: contract v9 (path-parameter examples; Prism server entry), API specification v9 (sections 3, 11), root `package.json` with exact pins, `tools/mock-smoke.mjs`, a CI step. Evidence: 36 of 36 operations pass, and a call without a token gets 401; a planted bad example (`greetingName: ''`) fails the run on exactly `GET /me`; port 4010 is free after both passing and failing runs. **The Phase 1 exit gate is met**: lint clean, every example valid, the mock serves every operation. CDS-15 and CDS-16 remain Phase 1 work outside the gate.
+**COMPLETE (2026-10-06; merged in #3, squash `ed63834`; implementation log in #4, `64c8c8f`; plan written to file in #5, `7a08fdf`).** Planned and approved before implementation. A spike showed Prism 5.16.0 serves the contract without its `/api/v1` base path (DR-039), answers malformed requests with 422 where the specification says 400, and must be started with `node` rather than through `npx` and a shell, or it outlives its caller. Delivered: contract v9 (path-parameter examples; Prism server entry), API specification v9 (sections 3, 11), root `package.json` with exact pins, `tools/mock-smoke.mjs`, a CI step. Evidence: 36 of 36 operations pass, and a call without a token gets 401; a planted bad example (`greetingName: ''`) fails the run on exactly `GET /me`; port 4010 is free after both passing and failing runs. **The Phase 1 exit gate is met**: lint clean, every example valid, the mock serves every operation. CDS-15 and CDS-16 remain Phase 1 work outside the gate.
+
+### CDS-15: Generated TypeScript client
+
+**BLOCKED (2026-10-06) by decision brief 6.** The plan was presented with spike evidence (`openapi-typescript` 7.13.0 generates all 36 operations; strict `tsc` with TypeScript 5.9.3 catches a wrong enum and a wrong type; an `openapi-fetch` 0.17.0 client called the Prism mock under Node 24.18.0). Three decisions are agreed: TypeScript 5.9.3 (the generator requires `^5.x`; revisit when it supports 7), generated types committed with a CI drift check, and a root `npm run verify` that becomes the registry gate. The package layout (npm workspaces or standalone) is deferred to decision brief 6 (#6). The plan is written to `DOCS/implementation-plans/` once fully agreed (DR-041).
+
+### Process: implementation plans (DR-041)
+
+**Recorded 2026-10-06 (#5, `7a08fdf`).** Every plan is written to `DOCS/implementation-plans/` before implementation, indexed and kept; the CDS-14 plan was recorded after delivery.
 
 ### CDS-14 to CDS-16: Phase 1
 

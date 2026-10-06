@@ -2,6 +2,15 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-06: generated TypeScript client (CDS-15)
+
+- New standalone package `packages/api-client` (DR-043): types generated from the contract by `openapi-typescript` 7.13.0 and committed, a thin `openapi-fetch` 0.17.0 client with optional bearer token, TypeScript pinned to 5.9.3 (the generator requires `^5.x`).
+- `npm run check` in the package fails when the committed types differ from a fresh generation, then type-checks strictly, including negative cases that must fail to compile.
+- `tools/client-smoke.ts`: four typed calls through the client against the Prism mock (no token, query, path parameter, request body with a test-control header).
+- `tools/lib/prism.mjs`: one Prism start and stop helper shared by both smoke runs.
+- `npm run verify` (`tools/verify.mjs`) runs every check with one result line each; CI now runs it as one step.
+- API specification v10 (sections 3 and 11) and UI specification v7 (Data row) name the client.
+
 ## 2026-10-06: implementation plans are recorded (DR-041)
 
 - New `DOCS/implementation-plans/` with an index and a template (`DOCS/templates/implementation-plan.template.md`).

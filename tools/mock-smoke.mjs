@@ -1,4 +1,4 @@
-// version: 1 | created: 2026-10-06T09:06Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 2 | created: 2026-10-06T16:33Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Mock smoke run (CDS-14; API specification section 11, 'Mock parity').
 // Starts the Prism mock from the contract with --errors, calls every operation with values taken from the
 // contract, and requires: the operation's documented 2xx status, no contract violation reported by Prism, and a
@@ -7,12 +7,11 @@
 // Run from the repository root:  npm ci && npm run check:mock   (MOCK_PORT overrides the default port 4010)
 import fs from 'node:fs';
 import path from 'node:path';
-import { spawn } from 'node:child_process';
-import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import YAML from 'yaml';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
+import { startPrism } from './lib/prism.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const contractPath = path.join(root, 'DOCS', '.architecture', 'openapi.yaml');
@@ -79,30 +78,8 @@ function buildOperations() {
   return ops;
 }
 
-function startPrism() {
-  const require = createRequire(import.meta.url);
-  const cli = require.resolve('@stoplight/prism-cli/dist/index.js');
-  const child = spawn(process.execPath, [cli, 'mock', contractPath, '-p', String(port), '-h', '127.0.0.1', '--errors'],
-    { stdio: ['ignore', 'pipe', 'pipe'] });
-  let log = '';
-  const ready = new Promise((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error(`Prism did not start within 60 s:\n${log.slice(-2000)}`)), 60000);
-    const onData = (d) => {
-      log += d;
-      if (/listening/i.test(log)) { clearTimeout(timer); resolve(); }
-    };
-    child.stdout.on('data', onData);
-    child.stderr.on('data', onData);
-    child.on('exit', (code) => { clearTimeout(timer); reject(new Error(`Prism exited early (code ${code}):\n${log.slice(-2000)}`)); });
-  });
-  return { child, ready };
-}
-
 const ops = buildOperations();
-const { child, ready } = startPrism();
-const stop = () => { if (child.exitCode === null) child.kill(); };
-process.on('exit', stop);
-process.on('SIGINT', () => { stop(); process.exit(130); });
+const { ready, stop } = startPrism({ contractPath, port });
 
 const failures = [];
 let passed = 0;

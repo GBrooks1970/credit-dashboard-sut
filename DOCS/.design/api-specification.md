@@ -1,7 +1,7 @@
 ---
-version: 9
-created: 2026-10-06T09:06Z
-supersedes: v8 (2026-10-05T20:28Z); earlier versions are in git history (DR-040)
+version: 10
+created: 2026-10-06T16:33Z
+supersedes: v9 (2026-10-06T09:06Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
 language: en-GB
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v10:** the generated TypeScript client (CDS-15): section 3 'Client' row and section 11 'Client' check; the harness does not use it (DR-042, DR-043).
 **Changes in v9:** the Prism mock is pinned, smoke-tested over every operation and reachable without the `/api/v1` prefix (CDS-14, DR-039; contract v9, `info.version` 0.6.2); sections 3 and 11.
 **Changes in v8:** decision brief 5 (owner review, CDS-01): `GET /me` gains `greetingName` (DR-036; contract v7, `info.version` 0.6.0); no general rate limit, 429 is PR-09's resend limit only (DR-035); the overview stays one aggregate call (DR-034). Accepted as the Phase 0 baseline (DR-038).
 **Changes in v7:** the email and mobile operations and `POST /__test/verify-email` are in the contract (v6, `info.version` 0.5.0; CDS-11), with rules PR-09 to PR-11 and amended PR-04 (decision brief 3). A reusable `429` response now exists for the error catalogue's rate limit.
@@ -50,6 +51,7 @@ Out of scope: real credit scoring, real open-banking consent, persistent storage
 | Auth | Bearer token issued by `POST /auth/login`; each test user is bound to one persona | Proposed (DR-007) |
 | Container | Single Docker image; `docker compose up` brings up API and UI | Proposed |
 | Mock | Prism 5.16.0 (`@stoplight/prism-cli`, pinned in the root `package.json`, DR-009) serving `openapi.yaml` examples on port 4010, without the `/api/v1` prefix (DR-039): `npm run mock` | Accepted |
+| Client | Generated TypeScript client, `packages/api-client`, a standalone package with its own lock (DR-043): types generated from `openapi.yaml` by `openapi-typescript` 7.13.0, requests made by `openapi-fetch` 0.17.0, TypeScript 5.9.3. Each consumer chooses the base URL: the mock at `http://localhost:4010`, the service at `http://localhost:4000/api/v1` (DR-039). Its consumer is the UI; the harness consumes the API independently (DR-042) | Accepted |
 
 The service is stateless apart from the in-memory store, the active bug flags and the controlled clock. A reset returns all three to their defaults.
 
@@ -287,6 +289,7 @@ UI-only flags (labels, ARIA, rendering) are listed in the UI spec.
 | Contract lint | Redocly CLI (2.57.0 on 2026-10-04), house ruleset `redocly.yaml`: `recommended` plus the overrides recorded in that file. Clean on 2026-10-04 | Every commit (Phase 1 onwards) |
 | Example validity | Each example validated against its own schema; enforced by the ruleset's `no-invalid-media-type-examples` and `no-invalid-schema-examples` at error level | Every commit |
 | Mock parity | Phase 1: `npm run check:mock` starts Prism with `--errors`, calls every operation with values from the contract, and requires its documented 2xx, no contract violation and a response body that validates; a call without a token must get 401. Phase 4: the UI smoke run against the mock. Known limits of the mock, checked against the real service in Phase 3 instead: a malformed request gets 422 where this specification says 400, and a missing test-control key gets 401 where the contract says 404 | Phase 1 (every commit) and Phase 4 |
+| Client | `npm --prefix packages/api-client run check`: the committed generated types match a fresh generation, and a strict type check passes, including negative tests that must fail to compile; then a client smoke run of typed calls against the mock | Phase 1 (every commit) |
 | Response validation | Every API scenario response checked against the contract | Phase 3 onwards |
 | Property-based | Schemathesis against the running service | Nightly |
 | Business rules | `@api` Gherkin scenarios tagged with `BR-` IDs | Phase 3 onwards |

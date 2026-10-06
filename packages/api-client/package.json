@@ -1,0 +1,22 @@
+{
+  "name": "@credit-dashboard-sut/api-client",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Typed client generated from the credit-dashboard-sut OpenAPI contract (DR-043).",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "generate": "node scripts/generate.mjs",
+    "check": "node scripts/generate.mjs --check && tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "openapi-fetch": "0.17.0"
+  },
+  "devDependencies": {
+    "openapi-typescript": "7.13.0",
+    "typescript": "5.9.3"
+  }
+}

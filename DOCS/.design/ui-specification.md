@@ -1,7 +1,7 @@
 ---
-version: 6
-created: 2026-10-05T20:28Z
-supersedes: v5 (2026-10-04T23:19Z)
+version: 7
+created: 2026-10-06T16:33Z
+supersedes: v6 (2026-10-05T20:28Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-spec
 language: en-GB
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v7:** the 'Data' row names the generated client package and its pinned tools (CDS-15, DR-043).
 **Changes in v6:** decision brief 5 (owner review, CDS-01): the header greets the customer by `greetingName` from `GET /me` (DR-036); the debug panel is in local and test builds only (DR-037). Accepted as the Phase 0 baseline (DR-038).
 **Changes in v5:** the email and mobile profile sub-pages join the page catalogue (Release 3, CDS-11); companion links point at API spec v7 and profile spec v4.
 **Changes in v4:** decision brief 2 applied: accounts in credit read 'in credit' (DR-018); new bug flag `negative-balance` (DR-019); React + Vite accepted (DR-003); Release 3 profile sub-pages are email and mobile (DR-022).
@@ -42,7 +43,7 @@ Out of scope: real branding, real lenders, open-banking flows, offers and market
 | --- | --- | --- |
 | Framework | React with Vite and TypeScript | Accepted (DR-003, 2026-10-04) |
 | Routing | Client-side router; deep links work on refresh | Proposed |
-| Data | Generated client (e.g. openapi-typescript + openapi-fetch); query cache with retry off in test mode | Proposed |
+| Data | Generated client `packages/api-client` (`openapi-typescript` 7.13.0 types, `openapi-fetch` 0.17.0, DR-043), base URL per environment (DR-039); query cache with retry off in test mode | Accepted (client); Proposed (cache) |
 | Styling | Design tokens in CSS custom properties; light and dark themes | Proposed |
 | Charts | Hand-built SVG components, so the accessibility tree is under our control | Proposed |
 | Bug flags | Read from `GET /__test/state` at start, or from `?bugs=` locally | Proposed |

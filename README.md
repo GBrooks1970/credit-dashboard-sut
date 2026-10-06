@@ -58,7 +58,9 @@ Node is pinned in `.nvmrc` (24.18.0).
 ## How it is built
 
 Specification first: a change goes to the contract, a rule table or the fixture format before fixtures, scenarios
-or code. Each phase has an exit gate (API specification, 'Verification checks'; backlog). The planned layout adds
+or code. Each piece of work starts from a written implementation plan, approved before it is built and kept in
+[`DOCS/implementation-plans/`](DOCS/implementation-plans/_index.md) (DR-041); each delivery is recorded in
+[`DOCS/implementation-logs/`](DOCS/implementation-logs/). Each phase has an exit gate (API specification, 'Verification checks'; backlog). The planned layout adds
 an ASP.NET Core minimal API (DR-017), a React + Vite UI (DR-003), a generated TypeScript client and a Serenity/JS
 harness (DR-006).
 

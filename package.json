@@ -1,0 +1,18 @@
+{
+  "name": "credit-dashboard-sut",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Fictional UK credit-health dashboard built as a system under test. Repository-level tooling.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "mock": "prism mock DOCS/.architecture/openapi.yaml -p 4010 --errors",
+    "check:mock": "node tools/mock-smoke.mjs"
+  },
+  "devDependencies": {
+    "@stoplight/prism-cli": "5.16.0",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "yaml": "2.9.1"
+  }
+}

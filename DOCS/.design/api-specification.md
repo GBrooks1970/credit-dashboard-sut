@@ -1,7 +1,7 @@
 ---
-version: 8
-created: 2026-10-05T20:28Z
-supersedes: v7 (2026-10-04T23:19Z)
+version: 9
+created: 2026-10-06T09:06Z
+supersedes: v8 (2026-10-05T20:28Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
 language: en-GB
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v9:** the Prism mock is pinned, smoke-tested over every operation and reachable without the `/api/v1` prefix (CDS-14, DR-039; contract v9, `info.version` 0.6.2); sections 3 and 11.
 **Changes in v8:** decision brief 5 (owner review, CDS-01): `GET /me` gains `greetingName` (DR-036; contract v7, `info.version` 0.6.0); no general rate limit, 429 is PR-09's resend limit only (DR-035); the overview stays one aggregate call (DR-034). Accepted as the Phase 0 baseline (DR-038).
 **Changes in v7:** the email and mobile operations and `POST /__test/verify-email` are in the contract (v6, `info.version` 0.5.0; CDS-11), with rules PR-09 to PR-11 and amended PR-04 (decision brief 3). A reusable `429` response now exists for the error catalogue's rate limit.
 **Changes in v6:** test-control overrides are in the contract (v5, `info.version` 0.4.0; CDS-13): section 6.5 states their rules and section 9.1 which fixture checks apply to them; `FixtureAccount` moves into the contract.
@@ -48,7 +49,7 @@ Out of scope: real credit scoring, real open-banking consent, persistent storage
 | Data | In-memory store, loaded from `fixtures/personas/*.json` at start and on reset | Proposed |
 | Auth | Bearer token issued by `POST /auth/login`; each test user is bound to one persona | Proposed (DR-007) |
 | Container | Single Docker image; `docker compose up` brings up API and UI | Proposed |
-| Mock | Prism serving `openapi.yaml` examples on a separate port | Proposed |
+| Mock | Prism 5.16.0 (`@stoplight/prism-cli`, pinned in the root `package.json`, DR-009) serving `openapi.yaml` examples on port 4010, without the `/api/v1` prefix (DR-039): `npm run mock` | Accepted |
 
 The service is stateless apart from the in-memory store, the active bug flags and the controlled clock. A reset returns all three to their defaults.
 
@@ -285,7 +286,7 @@ UI-only flags (labels, ARIA, rendering) are listed in the UI spec.
 | --- | --- | --- |
 | Contract lint | Redocly CLI (2.57.0 on 2026-10-04), house ruleset `redocly.yaml`: `recommended` plus the overrides recorded in that file. Clean on 2026-10-04 | Every commit (Phase 1 onwards) |
 | Example validity | Each example validated against its own schema; enforced by the ruleset's `no-invalid-media-type-examples` and `no-invalid-schema-examples` at error level | Every commit |
-| Mock parity | Prism started from the contract; UI smoke run against it | Phase 1 and Phase 4 |
+| Mock parity | Phase 1: `npm run check:mock` starts Prism with `--errors`, calls every operation with values from the contract, and requires its documented 2xx, no contract violation and a response body that validates; a call without a token must get 401. Phase 4: the UI smoke run against the mock. Known limits of the mock, checked against the real service in Phase 3 instead: a malformed request gets 422 where this specification says 400, and a missing test-control key gets 401 where the contract says 404 | Phase 1 (every commit) and Phase 4 |
 | Response validation | Every API scenario response checked against the contract | Phase 3 onwards |
 | Property-based | Schemathesis against the running service | Nightly |
 | Business rules | `@api` Gherkin scenarios tagged with `BR-` IDs | Phase 3 onwards |

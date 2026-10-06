@@ -33,7 +33,7 @@ seeded this repository. No service, UI or harness code exists yet; see [`DOCS/ba
 
 ## Checks
 
-The specification is kept green by three checks, which CI runs on every push:
+The specification is kept green by four checks, which CI runs on every push:
 
 ```bash
 npx --yes @redocly/cli@2.57.0 lint
@@ -46,6 +46,12 @@ cd fixtures && npm ci && npm run check
 ```bash
 pip install gherkin-official==29.0.0 && python tools/check-gherkin.py
 ```
+
+```bash
+npm ci && npm run check:mock
+```
+
+The last starts the Prism mock (pinned in `package.json`) and calls every operation in the contract. To run the mock on its own, use `npm run mock`; it listens on `http://localhost:4010` without the `/api/v1` prefix (DR-039).
 
 Node is pinned in `.nvmrc` (24.18.0).
 

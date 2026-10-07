@@ -1,8 +1,8 @@
-# version: 3 | created: 2026-10-05T20:00Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 4 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @ui
 Feature: Searches page
   A customer can see which organisations have searched their report, hard and soft searches apart.
-  Covers UI specification v5, section 6.7.
+  Covers the UI specification, section 6.7.
 
   Scenario: Hard searches are listed
     Given Alex holds the "struggling" persona

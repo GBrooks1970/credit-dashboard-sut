@@ -125,7 +125,7 @@ export interface paths {
         put?: never;
         /**
          * Send the verification link again
-         * @description Allowed once at least 60 seconds have passed since the last link was sent, on the controlled clock (PR-09). Sooner is a 429 with Retry-After. An email that is already verified is a 422 and nothing is sent.
+         * @description Allowed once at least 60 seconds have passed since the last link was sent, on the controlled clock (PR-09). Sooner is a 429 with Retry-After. An email that is already verified is a 422 (`/problems/rule-violation/already-verified`) and nothing is sent.
          */
         post: operations["resendEmailVerification"];
         delete?: never;
@@ -144,7 +144,7 @@ export interface paths {
         get?: never;
         /**
          * Add or change the mobile number
-         * @description A UK number (PR-06) is stored at once, normalised to +44, as unverified, and a six-digit code is issued (PR-10). The demo sends no message: the code is always 123456. A number outside PR-06 is a 422.
+         * @description A UK number (PR-06) is stored at once, normalised to +44, as unverified, and a six-digit code is issued (PR-10). The demo sends no message: the code is always 123456. A number outside PR-06 is a 422 (`/problems/rule-violation/mobile-number`).
          */
         put: operations["changeMobile"];
         post?: never;
@@ -165,7 +165,7 @@ export interface paths {
         put?: never;
         /**
          * Submit the one-time code
-         * @description The correct code, while less than 10 minutes have passed since issue, marks the number verified (PR-10). A wrong code is a 422 with the attempts remaining; the third wrong code voids the challenge (PR-11). An expired or voided code, or a code with nothing pending, is a 422 asking for a new code.
+         * @description The correct code, while less than 10 minutes have passed since issue, marks the number verified (PR-10). A wrong code with attempts left is a 422 `/problems/rule-violation/code-wrong` carrying `attemptsRemaining` (PR-11). The third wrong code voids the challenge; it, an expired or voided code, and a code with nothing pending are a 422 `/problems/rule-violation/code-invalid`, asking for a new code.
          */
         post: operations["verifyMobile"];
         delete?: never;
@@ -436,7 +436,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Total debt and trend */
+        /** Total debt, trend and the breakdown by account type */
         get: operations["getDebtOverview"];
         put?: never;
         post?: never;
@@ -541,7 +541,7 @@ export interface paths {
         get?: never;
         /**
          * Bind a test user to a persona, optionally with data overrides
-         * @description Binds the user to the persona. Optional `overrides` arrange data no persona holds (DR-020): each list named for a bureau replaces that bureau's list, for this user only, until rebound or reset. Overrides are source data in the fixture format (API spec section 9.1); derived values are recomputed from them. A body that fails the schema is a 400; overrides that break a business rule (for example a stored utilisation that does not match its balance and limit, BR-03) are a 422; an unknown bureau ID is a 404.
+         * @description Binds the user to the persona. Optional `overrides` arrange data no persona holds (DR-020): each list named for a bureau replaces that bureau's list, for this user only, until rebound or reset. Overrides are source data in the fixture format (API spec section 9.1); derived values are recomputed from them. A body that fails the schema is a 400; overrides that break a business rule (for example a stored utilisation that does not match its balance and limit, BR-03) are a 422 (`/problems/rule-violation/overrides-inconsistent`); an unknown bureau ID is a 404.
          */
         put: operations["testBindPersona"];
         post?: never;
@@ -924,6 +924,11 @@ export interface components {
         };
         DebtOverview: {
             total: components["schemas"]["Money"];
+            /** @description The total split by account type (BR-07, DR-046): for each type, the sum of positive balances of open accounts with includedInTotals true. One entry per type whose sum is above zero, in AccountType enum order; current accounts never appear. The entries sum to total. */
+            byType: {
+                type: components["schemas"]["AccountType"];
+                amount: components["schemas"]["Money"];
+            }[];
             /**
              * @description Against total debt three months earlier (BR-07). Steady when the unrounded change is at most 1% either way; if the earlier total was zero, steady when now zero, otherwise up (DR-011).
              * @enum {string}
@@ -951,12 +956,17 @@ export interface components {
             total: number;
         };
         Problem: {
-            /** Format: uri-reference */
+            /**
+             * Format: uri-reference
+             * @description The problem type (API specification section 8). A 422 names its rule outcome under /problems/rule-violation/ (DR-048); clients and tests branch on type, never on title or detail.
+             */
             type: string;
             title: string;
             status: number;
             detail?: string;
             instance?: string;
+            /** @description code-wrong and code-invalid only (PR-11) */
+            attemptsRemaining?: number;
             errors?: {
                 field?: string;
                 message?: string;
@@ -1024,7 +1034,7 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
-        /** @description Breaks a business rule */
+        /** @description An account detail is out of range (BR-14) */
         RuleViolation: {
             headers: {
                 [name: string]: unknown;
@@ -1032,8 +1042,8 @@ export interface components {
             content: {
                 /**
                  * @example {
-                 *       "type": "/problems/rule-violation",
-                 *       "title": "Breaks a business rule",
+                 *       "type": "/problems/rule-violation/out-of-range",
+                 *       "title": "Value out of range",
                  *       "status": 422,
                  *       "detail": "interestRate must be between 0 and 100 (BR-14).",
                  *       "instance": "/api/v1/accounts/acc_7f3k2q/details",
@@ -1043,6 +1053,87 @@ export interface components {
                  *           "message": "must be between 0 and 100"
                  *         }
                  *       ]
+                 *     }
+                 */
+                "application/problem+json": components["schemas"]["Problem"];
+            };
+        };
+        /** @description The preferred name breaks PR-02 after trimming */
+        PreferredNameRefused: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                /**
+                 * @example {
+                 *       "type": "/problems/rule-violation/preferred-name",
+                 *       "title": "Preferred name not allowed",
+                 *       "status": 422,
+                 *       "detail": "A preferred name is 1 to 30 letters, spaces, hyphens or apostrophes (PR-02).",
+                 *       "instance": "/api/v1/me/profile/preferred-name"
+                 *     }
+                 */
+                "application/problem+json": components["schemas"]["Problem"];
+            };
+        };
+        /** @description The email is already verified; nothing is sent (PR-09) */
+        AlreadyVerified: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                /**
+                 * @example {
+                 *       "type": "/problems/rule-violation/already-verified",
+                 *       "title": "Email already verified",
+                 *       "status": 422,
+                 *       "detail": "This email address is already verified.",
+                 *       "instance": "/api/v1/me/profile/email/verification"
+                 *     }
+                 */
+                "application/problem+json": components["schemas"]["Problem"];
+            };
+        };
+        /** @description The number is not a UK mobile number (PR-06) */
+        MobileNumberRefused: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                /**
+                 * @example {
+                 *       "type": "/problems/rule-violation/mobile-number",
+                 *       "title": "Not a UK mobile number",
+                 *       "status": 422,
+                 *       "detail": "Enter a UK mobile number starting 07 or +447 (PR-06).",
+                 *       "instance": "/api/v1/me/profile/mobile"
+                 *     }
+                 */
+                "application/problem+json": components["schemas"]["Problem"];
+            };
+        };
+        /** @description The code is refused. `code-wrong` while attempts remain (PR-11); `code-invalid` for the third wrong code, an expired or voided code, or nothing pending (PR-10, PR-11, DR-026) */
+        CodeRefused: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                "application/problem+json": components["schemas"]["Problem"];
+            };
+        };
+        /** @description Test-control overrides break a business rule (DR-020) */
+        OverridesInconsistent: {
+            headers: {
+                [name: string]: unknown;
+            };
+            content: {
+                /**
+                 * @example {
+                 *       "type": "/problems/rule-violation/overrides-inconsistent",
+                 *       "title": "Overrides break a business rule",
+                 *       "status": 422,
+                 *       "detail": "acc_ovcc01 utilisation 40 does not match its balance and limit (BR-03).",
+                 *       "instance": "/api/v1/__test/users/alex/persona"
                  *     }
                  */
                 "application/problem+json": components["schemas"]["Problem"];
@@ -1286,7 +1377,7 @@ export interface operations {
             };
             400: components["responses"]["Validation"];
             401: components["responses"]["Unauthenticated"];
-            422: components["responses"]["RuleViolation"];
+            422: components["responses"]["PreferredNameRefused"];
         };
     };
     changeEmail: {
@@ -1351,7 +1442,7 @@ export interface operations {
                 };
             };
             401: components["responses"]["Unauthenticated"];
-            422: components["responses"]["RuleViolation"];
+            422: components["responses"]["AlreadyVerified"];
             429: components["responses"]["RateLimited"];
         };
     };
@@ -1392,7 +1483,7 @@ export interface operations {
             };
             400: components["responses"]["Validation"];
             401: components["responses"]["Unauthenticated"];
-            422: components["responses"]["RuleViolation"];
+            422: components["responses"]["MobileNumberRefused"];
         };
     };
     verifyMobile: {
@@ -1430,7 +1521,7 @@ export interface operations {
             };
             400: components["responses"]["Validation"];
             401: components["responses"]["Unauthenticated"];
-            422: components["responses"]["RuleViolation"];
+            422: components["responses"]["CodeRefused"];
         };
     };
     listBureaux: {
@@ -1524,7 +1615,23 @@ export interface operations {
                      *           "amountMinor": 1294760,
                      *           "currency": "GBP"
                      *         },
-                     *         "trend": "steady"
+                     *         "trend": "steady",
+                     *         "byType": [
+                     *           {
+                     *             "type": "creditcard",
+                     *             "amount": {
+                     *               "amountMinor": 42360,
+                     *               "currency": "GBP"
+                     *             }
+                     *           },
+                     *           {
+                     *             "type": "loan",
+                     *             "amount": {
+                     *               "amountMinor": 1252400,
+                     *               "currency": "GBP"
+                     *             }
+                     *           }
+                     *         ]
                      *       },
                      *       "accountTypes": [
                      *         {
@@ -2259,7 +2366,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Total debt and trend (BR-07) */
+            /** @description Total debt, trend and the breakdown by account type (BR-07) */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -2271,7 +2378,23 @@ export interface operations {
                      *         "amountMinor": 1294760,
                      *         "currency": "GBP"
                      *       },
-                     *       "trend": "steady"
+                     *       "trend": "steady",
+                     *       "byType": [
+                     *         {
+                     *           "type": "creditcard",
+                     *           "amount": {
+                     *             "amountMinor": 42360,
+                     *             "currency": "GBP"
+                     *           }
+                     *         },
+                     *         {
+                     *           "type": "loan",
+                     *           "amount": {
+                     *             "amountMinor": 1252400,
+                     *             "currency": "GBP"
+                     *           }
+                     *         }
+                     *       ]
                      *     }
                      */
                     "application/json": components["schemas"]["DebtOverview"];
@@ -2489,7 +2612,7 @@ export interface operations {
             };
             400: components["responses"]["Validation"];
             404: components["responses"]["TestControlDisabled"];
-            422: components["responses"]["RuleViolation"];
+            422: components["responses"]["OverridesInconsistent"];
         };
     };
     testSetBugs: {

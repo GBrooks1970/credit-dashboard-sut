@@ -1,4 +1,4 @@
-# version: 1 | created: 2026-10-04T13:01Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 2 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @api
 Feature: Credit score scale
   Every score and benchmark sits on one 0 to 1000 scale, so scores from different bureaux can be compared.
@@ -19,3 +19,12 @@ Feature: Credit score scale
   Scenario: Benchmarks share the score's scale
     When Alex asks for the score from "Bureau A"
     Then the national and local averages are each between 0 and 1000
+
+  # Sam holds a different persona from the background: drilldown's history has no score for January 2026.
+  @BR-02
+  Scenario: A month with no score is reported as missing, not carried forward
+    Given Sam holds the "drilldown" persona
+    And today is 3 October 2026
+    When Sam asks for the score history from "Bureau A" over 1 year
+    Then 12 monthly points are returned
+    And the score for January 2026 is missing

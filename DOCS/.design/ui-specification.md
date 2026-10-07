@@ -1,7 +1,7 @@
 ---
-version: 8
-created: 2026-10-06T18:29Z
-supersedes: v6 (2026-10-05T20:28Z); earlier versions are in git history (DR-040)
+version: 9
+created: 2026-10-07T10:25Z
+supersedes: v8 (2026-10-06T18:29Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-spec
 language: en-GB
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v9:** CDS-18 review fixes. The overview's changes toggle fetches every change with one further call (section 6.2, DR-047); the debt breakdown reads `byType` (section 6.7, DR-046); the report-changes route carries `sentiment`; the edit-form catalogue row also names the open-redirect security scenarios; section 6.9 cites PR-01 to PR-11.
 **Changes in v8:** the framework versions are resolved (CDS-16, DR-044): section 3 'Framework' row.
 **Changes in v7:** the 'Data' row names the generated client package and its pinned tools (CDS-15, DR-043).
 **Changes in v6:** decision brief 5 (owner review, CDS-01): the header greets the customer by `greetingName` from `GET /me` (DR-036); the debug panel is in local and test builds only (DR-037). Accepted as the Phase 0 baseline (DR-038).
@@ -95,13 +96,13 @@ WCAG 2.2 AA. With all bug flags off, an axe-core scan of every page returns zero
 | Page | Route | Release | Main endpoints | Feature file |
 | --- | --- | --- | --- | --- |
 | Login | `/login` | 1 | `POST /auth/login` | `ui/login.feature` |
-| Report overview | `/credit-health/report/:bureauId` | 1 | `GET /reports/{id}/overview`, `/score/history` | `ui/report-overview.feature` |
+| Report overview | `/credit-health/report/:bureauId` | 1 | `GET /reports/{id}/overview`, `/score/history`; `/changes` when the changes toggle is pressed (DR-047) | `ui/report-overview.feature` |
 | Payment history | `/credit-health/report/:bureauId/payment-history` | 2 | `GET /reports/{id}/payment-history` | `ui/payment-history.feature` |
 | Account-type list | `/credit-health/report/:bureauId/accounts/:type` | 2 | `GET /reports/{id}/accounts`, `/accounts/totals` | `ui/account-drilldown.feature` |
 | Account detail | `/credit-health/report/:bureauId/account/:accountId` | 2 | `GET /accounts/{id}`, `/balance-history`, `/payment-history` | `ui/account-drilldown.feature` |
-| Detail edit form | `/data-capture/:field?accountId=&redirectUrl=` | 2 | `PATCH /accounts/{id}/details` | `ui/account-details-form.feature` |
+| Detail edit form | `/data-capture/:field?accountId=&redirectUrl=` | 2 | `PATCH /accounts/{id}/details` | `ui/account-details-form.feature`, `security/open-redirect.feature` |
 | Closed accounts | `/credit-health/report/:bureauId/closed-accounts` | 2 | `GET /reports/{id}/accounts?status=closed` | `ui/account-drilldown.feature` |
-| Report changes | `/insights/updates?bureauId=&tags=` | 2 | `GET /reports/{id}/changes` | `ui/report-changes.feature` |
+| Report changes | `/insights/updates?bureauId=&tags=&sentiment=` | 2 | `GET /reports/{id}/changes` | `ui/report-changes.feature` |
 | Searches | `/credit-health/report/:bureauId/searches/:kind` | 3 | `GET /reports/{id}/searches` | `ui/searches.feature` |
 | Personal details | `/credit-health/report/:bureauId/personal-details` | 3 | `GET /reports/{id}/personal-details` | `ui/personal-details.feature` |
 | Debt overview | `/credit-health/debt-overview` | 3 | `GET /debt/overview` | `ui/debt.feature` |
@@ -125,7 +126,7 @@ On success the app stores the token in memory (not localStorage) and routes to t
 
 ### 6.2 Report overview (Release 1)
 
-One `GET /reports/{bureauId}/overview` call feeds every section except the history chart. Sections render in the order below. If the overview call fails, every section shows its error state with one shared Retry.
+One `GET /reports/{bureauId}/overview` call feeds every section except the history chart, and except the full changes list behind the changes toggle (DR-047). Sections render in the order below. If the overview call fails, every section shows its error state with one shared Retry.
 
 | Section | Key elements (data-testid) | Data | States worth testing |
 | --- | --- | --- | --- |
@@ -133,7 +134,7 @@ One `GET /reports/{bureauId}/overview` call feeds every section except the histo
 | Comparison | `bureau-name`, `next-update`, `bench-national`, `bench-local` | `bureau`, `score` | `Updates in 0 days`, `1 day` (clock control) |
 | Summary | `summary-text`, `btn-chat`, `link-impact`, `btn-like`, `btn-dislike`, `ai-disclaimer` | `summary` | Feedback persists after reload (BR-10) |
 | History chart | `history-chart`, `range-3m`, `range-6m`, `range-1y` | `GET /score/history` | Null months render as gaps (BR-02); own loading state |
-| Report changes | `changes-heading`, `change-card-{id}`, `changes-toggle`, `changes-see-all` | `recentChanges`, `changesTotal` | Toggle hidden when total ≤ 3 |
+| Report changes | `changes-heading`, `change-card-{id}`, `changes-toggle`, `changes-see-all` | `recentChanges`, `changesTotal`; the toggle calls `GET /reports/{bureauId}/changes` and lists every change in place, then collapses back to the 3 newest | Toggle hidden when total ≤ 3; the toggle's own loading and error states |
 | Impact | `impact-action-needed`, `impact-monitor`, `impact-doing-well`, `impact-link` | `impact` | Pluralisation |
 | Debt | `debt-total`, `debt-trend`, `debt-link` | `debt` | Each trend value |
 | Accounts | `account-card-{type}`, `account-balance-{type}`, `account-util-text-{type}`, `account-util-bar-{type}`, `link-closed-accounts` | `accountTypes` | Type with no accounts is hidden; donut absent when limit null |
@@ -206,7 +207,7 @@ Sections not shown for a type are not rendered at all, rather than rendered empt
 
 ### 6.7 Closed accounts, report changes, searches, personal details, debt (Releases 2 to 3)
 
-These pages reuse the list patterns above. Closed accounts groups rows under `closed-group-{type}` with no summary. Report changes adds filter chips `changes-filter-{sentiment}` and pagination `pager-prev`, `pager-next`, `pager-status`; filters are reflected in the URL. Searches lists `search-row-{id}`. Personal details is read-only in v1. Debt overview shows `debt-total`, `debt-trend` and a per-type breakdown `debt-type-{type}`.
+These pages reuse the list patterns above. Closed accounts groups rows under `closed-group-{type}` with no summary. Report changes adds filter chips `changes-filter-{sentiment}` and pagination `pager-prev`, `pager-next`, `pager-status`; filters are reflected in the URL. Searches lists `search-row-{id}`. Personal details is read-only in v1. Debt overview shows `debt-total`, `debt-trend` and a per-type breakdown `debt-type-{type}`, one row per `byType` entry of `GET /debt/overview` (BR-07, DR-046).
 
 ### 6.8 Debug panel (tooling)
 
@@ -214,7 +215,7 @@ Visible only when test control is enabled, so never in the public demo build (DR
 
 ### 6.9 My profile (Release 3)
 
-Specified in full in the [My Profile UI feature spec](ui-feature-profile.md): layout, element inventory with `data-testid` values, rules PR-01 to PR-08 and seed scenarios. Reached from the header account button `btn-account`. It is a different page from the report's read-only personal details in section 6.7.
+Specified in full in the [My Profile UI feature spec](ui-feature-profile.md): layout, element inventory with `data-testid` values, rules PR-01 to PR-11 and seed scenarios. Reached from the header account button `btn-account`. It is a different page from the report's read-only personal details in section 6.7.
 
 Release 3 adds the email and mobile sub-pages (DR-022), specified in that spec's section 4 and now in the page catalogue; their rules PR-09 to PR-11 are enforced by the API and shown as field errors. Address, employment and finances are stretch.
 

@@ -1,7 +1,7 @@
 ---
-version: 11
-created: 2026-10-06T18:29Z
-supersedes: v9 (2026-10-06T09:06Z); earlier versions are in git history (DR-040)
+version: 12
+created: 2026-10-07T10:25Z
+supersedes: v11 (2026-10-06T18:29Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
 language: en-GB
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v12:** CDS-18 review fixes (contract v10, `info.version` 0.7.0). BR-07 adds the debt breakdown by type (DR-046); BR-09 states that characters other than letters and digits are dropped; BR-11 names `changesTotal`; section 5 defines how a month's payment status is derived (BR-12); section 6.3 drops 403, which BR-15 rules out; section 8 lists one Problem type per rule outcome (DR-048); section 3 says token expiry is judged on the controlled clock.
 **Changes in v11:** the runtime version is resolved (CDS-16, DR-044): section 3 'Runtime' row.
 **Changes in v10:** the generated TypeScript client (CDS-15): section 3 'Client' row and section 11 'Client' check; the harness does not use it (DR-042, DR-043).
 **Changes in v9:** the Prism mock is pinned, smoke-tested over every operation and reachable without the `/api/v1` prefix (CDS-14, DR-039; contract v9, `info.version` 0.6.2); sections 3 and 11.
@@ -49,7 +50,7 @@ Out of scope: real credit scoring, real open-banking consent, persistent storage
 | Framework | ASP.NET Core minimal API. Contract first: C# request and response types generated from `openapi.yaml`; requests validated against the contract at the edge; no code-first contract generation | Accepted (DR-017) |
 | Business rules | A C# library inside the service, unit-tested with NUnit, each test tagged with its BR ID | Accepted (DR-017) |
 | Data | In-memory store, loaded from `fixtures/personas/*.json` at start and on reset | Proposed |
-| Auth | Bearer token issued by `POST /auth/login`; each test user is bound to one persona | Proposed (DR-007) |
+| Auth | Bearer token issued by `POST /auth/login`; each test user is bound to one persona. A token's `expiresAt` is judged on the controlled clock, so moving the clock past it expires the token (the `@security` expiry scenario) | Proposed (DR-007) |
 | Container | Single Docker image; `docker compose up` brings up API and UI | Proposed |
 | Mock | Prism 5.16.0 (`@stoplight/prism-cli`, pinned in the root `package.json`, DR-009) serving `openapi.yaml` examples on port 4010, without the `/api/v1` prefix (DR-039): `npm run mock` | Accepted |
 | Client | Generated TypeScript client, `packages/api-client`, a standalone package with its own lock (DR-043): types generated from `openapi.yaml` by `openapi-typescript` 7.13.0, requests made by `openapi-fetch` 0.17.0, TypeScript 5.9.3. Each consumer chooses the base URL: the mock at `http://localhost:4010`, the service at `http://localhost:4000/api/v1` (DR-039). Its consumer is the UI; the harness consumes the API independently (DR-042) | Accepted |
@@ -90,7 +91,7 @@ User 1 ── 1 Persona 1 ── * Bureau report
 
 Account types: `creditcard`, `loan`, `mortgage`, `currentaccount`, `telecomsandutilities`, `lineofcredit`.
 Account status: `normal`, `arrears`, `default`, `settled`, `closed`.
-Payment status per month: `on-time`, `missed`, `no-data`.
+Payment status per month: `on-time`, `missed`, `no-data`. For one account, a month is `missed` if it is in the account's `missedMonths`; `no-data` if it is before the month of `openedDate`, after the month of `closedDate`, or after the current month on the controlled clock; otherwise `on-time`. Across a report, a month is `missed` if any account missed it, `on-time` if any account was on time and none missed, and otherwise `no-data`. Year statuses follow BR-12.
 
 ## 6. Endpoints
 
@@ -122,10 +123,10 @@ Payment status per month: `on-time`, `missed`, `no-data`.
 | --- | --- | --- | --- | --- |
 | GET | `/reports/{bureauId}/accounts?type=&status=open\|closed` | Account rows for a type list or the closed page | 200 `AccountSummary[]` | 400, 401, 404 |
 | GET | `/reports/{bureauId}/accounts/totals?type=` | Summary card figures for one type (BR-04) | 200 `AccountTotals` | 400, 401, 404 |
-| GET | `/accounts/{accountId}` | Account detail | 200 `Account` | 401, 403, 404 |
-| GET | `/accounts/{accountId}/balance-history` | Last 6 months, oldest first | 200 `BalancePoint[]` | 401, 403, 404 |
-| GET | `/accounts/{accountId}/payment-history?year=` | That account's statuses | 200 `PaymentHistory` | 400, 401, 403, 404 |
-| PATCH | `/accounts/{accountId}/details` | Set one user-supplied field | 200 `AccountDetails` | 400, 401, 403, 404, 422 |
+| GET | `/accounts/{accountId}` | Account detail | 200 `Account` | 401, 404 |
+| GET | `/accounts/{accountId}/balance-history` | Last 6 months, oldest first | 200 `BalancePoint[]` | 401, 404 |
+| GET | `/accounts/{accountId}/payment-history?year=` | That account's statuses | 200 `PaymentHistory` | 400, 401, 404 |
+| PATCH | `/accounts/{accountId}/details` | Set one user-supplied field | 200 `AccountDetails` | 400, 401, 404, 422 |
 
 `PATCH` body: `{ "field": "interestRate", "value": 29.9 }`. Allowed fields: `apr`, `interestRate`, `promoPeriodMonths`, `minPayment`, `paymentMethod`.
 
@@ -133,7 +134,7 @@ Payment status per month: `on-time`, `missed`, `no-data`.
 
 | Method | Path | Purpose | Success | Errors |
 | --- | --- | --- | --- | --- |
-| GET | `/debt/overview` | Total debt and trend (BR-07) | 200 `DebtOverview` | 401 |
+| GET | `/debt/overview` | Total debt, trend and the breakdown by type (BR-07) | 200 `DebtOverview` | 401 |
 | GET | `/notifications` | Notifications, unread first | 200 `Page<Notification>` | 401 |
 | PATCH | `/notifications/{id}` | Mark read | 200 `Notification` | 401, 404 |
 | PUT | `/reports/{bureauId}/summary/feedback` | Like / dislike / clear (BR-10) | 200 `{ value }` | 400, 401 |
@@ -198,11 +199,11 @@ The customer's own account record, behind the My Profile page. Rules PR-01 to PR
 | BR-04 | Type totals sum `balance` and `limit` across open accounts of that type where `includedInTotals` is true. Utilisation of the total follows BR-03. |
 | BR-05 | Loans without a limit set `includedInTotals: false` and appear in a separate `excluded` array in the totals response. |
 | BR-06 | A negative balance (an account in credit) is returned as a negative integer. Utilisation is floored at 0 for display purposes; raw value available as `utilisationRaw`. The UI shows the amount as 'in credit' (DR-018). |
-| BR-07 | Total debt = sum of positive balances of open accounts with `includedInTotals` true, excluding current accounts. Trend compares to three months earlier: a change of at most 1% either way, unrounded, is `steady` (inclusive). If the earlier total was zero, the trend is `steady` when the total is still zero, otherwise `up` (DR-011). |
+| BR-07 | Total debt = sum of positive balances of open accounts with `includedInTotals` true, excluding current accounts. Trend compares to three months earlier: a change of at most 1% either way, unrounded, is `steady` (inclusive). If the earlier total was zero, the trend is `steady` when the total is still zero, otherwise `up` (DR-011). `byType` splits the total: for each account type, the sum of the same positive balances, one entry per type above zero, in enum order (DR-046). |
 | BR-08 | `nextUpdateInDays` = whole days until the bureau's next refresh date, using the controlled clock; minimum 0. |
-| BR-09 | Masked number format: `*` followed by the last four characters, uppercase alphanumeric (`^\*[A-Z0-9]{4}$`). Shorter source values are left-padded with `0`. |
+| BR-09 | Masked number format: `*` followed by the last four characters, uppercase alphanumeric (`^\*[A-Z0-9]{4}$`), after removing characters other than letters and digits from the source. Shorter results are left-padded with `0`. |
 | BR-10 | Summary feedback is one of `like`, `dislike`, `none`. Setting one replaces the other. |
-| BR-11 | Changes default to newest first. The overview embeds the 3 newest; `total` reports the full count. |
+| BR-11 | Changes default to newest first. The overview embeds the 3 newest in `recentChanges`; `changesTotal` reports the full count. |
 | BR-12 | Payment history covers the current year and the six before it. A year with any `missed` month reports `missed`; a year with only `no-data` reports `no-data`; every other year, including one mixing `on-time` and `no-data` months, reports `on-time` (DR-014). |
 | BR-13 | Closed accounts report balance 0 and are listed while today is before the close date plus six calendar years, so they drop off on the sixth anniversary. A 29 February close drops off on 28 February (DR-012). |
 | BR-14 | User-supplied details: `interestRate` and `apr` accept 0 to 100 with up to 2 decimal places; `promoPeriodMonths` 0 to 60; `minPayment` needs `amountMinor` ≥ 0 or `percent` 0 to 100. |
@@ -215,7 +216,7 @@ The customer's own account record, behind the My Profile page. Rules PR-01 to PR
 | 400 | `/validation` | Bad query or body shape; `errors[]` lists each field |
 | 401 | `/unauthenticated` | Missing, expired or revoked token |
 | 404 | `/not-found` | Unknown resource, or one owned by another user (BR-15) |
-| 422 | `/rule-violation` | Shape valid, but breaks a BR (e.g. BR-14 range) |
+| 422 | `/rule-violation/{outcome}` | Shape valid, but breaks a rule. One type per outcome (DR-048): `out-of-range` (BR-14), `preferred-name` (PR-02), `already-verified` (PR-09), `mobile-number` (PR-06), `code-wrong` with `attemptsRemaining` (PR-11), `code-invalid` (the third wrong code, an expired or voided code, or nothing pending; PR-10, PR-11), `overrides-inconsistent` (test control, DR-020). Clients and tests branch on `type`, never on `title` or `detail` |
 | 429 | `/rate-limited` | A verification link resent within 60 seconds (PR-09). There is no general rate limit (DR-035) |
 | 500 | `/internal` | `error` persona, or an unhandled fault; no stack trace in the body |
 | 503 | `/unavailable` | Bureau marked offline in fixtures |

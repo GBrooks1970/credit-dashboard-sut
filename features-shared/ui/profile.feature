@@ -1,9 +1,9 @@
-# version: 3 | created: 2026-10-05T20:00Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 4 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @ui @profile
 Feature: My profile
   A customer can see what the app holds about them, choose how the app addresses them,
   and keep their contact details current.
-  Covers the My Profile UI feature spec v4 (UI specification v5, section 6.9).
+  Covers the My Profile UI feature spec (UI specification, section 6.9).
 
   Background:
     Given Alex holds the "excellent" persona
@@ -18,9 +18,9 @@ Feature: My profile
 
   @PR-02 @PR-03
   Scenario: Alex sets a preferred name
-    When Alex sets their preferred name to "Al"
+    When Alex sets their preferred name to "Ally"
     Then Alex is told the change is saved
-    And the app greets Alex as "Al"
+    And the app greets Alex as "Ally"
     But the credit report still shows Alex's legal name
 
   @PR-02
@@ -54,6 +54,14 @@ Feature: My profile
     Given Sam holds the "thin-file" persona
     And Sam is viewing their profile
     Then the mobile tile shows "Not added"
+
+  @PR-10
+  Scenario: A mobile number added on the mobile page is verified with its code
+    Given Sam holds the "thin-file" persona
+    And Sam is viewing their profile
+    When Sam adds the mobile number "07700 900456"
+    And Sam enters the code 123456
+    Then the mobile tile shows "Verified"
 
   @PR-07
   Scenario: Finance figures stay off the profile overview

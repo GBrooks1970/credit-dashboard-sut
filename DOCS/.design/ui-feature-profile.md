@@ -1,7 +1,7 @@
 ---
-version: 5
-created: 2026-10-07T12:50Z
-supersedes: v4 (2026-10-04T23:19Z); earlier versions are in git history (DR-040)
+version: 6
+created: 2026-10-07T13:05Z
+supersedes: v5 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-feature-spec
 language: en-GB
@@ -11,6 +11,7 @@ language: en-GB
 
 **Status:** Phase 0 draft, for review
 **Parent:** [UI specification](ui-specification.md) (conventions in its section 4 apply here unchanged)
+**Changes in v6:** section 4.1 specifies the mobile sub-page: its hooks, and that it stays open for the code and returns to the profile once the number is verified (CDS-18 third pass).
 **Changes in v5:** the mobile tile gains a status badge, `profile-mobile-badge`, as the email tile has (CDS-18 confirmation pass).
 **Changes in v4:** decision brief 3 applied: PR-04 amended (the address already held is not a change, DR-027); new rules PR-09 resend limit (DR-024), PR-10 one-time code (DR-025), PR-11 wrong-code lock-out (DR-026); the email and mobile operations are in the contract (v6, CDS-11).
 **Changes in v3:** decision brief 2 applied: no survey of the source sub-pages; the designs in section 4 stand (DR-021); Release 3 builds email and mobile, the rest are stretch (DR-022); explicit Save and Cancel confirmed (DR-023). No rule changed.
@@ -94,7 +95,20 @@ The source sub-pages were not opened, because they hold the owner's real contact
 | Employment | `/my-account/profile/employment` | Status select, optional employer and start date | Conditional fields by status |
 | Finances | `/my-account/profile/finances` | Annual income, monthly housing cost (synthetic), with an explanation of why it is asked | Currency input, ranges, sensitive-data display |
 
-Each sub-page has Save and Cancel, returns to the profile on save, and shows the change on the tile.
+Each sub-page has Save and Cancel, returns to the profile on save, and shows the change on the tile. The mobile sub-page is the exception: saving a number keeps the page open for the code (section 4.1).
+
+### 4.1 Mobile sub-page (Release 3)
+
+| Element | Role | `data-testid` | Notes |
+| --- | --- | --- | --- |
+| Number | textbox, labelled | `mobile-input` | UK format (PR-06); the current number pre-filled, masked, when held |
+| Save | button | `mobile-save` | `PUT /me/profile/mobile`; on 200 the code step appears on the same page |
+| Number error | text, `aria-describedby` | `mobile-error` | From 422 `/problems/rule-violation/mobile-number` |
+| Code | textbox, labelled, numeric | `mobile-code-input` | Six digits (PR-10) |
+| Code hint | text | `mobile-code-hint` | States that the demo code is always 123456 (DR-025) |
+| Submit code | button | `mobile-code-submit` | `POST /me/profile/mobile/verification`; on 200 returns to the profile, whose tile badge `profile-mobile-badge` shows Verified |
+| Code error | text, `aria-describedby` | `mobile-code-error` | From 422 `code-wrong` (with the attempts left, `mobile-attempts`) or `code-invalid` (asks for the number to be added again) |
+| Cancel | button | `mobile-cancel` | Returns to the profile; a number already saved stays Unverified |
 
 ## 5. Rules
 

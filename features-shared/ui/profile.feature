@@ -1,4 +1,4 @@
-# version: 4 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 5 | created: 2026-10-07T13:05Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @ui @profile
 Feature: My profile
   A customer can see what the app holds about them, choose how the app addresses them,
@@ -56,7 +56,7 @@ Feature: My profile
     Then the mobile tile shows "Not added"
 
   @PR-10
-  Scenario: A mobile number added on the mobile page is verified with its code
+  Scenario: A mobile number added on the mobile sub-page is verified with its code
     Given Sam holds the "thin-file" persona
     And Sam is viewing their profile
     When Sam adds the mobile number "07700 900456"

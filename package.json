@@ -10,12 +10,15 @@
     "mock": "prism mock DOCS/.architecture/openapi.yaml -p 4010 --errors",
     "check:mock": "node tools/mock-smoke.mjs",
     "check:client": "npm --prefix packages/api-client run check",
-    "check:client-smoke": "node tools/client-smoke.ts"
+    "check:client-smoke": "node tools/client-smoke.ts",
+    "kanban": "generate-kanban --project credit-dashboard-sut --dialect auth-table --backlog DOCS/backlog.md",
+    "check:kanban": "generate-kanban --check --project credit-dashboard-sut --dialect auth-table --backlog DOCS/backlog.md"
   },
   "devDependencies": {
     "@stoplight/prism-cli": "5.16.0",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",
+    "portfolio-kanban-generator": "1.2.0",
     "yaml": "2.9.1"
   }
 }

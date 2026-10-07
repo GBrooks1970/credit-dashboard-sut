@@ -2,6 +2,12 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-07: Kanban board; Phase 1 closed (CDS-17)
+
+- The backlog summary is one `auth-table` table per phase: Type, Tier and explicit 'Blocked by'; `Done <date>` or `Open`, with Ready and Backlog derived on the board. CDS-04 is placed in Phase 1 and CDS-11 in Phase 0. Backlog v31.
+- `portfolio-kanban-generator` 1.2.0 is pinned as an exact devDependency. `npm run kanban` writes `credit-dashboard-sut_implementation-kanban_v1.html`; `npm run check:kanban` is the drift check, the ninth step of `npm run verify`.
+- Phase 1 is closed (decision brief 7, DR-045).
+
 ## 2026-10-07: phase gates recorded (decision brief 7)
 
 - Decision brief 7 decided. DR-045: the Phase 1 exit gate is met, and the phase closes with CDS-17. Phase 2 is recorded after an independent re-review (CDS-18). Phase 3 follows both.

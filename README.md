@@ -12,8 +12,8 @@ All data is synthetic. No real bureau, lender, brand or person's financial data 
 ## Status
 
 Phase 1 (contract) is closed: its exit gate was met on 6 October 2026 (DR-045), and its last item, CDS-17, was
-done on 7 October. Phase 2's gate evidence is complete, and the gate is recorded after an independent re-review
-(CDS-18). Phase 3 (API) follows. Phase 0 (specify) was accepted as the baseline on 5 October 2026 (DR-038) and seeded this repository. No
+done on 7 October. Phase 2 (behaviour) is closed: its exit gate was met on 7 October 2026 (DR-049), after
+an independent re-review (CDS-18). Phase 3 (API) is next. Phase 0 (specify) was accepted as the baseline on 5 October 2026 (DR-038) and seeded this repository. No
 service, UI or harness code exists yet. The contract, mock and generated client do. See 'SDD workflow' below and
 [`DOCS/backlog.md`](DOCS/backlog.md).
 
@@ -26,7 +26,7 @@ service, UI or harness code exists yet. The contract, mock and generated client 
 | [`DOCS/.design/ui-specification.md`](DOCS/.design/ui-specification.md) | UI specification: page catalogue, test hooks, component states, UI bug flags |
 | [`DOCS/.design/ui-feature-profile.md`](DOCS/.design/ui-feature-profile.md) | My Profile feature spec: rules PR-01 to PR-11 |
 | [`DOCS/.design/page-survey.md`](DOCS/.design/page-survey.md) | Structure survey that informed the specifications (input, not a specification) |
-| [`DOCS/decision-register.md`](DOCS/decision-register.md) | Decisions DR-001 to DR-048 |
+| [`DOCS/decision-register.md`](DOCS/decision-register.md) | Decisions DR-001 to DR-049 |
 | [`DOCS/decision-briefs/`](DOCS/decision-briefs/_index.md) | The reasoning behind decisions: options, a recommendation and the argument against |
 | [`DOCS/glossary.md`](DOCS/glossary.md), [`DOCS/step-glossary.md`](DOCS/step-glossary.md) | Normative vocabulary and agreed Gherkin steps |
 | [`DOCS/backlog.md`](DOCS/backlog.md) | Backlog: the source of truth for status |
@@ -78,8 +78,8 @@ Phase 0 pack; 'Gate status' is the current state.
 | --- | --- | --- | --- |
 | **0. Specify** | Survey, API specification, UI specification, contract draft, seed scenarios, decision register | Owner accepts the DRs; DR-005 decided; the pack frozen | **Met** 5 October 2026 (DR-038); pack frozen at CDS-09 |
 | **1. Contract** | Own repository (DR-001); versions resolved (DR-009, DR-044); lint ruleset; an example for every response; Prism mock; generated TypeScript client | Lint clean; every example validates against its schema; mock serves every operation | **Closed** 7 October 2026: gate met 6 October (DR-045), all three run in CI through `npm run verify`; last item CDS-17 |
-| **2. Behaviour** | `features-shared/` covering every BR and every page in Releases 1 and 2 (DR-015); step glossary; persona fixtures validated against the schemas | Three-amigos review recorded; every BR tagged by at least one scenario; fixtures pass schema validation | **Evidence complete** (brief 4, DR-033; BR 15 of 15; fixtures 404 of 404). Recorded as met (DR-046) after the independent re-review, CDS-18 |
-| **3. API** | The service against the contract (DR-017); test-control endpoints; harness abilities `CallAnApi` and `ControlTheTestEnvironment` | All `@api` and `@security` scenarios green; every response validated against the contract; Schemathesis run clean | Next, after CDS-17 and CDS-18 |
+| **2. Behaviour** | `features-shared/` covering every BR and every page in Releases 1 and 2 (DR-015); step glossary; persona fixtures validated against the schemas | Three-amigos review recorded; every BR tagged by at least one scenario; fixtures pass schema validation | **Met** 7 October 2026 (DR-049): evidence complete (brief 4, DR-033; BR 15 of 15; fixtures pass), re-reviewed independently to no Blocker or Change (CDS-18) |
+| **3. API** | The service against the contract (DR-017); test-control endpoints; harness abilities `CallAnApi` and `ControlTheTestEnvironment` | All `@api` and `@security` scenarios green; every response validated against the contract; Schemathesis run clean | Next (CDS-19 is ready) |
 | **4. UI** | Pages against the Prism mock first, then the live API; component tests for every state in UI specification section 4.3 | All `@ui` scenarios green against the mock and live; axe-core zero violations with flags off | Not started |
 | **5. Defects and evidence** | Bug flags implemented; each flag proved caught; visual regression; CI publishes the Serenity report | Every flag turns at least one scenario red for the stated reason; report published | Not started |
 

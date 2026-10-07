@@ -1,7 +1,7 @@
 ---
-version: 13
-created: 2026-10-07T12:50Z
-supersedes: v12 (2026-10-07T10:25Z); earlier versions are in git history (DR-040)
+version: 14
+created: 2026-10-07T13:09Z
+supersedes: v13 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
 language: en-GB
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v14:** section 6.6 cites PR-01 to PR-11 and the rules the API enforces (CDS-18 third pass).
 **Changes in v13:** section 6.5 states the clock after a reset (CDS-18 confirmation pass).
 **Changes in v12:** CDS-18 review fixes (contract v10, `info.version` 0.7.0). BR-07 adds the debt breakdown by type (DR-046); BR-09 states that characters other than letters and digits are dropped; BR-11 names `changesTotal`; section 5 defines how a month's payment status is derived (BR-12); section 6.3 drops 403, which BR-15 rules out; section 8 lists one Problem type per rule outcome (DR-048); section 3 says token expiry is judged on the controlled clock.
 **Changes in v11:** the runtime version is resolved (CDS-16, DR-044): section 3 'Runtime' row.
@@ -166,7 +167,7 @@ Every operation documents a `404` (`TestControlDisabled` in the contract): test 
 
 ### 6.6 Profile (Release 3)
 
-The customer's own account record, behind the My Profile page. Rules PR-01 to PR-08 live in the [My Profile UI feature spec](ui-feature-profile.md), section 5; the API enforces PR-01, PR-02 and PR-07, and keeps PR-08 by putting no profile value in any path or query.
+The customer's own account record, behind the My Profile page. Rules PR-01 to PR-11 live in the [My Profile UI feature spec](ui-feature-profile.md), section 5; the API enforces PR-01, PR-02, PR-04, PR-06, PR-07 and PR-09 to PR-11, supplies PR-03's greeting as `greetingName` on `GET /me` (DR-036), and keeps PR-08 by putting no profile value in any path or query.
 
 | Method | Path | Purpose | Success | Errors |
 | --- | --- | --- | --- | --- |

@@ -1,7 +1,7 @@
 ---
-version: 9
+version: 10
 created: 2026-10-04T16:50Z
-updated: 2026-10-07T12:50Z
+updated: 2026-10-07T13:05Z
 project: credit-dashboard-sut
 type: glossary
 language: en-GB
@@ -20,7 +20,7 @@ status: normative
 
 **The rule.** Every term below has **one meaning** in this project's specifications, contract, feature files, fixtures and, from Phase 3, its code. A word with more than one meaning in use is either given one, or split into qualified terms that each have one. Where this glossary and another project document disagree about what a word means, this glossary is right and the other document is conformed to it.
 
-**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. Where this glossary and another project document disagree about what a word means, this glossary is right. Version 1 was compiled on 4 October 2026; versions 2 to 5 recorded decision briefs 1 to 3; version 6 makes it normative; version 7 adds `greetingName` (DR-036); version 8 applies the CDS-18 review: *Account information*, the masking wording, the PR range and current references; version 9 removes the remaining versioned citations and adds *Superseded* (CDS-18 confirmation pass).
+**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. Where this glossary and another project document disagree about what a word means, this glossary is right. Version 1 was compiled on 4 October 2026; versions 2 to 5 recorded decision briefs 1 to 3; version 6 makes it normative; version 7 adds `greetingName` (DR-036); version 8 applies the CDS-18 review: *Account information*, the masking wording, the PR range and current references; version 9 removes the remaining versioned citations and adds *Superseded* (CDS-18 confirmation pass); version 10 adds *Debt breakdown* and corrects *Account details* (CDS-18 third pass).
 
 ---
 
@@ -110,12 +110,13 @@ Definitions an agent cannot settle on its own, because each changes what a rule,
 | **Included in totals**, **excluded** | Whether an account counts towards its type's totals and total debt. A loan with no limit is excluded and listed separately | | BR-04, BR-05; `includedInTotals`, `AccountTotals.excluded` |
 | **Type totals** | The summed balance and limit, and their utilisation, across the included open accounts of one type. Shown on the overview account card and the type list's summary card, which must agree | Not the *report summary* | BR-04; `AccountTotals` |
 | **Total debt**, or **debt** | The sum of positive balances on included open accounts, excluding current accounts | Not an account's *balance* | BR-07; `DebtOverview` |
+| **Debt breakdown** | Total debt split by account type: for each type, the sum of the same positive balances, one entry per type above zero (*Decided, DR-046*) | Not *type totals*, which sum all balances of open included accounts (BR-04) | BR-07; DR-046; `DebtOverview.byType` |
 | **Debt trend** | Total debt now compared with three months earlier: `up`, `down` or `steady` | Not *score history* | BR-07; `DebtOverview.trend` |
 | **Steady** | Of the debt trend: the unrounded change against three months earlier is at most 1% either way, so exactly 1% is steady. From an earlier total of zero, steady if still zero, otherwise up (*Decided, brief 1 D1*) | | BR-07; DR-011 |
 | **Balance history** | Six monthly balances for one account, oldest first. Also the source of the debt trend | | `BalancePoint` |
 | **Masked number** | How an account number leaves the service: `*` and the last four letters or digits of the source (other characters dropped), uppercase, left-padded with `0` when fewer remain. The full number never leaves the service | Not the *source mask* | BR-09; `MaskedNumber` |
 | **Source mask** | The account number, or partial number, as the fixture's source data supplies it; the input to masking | Not the *source app*. See section 5 | API spec 9.1; `sourceMask` |
-| **Account details** | The fields the customer supplies for an account: APR, interest rate, promotional period, minimum payment, payment method. Shown, and editable, for credit cards and credit accounts only | Not *personal details*. Not the profile's *details list*. Not *account information* | BR-14; `AccountDetails` |
+| **Account details** | The fields the customer supplies for an account: APR, interest rate, promotional period, minimum payment, payment method. Customer-supplied, within the limits BR-14 sets. The UI offers them as details tiles on credit cards and credit accounts (UI spec section 6.5); the contract does not restrict them by type | Not *personal details*. Not the profile's *details list*. Not *account information* | BR-14; `AccountDetails` |
 | **Account information** | What the account page shows about any account: update frequency, status and opened date | Not *account details* (customer-supplied) | UI spec 6.5, `detail-meta-*` |
 | **APR**, **interest rate** | Two separate account details, each 0 to 100 with up to 2 decimal places | Not interchangeable | BR-14 |
 | **Promotional period** | Months, 0 to 60, of a promotional rate | | BR-14; `promoPeriodMonths` |

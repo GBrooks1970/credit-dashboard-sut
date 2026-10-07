@@ -1,7 +1,7 @@
 ---
-version: 12
-created: 2026-10-07T10:25Z
-supersedes: v11 (2026-10-07T08:30Z), extended in place
+version: 13
+created: 2026-10-07T13:12Z
+supersedes: v12 (2026-10-07T10:25Z), extended in place
 project: credit-dashboard-sut
 type: decision-register
 language: en-GB
@@ -61,3 +61,4 @@ DR-001 and DR-003 to DR-010 were accepted or superseded by 5 October 2026 (DR-00
 | DR-046 | `DebtOverview` gains a required `byType`: for each account type, the sum of BR-07's positive balances, one entry per type above zero, in enum order; the debt page's `debt-type-{type}` rows read it (contract v10, `info.version` 0.7.0) | Accepted (2026-10-07) | The UI specification already named a per-type breakdown that no field carried (CDS-18 review F-02) | Drop the breakdown (CDS-18 review interview) |
 | DR-047 | The report overview's first render stays one aggregate call (DR-034 unchanged); the changes toggle then calls `GET /reports/{bureauId}/changes` and lists every change in place | Accepted (2026-10-07) | `recentChanges` holds at most 3, so the toggle needs the full list (CDS-18 review F-03) | No toggle; link to the report changes page (CDS-18 review interview) |
 | DR-048 | Each 422 names its rule outcome as its own Problem type under `/problems/rule-violation/` (`out-of-range`, `preferred-name`, `already-verified`, `mobile-number`, `code-wrong` with `attemptsRemaining`, `code-invalid`, `overrides-inconsistent`); clients and API scenarios branch on `type`, never on wording | Accepted (2026-10-07) | Outcomes were told apart only by free text (CDS-18 review F-09); standard RFC 9457 practice | A required `code` field; accept the copy dependency (CDS-18 review interview) |
+| DR-049 | **Phase 2 exit gate met** (7 October 2026). Three-amigos review recorded (brief 4, DR-033) and re-reviewed independently (CDS-18, `.review/2026-10-07_cds-18-behaviour-re-review.md`): a blind first pass (5 Blocker, 12 Change), a confirmation pass (1 Blocker, 10 Change) and a scoped third pass (3 Change) with two re-checks, ending with no Blocker or Change; fixes in #16, #17 and #18 (contract v10). Every BR tagged (15 of 15); fixtures pass (12 samples, 448 checks). Notes left are CDS-24. Signed off by the owner. Phase 3 may start (DR-045) | Accepted (2026-10-07) | A gate recorded on observed, independent evidence, as brief 7 D2 required | Record on the author's reading (brief 7 D2, recommended and declined); sign off after the second pass |

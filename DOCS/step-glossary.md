@@ -1,6 +1,6 @@
 ---
-version: 6
-created: 2026-10-07T10:25Z
+version: 7
+created: 2026-10-07T12:50Z
 project: credit-dashboard-sut
 type: step-glossary
 language: en-GB
@@ -11,7 +11,7 @@ status: normative
 
 **What this is.** The agreed Gherkin phrases for `features-shared/`, one pattern per meaning, with the parameter types the harness will define and how each Given is arranged. The words inside the phrases are defined in `DOCS/glossary.md`; this document defines the sentences.
 
-**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. A new step is added here before it is used in a feature file. Version 6 applies the CDS-18 independent re-review (section 6.6); version 5 applied the three-amigos review (section 6); earlier versions added the email and mobile steps (v4), recorded the overrides (v3) and the in-credit step (v2).
+**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. A new step is added here before it is used in a feature file. Version 7 applies the CDS-18 confirmation pass (section 6.6); version 6 applied the CDS-18 independent re-review; version 5 applied the three-amigos review (section 6); earlier versions added the email and mobile steps (v4), recorded the overrides (v3) and the in-credit step (v2).
 
 ---
 
@@ -67,6 +67,7 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 | `{name outcome}` | `refused`, `saved as {name}` | PR-02: refused is 422 `/problems/rule-violation/preferred-name` |
 | `{name}` | A preferred name, unquoted: letters, spaces, hyphens, apostrophes | PR-02 |
 | `{tile}` | `email`, `mobile`, `address`, `employment`, `finances` | Profile details list |
+| `{accepted or refused}` | `accepted`, `refused` | BR-14: accepted is 200 with the value stored; refused is 422 `/problems/rule-violation/out-of-range` |
 
 ## 3. Arrange (Given)
 
@@ -82,7 +83,7 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 | Pattern | Means | Arranged by | Used in |
 |---|---|---|---|
 | `{actor} holds the {persona} persona` | Bind the test user to the persona | Test control (`PUT /__test/users/{username}/persona`) | All files |
-| `today is {date}` | Freeze server time | Test control (`PUT /__test/clock`) | `api/closed-accounts`, `api/payment-history`, `api/profile-contact`, `api/score`, `ui/account-drilldown`, `ui/debt`, `ui/payment-history` |
+| `today is {date}` | Freeze server time | Test control (`PUT /__test/clock`) | `api/closed-accounts`, `api/debt`, `api/payment-history`, `api/profile-contact`, `api/score`, `ui/account-drilldown`, `ui/debt`, `ui/payment-history` |
 | `the next bureau refresh is {days} away` | Set the clock that many days before the bureau's `nextRefreshDate` | Test control (clock) | `ui/report-overview` |
 | `{actor} has signed in` | A valid session exists | Navigation | `ui/login` |
 | `{actor} is viewing the report for {bureau}` | On the report overview | Navigation | `ui/report-overview` |
@@ -92,7 +93,7 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 | `{actor} is viewing a credit card with no interest rate recorded` | On the detail page of such a card | Navigation + fixture (`drilldown` cards hold no rate) | `ui/account-details-form` |
 | `{actor} has noted the credit card total on the report overview` | Note the overview figure for a later comparison | Navigation | `ui/account-drilldown` |
 | `{actor} shows only positive changes` | Filter applied | Navigation | `ui/report-changes` |
-| `{actor} has a credit card with a balance of {money} and a limit of {money}` | Such a card exists | Fixture (`drilldown`, -44.00 / 1000.00); Test control (overrides, `fixtures/overrides/br03-one-credit-card.json`) for the outline rows; Test control (overrides, `fixtures/overrides/br03-zero-limit-card.json`) for 0.00 / 0.00 | `api/account-totals`, `api/credit-balances` |
+| `{actor} has a credit card with a balance of {money} and a limit of {money}` | Such a card exists | Fixture (`drilldown`: 423.60 / 5100.00 and -44.00 / 1000.00, open; its closed Lender Y card is not one of these); Test control (overrides, `fixtures/overrides/br03-one-credit-card.json`) for the outline rows; Test control (overrides, `fixtures/overrides/br03-zero-limit-card.json`) for 0.00 / 0.00 | `api/account-totals`, `api/credit-balances` |
 | `{actor} has a credit card that is {money} in credit` | Such a card exists | Fixture (`drilldown`) | `api/debt` |
 | `{actor} has a loan of {money} against {money} borrowed` | Such a loan exists | Fixture (`drilldown`) | `api/account-totals` |
 | `{actor} owes {money} on a {accountType}` | Such an account exists, open and counted in totals (for loans, the row below) | Fixture (`drilldown`) | `api/debt` |
@@ -124,6 +125,7 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 | `{actor} asks for one of {actor}'s accounts` | `GET /accounts/{id}` with another user's ID | `security/access-control` |
 | `{actor} asks for that account` | `GET /accounts/{id}` | `api/credit-balances`, `api/masking` |
 | `{actor} asks for the debt overview` | `GET /debt/overview` | `api/debt` |
+| `{actor} sets the interest rate on the {provider} card to {percent}` | `PATCH /accounts/{id}/details` with `{ "field": "interestRate", "value": … }` | `api/account-details` |
 | `{actor} asks for the closed accounts for {bureau}` | `GET /reports/{id}/accounts?status=closed` | `api/closed-accounts` |
 | `{actor} asks for the payment history for {bureau}` | `GET /reports/{id}/payment-history` | `api/payment-history` |
 | `{actor} asks for the report changes for {bureau}` | `GET /reports/{id}/changes` | `api/report-changes` |
@@ -173,16 +175,16 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 | Report summary | `the summary is still marked as liked`; `it is not marked as disliked` | `ui/report-overview` |
 | Next update | `{actor} is told the report updates in {days}` | `ui/report-overview` |
 | Report changes | `{count} changes are listed`; `every change listed is positive`; `only positive changes are listed`; `the changes are dated {date}, {date} and {date}, in that order` / `the changes are dated {date} and {date}, in that order`; `there is no next page`; `the {count} newest changes are included`; `the change count reads {count}` | `api/report-changes`, `ui/report-changes`, `ui/report-overview` |
-| Totals and utilisation | `the total utilisation is {percent}`; `no utilisation is reported`; `the total remaining is {money}`; `the loan of {money} is listed as excluded`; `the list total matches the overview total`; `{actor} sees which loans are not included in the borrowing calculation`; `the utilisation is {percent}`; `the unfloored utilisation is {percent}`; `the {provider} card shows a utilisation of {percent}`; `the {provider} card shows a balance of {money} in credit`; `the {provider} card is marked as over its limit` | `api/account-totals`, `api/credit-balances`, `ui/account-drilldown` |
-| Balances and accounts | `the balance is {money}`; `its balance is {money}`; `the credit card is listed` / `is {listed or not listed}`; `the account is not found`; `the closed {accountType} group lists {count} account` (or `accounts`); `{actor} sees the balance, payment history and account information`; `{actor} does not see interest rate or promotional period details` | `api/closed-accounts`, `api/credit-balances`, `security/access-control`, `ui/account-drilldown` |
+| Totals and utilisation | `the total balance is {money}`; `the total limit is {money}`; `the total utilisation is {percent}`; `no utilisation is reported`; `the total remaining is {money}`; `the loan of {money} is listed as excluded`; `the list total matches the overview total`; `{actor} sees which loans are excluded from the loan totals`; `the utilisation is {percent}`; `the unfloored utilisation is {percent}`; `the {provider} card shows a utilisation of {percent}`; `the {provider} card shows a balance of {money} in credit`; `the {provider} card is marked as over its limit` | `api/account-totals`, `api/credit-balances`, `ui/account-drilldown` |
+| Balances and accounts | `the balance is {money}`; `its balance is {money}`; `the credit card is listed` / `is {listed or not listed}`; `the account is not found` (API: 404 `/problems/not-found`); `the closed {accountType} group lists {count} account` (or `accounts`); `{actor} sees the balance, payment history and account information`; `{actor} does not see interest rate or promotional period details` | `api/closed-accounts`, `api/credit-balances`, `security/access-control`, `ui/account-drilldown` |
 | Masking | `the account number is shown as {string}`; `no response contains {string}` | `api/masking` |
 | Debt | `the total debt is {money}`; `the debt trend is {trend}`; `the debt on {accountType} is {money}` | `api/debt`, `ui/debt` |
 | Payment history | `the years {year} to {year} are covered`; `{year} is marked {yearStatus}`; `seven years are offered, from {year} to {year}`; `{year} is chosen`; `{actor} sees {count} missed payments, all on the {provider} loan`; `{actor} is told there were no missed payments in {year}` | `api/payment-history`, `ui/payment-history` |
 | Account details form | `the credit card shows an interest rate of {percent}`; `{actor} is told the rate must be between 0% and 100%`; `no interest rate is recorded`; `{actor} is back on the credit card's own page` | `security/open-redirect`, `ui/account-details-form` |
-| Searches and personal details | `{count} hard searches are listed` / `1 soft search is listed`; `no hard search is listed`; `{actor} is told there are no hard searches`; `{actor} sees {count} current address and {count} previous addresses`; `{actor} is shown as on the electoral roll`; `none of the personal details can be edited` | `ui/personal-details`, `ui/searches` |
+| Account details (API) | `the interest rate is {accepted or refused}` | `api/account-details` |
+| Searches and personal details | `{count} hard searches are listed` / `1 soft search is listed`; `no hard search is listed`; `{actor} is told there are no hard searches` (`search-list-empty`); `{actor} sees {count} current address and {count} previous addresses`; `{actor} is shown as on the electoral roll`; `none of the personal details can be edited` | `ui/personal-details`, `ui/searches` |
 | Sign-in | `{actor} sees the report for {bureau}`; `{actor} is told the sign-in details were not recognised`; `{actor} is still on the sign-in page`; `{actor} is asked to sign in again` | `ui/login` |
-| Profile | `the page title contains none of {actor}'s legal name, email address or mobile digits`; `the page address contains none of them either`; `the email is still verified`; `the resend is {refused or sent}`; `{actor} is told the email is already verified`; `the number is {mobile outcome}`; `the mobile number is {verified or still unverified}`; `{actor} is told to request a new code`; `the code {code} is no longer accepted`; `{actor} sees their legal name and date of birth`; `neither can be edited`; `{actor} is told that it matches the credit report`; `{actor} is told the change is saved`; `the app greets {actor} as {string}` / `by their legal first name`; `the credit report still shows {actor}'s legal name`; `the preferred name is {name outcome}`; `the email shows as unverified`; `the {tile} tile shows {string}`; `no amounts are shown on the profile` | `api/profile-contact`, `ui/profile` |
-
+| Profile | `the page title contains none of {actor}'s legal name, email address or mobile digits`; `the page address contains none of them either`; `the email is still verified`; `the resend is {refused or sent}`; `{actor} is told the email is already verified`; `the number is {mobile outcome}`; `the mobile number is {verified or still unverified}`; `{actor} is told to request a new code` and `the code {code} is no longer accepted` (API: 422 `/problems/rule-violation/code-invalid`); `{actor} sees their legal name and date of birth`; `neither can be edited`; `{actor} is told that it matches the credit report`; `{actor} is told the change is saved`; `the app greets {actor} as {string}` / `by their legal first name`; `the credit report still shows {actor}'s legal name` (reads `pd-name` on the report's personal details page); `the preferred name is {name outcome}`; `the email shows as unverified`; `the {tile} tile shows {string}`; `no amounts are shown on the profile` | `api/profile-contact`, `ui/profile` |
 | Security | `{actor} is refused as not signed in` (401 `/problems/unauthenticated`); `test control is not found` (404) | `security/session-and-test-control` |
 
 ## 6. Three-amigos review (held 5 October 2026)
@@ -219,7 +221,7 @@ Every BR rule (BR-01 to BR-15) and every PR rule except PR-05 (address sub-page,
 
 ### 6.6 Independent re-review (CDS-18, 7 October 2026)
 
-A separate agent with fresh context re-checked every scenario and this glossary against contract v9 (`.review/2026-10-07_cds-18-behaviour-re-review.md`). Its findings were fixed in version 6 with contract v10: the debt total and breakdown (F-01, F-02, DR-046), the changes toggle (F-03, DR-047), the preferred-name save (F-04), *account information* (F-05), the zero-limit and BR-12 arrangements (F-06, F-08), API messages by Problem type (F-09, DR-048), the BR-02 gap scenario (F-10), the 0-day row (F-11), the expiry and test-control-off scenarios (F-12), the closed-accounts and mobile-page scenarios (F-13), the parameter types (F-14) and the 'Used in' columns (F-15).
+A separate agent with fresh context re-checked every scenario and this glossary against contract v9 (`.review/2026-10-07_cds-18-behaviour-re-review.md`). Its findings were fixed in version 6 with contract v10: the debt total and breakdown (F-01, F-02, DR-046), the changes toggle (F-03, DR-047), the preferred-name save (F-04), *account information* (F-05), the zero-limit and BR-12 arrangements (F-06, F-08), API messages by Problem type (F-09, DR-048), the BR-02 gap scenario (F-10), the 0-day row (F-11), the expiry and test-control-off scenarios (F-12), the closed-accounts and mobile-page scenarios (F-13), the parameter types (F-14) and the 'Used in' columns (F-15). A confirmation pass by a second fresh agent found 1 Blocker and 10 Changes, fixed in version 7: the BR-08 outline reloads the overview after the clock moves; the API debt Background sets the clock; a summing `@BR-04` scenario; an API `@BR-14` outline; hooks for searches and personal details; the mobile badge; *excluded from the loan totals*; and status mappings for every API outcome.
 
 ## 7. Keeping it true
 
@@ -229,6 +231,6 @@ A separate agent with fresh context re-checked every scenario and this glossary 
 
 ## 8. Provenance
 
-Version 6 (7 October 2026): 'Used in' regenerated from the files, against 22 feature files, 70 scenarios and 258 step lines, every line matching a pattern here. Version 5 (5 October 2026) was checked against 19 feature files, 65 scenarios, after the three-amigos review; every Given in section 3 is arranged by fixture, navigation, test control, overrides or environment.
+Version 7 (7 October 2026): checked against 23 feature files, 72 scenarios and 269 step lines, every line matching a pattern here; new rows' 'Used in' set from the files. Version 6 (7 October 2026): 'Used in' regenerated from the files, against 22 feature files, 70 scenarios and 258 step lines, every line matching a pattern here. Version 5 (5 October 2026) was checked against 19 feature files, 65 scenarios, after the three-amigos review; every Given in section 3 is arranged by fixture, navigation, test control, overrides or environment.
 
 Extracted on 4 October 2026 with `gherkin-official` from the 18 feature files in `features-shared/` (54 scenarios, 160 distinct step texts, And and But resolved to their keyword). Section 3's *Arranged by* column was checked against `fixtures/personas/*.json` (contract v4, fixture check 241 of 241) and API spec v4 section 6.5.

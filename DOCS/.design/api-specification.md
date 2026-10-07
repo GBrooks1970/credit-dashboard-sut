@@ -1,7 +1,7 @@
 ---
-version: 12
-created: 2026-10-07T10:25Z
-supersedes: v11 (2026-10-06T18:29Z); earlier versions are in git history (DR-040)
+version: 13
+created: 2026-10-07T12:50Z
+supersedes: v12 (2026-10-07T10:25Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
 language: en-GB
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v13:** section 6.5 states the clock after a reset (CDS-18 confirmation pass).
 **Changes in v12:** CDS-18 review fixes (contract v10, `info.version` 0.7.0). BR-07 adds the debt breakdown by type (DR-046); BR-09 states that characters other than letters and digits are dropped; BR-11 names `changesTotal`; section 5 defines how a month's payment status is derived (BR-12); section 6.3 drops 403, which BR-15 rules out; section 8 lists one Problem type per rule outcome (DR-048); section 3 says token expiry is judged on the controlled clock.
 **Changes in v11:** the runtime version is resolved (CDS-16, DR-044): section 3 'Runtime' row.
 **Changes in v10:** the generated TypeScript client (CDS-15): section 3 'Client' row and section 11 'Client' check; the harness does not use it (DR-042, DR-043).
@@ -151,7 +152,7 @@ Every operation documents a `404` (`TestControlDisabled` in the contract): test 
 | POST | `/__test/reset` | Reload fixtures, clear bug flags, reset clock and latency |
 | PUT | `/__test/users/{username}/persona` | Bind a test user to a persona; optional `overrides` (below) |
 | PUT | `/__test/bugs` | `{ "flags": ["util-mismatch", "minor-units-label"] }` |
-| PUT | `/__test/clock` | `{ "now": "2026-10-03T09:00:00Z" }` freezes server time |
+| PUT | `/__test/clock` | `{ "now": "2026-10-03T09:00:00Z" }` freezes server time. After a reset the clock follows real time (`now: null` in `GET /__test/state`) until this call freezes it, so every scenario whose outcome depends on the date sets it (`today is …`) |
 | PUT | `/__test/latency` | `{ "fixedMs": 3000 }` or `{ "minMs": 0, "maxMs": 5000 }` |
 | GET | `/__test/state` | Current persona bindings, flags, clock, latency |
 | POST | `/__test/verify-email` | Mark a test user's email verified without the link (PR-04) |

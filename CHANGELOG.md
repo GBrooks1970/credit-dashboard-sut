@@ -2,6 +2,11 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-07: CDS-18 confirmation-pass fixes
+
+- A second fresh reviewer, given the same prompt, checked the fixed state: 1 Blocker, 10 Change and 11 Note findings, the Blocker and Changes reproduced. All fixed here; the Notes become backlog item CDS-24 with the gate.
+- The BR-08 outline reloads the overview after moving the clock; the API debt Background sets the clock, and API specification v13 states the clock after a reset; a summing `@BR-04` scenario; `api/account-details.feature` (`@BR-14` limits on `PATCH /accounts/{id}/details`); searches and personal-details hooks (UI specification v10); a mobile status badge (My Profile specification v5); "Accounts in credit"; *excluded from the loan totals*; status mappings for every API outcome (step glossary v7); glossary v9. 23 files, 72 scenarios.
+
 ## 2026-10-07: CDS-18 review fixes (contract v10)
 
 - An independent re-review of the behaviour against contract v9 found 5 Blocker, 12 Change and 8 Note findings (`.review/2026-10-07_cds-18-behaviour-re-review.md`); all Blockers and Changes and four Notes are fixed here, specification first.

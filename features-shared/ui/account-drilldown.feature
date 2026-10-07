@@ -1,4 +1,4 @@
-# version: 5 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 6 | created: 2026-10-07T12:50Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @ui
 Feature: Account drilldown
   A customer can move from a summary of each account type down to a single account.
@@ -15,7 +15,7 @@ Feature: Account drilldown
   @BR-05
   Scenario: Excluded loans are explained
     When Alex opens the loan list
-    Then Alex sees which loans are not included in the borrowing calculation
+    Then Alex sees which loans are excluded from the loan totals
 
   Scenario: A loan shows only the sections that apply to loans
     When Alex opens a loan account

@@ -1,6 +1,6 @@
 ---
-version: 9
-created: 2026-10-07T10:14Z
+version: 10
+created: 2026-10-07T12:49Z
 project: credit-dashboard-sut
 type: implementation-plan-index
 language: en-GB
@@ -18,3 +18,4 @@ Every implementation plan is written to a file here before implementation starts
 | [`2026-10-07_cds-17-kanban.md`](2026-10-07_cds-17-kanban.md) | CDS-17 auth-table backlog, Kanban board and Phase 1 closure | 2026-10-07 | implemented | #14, `a15f6a0` |
 | [`2026-10-07_cds-18-behaviour-re-review.md`](2026-10-07_cds-18-behaviour-re-review.md) | CDS-18 Independent re-review of Phase 2 behaviour; Phase 2 gate | 2026-10-07 | approved | not yet |
 | [`2026-10-07_cds-18-fixes-addendum.md`](2026-10-07_cds-18-fixes-addendum.md) | CDS-18 fixes addendum: review findings fixed before the Phase 2 gate | 2026-10-07 | approved | not yet |
+| [`2026-10-07_cds-18-fixes-addendum-2.md`](2026-10-07_cds-18-fixes-addendum-2.md) | CDS-18 fixes addendum 2: confirmation-pass fixes and a scoped third pass | 2026-10-07 | approved | not yet |

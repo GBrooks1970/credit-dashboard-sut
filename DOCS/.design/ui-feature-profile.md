@@ -1,7 +1,7 @@
 ---
-version: 4
-created: 2026-10-04T23:19Z
-supersedes: v3 (2026-10-04T21:36Z)
+version: 5
+created: 2026-10-07T12:50Z
+supersedes: v4 (2026-10-04T23:19Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-feature-spec
 language: en-GB
@@ -11,6 +11,7 @@ language: en-GB
 
 **Status:** Phase 0 draft, for review
 **Parent:** [UI specification](ui-specification.md) (conventions in its section 4 apply here unchanged)
+**Changes in v5:** the mobile tile gains a status badge, `profile-mobile-badge`, as the email tile has (CDS-18 confirmation pass).
 **Changes in v4:** decision brief 3 applied: PR-04 amended (the address already held is not a change, DR-027); new rules PR-09 resend limit (DR-024), PR-10 one-time code (DR-025), PR-11 wrong-code lock-out (DR-026); the email and mobile operations are in the contract (v6, CDS-11).
 **Changes in v3:** decision brief 2 applied: no survey of the source sub-pages; the designs in section 4 stand (DR-021); Release 3 builds email and mobile, the rest are stretch (DR-022); explicit Save and Cancel confirmed (DR-023). No rule changed.
 **Changes in v2:** *Release* replaces *Phase* for page scheduling (DR-015); section 6 records that the page-level endpoints are now in the contract (CDS-11). No rule changed.
@@ -74,7 +75,7 @@ Each tile is a link to its sub-page, showing a label and a one-line summary.
 | Tile | data-testid | Summary shown | States to cover |
 | --- | --- | --- | --- |
 | Email | `profile-tile-email` | Address plus badge `profile-email-badge` | Verified / Unverified |
-| Mobile | `profile-tile-mobile` | Masked number (`•••• ••• 123`) | 'Not added' / Unverified / Verified |
+| Mobile | `profile-tile-mobile` | Masked number (`•••• ••• 123`) plus badge `profile-mobile-badge` | 'Not added' / Unverified / Verified (the badge shows Unverified or Verified) |
 | Address | `profile-tile-address` | First line and postcode of the current address | Not added / one address / history |
 | Employment | `profile-tile-employment` | Status (e.g. 'Employed full time') | Not added / set |
 | Finances | `profile-tile-finances` | 'Added' or 'Not added', never figures | Not added / added |

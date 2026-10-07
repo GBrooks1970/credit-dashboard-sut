@@ -4,9 +4,9 @@ created: 2026-10-07T09:37Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-18
-status: approved
+status: implemented
 approved: 2026-10-07, Gary Brooks; merges of the credit-dashboard-sut PRs and the three status PRs (registry, landing, capability matrix) authorised once each one's own checks pass
-delivered: not yet
+delivered: "#16 dca26ce, #17 79d6498, #18 2746a82 (2026-10-07); status PRs to follow"
 language: en-GB
 ---
 
@@ -67,4 +67,12 @@ The report gives per-check counts. The author reproduces every Blocker and Chang
 
 ## Outcome
 
-Appended after delivery.
+Delivered. The Phase 2 exit gate is met (DR-049, #18 `2746a82`). Steps 1 to 6 were done as planned. Step 7, the status PRs, follows this records PR.
+
+Differences from the plan:
+
+- **More passes than planned.** The plan had one review. The owner added a confirmation pass after #16, and then a pass scoped to the fixes, with two re-checks, after #17. Each round of the author's fixes produced new findings, so the extra passes were needed.
+- **Two addenda instead of one.** Both were written to file before their fixes.
+- **The gate is DR-049.** The fixes needed DR-046 to DR-048 first. Brief 7 §7.3 records the correction.
+
+Full record: [`DOCS/implementation-logs/2026-10-07_cds-18-behaviour-re-review.md`](../implementation-logs/2026-10-07_cds-18-behaviour-re-review.md) and [`.review/2026-10-07_cds-18-behaviour-re-review.md`](../../.review/2026-10-07_cds-18-behaviour-re-review.md).

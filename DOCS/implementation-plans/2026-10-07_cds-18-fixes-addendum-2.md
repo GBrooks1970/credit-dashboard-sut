@@ -4,9 +4,9 @@ created: 2026-10-07T12:49Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-18 (fixes addendum 2)
-status: approved
+status: implemented
 approved: 2026-10-07, Gary Brooks ("Fix all, then a scoped third pass"); each PR merged once its own checks pass (CDS-18 plan)
-delivered: not yet
+delivered: "#17 79d6498; third-pass fixes in #18 2746a82 (2026-10-07)"
 language: en-GB
 ---
 
@@ -39,6 +39,10 @@ A fresh agent gets the same checklist, scoped to the files and lines changed by 
 ## Verification
 
 `npm run verify` passes 9 of 9. The step glossary matches every step line. The new scenarios' values are recomputed from the fixtures.
+
+## Outcome
+
+Delivered in #17 (`79d6498`; CI run 37624143274). The scoped third pass found 0 Blockers and 3 Changes. They were fixed, and the same reviewer re-checked twice (first 0 / 1, then 0 / 0). The fixes and the gate are in #18 (`2746a82`; CI run 37626838023). Full record: [`DOCS/implementation-logs/2026-10-07_cds-18-behaviour-re-review.md`](../implementation-logs/2026-10-07_cds-18-behaviour-re-review.md) and [`.review/2026-10-07_cds-18-behaviour-re-review.md`](../../.review/2026-10-07_cds-18-behaviour-re-review.md).
 
 ## Delivery
 

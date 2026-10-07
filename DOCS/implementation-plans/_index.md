@@ -20,3 +20,4 @@ Every implementation plan is written to a file here before implementation starts
 | [`2026-10-07_cds-18-fixes-addendum.md`](2026-10-07_cds-18-fixes-addendum.md) | CDS-18 fixes addendum: review findings fixed before the Phase 2 gate | 2026-10-07 | implemented | #16, `dca26ce` |
 | [`2026-10-07_cds-18-fixes-addendum-2.md`](2026-10-07_cds-18-fixes-addendum-2.md) | CDS-18 fixes addendum 2: confirmation-pass fixes and a scoped third pass | 2026-10-07 | implemented | #17, #18 |
 | [`2026-10-07_cds-19-service-scaffold.md`](2026-10-07_cds-19-service-scaffold.md) | CDS-19 Phase 3 service scaffold: contract types, edge validation, coverage gate | 2026-10-07 | implemented | #21, `1608eac` |
+| [`2026-10-07_cds-20-business-rules-library.md`](2026-10-07_cds-20-business-rules-library.md) | CDS-20 Business-rules library with NUnit tests tagged by BR ID | 2026-10-07 | approved | not yet |

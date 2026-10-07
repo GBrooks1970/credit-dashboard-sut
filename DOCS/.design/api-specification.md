@@ -1,7 +1,7 @@
 ---
-version: 15
-created: 2026-10-07T14:39Z
-supersedes: v14 (2026-10-07T13:09Z); earlier versions are in git history (DR-040)
+version: 16
+created: 2026-10-07T19:46Z
+supersedes: v15 (2026-10-07T14:39Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
 language: en-GB
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v16:** the business-rules library (CDS-20): BR-03 says how half up rounds a negative value; section 3 'Business rules' row names the library and its tests; section 11 gains 'Rule unit tests' and 'Rule traceability'; the case tables are in [business-rules-cases.md](business-rules-cases.md).
 **Changes in v15:** the service scaffold (CDS-19, DR-050): section 3 'Framework' row; section 8 says what a request outside the contract, or for an operation not served yet, receives; section 11 gains 'Service contract drift', 'Edge validation' and 'Contract coverage'.
 **Changes in v14:** section 6.6 cites PR-01 to PR-11 and the rules the API enforces (CDS-18 third pass).
 **Changes in v13:** section 6.5 states the clock after a reset (CDS-18 confirmation pass).
@@ -51,7 +52,7 @@ Out of scope: real credit scoring, real open-banking consent, persistent storage
 | --- | --- | --- |
 | Runtime | .NET 10 (LTS), C#: SDK 10.0.401, pinned in the service's `global.json` with `rollForward: latestPatch` when the service is scaffolded, taking the latest 10.0.4xx patch on that day (DR-044). Building it needs the .NET 10 SDK installed | Accepted (DR-017, DR-044) |
 | Framework | ASP.NET Core minimal API, `demo-apps/demoapp001-dotnet-api/` (`CreditDashboard.Api`, tested by `CreditDashboard.Api.Tests` with NUnit 5.0.0). Contract first: C# data types generated from `openapi.yaml` by NSwag 14.7.1 into `Contract/`, with the contract embedded; requests validated against the contract at the edge by the service's middleware (JsonSchema.Net 9.4.0); no code-first contract generation (DR-050). Listens on port 4000 under `/api/v1` | Accepted (DR-017, DR-050) |
-| Business rules | A C# library inside the service, unit-tested with NUnit, each test tagged with its BR ID | Accepted (DR-017) |
+| Business rules | A C# class library in the service's solution, `CreditDashboard.BusinessRules`, with no ASP.NET or contract dependency: pure functions over integer minor units and a `DateOnly` today. Unit-tested by `CreditDashboard.BusinessRules.Tests` (NUnit), each test tagged `[Category("BR-nn")]`; the cases are in [business-rules-cases.md](business-rules-cases.md) | Accepted (DR-017, CDS-20 plan) |
 | Data | In-memory store, loaded from `fixtures/personas/*.json` at start and on reset | Proposed |
 | Auth | Bearer token issued by `POST /auth/login`; each test user is bound to one persona. A token's `expiresAt` is judged on the controlled clock, so moving the clock past it expires the token (the `@security` expiry scenario) | Proposed (DR-007) |
 | Container | Single Docker image; `docker compose up` brings up API and UI | Proposed |
@@ -198,7 +199,7 @@ The customer's own account record, behind the My Profile page. Rules PR-01 to PR
 | --- | --- |
 | BR-01 | Score is an integer 0 to 1000. Benchmarks (national, local) use the same scale. |
 | BR-02 | History range `3m`, `6m`, `1y` returns 3, 6 and 12 monthly points, oldest first, ending at the current month. Missing months return `score: null`, never a carried-forward value. |
-| BR-03 | Utilisation = balance / limit × 100, rounded half up to an integer. Limit of zero or null gives `utilisation: null`. No upper bound: above 100 means the balance is over the limit (DR-013). |
+| BR-03 | Utilisation = balance / limit × 100, rounded half up (towards positive infinity, so -4.5 gives -4) to an integer. Limit of zero or null gives `utilisation: null`. No upper bound: above 100 means the balance is over the limit (DR-013). |
 | BR-04 | Type totals sum `balance` and `limit` across open accounts of that type where `includedInTotals` is true. Utilisation of the total follows BR-03. |
 | BR-05 | Loans without a limit set `includedInTotals: false` and appear in a separate `excluded` array in the totals response. |
 | BR-06 | A negative balance (an account in credit) is returned as a negative integer. Utilisation is floored at 0 for display purposes; raw value available as `utilisationRaw`. The UI shows the amount as 'in credit' (DR-018). |
@@ -298,6 +299,8 @@ UI-only flags (labels, ARIA, rendering) are listed in the UI spec.
 | Service contract drift | `npm run check:service-contract`: `Contract/contract.json` and `Contract/Contract.g.cs` match a fresh generation from `openapi.yaml` (DR-050) | Phase 3 onwards (CDS-19) |
 | Edge validation | `CreditDashboard.Api.Tests`: requests breaking the contract get 400 `/problems/validation` with `errors[]`, requests outside it get 404, and every problem body validates against the contract's `Problem` schema | Phase 3 onwards (CDS-19) |
 | Contract coverage | `CreditDashboard.Api.Tests`: every contract operation is served or listed as pending, and no route exists outside the contract; the pending list is empty at the Phase 3 gate | Phase 3 onwards (CDS-19) |
+| Rule unit tests | `CreditDashboard.BusinessRules.Tests`: every case in business-rules-cases.md, tagged by BR ID; the fixture parity test recomputes the seven personas' derived values | Phase 3 onwards (CDS-20) |
+| Rule traceability | A test reads the BR IDs from section 7 and fails if a rule has no tagged test, or a tag names no rule | Phase 3 onwards (CDS-20) |
 | Response validation | Every API scenario response checked against the contract | Phase 3 onwards |
 | Property-based | Schemathesis against the running service | Nightly |
 | Business rules | `@api` Gherkin scenarios tagged with `BR-` IDs | Phase 3 onwards |

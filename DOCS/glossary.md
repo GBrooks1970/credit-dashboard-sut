@@ -1,7 +1,7 @@
 ---
-version: 8
+version: 9
 created: 2026-10-04T16:50Z
-updated: 2026-10-07T10:25Z
+updated: 2026-10-07T12:50Z
 project: credit-dashboard-sut
 type: glossary
 language: en-GB
@@ -20,7 +20,7 @@ status: normative
 
 **The rule.** Every term below has **one meaning** in this project's specifications, contract, feature files, fixtures and, from Phase 3, its code. A word with more than one meaning in use is either given one, or split into qualified terms that each have one. Where this glossary and another project document disagree about what a word means, this glossary is right and the other document is conformed to it.
 
-**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. Where this glossary and another project document disagree about what a word means, this glossary is right. Version 1 was compiled on 4 October 2026; versions 2 to 5 recorded decision briefs 1 to 3; version 6 makes it normative; version 7 adds `greetingName` (DR-036); version 8 applies the CDS-18 review: *Account information*, the masking wording, the PR range and current references.
+**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. Where this glossary and another project document disagree about what a word means, this glossary is right. Version 1 was compiled on 4 October 2026; versions 2 to 5 recorded decision briefs 1 to 3; version 6 makes it normative; version 7 adds `greetingName` (DR-036); version 8 applies the CDS-18 review: *Account information*, the masking wording, the PR range and current references; version 9 removes the remaining versioned citations and adds *Superseded* (CDS-18 confirmation pass).
 
 ---
 
@@ -105,7 +105,7 @@ Definitions an agent cannot settle on its own, because each changes what a rule,
 | **In credit** | An account whose balance is negative: the lender owes the customer. The API returns the negative amount; the UI shows the amount without a sign followed by 'in credit' (`£44 in credit`), for any negative figure (*Decided, brief 2 D2*) | *Credit balance*: avoid, because it reads as "the balance on a credit card" | BR-06; DR-018 |
 | **Limit** | The ceiling an account's balance is measured against. On a credit card or credit account, the credit limit; on a loan, the amount originally borrowed (UI: *borrowed*); on a current account, the overdraft limit. May be absent | | `AccountSummary.limit`; UI spec 6.4 |
 | **Utilisation** | Balance divided by limit, × 100, rounded half up to a whole number; absent when the limit is zero or absent. Floored at 0 for an account in credit. No upper bound (*Decided, brief 1 D3*) | Not capped at 100 | BR-03, BR-06; `Utilisation`; DR-013 |
-| **Over limit** | Of an account: utilisation above 100, because the balance exceeds the limit. The UI shows the real figure and an 'Over limit' badge | Not *in arrears*, which is an account status | BR-03; UI spec v3 section 7; DR-013 |
+| **Over limit** | Of an account: utilisation above 100, because the balance exceeds the limit. The UI shows the real figure and an 'Over limit' badge | Not *in arrears*, which is an account status | BR-03; UI spec section 7; DR-013 |
 | **Unfloored utilisation** | The utilisation before the floor at 0, so negative for an account in credit | | BR-06; `utilisationRaw` |
 | **Included in totals**, **excluded** | Whether an account counts towards its type's totals and total debt. A loan with no limit is excluded and listed separately | | BR-04, BR-05; `includedInTotals`, `AccountTotals.excluded` |
 | **Type totals** | The summed balance and limit, and their utilisation, across the included open accounts of one type. Shown on the overview account card and the type list's summary card, which must agree | Not the *report summary* | BR-04; `AccountTotals` |
@@ -143,7 +143,7 @@ Definitions an agent cannot settle on its own, because each changes what a rule,
 | **One-time code** | The six-digit code that verifies a mobile number, valid for less than 10 minutes; always `123456` in this demo; the third wrong entry voids it (PR-10, PR-11) | Not a verification link; not a password | PR-10, PR-11 |
 | **Verification status** | `verified` or `unverified`, for the email address or mobile number. Changing the email sets it to unverified | Not an account or payment status | PR-04; `VerificationStatus` |
 | **Tile** | A link showing a label and, on the profile, a one-line **tile summary** | Not a button (bug flag `button-href`) | UI spec section 7; profile spec 3.3 |
-| **Sub-page** | One of the five profile pages (email, mobile, address, employment, finances). Release 3 builds email and mobile; the others are stretch (DR-022) | | Profile spec v3 section 4; DR-022 |
+| **Sub-page** | One of the five profile pages (email, mobile, address, employment, finances). Release 3 builds email and mobile; the others are stretch (DR-022) | | Profile spec section 4; DR-022 |
 | **Finances** | The customer's annual income and monthly housing cost, in minor units; never shown on the profile overview | | PR-07 |
 
 ### 4.5 The system under test
@@ -161,7 +161,7 @@ Definitions an agent cannot settle on its own, because each changes what a rule,
 | **As-at time** | A persona's reference time, `asAt`; every fixture date is relative to it. All seven use 2026-10-03T09:00:00Z | Not the *controlled clock*, which can move | API spec 9.1 |
 | **Controlled clock** | Server time as set by test control. Moving it changes derived values, not stored data | | BR-08; `PUT /__test/clock` |
 | **Test control** | The `/__test/*` operations that arrange state: reset, persona binding, bug flags, clock, latency. Enabled only when `TEST_CONTROL=true` and the request carries `X-Test-Control-Key` | Not part of the product; never in a production build | API spec 6.5; DR-008 |
-| **Overrides** | Test-control data supplied when binding a persona, replacing named lists for one bureau, so a scenario can arrange data no persona holds (*Decided, brief 2 D1*). Contract schema `PersonaOverrides`; accounts use `FixtureAccount` | Not a fixture; never stored | API spec v6 section 6.5; contract v5; DR-020 |
+| **Overrides** | Test-control data supplied when binding a persona, replacing named lists for one bureau, so a scenario can arrange data no persona holds (*Decided, brief 2 D1*). Contract schema `PersonaOverrides`; accounts use `FixtureAccount` | Not a fixture; never stored | API spec section 6.5; contract `PersonaOverrides`; DR-020 |
 | **Bug flag** | A switch, off by default, that plants one known defect so a scenario can be shown to catch it. API-layer flags are in API spec section 10, UI-layer in UI spec section 8, profile flags in the profile spec section 7 | *Feature flag*: retired (section 6) | DR-008 |
 | **Debug panel** | The `/__debug` page that drives test control from the browser | Tooling, not a product page | UI spec 6.8 |
 | **Demo banner** | The banner on every page saying all data is fictional; cannot be dismissed | | UI spec 4.4 |
@@ -195,13 +195,13 @@ Definitions an agent cannot settle on its own, because each changes what a rule,
 |---|---|---|---|
 | **SDD phase**, or **phase** | One of Phase 0 (specify) to Phase 5 (defects and evidence), each with an exit gate. Bare *phase* means this (*Decided, brief 1 D5*) | Not a *release* | README, SDD workflow; DR-015 |
 | **Stretch** | Of a page or operation: specified, and deliberately not built until promoted. The address, employment and finances profile sub-pages are stretch (*Decided, brief 2 D7*) | Not out of scope | DR-022 |
-| **Release** | A group of pages that ship together, R1 to R3, as listed in the UI spec page catalogue. Release 1 (login, report overview) is built during SDD Phase 4 (*Decided, brief 1 D5*) | Not an SDD phase, and not a deployment | UI spec v3 section 5; DR-015 |
+| **Release** | A group of pages that ship together, R1 to R3, as listed in the UI spec page catalogue. Release 1 (login, report overview) is built during SDD Phase 4 (*Decided, brief 1 D5*) | Not an SDD phase, and not a deployment | UI spec section 5; DR-015 |
 | **Exit gate** | The condition that must hold before the next SDD phase starts | Not a *verification check* | README, SDD workflow |
 | **Verification check** | A tool run that keeps a specification honest (lint, example validity, response validation). The specifications head these *Verification checks* | Not an *exit gate*. See *gate* in section 5 | API spec section 11; UI spec section 9 |
-| **Phase 0 pack** | This folder, `project-specs/credit-dashboard-sut/`, until Phase 1 lifts it into its own repository | | DR-001 |
+| **Phase 0 pack** | The frozen specification folder `project-specs/credit-dashboard-sut/` in the portfolio repository, from which this repository was seeded at CDS-09 (5 October 2026) | Not this repository | DR-001; DR-038 |
 | **Specification first** | A change is made to the contract, a rule table or the fixture format before fixtures, scenarios or code | | README, change control |
 | **Owner** | The person who accepts decisions and reviews the pack; the *approver* in a decision brief | | Decision register |
-| **Decision status** | A decision-register entry is `Proposed`, `Open` (no proposal yet, DR-005) or `Accepted` (DR-011 to DR-016); an accepted entry changes only by a new entry that supersedes it | Not a backlog status | Decision register |
+| **Decision status** | A decision-register entry is `Proposed`, `Open` (no proposal yet), `Accepted`, or `Superseded` by a later entry (for example DR-005 by DR-018); an accepted entry changes only by a new entry that supersedes it | Not a backlog status | Decision register |
 | **Superseded** | Of a versioned file: replaced by a later version, kept, and not edited | | README contents; handover working norms |
 | **Decision brief** | A dated document putting decisions to the owner with options, one recommendation and the argument against; indexed in `DOCS/decision-briefs/_index.md`. Its outcome is recorded as DR entries | Not a DR entry | `templates/decision-brief.template.md` |
 | **Page survey** | The design spec files: a record of the source app's page structure. Input to the specifications, not a specification | Filenames keep *design-spec*; prose says *page survey* | README contents |

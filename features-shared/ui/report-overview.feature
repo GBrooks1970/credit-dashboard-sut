@@ -1,4 +1,4 @@
-# version: 4 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 5 | created: 2026-10-07T12:50Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @ui
 Feature: Report overview
   The overview gives a customer their score, how it compares, and a route into every part of the report.
@@ -39,6 +39,7 @@ Feature: Report overview
   @BR-08
   Scenario Outline: Next update wording
     Given the next bureau refresh is <days> away
+    When Alex returns to the report later
     Then Alex is told the report updates in <wording>
     Examples:
       | days   | wording |

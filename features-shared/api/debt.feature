@@ -1,10 +1,11 @@
-# version: 4 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 5 | created: 2026-10-07T12:50Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @api
 Feature: Total debt
   Total debt counts what is owed on open accounts that count towards totals, and shows which way it is moving.
 
   Background:
     Given Alex holds the "drilldown" persona
+    And today is 3 October 2026
 
   @BR-07
   Scenario: Only money owed on included accounts counts as debt

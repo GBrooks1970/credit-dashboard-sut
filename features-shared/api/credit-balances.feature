@@ -1,10 +1,10 @@
-# version: 2 | created: 2026-10-05T20:00Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 3 | created: 2026-10-07T12:50Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @api
-Feature: Credit balances
+Feature: Accounts in credit
   An account that is in credit reports a negative balance, and its utilisation never drops below zero.
 
-  # How a credit balance is displayed is DR-005, still open (backlog CDS-02).
-  # These scenarios cover only what the API returns, which DR-005 does not change.
+  # How an account in credit is displayed is DR-018 (ui/account-drilldown.feature, 'A card in credit says so').
+  # These scenarios cover only what the API returns.
 
   Background:
     Given Alex holds the "drilldown" persona

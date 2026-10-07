@@ -1,7 +1,7 @@
 ---
-version: 9
-created: 2026-10-07T10:25Z
-supersedes: v8 (2026-10-06T18:29Z); earlier versions are in git history (DR-040)
+version: 10
+created: 2026-10-07T12:50Z
+supersedes: v9 (2026-10-07T10:25Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-spec
 language: en-GB
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v10:** section 6.7 names the searches list and personal-details hooks (CDS-18 confirmation pass).
 **Changes in v9:** CDS-18 review fixes. The overview's changes toggle fetches every change with one further call (section 6.2, DR-047); the debt breakdown reads `byType` (section 6.7, DR-046); the report-changes route carries `sentiment`; the edit-form catalogue row also names the open-redirect security scenarios; section 6.9 cites PR-01 to PR-11.
 **Changes in v8:** the framework versions are resolved (CDS-16, DR-044): section 3 'Framework' row.
 **Changes in v7:** the 'Data' row names the generated client package and its pinned tools (CDS-15, DR-043).
@@ -207,7 +208,7 @@ Sections not shown for a type are not rendered at all, rather than rendered empt
 
 ### 6.7 Closed accounts, report changes, searches, personal details, debt (Releases 2 to 3)
 
-These pages reuse the list patterns above. Closed accounts groups rows under `closed-group-{type}` with no summary. Report changes adds filter chips `changes-filter-{sentiment}` and pagination `pager-prev`, `pager-next`, `pager-status`; filters are reflected in the URL. Searches lists `search-row-{id}`. Personal details is read-only in v1. Debt overview shows `debt-total`, `debt-trend` and a per-type breakdown `debt-type-{type}`, one row per `byType` entry of `GET /debt/overview` (BR-07, DR-046).
+These pages reuse the list patterns above. Closed accounts groups rows under `closed-group-{type}` with no summary. Report changes adds filter chips `changes-filter-{sentiment}` and pagination `pager-prev`, `pager-next`, `pager-status`; filters are reflected in the URL. Searches lists `search-row-{id}` inside `search-list` (empty state `search-list-empty`). Personal details is read-only in v1: the name `pd-name` (the user's legal name), the current address `pd-address-current`, previous addresses `pd-address-previous-{n}` (newest first, from 1), and the electoral roll status `pd-electoral-roll`. Debt overview shows `debt-total`, `debt-trend` and a per-type breakdown `debt-type-{type}`, one row per `byType` entry of `GET /debt/overview` (BR-07, DR-046).
 
 ### 6.8 Debug panel (tooling)
 

@@ -4,9 +4,9 @@ created: 2026-10-07T09:58Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-18 (fixes addendum)
-status: approved
+status: implemented
 approved: 2026-10-07, Gary Brooks; each PR merged once its own checks pass
-delivered: not yet
+delivered: "#16, squash dca26ce (2026-10-07)"
 language: en-GB
 ---
 
@@ -80,6 +80,10 @@ DR-049 records the Phase 2 gate as met. The review record gains the owner's sign
 ### PR C and status PRs
 
 PR C appends the Outcome of both plans and adds an implementation log. Then come the registry label, the landing card and the capability-matrix ledger.
+
+## Outcome
+
+Delivered in #16 (`dca26ce`; CI run 37607379139, `verify` 9/9). The confirmation pass that followed found 1 Blocker and 10 Changes, three of them caused by these fixes (see addendum 2). Full record: [`DOCS/implementation-logs/2026-10-07_cds-18-behaviour-re-review.md`](../implementation-logs/2026-10-07_cds-18-behaviour-re-review.md) and [`.review/2026-10-07_cds-18-behaviour-re-review.md`](../../.review/2026-10-07_cds-18-behaviour-re-review.md).
 
 ## Verification
 

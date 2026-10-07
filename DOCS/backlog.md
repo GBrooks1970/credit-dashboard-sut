@@ -1,6 +1,6 @@
 ---
-version: 34
-created: 2026-10-07T13:15Z
+version: 35
+created: 2026-10-07T13:31Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 34 (CDS-18 recorded: plan Outcomes and implementation log)
+**Version:** 35 (portfolio status updated for Phases 1 and 2)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -179,6 +179,8 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 ### CDS-18: Phase 2 re-review and gate
 
 **COMPLETE (2026-10-07). The Phase 2 exit gate is met (DR-049).** Implemented to the plan and its two addenda (`DOCS/implementation-plans/2026-10-07_cds-18-*.md`). Three independent passes, each by a fresh agent: blind (5 Blocker, 12 Change, 8 Note), confirmation (1, 10, 11) and scoped to the fixes (0, 3, 6), with two re-checks ending at no Blocker or Change. Fixes in #16 (contract v10; DR-046 to DR-048), #17 and #18. Record: `.review/2026-10-07_cds-18-behaviour-re-review.md`. Signed off by the owner. Plan Outcomes and implementation log in #19. CDS-24 holds the remaining Notes; CDS-19 (Phase 3) is ready.
+
+**Update (2026-10-07).** Portfolio status follows the gate, as brief 7 required: registry label "Phases 1 and 2 complete 2026-10-07" (NeoCognitus70/portfolio-prompts#115, `63f31ae`), landing card summary (GBrooks1970/portfolio#60, `a49da0a`; its first CI run failed on a transient HTTP 500 for another project's URL and passed on re-run), capability matrix (test-automation-portfolio#290, `a10ba69`). Handover v11 written.
 
 ### CDS-17: Kanban dialect
 

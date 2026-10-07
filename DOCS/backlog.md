@@ -1,6 +1,6 @@
 ---
-version: 38
-created: 2026-10-07T18:19Z
+version: 39
+created: 2026-10-07T19:44Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 38 (CDS-26 added: Prism development-dependency audit risk)
+**Version:** 39 (CDS-26 closed: accepted and recorded, DR-051)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -64,7 +64,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-22` | Serenity/JS harness: `CallAnApi` and `ControlTheTestEnvironment` abilities; `@api` and `@security` scenarios green with every response validated against the contract (DR-006, DR-042) | Harness | — | HIGH | `CDS-20`, `CDS-21`, `CDS-25` | Open |
 | `CDS-23` | Schemathesis pinned and run clean against the service (Phase 3 gate) | Service | — | HIGH | `CDS-19` | Open |
 | `CDS-25` | Serve the contract operations from the fixture store: store and clock, session, report, accounts, profile, supporting; each removed from the coverage test's pending list as it is served | Service | — | HIGH | `CDS-19`, `CDS-20`, `CDS-21` | Open |
-| `CDS-26` | Risk: the development-dependency audit reports 15 vulnerabilities (9 high, 6 moderate), all through Prism 5.16.0; owner to accept, wait for a fixed Prism release, or apply npm overrides | Tooling | — | MEDIUM | — | Open |
+| `CDS-26` | Risk: the development-dependency audit reports 15 vulnerabilities (9 high, 6 moderate), all through Prism 5.16.0; owner to accept, wait for a fixed Prism release, or apply npm overrides | Tooling | — | MEDIUM | — | Done 2026-10-07 |
 
 ## Items
 
@@ -202,8 +202,10 @@ npm's only offered fix is `@stoplight/prism-cli` 3.1.1, a semver-major downgrade
 3. Replace Prism with another mock server, which reopens DR-039 and CDS-14.
 
 **Success Criteria:**
-- [ ] The owner's choice is recorded (a decision-register entry if it changes the mock).
-- [ ] If the risk is mitigated, `npm audit` at the root reports 0 high, and `npm run verify` passes.
+- [x] The owner's choice is recorded (DR-051, decision brief 8).
+- [x] Not applicable: the risk is accepted, not mitigated.
+
+**COMPLETE (2026-10-07, decision brief 8 D1, option 1).** Accepted and recorded as DR-051. The gate-relevant audit is `npm audit --omit=dev` (0 findings; README 'Checks'). Revisit triggers: a new Prism release, each phase gate, and Prism ever run with credentials or on a non-loopback address. Dependabot alerts remain off on the repository; enabling them is the owner's setting.
 
 ### CDS-19: Service scaffold
 

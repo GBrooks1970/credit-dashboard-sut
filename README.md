@@ -57,6 +57,8 @@ pip install gherkin-official==29.0.0
 
 Each check can also be run on its own: `npm run check:mock`, `npm run check:client`, `npm run check:client-smoke`, `npm run check:service-contract`, `npm run check:service`, `npm run check:kanban`, `cd fixtures && npm run check`, `python tools/check-gherkin.py`. After changing the contract, regenerate the client types with `npm --prefix packages/api-client run generate` and the service's contract with `npm run generate:service-contract`, and commit them. `npm run service` starts the service on `http://localhost:4000/api/v1`. After changing the backlog's summary tables, regenerate the board with `npm run kanban` and commit it.
 
+The gate-relevant dependency audit is the production one, `npm audit --omit=dev`, which reports 0. The full `npm audit` reports 15 development-only findings, all inside Prism 5.16.0's dependency tree; they are accepted and recorded (DR-051, CDS-26), with revisit triggers set there.
+
 To run the mock on its own, use `npm run mock`; it listens on `http://localhost:4010` without the `/api/v1` prefix (DR-039).
 
 Node is pinned in `.nvmrc` (24.18.0).

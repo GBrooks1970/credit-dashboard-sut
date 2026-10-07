@@ -7,7 +7,7 @@ This walkthrough covers one batch: 15 merged PRs in `credit-dashboard-sut` (#8 t
 In this batch:
 
 - **Phase 1 (contract) is closed.** It gained a generated TypeScript client, resolved version pins and a drift-checked Kanban board.
-- **Phase 2 (behaviour) is closed.** Its gate was met only after three independent agent reviews, which found and drove fixes to 23 Blocker or Change findings; this included contract v10.
+- **Phase 2 (behaviour) is closed.** Its gate was met only after three independent agent reviews, which found 32 Blocker or Change findings in all (17, 11, 3 and 1) and drove their fixes; this included contract v10.
 - **Phase 3 has started** with a contract-first ASP.NET Core service scaffold.
 
 The repository is clean and in sync with `origin/main` at `02181d6`, and `npm run verify` passes 11 of 11.

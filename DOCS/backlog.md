@@ -1,6 +1,6 @@
 ---
-version: 37
-created: 2026-10-07T14:47Z
+version: 38
+created: 2026-10-07T18:19Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 37 (CDS-19 recorded)
+**Version:** 38 (CDS-26 added: Prism development-dependency audit risk)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -64,6 +64,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-22` | Serenity/JS harness: `CallAnApi` and `ControlTheTestEnvironment` abilities; `@api` and `@security` scenarios green with every response validated against the contract (DR-006, DR-042) | Harness | — | HIGH | `CDS-20`, `CDS-21`, `CDS-25` | Open |
 | `CDS-23` | Schemathesis pinned and run clean against the service (Phase 3 gate) | Service | — | HIGH | `CDS-19` | Open |
 | `CDS-25` | Serve the contract operations from the fixture store: store and clock, session, report, accounts, profile, supporting; each removed from the coverage test's pending list as it is served | Service | — | HIGH | `CDS-19`, `CDS-20`, `CDS-21` | Open |
+| `CDS-26` | Risk: the development-dependency audit reports 15 vulnerabilities (9 high, 6 moderate), all through Prism 5.16.0; owner to accept, wait for a fixed Prism release, or apply npm overrides | Tooling | — | MEDIUM | — | Open |
 
 ## Items
 
@@ -182,6 +183,27 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 **COMPLETE (2026-10-07). The Phase 2 exit gate is met (DR-049).** Implemented to the plan and its two addenda (`DOCS/implementation-plans/2026-10-07_cds-18-*.md`). Three independent passes, each by a fresh agent: blind (5 Blocker, 12 Change, 8 Note), confirmation (1, 10, 11) and scoped to the fixes (0, 3, 6), with two re-checks ending at no Blocker or Change. Fixes in #16 (contract v10; DR-046 to DR-048), #17 and #18. Record: `.review/2026-10-07_cds-18-behaviour-re-review.md`. Signed off by the owner. Plan Outcomes and implementation log in #19. CDS-24 holds the remaining Notes; CDS-19 (Phase 3) is ready.
 
 **Update (2026-10-07).** Portfolio status follows the gate, as brief 7 required: registry label "Phases 1 and 2 complete 2026-10-07" (NeoCognitus70/portfolio-prompts#115, `63f31ae`), landing card summary (GBrooks1970/portfolio#60, `a49da0a`; its first CI run failed on a transient HTTP 500 for another project's URL and passed on re-run), capability matrix (test-automation-portfolio#290, `a10ba69`). Handover v11 written.
+
+### CDS-26: Prism development-dependency audit risk
+
+**Recorded (2026-10-07).** Found while gathering evidence for the walkthrough `DOCS/walkthroughs/2026-10-07_phase-1-close-to-phase-3-start.md` (#23). Previously unrecorded.
+
+**Problem:** `npm audit`, including development dependencies, at the repository root reports 15 vulnerabilities: 9 high and 6 moderate, none critical. All sit inside the dependency tree of `@stoplight/prism-cli` 5.16.0, the pinned mock server (CDS-14). The vulnerable packages are:
+- **High:** `@faker-js/faker`, `@stoplight/http-spec`, `@stoplight/prism-http`, `@stoplight/prism-http-server`, `braces`, `chokidar`, `lodash`, `postman-collection`, and `@stoplight/prism-cli` itself.
+- **Moderate:** `argparse`, `js-yaml`, `json-schema-faker`, `json-schema-ref-parser`, `sprintf-js`, `uuid`.
+
+npm's only offered fix is `@stoplight/prism-cli` 3.1.1, a semver-major downgrade, so nothing has been applied.
+
+**Exposure:** development only. Prism runs locally and in CI as the contract mock (`npm run mock`, the mock smoke and the client smoke), bound to `127.0.0.1`. It is not part of any deployed artefact. The production audit (`npm audit --omit=dev`) reports 0, and so do the `fixtures/` and `packages/api-client/` audits.
+
+**Options (owner):**
+1. Accept and record, watching for a Prism release that clears the tree.
+2. Add npm `overrides` for the vulnerable transitive packages, then prove the mock smoke and client smoke still pass.
+3. Replace Prism with another mock server, which reopens DR-039 and CDS-14.
+
+**Success Criteria:**
+- [ ] The owner's choice is recorded (a decision-register entry if it changes the mock).
+- [ ] If the risk is mitigated, `npm audit` at the root reports 0 high, and `npm run verify` passes.
 
 ### CDS-19: Service scaffold
 

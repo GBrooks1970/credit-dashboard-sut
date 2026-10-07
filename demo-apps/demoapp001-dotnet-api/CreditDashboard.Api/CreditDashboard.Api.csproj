@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <!-- credit-dashboard-sut service (DR-017). Contract-first: Contract/ is generated from DOCS/.architecture/openapi.yaml
+       by tools/generate-service-contract.mjs (DR-050); never edit it by hand. Versions are exact pins (DR-044). -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RootNamespace>CreditDashboard.Api</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JsonSchema.Net" Version="9.4.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Contract\contract.json" LogicalName="contract.json" />
+  </ItemGroup>
+
+</Project>

@@ -2,6 +2,12 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-07: service scaffold (CDS-19, Phase 3 starts)
+
+- `demo-apps/demoapp001-dotnet-api/`: ASP.NET Core minimal API on .NET 10 (`global.json` 10.0.401, latest patch), contract first (DR-050). NSwag 14.7.1 generates the C# types and the contract is embedded (`npm run generate:service-contract`; drift-checked); a middleware validates every request against the contract with JsonSchema.Net 9.4.0 (400 `/problems/validation` with `errors[]`, 404 outside the contract). No operation is served yet; a contract coverage test lists all 36 as pending.
+- `CreditDashboard.Api.Tests` (NUnit 5.0.0): 16 tests; every problem body is checked against the contract's `Problem` schema. NuGet lock files; CI restores in locked mode.
+- `npm run verify` has 11 steps; CI sets up .NET from `global.json`. API specification v15, decision register v14 (DR-050), backlog v36 (CDS-25 added).
+
 ## 2026-10-07: Phase 2 exit gate met (CDS-18, DR-049)
 
 - A scoped third independent pass and two re-checks ended with no Blocker or Change; its three Changes are fixed (My Profile specification v6 mobile sub-page, glossary v10 *Debt breakdown* and *Account details*, API specification v14 section 6.6).

@@ -1,0 +1,7 @@
+<Project>
+  <!-- NuGet lock files keep restores reproducible (exact pins, DR-044); CI restores in locked mode. -->
+  <PropertyGroup>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <RestoreLockedMode Condition="'$(CI)' == 'true'">true</RestoreLockedMode>
+  </PropertyGroup>
+</Project>

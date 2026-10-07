@@ -11,6 +11,10 @@
     "check:mock": "node tools/mock-smoke.mjs",
     "check:client": "npm --prefix packages/api-client run check",
     "check:client-smoke": "node tools/client-smoke.ts",
+    "generate:service-contract": "node tools/generate-service-contract.mjs",
+    "check:service-contract": "node tools/generate-service-contract.mjs --check",
+    "check:service": "dotnet test demo-apps/demoapp001-dotnet-api/CreditDashboard.sln -c Release --nologo",
+    "service": "dotnet run --project demo-apps/demoapp001-dotnet-api/CreditDashboard.Api",
     "kanban": "generate-kanban --project credit-dashboard-sut --dialect auth-table --backlog DOCS/backlog.md",
     "check:kanban": "generate-kanban --check --project credit-dashboard-sut --dialect auth-table --backlog DOCS/backlog.md"
   },

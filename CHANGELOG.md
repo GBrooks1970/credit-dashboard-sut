@@ -2,6 +2,12 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-07: phase gates recorded (decision brief 7)
+
+- Decision brief 7 decided. DR-045: the Phase 1 exit gate is met, and the phase closes with CDS-17. Phase 2 is recorded after an independent re-review (CDS-18). Phase 3 follows both.
+- README: the 'SDD workflow' table returns from the Phase 0 pack with a 'Gate status' column, and 'Status' is corrected.
+- Backlog v30: CDS-18 (re-review), and CDS-19 to CDS-23 (Phase 3 outline, blocked). Decision register v11.
+
 ## 2026-10-06: remaining versions resolved (CDS-16)
 
 - DR-044: .NET SDK 10.0.401 (`global.json`, `rollForward: latestPatch`) for the service; React 19.3.0, Vite 8.3.3, `@vitejs/plugin-react` 6.1.2 and TypeScript 5.9.3 for the UI, exact pins. The files are created when each project is scaffolded, taking the latest patch on that day. The entry also lists every version already pinned.

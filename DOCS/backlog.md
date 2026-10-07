@@ -1,6 +1,6 @@
 ---
-version: 29
-created: 2026-10-06T18:31Z
+version: 30
+created: 2026-10-07T08:30Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 29 (CDS-16 merged and recorded)
+**Version:** 30 (decision brief 7: Phase 1 gate met, DR-045; CDS-18 re-review; Phase 3 items added, blocked)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -36,7 +36,13 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | CDS-14 | Prism mock serves every operation from the contract examples (Phase 1 exit gate) | 1 | COMPLETE (2026-10-06) | none |
 | CDS-15 | Generate the typed TypeScript client into `packages/api-client` from the contract | 1 | COMPLETE (2026-10-06) | none |
 | CDS-16 | Pin the remaining versions as each project is created: .NET SDK (`global.json`), React, Vite (DR-009) | 1 | COMPLETE (2026-10-06) | none |
-| CDS-17 | Convert this backlog's summary table to the portfolio `auth-table` dialect so the shared Kanban generator can build a board | 1 | READY TO START | none (owner chooses when a board is wanted) |
+| CDS-17 | Convert this backlog's summary table to the portfolio `auth-table` dialect so the shared Kanban generator can build a board | 1 | READY TO START | none (closes Phase 1, brief 7 D1; next in order) |
+| CDS-18 | Independent re-review of the feature files and step glossary against contract v9, then owner sign-off; records the Phase 2 gate (DR-046) | 2 | READY TO START | none (after CDS-17, brief 7 order) |
+| CDS-19 | Phase 3 plan and service scaffold: ASP.NET Core minimal API (DR-017), `global.json` (DR-044), C# types generated from the contract | 3 | BLOCKED | CDS-17, CDS-18 (sequence rule, DR-045) |
+| CDS-20 | Business-rules library with NUnit tests tagged by BR ID (DR-017) | 3 | BLOCKED | CDS-19 |
+| CDS-21 | Test-control endpoints as API specification section 6.5 specifies: reset, persona binding with overrides (DR-020), clock, bug flags | 3 | BLOCKED | CDS-19 |
+| CDS-22 | Serenity/JS harness: `CallAnApi` and `ControlTheTestEnvironment` abilities; `@api` and `@security` scenarios green with every response validated against the contract (DR-006, DR-042) | 3 | BLOCKED | CDS-20, CDS-21 |
+| CDS-23 | Schemathesis pinned and run clean against the service (Phase 3 gate) | 3 | BLOCKED | CDS-19 |
 
 ## Items
 
@@ -145,6 +151,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 **Fan-outs (2026-10-06).** The owner set `orchestration_target: true`, because the trigger set at onboarding (the Phase 1 exit gate) is met and the gate is the single command `npm ci && npm run verify`. This was done in NeoCognitus70/portfolio-prompts#114 (`9c582d7`). The same PR adopted this project's DR-041 plan convention portfolio-wide: `project-layout.md` Working norms, a default `implementation_plans` path, and this project's `DOCS/implementation-plans/` deviation. The shared template is at the portfolio root (`templates/implementation-plan.template.md`, test-automation-portfolio#271, `dea15ed`).
 
 **Timestamp correction (2026-10-06).** Some `created` stamps were written before the clock was read. Backlog v26 and the plans index v3 said 16:50Z; the commit that made them is from 16:47Z, and the index now says so (v26's header was replaced by this version). Four tool files said 16:33Z, the time the plan was written, but were committed at 16:41Z (`tools/lib/prism.mjs`, `tools/client-smoke.ts`, `tools/verify.mjs`, `tools/mock-smoke.mjs` v2). Each stamp is now its commit time.
+
+### Decision brief 7: phase gates
+
+**Decided (2026-10-07).** The Phase 1 gate is met (DR-045). Phase 1 closes with CDS-17, which stays in Phase 1 (D1 option 2, against the recommendation). The Phase 2 gate is recorded only after CDS-18, an independent re-review against contract v9 by a separate agent and then the owner's sign-off (D2 option 2, against the recommendation). The gates are in the README 'SDD workflow' table (D3). Phase 3 follows both (D4). CDS-19 to CDS-23 are an outline of the pack's Phase 3 work; the first Phase 3 plan sets their content.
 
 ### CDS-17: Kanban dialect
 

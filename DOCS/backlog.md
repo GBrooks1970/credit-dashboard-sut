@@ -1,6 +1,6 @@
 ---
-version: 32
-created: 2026-10-07T09:04Z
+version: 33
+created: 2026-10-07T13:12Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 32 (CDS-17 merged and recorded)
+**Version:** 33 (CDS-18 complete: Phase 2 gate met, DR-049; CDS-24 added)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -51,7 +51,8 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-07` | Step glossary and three-amigos review of all feature files | Behaviour | — | — | — | Done 2026-10-05 |
 | `CDS-08` | Persona fixtures (7) written and validated against the contract schemas | Behaviour | — | — | — | Done 2026-10-04 |
 | `CDS-13` | Arrange data no persona holds: test-control overrides (DR-020) | Specification | — | — | — | Done 2026-10-04 |
-| `CDS-18` | Independent re-review of the feature files and step glossary against contract v9, then owner sign-off; records the Phase 2 gate (DR-046) | Behaviour | — | HIGH | `CDS-17` | Open |
+| `CDS-18` | Independent re-review of the feature files and step glossary against contract v9, then owner sign-off; records the Phase 2 gate (DR-046) | Behaviour | — | — | `CDS-17` | Done 2026-10-07 |
+| `CDS-24` | Address the CDS-18 review Notes (boundary rows, contract 404s, clock time of day, PR-06 spaces, hook casing and email sub-page hooks, money precision, stale text, current accounts in `{accountType}`, rule tags, bug-flag catches for Phase 5) | Specification | — | LOW | `CDS-18` | Open |
 
 ### Phase 3 — API
 
@@ -174,6 +175,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 ### Decision brief 7: phase gates
 
 **Decided (2026-10-07).** The Phase 1 gate is met (DR-045). Phase 1 closes with CDS-17, which stays in Phase 1 (D1 option 2, against the recommendation). The Phase 2 gate is recorded only after CDS-18, an independent re-review against contract v9 by a separate agent and then the owner's sign-off (D2 option 2, against the recommendation). The gates are in the README 'SDD workflow' table (D3). Phase 3 follows both (D4). CDS-19 to CDS-23 are an outline of the pack's Phase 3 work; the first Phase 3 plan sets their content.
+
+### CDS-18: Phase 2 re-review and gate
+
+**COMPLETE (2026-10-07). The Phase 2 exit gate is met (DR-049).** Implemented to the plan and its two addenda (`DOCS/implementation-plans/2026-10-07_cds-18-*.md`). Three independent passes, each by a fresh agent: blind (5 Blocker, 12 Change, 8 Note), confirmation (1, 10, 11) and scoped to the fixes (0, 3, 6), with two re-checks ending at no Blocker or Change. Fixes in #16 (contract v10; DR-046 to DR-048), #17 and #18. Record: `.review/2026-10-07_cds-18-behaviour-re-review.md`. Signed off by the owner. CDS-24 holds the remaining Notes; CDS-19 (Phase 3) is ready.
 
 ### CDS-17: Kanban dialect
 

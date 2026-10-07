@@ -206,4 +206,4 @@ Together they put two items between today and Phase 3, which is the cost the rec
 
 ### 7.3 Corrections after decision
 
-None.
+- **2026-10-07, the Phase 2 entry is DR-049, not DR-046.** The read-back named DR-046 for the Phase 2 outcome. The CDS-18 re-review needed three decisions first (DR-046 to DR-048, owner's approval of the fixes addendum), so the gate is recorded as DR-049.

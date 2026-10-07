@@ -1,6 +1,6 @@
 ---
 version: 6
-created: 2026-10-07T13:05Z
+created: 2026-10-07T13:09Z
 supersedes: v5 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-feature-spec

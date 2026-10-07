@@ -2,6 +2,11 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-07: Phase 2 exit gate met (CDS-18, DR-049)
+
+- A scoped third independent pass and two re-checks ended with no Blocker or Change; its three Changes are fixed (My Profile specification v6 mobile sub-page, glossary v10 *Debt breakdown* and *Account details*, API specification v14 section 6.6).
+- DR-049 records the Phase 2 gate, signed off by the owner; the review record holds all three passes verbatim. README shows Phase 2 Met; backlog v33: CDS-18 Done, CDS-24 for the remaining Notes, CDS-19 ready.
+
 ## 2026-10-07: CDS-18 confirmation-pass fixes
 
 - A second fresh reviewer, given the same prompt, checked the fixed state: 1 Blocker, 10 Change and 11 Note findings, the Blocker and Changes reproduced. All fixed here; the Notes become backlog item CDS-24 with the gate.

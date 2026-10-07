@@ -1,7 +1,7 @@
 ---
 version: 14
 created: 2026-10-07T13:05Z
-supersedes: v13 (2026-10-07T12:50Z)
+supersedes: v13 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
 language: en-GB
@@ -167,7 +167,7 @@ Every operation documents a `404` (`TestControlDisabled` in the contract): test 
 
 ### 6.6 Profile (Release 3)
 
-The customer's own account record, behind the My Profile page. Rules PR-01 to PR-11 live in the [My Profile UI feature spec](ui-feature-profile.md), section 5; the API enforces PR-01, PR-02, PR-04, PR-06, PR-07 and PR-09 to PR-11, and keeps PR-08 by putting no profile value in any path or query.
+The customer's own account record, behind the My Profile page. Rules PR-01 to PR-11 live in the [My Profile UI feature spec](ui-feature-profile.md), section 5; the API enforces PR-01, PR-02, PR-04, PR-06, PR-07 and PR-09 to PR-11, supplies PR-03's greeting as `greetingName` on `GET /me` (DR-036), and keeps PR-08 by putting no profile value in any path or query.
 
 | Method | Path | Purpose | Success | Errors |
 | --- | --- | --- | --- | --- |

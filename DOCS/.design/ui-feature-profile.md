@@ -101,7 +101,8 @@ Each sub-page has Save and Cancel, returns to the profile on save, and shows the
 
 | Element | Role | `data-testid` | Notes |
 | --- | --- | --- | --- |
-| Number | textbox, labelled | `mobile-input` | UK format (PR-06); the current number pre-filled, masked, when held |
+| Current number | text | `mobile-current` | The number held, masked (`•••• ••• 123`), with its status; absent when none is held |
+| Number | textbox, labelled | `mobile-input` | Always starts empty, never pre-filled with the mask; UK format (PR-06) |
 | Save | button | `mobile-save` | `PUT /me/profile/mobile`; on 200 the code step appears on the same page |
 | Number error | text, `aria-describedby` | `mobile-error` | From 422 `/problems/rule-violation/mobile-number` |
 | Code | textbox, labelled, numeric | `mobile-code-input` | Six digits (PR-10) |

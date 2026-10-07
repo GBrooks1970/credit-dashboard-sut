@@ -1,6 +1,6 @@
 ---
-version: 31
-created: 2026-10-07T09:05Z
+version: 32
+created: 2026-10-07T09:04Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 31 (CDS-17 complete: auth-table summary, Kanban board, drift check; Phase 1 closed)
+**Version:** 32 (CDS-17 merged and recorded)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -177,7 +177,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-17: Kanban dialect
 
-**COMPLETE (2026-10-07, #14). Phase 1 is closed** (brief 7 D1, DR-045). Implemented to the approved plan (`DOCS/implementation-plans/2026-10-07_cds-17-kanban.md`). The summary is now one `auth-table` table per phase. `portfolio-kanban-generator` 1.2.0 is pinned as an exact root devDependency, and builds `credit-dashboard-sut_implementation-kanban_v1.html` (header-only cards, not published). `npm run verify` gains the drift check as its ninth step. CDS-04 was placed in Phase 1 and CDS-11 in Phase 0, where the summary had said "0 or 1"; CDS-18 is now blocked by CDS-17, the order brief 7 set.
+**COMPLETE (2026-10-07; merged in #14, squash `a15f6a0`, CI run 37597905679; plan Outcome and implementation log in #15). Phase 1 is closed** (brief 7 D1, DR-045). Implemented to the approved plan (`DOCS/implementation-plans/2026-10-07_cds-17-kanban.md`). The summary is now one `auth-table` table per phase. `portfolio-kanban-generator` 1.2.0 is pinned as an exact root devDependency, and builds `credit-dashboard-sut_implementation-kanban_v1.html` (header-only cards, not published). `npm run verify` gains the drift check as its ninth step. CDS-04 was placed in Phase 1 and CDS-11 in Phase 0, where the summary had said "0 or 1"; CDS-18 is now blocked by CDS-17, the order brief 7 set. Backlog v31's header said 09:05Z, written before the clock was read; its commit is from 09:02Z.
 
 **Was:**
 

@@ -16,7 +16,7 @@ concurrency:
 jobs:
   specification:
     # Every check that keeps the repository green, through the one command (README 'Checks', CDS-15).
-    name: Verify (contract lint, fixtures, Gherkin, mock smoke, client check, client smoke)
+    name: Verify (contract lint, fixtures, Gherkin, mock smoke, client check, client smoke, Kanban)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

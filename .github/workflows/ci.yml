@@ -16,7 +16,7 @@ concurrency:
 jobs:
   specification:
     # Every check that keeps the repository green, through the one command (README 'Checks', CDS-15).
-    name: Verify (contract lint, fixtures, Gherkin, mock smoke, client check, client smoke, Kanban)
+    name: Verify (contract lint, fixtures, Gherkin, mock smoke, client, service, Kanban)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -32,6 +32,12 @@ jobs:
             package-lock.json
             fixtures/package-lock.json
             packages/api-client/package-lock.json
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: demo-apps/demoapp001-dotnet-api/global.json
+          cache: true
+          cache-dependency-path: demo-apps/demoapp001-dotnet-api/*/packages.lock.json
 
       - uses: actions/setup-python@v6
         with:

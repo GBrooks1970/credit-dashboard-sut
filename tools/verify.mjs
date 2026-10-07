@@ -1,7 +1,8 @@
-// version: 2 | created: 2026-10-07T09:02Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 3 | created: 2026-10-07T14:39Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // One command for every check that keeps the repository green (CDS-15; README 'Checks'). Installs the two
 // sub-packages, runs each check in turn whatever the previous result, prints one result line per check and exits
-// non-zero if any failed. Needs Python with gherkin-official 29.0.0 for the Gherkin check (PYTHON overrides 'python').
+// non-zero if any failed. Needs Python with gherkin-official 29.0.0 for the Gherkin check (PYTHON overrides 'python')
+// and the .NET 10 SDK for the service steps (CDS-19).
 // Run from the repository root:  npm ci && npm run verify
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
@@ -19,6 +20,8 @@ const steps = [
   { name: 'mock smoke', cwd: '.', cmd: 'node tools/mock-smoke.mjs' },
   { name: 'client check (drift and types)', cwd: 'packages/api-client', cmd: 'npm run check' },
   { name: 'client smoke', cwd: '.', cmd: 'node tools/client-smoke.ts' },
+  { name: 'service contract drift', cwd: '.', cmd: 'node tools/generate-service-contract.mjs --check' },
+  { name: 'service build and tests', cwd: 'demo-apps/demoapp001-dotnet-api', cmd: 'dotnet test CreditDashboard.sln -c Release --nologo' },
   { name: 'Kanban board current (drift check)', cwd: '.', cmd: 'npm run --silent check:kanban' },
 ];
 

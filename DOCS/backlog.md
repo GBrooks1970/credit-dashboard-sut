@@ -1,6 +1,6 @@
 ---
-version: 35
-created: 2026-10-07T13:31Z
+version: 36
+created: 2026-10-07T14:39Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 35 (portfolio status updated for Phases 1 and 2)
+**Version:** 36 (CDS-19 complete: service scaffold, DR-050; CDS-25 added)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -58,11 +58,12 @@ This backlog is the source of truth for status. It moved here from the portfolio
 
 | ID | Ticket | Type | Priority | Tier | Blocked by | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| `CDS-19` | Phase 3 plan and service scaffold: ASP.NET Core minimal API (DR-017), `global.json` (DR-044), C# types generated from the contract | Service | — | HIGH | `CDS-17`, `CDS-18` | Open |
+| `CDS-19` | Phase 3 plan and service scaffold: ASP.NET Core minimal API (DR-017), `global.json` (DR-044), C# types generated from the contract | Service | — | — | `CDS-17`, `CDS-18` | Done 2026-10-07 |
 | `CDS-20` | Business-rules library with NUnit tests tagged by BR ID (DR-017) | Service | — | MEDIUM | `CDS-19` | Open |
 | `CDS-21` | Test-control endpoints as API specification section 6.5 specifies: reset, persona binding with overrides (DR-020), clock, bug flags | Service | — | MEDIUM | `CDS-19` | Open |
-| `CDS-22` | Serenity/JS harness: `CallAnApi` and `ControlTheTestEnvironment` abilities; `@api` and `@security` scenarios green with every response validated against the contract (DR-006, DR-042) | Harness | — | HIGH | `CDS-20`, `CDS-21` | Open |
+| `CDS-22` | Serenity/JS harness: `CallAnApi` and `ControlTheTestEnvironment` abilities; `@api` and `@security` scenarios green with every response validated against the contract (DR-006, DR-042) | Harness | — | HIGH | `CDS-20`, `CDS-21`, `CDS-25` | Open |
 | `CDS-23` | Schemathesis pinned and run clean against the service (Phase 3 gate) | Service | — | HIGH | `CDS-19` | Open |
+| `CDS-25` | Serve the contract operations from the fixture store: store and clock, session, report, accounts, profile, supporting; each removed from the coverage test's pending list as it is served | Service | — | HIGH | `CDS-19`, `CDS-20`, `CDS-21` | Open |
 
 ## Items
 
@@ -181,6 +182,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 **COMPLETE (2026-10-07). The Phase 2 exit gate is met (DR-049).** Implemented to the plan and its two addenda (`DOCS/implementation-plans/2026-10-07_cds-18-*.md`). Three independent passes, each by a fresh agent: blind (5 Blocker, 12 Change, 8 Note), confirmation (1, 10, 11) and scoped to the fixes (0, 3, 6), with two re-checks ending at no Blocker or Change. Fixes in #16 (contract v10; DR-046 to DR-048), #17 and #18. Record: `.review/2026-10-07_cds-18-behaviour-re-review.md`. Signed off by the owner. Plan Outcomes and implementation log in #19. CDS-24 holds the remaining Notes; CDS-19 (Phase 3) is ready.
 
 **Update (2026-10-07).** Portfolio status follows the gate, as brief 7 required: registry label "Phases 1 and 2 complete 2026-10-07" (NeoCognitus70/portfolio-prompts#115, `63f31ae`), landing card summary (GBrooks1970/portfolio#60, `a49da0a`; its first CI run failed on a transient HTTP 500 for another project's URL and passed on re-run), capability matrix (test-automation-portfolio#290, `a10ba69`). Handover v11 written.
+
+### CDS-19: Service scaffold
+
+**COMPLETE (2026-10-07, #21).** Implemented to the approved plan (`DOCS/implementation-plans/2026-10-07_cds-19-service-scaffold.md`) after a spike and an owner interview. DR-050: NSwag 14.7.1 C# types and the embedded contract, generated and drift-checked; edge validation with JsonSchema.Net 9.4.0 (400 `/problems/validation` with `errors[]`; 404 outside the contract); only implemented operations mapped, a contract coverage test holding the other 36 as pending. `demo-apps/demoapp001-dotnet-api/` (`global.json` 10.0.401, NUnit 5.0.0 tests, NuGet lock files); `npm run verify` gains two service steps (11); CI sets up .NET from `global.json`. API specification v15. CDS-25 added for the operations themselves, which no Phase 3 item covered (owner's choice).
 
 ### CDS-17: Kanban dialect
 

@@ -1,7 +1,7 @@
 ---
-version: 14
-created: 2026-10-07T13:09Z
-supersedes: v13 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
+version: 15
+created: 2026-10-07T14:39Z
+supersedes: v14 (2026-10-07T13:09Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
 language: en-GB
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v15:** the service scaffold (CDS-19, DR-050): section 3 'Framework' row; section 8 says what a request outside the contract, or for an operation not served yet, receives; section 11 gains 'Service contract drift', 'Edge validation' and 'Contract coverage'.
 **Changes in v14:** section 6.6 cites PR-01 to PR-11 and the rules the API enforces (CDS-18 third pass).
 **Changes in v13:** section 6.5 states the clock after a reset (CDS-18 confirmation pass).
 **Changes in v12:** CDS-18 review fixes (contract v10, `info.version` 0.7.0). BR-07 adds the debt breakdown by type (DR-046); BR-09 states that characters other than letters and digits are dropped; BR-11 names `changesTotal`; section 5 defines how a month's payment status is derived (BR-12); section 6.3 drops 403, which BR-15 rules out; section 8 lists one Problem type per rule outcome (DR-048); section 3 says token expiry is judged on the controlled clock.
@@ -49,7 +50,7 @@ Out of scope: real credit scoring, real open-banking consent, persistent storage
 | Concern | Decision | Status |
 | --- | --- | --- |
 | Runtime | .NET 10 (LTS), C#: SDK 10.0.401, pinned in the service's `global.json` with `rollForward: latestPatch` when the service is scaffolded, taking the latest 10.0.4xx patch on that day (DR-044). Building it needs the .NET 10 SDK installed | Accepted (DR-017, DR-044) |
-| Framework | ASP.NET Core minimal API. Contract first: C# request and response types generated from `openapi.yaml`; requests validated against the contract at the edge; no code-first contract generation | Accepted (DR-017) |
+| Framework | ASP.NET Core minimal API, `demo-apps/demoapp001-dotnet-api/` (`CreditDashboard.Api`, tested by `CreditDashboard.Api.Tests` with NUnit 5.0.0). Contract first: C# data types generated from `openapi.yaml` by NSwag 14.7.1 into `Contract/`, with the contract embedded; requests validated against the contract at the edge by the service's middleware (JsonSchema.Net 9.4.0); no code-first contract generation (DR-050). Listens on port 4000 under `/api/v1` | Accepted (DR-017, DR-050) |
 | Business rules | A C# library inside the service, unit-tested with NUnit, each test tagged with its BR ID | Accepted (DR-017) |
 | Data | In-memory store, loaded from `fixtures/personas/*.json` at start and on reset | Proposed |
 | Auth | Bearer token issued by `POST /auth/login`; each test user is bound to one persona. A token's `expiresAt` is judged on the controlled clock, so moving the clock past it expires the token (the `@security` expiry scenario) | Proposed (DR-007) |
@@ -217,7 +218,7 @@ The customer's own account record, behind the My Profile page. Rules PR-01 to PR
 | --- | --- | --- |
 | 400 | `/validation` | Bad query or body shape; `errors[]` lists each field |
 | 401 | `/unauthenticated` | Missing, expired or revoked token |
-| 404 | `/not-found` | Unknown resource, or one owned by another user (BR-15) |
+| 404 | `/not-found` | Unknown resource, or one owned by another user (BR-15); also a request that fits no contract operation, and, while the service is being built, an operation it does not serve yet (DR-050) |
 | 422 | `/rule-violation/{outcome}` | Shape valid, but breaks a rule. One type per outcome (DR-048): `out-of-range` (BR-14), `preferred-name` (PR-02), `already-verified` (PR-09), `mobile-number` (PR-06), `code-wrong` with `attemptsRemaining` (PR-11), `code-invalid` (the third wrong code, an expired or voided code, or nothing pending; PR-10, PR-11), `overrides-inconsistent` (test control, DR-020). Clients and tests branch on `type`, never on `title` or `detail` |
 | 429 | `/rate-limited` | A verification link resent within 60 seconds (PR-09). There is no general rate limit (DR-035) |
 | 500 | `/internal` | `error` persona, or an unhandled fault; no stack trace in the body |
@@ -294,6 +295,9 @@ UI-only flags (labels, ARIA, rendering) are listed in the UI spec.
 | Example validity | Each example validated against its own schema; enforced by the ruleset's `no-invalid-media-type-examples` and `no-invalid-schema-examples` at error level | Every commit |
 | Mock parity | Phase 1: `npm run check:mock` starts Prism with `--errors`, calls every operation with values from the contract, and requires its documented 2xx, no contract violation and a response body that validates; a call without a token must get 401. Phase 4: the UI smoke run against the mock. Known limits of the mock, checked against the real service in Phase 3 instead: a malformed request gets 422 where this specification says 400, and a missing test-control key gets 401 where the contract says 404 | Phase 1 (every commit) and Phase 4 |
 | Client | `npm --prefix packages/api-client run check`: the committed generated types match a fresh generation, and a strict type check passes, including negative tests that must fail to compile; then a client smoke run of typed calls against the mock | Phase 1 (every commit) |
+| Service contract drift | `npm run check:service-contract`: `Contract/contract.json` and `Contract/Contract.g.cs` match a fresh generation from `openapi.yaml` (DR-050) | Phase 3 onwards (CDS-19) |
+| Edge validation | `CreditDashboard.Api.Tests`: requests breaking the contract get 400 `/problems/validation` with `errors[]`, requests outside it get 404, and every problem body validates against the contract's `Problem` schema | Phase 3 onwards (CDS-19) |
+| Contract coverage | `CreditDashboard.Api.Tests`: every contract operation is served or listed as pending, and no route exists outside the contract; the pending list is empty at the Phase 3 gate | Phase 3 onwards (CDS-19) |
 | Response validation | Every API scenario response checked against the contract | Phase 3 onwards |
 | Property-based | Schemathesis against the running service | Nightly |
 | Business rules | `@api` Gherkin scenarios tagged with `BR-` IDs | Phase 3 onwards |

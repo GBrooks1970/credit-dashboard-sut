@@ -11,9 +11,9 @@ All data is synthetic. No real bureau, lender, brand or person's financial data 
 
 ## Status
 
-The Phase 1 (contract) exit gate is met (6 October 2026, DR-045). The phase closes when CDS-17 is done. Phase 2's
-gate evidence is complete, and the gate is recorded after an independent re-review (CDS-18). Phase 3 (API) follows
-both. Phase 0 (specify) was accepted as the baseline on 5 October 2026 (DR-038) and seeded this repository. No
+Phase 1 (contract) is closed: its exit gate was met on 6 October 2026 (DR-045), and its last item, CDS-17, was
+done on 7 October. Phase 2's gate evidence is complete, and the gate is recorded after an independent re-review
+(CDS-18). Phase 3 (API) follows. Phase 0 (specify) was accepted as the baseline on 5 October 2026 (DR-038) and seeded this repository. No
 service, UI or harness code exists yet. The contract, mock and generated client do. See 'SDD workflow' below and
 [`DOCS/backlog.md`](DOCS/backlog.md).
 
@@ -30,6 +30,7 @@ service, UI or harness code exists yet. The contract, mock and generated client 
 | [`DOCS/decision-briefs/`](DOCS/decision-briefs/_index.md) | The reasoning behind decisions: options, a recommendation and the argument against |
 | [`DOCS/glossary.md`](DOCS/glossary.md), [`DOCS/step-glossary.md`](DOCS/step-glossary.md) | Normative vocabulary and agreed Gherkin steps |
 | [`DOCS/backlog.md`](DOCS/backlog.md) | Backlog: the source of truth for status |
+| [`credit-dashboard-sut_implementation-kanban_v1.html`](credit-dashboard-sut_implementation-kanban_v1.html) | Kanban board generated from the backlog by `portfolio-kanban-generator` (one self-contained file; `npm run kanban`) |
 | [`features-shared/`](features-shared/) | Gherkin scenarios by layer: `api/`, `ui/`, `security/` |
 | [`fixtures/`](fixtures/) | Seven personas, test users, override samples, the fixture schema and its check |
 | [`DOCS/implementation-plans/`](DOCS/implementation-plans/_index.md) | Implementation plans, written and approved before the work starts (DR-041) |
@@ -46,13 +47,13 @@ One command runs every check, as CI does on every push:
 npm ci && npm run verify
 ```
 
-It installs `fixtures/` and `packages/api-client/`, then runs six checks and prints one result line each: contract lint (Redocly CLI 2.57.0), the fixture check, the Gherkin parse and rule coverage, the mock smoke (Prism, pinned in `package.json`, answering all 36 operations), the client check (generated types current with the contract; strict `tsc`, including cases that must fail to compile) and the client smoke (typed calls through the client against the mock). The Gherkin check needs Python with `gherkin-official` installed first:
+It installs `fixtures/` and `packages/api-client/`, then runs seven checks and prints one result line each: contract lint (Redocly CLI 2.57.0), the fixture check, the Gherkin parse and rule coverage, the mock smoke (Prism, pinned in `package.json`, answering all 36 operations), the client check (generated types current with the contract; strict `tsc`, including cases that must fail to compile) the client smoke (typed calls through the client against the mock) and the Kanban drift check (the committed board matches the backlog). The Gherkin check needs Python with `gherkin-official` installed first:
 
 ```bash
 pip install gherkin-official==29.0.0
 ```
 
-Each check can also be run on its own: `npm run check:mock`, `npm run check:client`, `npm run check:client-smoke`, `cd fixtures && npm run check`, `python tools/check-gherkin.py`. After changing the contract, regenerate the client types with `npm --prefix packages/api-client run generate` and commit them.
+Each check can also be run on its own: `npm run check:mock`, `npm run check:client`, `npm run check:client-smoke`, `npm run check:kanban`, `cd fixtures && npm run check`, `python tools/check-gherkin.py`. After changing the contract, regenerate the client types with `npm --prefix packages/api-client run generate` and commit them. After changing the backlog's summary tables, regenerate the board with `npm run kanban` and commit it.
 
 To run the mock on its own, use `npm run mock`; it listens on `http://localhost:4010` without the `/api/v1` prefix (DR-039).
 
@@ -76,7 +77,7 @@ Phase 0 pack; 'Gate status' is the current state.
 | Phase | Work | Exit gate | Gate status |
 | --- | --- | --- | --- |
 | **0. Specify** | Survey, API specification, UI specification, contract draft, seed scenarios, decision register | Owner accepts the DRs; DR-005 decided; the pack frozen | **Met** 5 October 2026 (DR-038); pack frozen at CDS-09 |
-| **1. Contract** | Own repository (DR-001); versions resolved (DR-009, DR-044); lint ruleset; an example for every response; Prism mock; generated TypeScript client | Lint clean; every example validates against its schema; mock serves every operation | **Gate met** 6 October 2026 (DR-045): all three run in CI through `npm run verify`. The phase closes with CDS-17 |
+| **1. Contract** | Own repository (DR-001); versions resolved (DR-009, DR-044); lint ruleset; an example for every response; Prism mock; generated TypeScript client | Lint clean; every example validates against its schema; mock serves every operation | **Closed** 7 October 2026: gate met 6 October (DR-045), all three run in CI through `npm run verify`; last item CDS-17 |
 | **2. Behaviour** | `features-shared/` covering every BR and every page in Releases 1 and 2 (DR-015); step glossary; persona fixtures validated against the schemas | Three-amigos review recorded; every BR tagged by at least one scenario; fixtures pass schema validation | **Evidence complete** (brief 4, DR-033; BR 15 of 15; fixtures 404 of 404). Recorded as met (DR-046) after the independent re-review, CDS-18 |
 | **3. API** | The service against the contract (DR-017); test-control endpoints; harness abilities `CallAnApi` and `ControlTheTestEnvironment` | All `@api` and `@security` scenarios green; every response validated against the contract; Schemathesis run clean | Next, after CDS-17 and CDS-18 |
 | **4. UI** | Pages against the Prism mock first, then the live API; component tests for every state in UI specification section 4.3 | All `@ui` scenarios green against the mock and live; axe-core zero violations with flags off | Not started |

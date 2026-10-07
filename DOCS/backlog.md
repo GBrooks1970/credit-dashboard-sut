@@ -1,6 +1,6 @@
 ---
-version: 30
-created: 2026-10-07T08:30Z
+version: 31
+created: 2026-10-07T09:05Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,41 +8,60 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 30 (decision brief 7: Phase 1 gate met, DR-045; CDS-18 re-review; Phase 3 items added, blocked)
+**Version:** 31 (CDS-17 complete: auth-table summary, Kanban board, drift check; Phase 1 closed)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
 This backlog is the source of truth for status. It moved here from the portfolio's Phase 0 pack when this repository was seeded (CDS-09, 5 October 2026); paths below that name Phase 0 files refer to that pack.
 
-**Status vocabulary.** `READY TO START`, `IN PROGRESS`, `BLOCKED`, `COMPLETE`.
+**Status vocabulary.** Summary tables: `Done <date>`, `Parked`, `Open` (Ready or Backlog is derived on the board, see below; CDS-17). The item notes below keep the wording of their time (`COMPLETE`, `READY TO START`, `BLOCKED`).
 
 ## Summary
 
-| ID | Item | Phase | Status | Blocked by |
-| --- | --- | --- | --- | --- |
-| CDS-01 | Owner review of API spec, UI spec, profile spec, README and decision register | 0 | COMPLETE (2026-10-05) | none |
-| CDS-02 | Decide DR-005 (credit-balance display) | 0 | COMPLETE (2026-10-04) | none |
-| CDS-03 | Accept or amend DR-002 (API framework) and DR-003 (UI framework) | 0 | COMPLETE (2026-10-04) | none |
-| CDS-04 | Lint `openapi.yaml` with Redocly or Spectral and fix findings | 0 or 1 | COMPLETE (2026-10-04) | none |
-| CDS-05 | Add an example for every response in `openapi.yaml` (API spec principle 1) | 1 | COMPLETE (2026-10-04) | none |
-| CDS-06 | Scenarios for uncovered business rules: BR-01, BR-06, BR-07, BR-09, BR-11, BR-12, BR-13 | 2 | COMPLETE (2026-10-04) | none |
-| CDS-07 | Step glossary and three-amigos review of all feature files | 2 | COMPLETE (2026-10-05) | none |
-| CDS-08 | Persona fixtures (7) written and validated against the contract schemas | 2 | COMPLETE (2026-10-04) | none |
-| CDS-09 | Freeze Phase 0 and lift into `credit-dashboard-sut/` at the portfolio root as its own repo, per the README 'Phase 1 target layout' | 1 | COMPLETE (2026-10-05) | none |
-| CDS-10 | Onboard to the portfolio: `portfolio-prompts/registry.yml` row, portfolio README row, worklist | 1 | COMPLETE (2026-10-05) | none |
-| CDS-11 | Fold the My Profile API needs into `openapi.yaml` and the API spec; add the profile route to the UI spec page catalogue | 0 or 1 | COMPLETE (2026-10-04) | none (address, employment, finances are stretch, DR-022) |
-| CDS-12 | Decide whether to survey the source profile sub-pages (structure only) or keep the proposed designs | 0 | COMPLETE (2026-10-04) | none |
-| CDS-13 | Arrange data no persona holds: test-control overrides (DR-020) | 2 | COMPLETE (2026-10-04) | none |
-| CDS-14 | Prism mock serves every operation from the contract examples (Phase 1 exit gate) | 1 | COMPLETE (2026-10-06) | none |
-| CDS-15 | Generate the typed TypeScript client into `packages/api-client` from the contract | 1 | COMPLETE (2026-10-06) | none |
-| CDS-16 | Pin the remaining versions as each project is created: .NET SDK (`global.json`), React, Vite (DR-009) | 1 | COMPLETE (2026-10-06) | none |
-| CDS-17 | Convert this backlog's summary table to the portfolio `auth-table` dialect so the shared Kanban generator can build a board | 1 | READY TO START | none (closes Phase 1, brief 7 D1; next in order) |
-| CDS-18 | Independent re-review of the feature files and step glossary against contract v9, then owner sign-off; records the Phase 2 gate (DR-046) | 2 | READY TO START | none (after CDS-17, brief 7 order) |
-| CDS-19 | Phase 3 plan and service scaffold: ASP.NET Core minimal API (DR-017), `global.json` (DR-044), C# types generated from the contract | 3 | BLOCKED | CDS-17, CDS-18 (sequence rule, DR-045) |
-| CDS-20 | Business-rules library with NUnit tests tagged by BR ID (DR-017) | 3 | BLOCKED | CDS-19 |
-| CDS-21 | Test-control endpoints as API specification section 6.5 specifies: reset, persona binding with overrides (DR-020), clock, bug flags | 3 | BLOCKED | CDS-19 |
-| CDS-22 | Serenity/JS harness: `CallAnApi` and `ControlTheTestEnvironment` abilities; `@api` and `@security` scenarios green with every response validated against the contract (DR-006, DR-042) | 3 | BLOCKED | CDS-20, CDS-21 |
-| CDS-23 | Schemathesis pinned and run clean against the service (Phase 3 gate) | 3 | BLOCKED | CDS-19 |
+**How the board reads this.** Each phase has a table in the portfolio `auth-table` shape, read by the shared generator (`npm run kanban`; drift-checked by `npm run check:kanban` inside `npm run verify`) into `credit-dashboard-sut_implementation-kanban_v1.html`. This backlog authors **Done** (with its date) and **Parked**; every other item reads **Open**, and the board derives Ready (every blocker Done) or Backlog from the 'Blocked by' column. Type is one of Decision, Specification, Behaviour, Tooling, Process, Service, Harness; Tier (HIGH, MEDIUM, LOW) is set for open items, phase-gate work being HIGH; Priority is not used.
+
+### Phase 0 — Specify
+
+| ID | Ticket | Type | Priority | Tier | Blocked by | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| `CDS-01` | Owner review of API spec, UI spec, profile spec, README and decision register | Decision | — | — | — | Done 2026-10-05 |
+| `CDS-02` | Decide DR-005 (credit-balance display) | Decision | — | — | — | Done 2026-10-04 |
+| `CDS-03` | Accept or amend DR-002 (API framework) and DR-003 (UI framework) | Decision | — | — | — | Done 2026-10-04 |
+| `CDS-11` | Fold the My Profile API needs into `openapi.yaml` and the API spec; add the profile route to the UI spec page catalogue | Specification | — | — | — | Done 2026-10-04 |
+| `CDS-12` | Decide whether to survey the source profile sub-pages (structure only) or keep the proposed designs | Decision | — | — | — | Done 2026-10-04 |
+
+### Phase 1 — Contract
+
+| ID | Ticket | Type | Priority | Tier | Blocked by | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| `CDS-04` | Lint `openapi.yaml` with Redocly or Spectral and fix findings | Tooling | — | — | — | Done 2026-10-04 |
+| `CDS-05` | Add an example for every response in `openapi.yaml` (API spec principle 1) | Specification | — | — | — | Done 2026-10-04 |
+| `CDS-09` | Freeze Phase 0 and lift into `credit-dashboard-sut/` at the portfolio root as its own repo, per the README 'Phase 1 target layout' | Process | — | — | — | Done 2026-10-05 |
+| `CDS-10` | Onboard to the portfolio: `portfolio-prompts/registry.yml` row, portfolio README row, worklist | Process | — | — | — | Done 2026-10-05 |
+| `CDS-14` | Prism mock serves every operation from the contract examples (Phase 1 exit gate) | Tooling | — | — | — | Done 2026-10-06 |
+| `CDS-15` | Generate the typed TypeScript client into `packages/api-client` from the contract | Tooling | — | — | — | Done 2026-10-06 |
+| `CDS-16` | Pin the remaining versions as each project is created: .NET SDK (`global.json`), React, Vite (DR-009) | Decision | — | — | — | Done 2026-10-06 |
+| `CDS-17` | Convert this backlog's summary table to the portfolio `auth-table` dialect so the shared Kanban generator can build a board | Tooling | — | — | — | Done 2026-10-07 |
+
+### Phase 2 — Behaviour
+
+| ID | Ticket | Type | Priority | Tier | Blocked by | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| `CDS-06` | Scenarios for uncovered business rules: BR-01, BR-06, BR-07, BR-09, BR-11, BR-12, BR-13 | Behaviour | — | — | — | Done 2026-10-04 |
+| `CDS-07` | Step glossary and three-amigos review of all feature files | Behaviour | — | — | — | Done 2026-10-05 |
+| `CDS-08` | Persona fixtures (7) written and validated against the contract schemas | Behaviour | — | — | — | Done 2026-10-04 |
+| `CDS-13` | Arrange data no persona holds: test-control overrides (DR-020) | Specification | — | — | — | Done 2026-10-04 |
+| `CDS-18` | Independent re-review of the feature files and step glossary against contract v9, then owner sign-off; records the Phase 2 gate (DR-046) | Behaviour | — | HIGH | `CDS-17` | Open |
+
+### Phase 3 — API
+
+| ID | Ticket | Type | Priority | Tier | Blocked by | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| `CDS-19` | Phase 3 plan and service scaffold: ASP.NET Core minimal API (DR-017), `global.json` (DR-044), C# types generated from the contract | Service | — | HIGH | `CDS-17`, `CDS-18` | Open |
+| `CDS-20` | Business-rules library with NUnit tests tagged by BR ID (DR-017) | Service | — | MEDIUM | `CDS-19` | Open |
+| `CDS-21` | Test-control endpoints as API specification section 6.5 specifies: reset, persona binding with overrides (DR-020), clock, bug flags | Service | — | MEDIUM | `CDS-19` | Open |
+| `CDS-22` | Serenity/JS harness: `CallAnApi` and `ControlTheTestEnvironment` abilities; `@api` and `@security` scenarios green with every response validated against the contract (DR-006, DR-042) | Harness | — | HIGH | `CDS-20`, `CDS-21` | Open |
+| `CDS-23` | Schemathesis pinned and run clean against the service (Phase 3 gate) | Service | — | HIGH | `CDS-19` | Open |
 
 ## Items
 
@@ -157,6 +176,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 **Decided (2026-10-07).** The Phase 1 gate is met (DR-045). Phase 1 closes with CDS-17, which stays in Phase 1 (D1 option 2, against the recommendation). The Phase 2 gate is recorded only after CDS-18, an independent re-review against contract v9 by a separate agent and then the owner's sign-off (D2 option 2, against the recommendation). The gates are in the README 'SDD workflow' table (D3). Phase 3 follows both (D4). CDS-19 to CDS-23 are an outline of the pack's Phase 3 work; the first Phase 3 plan sets their content.
 
 ### CDS-17: Kanban dialect
+
+**COMPLETE (2026-10-07, #14). Phase 1 is closed** (brief 7 D1, DR-045). Implemented to the approved plan (`DOCS/implementation-plans/2026-10-07_cds-17-kanban.md`). The summary is now one `auth-table` table per phase. `portfolio-kanban-generator` 1.2.0 is pinned as an exact root devDependency, and builds `credit-dashboard-sut_implementation-kanban_v1.html` (header-only cards, not published). `npm run verify` gains the drift check as its ninth step. CDS-04 was placed in Phase 1 and CDS-11 in Phase 0, where the summary had said "0 or 1"; CDS-18 is now blocked by CDS-17, the order brief 7 set.
+
+**Was:**
 
 Added at onboarding (owner's choice). The summary table above (ID, Item, Phase, Status, Blocked by) matches neither Kanban dialect (`auth-table` needs seven columns with backticked IDs; `risk-block` needs scored risk headings), so the shared generator would build an empty board. Convert when a board is wanted, and set the registry's `backlog_dialect` to match.
 

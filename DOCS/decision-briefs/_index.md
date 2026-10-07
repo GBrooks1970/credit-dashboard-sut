@@ -1,6 +1,6 @@
 ---
-version: 6
-created: 2026-10-06T10:20Z
+version: 7
+created: 2026-10-07T08:30Z
 project: credit-dashboard-sut
 type: decision-brief-index
 language: en-GB
@@ -18,3 +18,4 @@ One row per brief. Briefs are cited by number from other documents; this index r
 | 4 | [`credit-dashboard-sut_decision-brief-4_v1_20261005T2000Z.md`](credit-dashboard-sut_decision-brief-4_v1_20261005T2000Z.md) | 2026-10-05 | Three-amigos review of the feature files and step glossary | CDS-07; Phase 2 gate | decided | DR-028 to DR-033; 14 feature files; three override samples; step glossary v5 and glossary v6 normative |
 | 5 | [`credit-dashboard-sut_decision-brief-5_v1_20261005T2028Z.md`](credit-dashboard-sut_decision-brief-5_v1_20261005T2028Z.md) | 2026-10-05 | Owner review and Phase 0 baseline | CDS-09; Phase 0 gate | decided | DR-001, DR-004, DR-006 to DR-010 accepted; DR-034 to DR-038; contract v7; API spec v8; UI spec v6; glossary v7; fixture check v4 |
 | 6 | [`credit-dashboard-sut_decision-brief-6_v2_20261006T1547Z.md`](credit-dashboard-sut_decision-brief-6_v2_20261006T1547Z.md) (v1 superseded) | 2026-10-06 | Who uses the generated client (D0); how TypeScript packages sit in the repository (D1) | CDS-15 | decided | DR-042 (harness independent of the client), DR-043 (standalone package); backlog v24 |
+| 7 | [`credit-dashboard-sut_decision-brief-7_v1_20261006T2320Z.md`](credit-dashboard-sut_decision-brief-7_v1_20261006T2320Z.md) | 2026-10-06 | Recording the Phase 1 and Phase 2 exit gates; where gates are recorded; what comes next | Phase 3 entry; README status; registry label | decided | DR-045; README 'SDD workflow' and 'Status'; backlog v30 (CDS-18 to CDS-23) |

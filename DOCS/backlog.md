@@ -1,6 +1,6 @@
 ---
-version: 36
-created: 2026-10-07T14:39Z
+version: 37
+created: 2026-10-07T14:47Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 36 (CDS-19 complete: service scaffold, DR-050; CDS-25 added)
+**Version:** 37 (CDS-19 recorded)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -185,7 +185,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-19: Service scaffold
 
-**COMPLETE (2026-10-07, #21).** Implemented to the approved plan (`DOCS/implementation-plans/2026-10-07_cds-19-service-scaffold.md`) after a spike and an owner interview. DR-050: NSwag 14.7.1 C# types and the embedded contract, generated and drift-checked; edge validation with JsonSchema.Net 9.4.0 (400 `/problems/validation` with `errors[]`; 404 outside the contract); only implemented operations mapped, a contract coverage test holding the other 36 as pending. `demo-apps/demoapp001-dotnet-api/` (`global.json` 10.0.401, NUnit 5.0.0 tests, NuGet lock files); `npm run verify` gains two service steps (11); CI sets up .NET from `global.json`. API specification v15. CDS-25 added for the operations themselves, which no Phase 3 item covered (owner's choice).
+**COMPLETE (2026-10-07; merged in #21, squash `1608eac`, CI run 37639330056; plan Outcome and implementation log in #22).** Implemented to the approved plan (`DOCS/implementation-plans/2026-10-07_cds-19-service-scaffold.md`) after a spike and an owner interview. DR-050: NSwag 14.7.1 C# types and the embedded contract, generated and drift-checked; edge validation with JsonSchema.Net 9.4.0 (400 `/problems/validation` with `errors[]`; 404 outside the contract); only implemented operations mapped, a contract coverage test holding the other 36 as pending. `demo-apps/demoapp001-dotnet-api/` (`global.json` 10.0.401, NUnit 5.0.0 tests, NuGet lock files); `npm run verify` gains two service steps (11); CI sets up .NET from `global.json`. API specification v15. CDS-25 added for the operations themselves, which no Phase 3 item covered (owner's choice).
 
 ### CDS-17: Kanban dialect
 

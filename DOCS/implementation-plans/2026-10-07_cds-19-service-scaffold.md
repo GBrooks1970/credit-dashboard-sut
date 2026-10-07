@@ -4,9 +4,9 @@ created: 2026-10-07T14:15Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-19
-status: approved
+status: implemented
 approved: 2026-10-07, Gary Brooks; merges of the CDS-19 PR, its records PR and the registry PR authorised once each one's own CI run reports success
-delivered: not yet
+delivered: "#21, squash 1608eac (2026-10-07); registry follow-up to come"
 language: en-GB
 ---
 
@@ -83,4 +83,14 @@ Branch `claude/cds19-service-scaffold`, one PR, merged on its own green CI; then
 
 ## Outcome
 
-Appended after delivery.
+Delivered as planned in #21 (squash `1608eac`; CI run 37639330056 green: `verify` 11 of 11, job 45 s, 16 of 16 service tests). The live run answered as specified, and the three probes failed as intended.
+
+Differences from the plan:
+
+- **Tool manifest.** The .NET 10 CLI created it at the service folder's root; it was moved to `.config/` as planned.
+- **NuGet lock files and `Directory.Build.props`.** Not in the plan's steps. They make restores reproducible and enable the CI NuGet cache, which needs lock files, with locked mode in CI.
+- **More edge tests than planned.** 16 tests, and every problem body is checked against the contract's `Problem` schema. That check was added after a fault (a null `errors`) that the plan did not foresee.
+- **Three faults fixed during implementation:** the inline-schema dialect, `instance` serialisation, and the null `errors` (see the log).
+- **Root scripts.** `generate:service-contract`, `check:service-contract`, `check:service` and `service` were added.
+
+Full record: [`DOCS/implementation-logs/2026-10-07_cds-19-service-scaffold.md`](../implementation-logs/2026-10-07_cds-19-service-scaffold.md).

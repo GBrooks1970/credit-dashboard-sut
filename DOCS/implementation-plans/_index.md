@@ -1,6 +1,6 @@
 ---
-version: 12
-created: 2026-10-07T14:30Z
+version: 13
+created: 2026-10-07T14:47Z
 project: credit-dashboard-sut
 type: implementation-plan-index
 language: en-GB
@@ -19,4 +19,4 @@ Every implementation plan is written to a file here before implementation starts
 | [`2026-10-07_cds-18-behaviour-re-review.md`](2026-10-07_cds-18-behaviour-re-review.md) | CDS-18 Independent re-review of Phase 2 behaviour; Phase 2 gate | 2026-10-07 | implemented | #16 to #18, `2746a82` |
 | [`2026-10-07_cds-18-fixes-addendum.md`](2026-10-07_cds-18-fixes-addendum.md) | CDS-18 fixes addendum: review findings fixed before the Phase 2 gate | 2026-10-07 | implemented | #16, `dca26ce` |
 | [`2026-10-07_cds-18-fixes-addendum-2.md`](2026-10-07_cds-18-fixes-addendum-2.md) | CDS-18 fixes addendum 2: confirmation-pass fixes and a scoped third pass | 2026-10-07 | implemented | #17, #18 |
-| [`2026-10-07_cds-19-service-scaffold.md`](2026-10-07_cds-19-service-scaffold.md) | CDS-19 Phase 3 service scaffold: contract types, edge validation, coverage gate | 2026-10-07 | approved | not yet |
+| [`2026-10-07_cds-19-service-scaffold.md`](2026-10-07_cds-19-service-scaffold.md) | CDS-19 Phase 3 service scaffold: contract types, edge validation, coverage gate | 2026-10-07 | implemented | #21, `1608eac` |

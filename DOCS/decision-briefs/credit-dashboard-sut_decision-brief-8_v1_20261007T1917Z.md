@@ -7,7 +7,7 @@ brief: 8
 subject: The Prism development-dependency audit findings (CDS-26)
 blocks: CDS-26; nothing else
 approver: the project owner (Gary Brooks)
-status: awaiting-decision
+status: decided
 supersedes: none
 language: en-GB
 ---
@@ -79,11 +79,30 @@ A full `npm audit` at the repository root, run while gathering evidence for the 
 
 | File | Section | Change required | Done |
 |---|---|---|---|
-| `DOCS/decision-register.md` | New entry | The outcome, citing this brief | [ ] |
-| `DOCS/backlog.md` | CDS-26 | Close with the outcome, or replace with the plan item the choice creates | [ ] |
-| `README.md` | 'Checks' (option 1) | State which audit is the gate-relevant one | [ ] |
+| `DOCS/decision-register.md` | New entry | The outcome, citing this brief | [x] DR-051 |
+| `DOCS/backlog.md` | CDS-26 | Close with the outcome, or replace with the plan item the choice creates | [x] v39 |
+| `README.md` | 'Checks' (option 1) | State which audit is the gate-relevant one | [x] |
 | `DOCS/decision-briefs/_index.md` | Brief 8 row | Status and where the decision landed | [x] row added as awaiting-decision |
 
 ## 7. Decision record
 
-Not yet decided. Completed after the owner's reply and a read-back.
+The owner decided on 2026-10-07, by reply in chat: "D1: option 1, accept and record".
+
+### 7.1 Read-back
+
+1. **D1 option 1.** The 15 development-only findings in the Prism 5.16.0 tree are accepted as a recorded, bounded risk (DR-051). Nothing is overridden or replaced.
+2. **Revisit triggers:** a new Prism release; each phase gate; Prism ever run with credentials or on a non-loopback address.
+3. **Gate-relevant audit:** `npm audit --omit=dev` (README 'Checks'). The full audit's 15 findings are expected until a trigger fires.
+4. **Not done here:** enabling Dependabot alerts (the owner's repository setting, section 5).
+
+### 7.2 Decisions
+
+| Ref | Item | Decision | Conditions | Who | When |
+|---|---|---|---|---|---|
+| D1 | The 15 audit findings | **Option 1.** Accept and record | The three triggers above | Gary Brooks | 2026-10-07 |
+
+**Recorded, not argued away.** The decision followed the recommendation. The argument against stands: the repository is a public showcase, monitoring is off, and replacing Prism costs more once Phase 4 is built on it. Option 3 remains the answer if a trigger fires or the owner wants the repository as a long-lived exemplar.
+
+### 7.3 Corrections after decision
+
+None.

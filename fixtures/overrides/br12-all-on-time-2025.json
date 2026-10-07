@@ -1,33 +1,33 @@
 {
-  "base": "drilldown",
-  "arranges": "'{actor} has a credit card with a balance of {money} and a limit of {money}': api/account-totals.feature, BR-03 row 49.50 / 100.00",
+  "base": "struggling",
+  "arranges": "'{actor}'s payments in {year} were {payment pattern}': api/payment-history.feature, BR-12 row 'all on time'",
   "overrides": {
     "bureaux": [
       {
         "id": "bureau-a",
         "accounts": [
           {
-            "id": "acc_ovcc01",
-            "type": "creditcard",
-            "provider": "Lender X",
+            "id": "acc_ovln02",
+            "type": "loan",
+            "provider": "Lender Y",
             "logoUrl": null,
-            "maskedNumber": "*0001",
+            "maskedNumber": "*0004",
             "balance": {
-              "amountMinor": 4950,
+              "amountMinor": 500000,
               "currency": "GBP"
             },
             "limit": {
-              "amountMinor": 10000,
+              "amountMinor": 800000,
               "currency": "GBP"
             },
-            "utilisation": 50,
+            "utilisation": 63,
             "includedInTotals": true,
             "status": "normal",
-            "openedDate": "2021-03-01",
+            "openedDate": "2019-01-01",
             "closedDate": null,
             "updateFrequency": "monthly",
             "lastUpdated": "2026-09-30",
-            "utilisationRaw": 50,
+            "utilisationRaw": 63,
             "details": {
               "apr": null,
               "interestRate": null,
@@ -41,66 +41,66 @@
               {
                 "month": "2026-05",
                 "balance": {
-                  "amountMinor": 4950,
+                  "amountMinor": 520000,
                   "currency": "GBP"
                 },
                 "limit": {
-                  "amountMinor": 10000,
+                  "amountMinor": 800000,
                   "currency": "GBP"
                 }
               },
               {
                 "month": "2026-06",
                 "balance": {
-                  "amountMinor": 4950,
+                  "amountMinor": 516000,
                   "currency": "GBP"
                 },
                 "limit": {
-                  "amountMinor": 10000,
+                  "amountMinor": 800000,
                   "currency": "GBP"
                 }
               },
               {
                 "month": "2026-07",
                 "balance": {
-                  "amountMinor": 4950,
+                  "amountMinor": 512000,
                   "currency": "GBP"
                 },
                 "limit": {
-                  "amountMinor": 10000,
+                  "amountMinor": 800000,
                   "currency": "GBP"
                 }
               },
               {
                 "month": "2026-08",
                 "balance": {
-                  "amountMinor": 4950,
+                  "amountMinor": 508000,
                   "currency": "GBP"
                 },
                 "limit": {
-                  "amountMinor": 10000,
+                  "amountMinor": 800000,
                   "currency": "GBP"
                 }
               },
               {
                 "month": "2026-09",
                 "balance": {
-                  "amountMinor": 4950,
+                  "amountMinor": 504000,
                   "currency": "GBP"
                 },
                 "limit": {
-                  "amountMinor": 10000,
+                  "amountMinor": 800000,
                   "currency": "GBP"
                 }
               },
               {
                 "month": "2026-10",
                 "balance": {
-                  "amountMinor": 4950,
+                  "amountMinor": 500000,
                   "currency": "GBP"
                 },
                 "limit": {
-                  "amountMinor": 10000,
+                  "amountMinor": 800000,
                   "currency": "GBP"
                 }
               }

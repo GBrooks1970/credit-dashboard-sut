@@ -1,8 +1,8 @@
-# version: 3 | created: 2026-10-05T20:00Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 4 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @ui
 Feature: Report changes page
   A customer can read every change to their report, narrow the list to one kind, and share what they are looking at.
-  Covers UI specification v5, section 6.7.
+  Covers the UI specification, section 6.7.
 
   Background:
     Given Alex holds the "drilldown" persona

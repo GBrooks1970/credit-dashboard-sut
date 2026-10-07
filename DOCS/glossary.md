@@ -1,7 +1,7 @@
 ---
-version: 7
+version: 8
 created: 2026-10-04T16:50Z
-updated: 2026-10-05T20:28Z
+updated: 2026-10-07T10:25Z
 project: credit-dashboard-sut
 type: glossary
 language: en-GB
@@ -20,7 +20,7 @@ status: normative
 
 **The rule.** Every term below has **one meaning** in this project's specifications, contract, feature files, fixtures and, from Phase 3, its code. A word with more than one meaning in use is either given one, or split into qualified terms that each have one. Where this glossary and another project document disagree about what a word means, this glossary is right and the other document is conformed to it.
 
-**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. Where this glossary and another project document disagree about what a word means, this glossary is right. Version 1 was compiled on 4 October 2026; versions 2 to 5 recorded decision briefs 1 to 3; version 6 makes it normative; version 7 adds `greetingName` (DR-036).
+**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. Where this glossary and another project document disagree about what a word means, this glossary is right. Version 1 was compiled on 4 October 2026; versions 2 to 5 recorded decision briefs 1 to 3; version 6 makes it normative; version 7 adds `greetingName` (DR-036); version 8 applies the CDS-18 review: *Account information*, the masking wording, the PR range and current references.
 
 ---
 
@@ -28,13 +28,13 @@ status: normative
 
 ### 1.1 What this covers
 
-The words used by the API specification (v4), the UI specification (v3), the My Profile UI feature spec (v2), the contract `DOCS/.architecture/openapi.yaml` (v4), the decision register, the backlog, the README, every feature file under `features-shared/`, and the fixtures under `fixtures/`. From Phase 1 it also covers step definitions, Screenplay class names and code identifiers that name a domain concept.
+The words used by the API specification, the UI specification, the My Profile UI feature spec, the contract `DOCS/.architecture/openapi.yaml`, the decision register, the backlog, the README, every feature file under `features-shared/`, and the fixtures under `fixtures/`. From Phase 1 it also covers step definitions, Screenplay class names and code identifiers that name a domain concept.
 
 ### 1.2 What it does not cover
 
 | Vocabulary | Where it is defined instead | Why not here |
 |---|---|---|
-| Agreed Gherkin step phrases | `DOCS/step-glossary.md` (to be written, backlog CDS-07) | Steps are sentences built from these terms; this glossary defines the words, the step glossary the sentences |
+| Agreed Gherkin step phrases | `DOCS/step-glossary.md` | Steps are sentences built from these terms; this glossary defines the words, the step glossary the sentences |
 | The source app's own labels, as surveyed | The page survey, `credit-dashboard-sut_design-spec_v2_20261003T1705Z.md` | A survey quotes its subject; conforming its vocabulary would falsify the record |
 | Contract field and enum names (`includedInTotals`, `lineofcredit`) | `DOCS/.architecture/openapi.yaml` | The contract is the source of truth for the API (API spec, header). Section 4 maps each domain term to its field where one exists |
 
@@ -113,9 +113,10 @@ Definitions an agent cannot settle on its own, because each changes what a rule,
 | **Debt trend** | Total debt now compared with three months earlier: `up`, `down` or `steady` | Not *score history* | BR-07; `DebtOverview.trend` |
 | **Steady** | Of the debt trend: the unrounded change against three months earlier is at most 1% either way, so exactly 1% is steady. From an earlier total of zero, steady if still zero, otherwise up (*Decided, brief 1 D1*) | | BR-07; DR-011 |
 | **Balance history** | Six monthly balances for one account, oldest first. Also the source of the debt trend | | `BalancePoint` |
-| **Masked number** | How an account number leaves the service: `*` and the last four characters, uppercase, left-padded with `0` when the source is shorter. The full number never leaves the service | Not the *source mask* | BR-09; `MaskedNumber` |
+| **Masked number** | How an account number leaves the service: `*` and the last four letters or digits of the source (other characters dropped), uppercase, left-padded with `0` when fewer remain. The full number never leaves the service | Not the *source mask* | BR-09; `MaskedNumber` |
 | **Source mask** | The account number, or partial number, as the fixture's source data supplies it; the input to masking | Not the *source app*. See section 5 | API spec 9.1; `sourceMask` |
-| **Account details** | The fields the customer supplies for an account: APR, interest rate, promotional period, minimum payment, payment method | Not *personal details*. Not the profile's *details list* | BR-14; `AccountDetails` |
+| **Account details** | The fields the customer supplies for an account: APR, interest rate, promotional period, minimum payment, payment method. Shown, and editable, for credit cards and credit accounts only | Not *personal details*. Not the profile's *details list*. Not *account information* | BR-14; `AccountDetails` |
+| **Account information** | What the account page shows about any account: update frequency, status and opened date | Not *account details* (customer-supplied) | UI spec 6.5, `detail-meta-*` |
 | **APR**, **interest rate** | Two separate account details, each 0 to 100 with up to 2 decimal places | Not interchangeable | BR-14 |
 | **Promotional period** | Months, 0 to 60, of a promotional rate | | BR-14; `promoPeriodMonths` |
 
@@ -176,7 +177,7 @@ Definitions an agent cannot settle on its own, because each changes what a rule,
 | Term | Meaning | Not this | Source |
 |---|---|---|---|
 | **Business rule**, **BR-nn** | A numbered API rule, BR-01 to BR-15 | Not a *profile rule* | API spec section 7 |
-| **Profile rule**, **PR-nn** | A numbered My Profile rule, PR-01 to PR-08 | Not a pull request | Profile spec section 5 |
+| **Profile rule**, **PR-nn** | A numbered My Profile rule, PR-01 to PR-11 | Not a pull request | Profile spec section 5 |
 | **Rule tag** | A scenario tag naming the rule it covers, `@BR-nn` or `@PR-nn` | Not a *layer tag* | README, traceability chain |
 | **Layer tag** | `@api`, `@ui`, `@security`, `@a11y`, saying which layer a scenario exercises. `@profile` groups the profile scenarios | | README; feature files |
 | **Traceability chain** | Rule or UI spec section, to contract operation or test hook, to tagged scenario, to Screenplay task. A rule or section with no scenario is a gap | | README |

@@ -1,8 +1,8 @@
-# version: 3 | created: 2026-10-05T20:00Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 4 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @ui
 Feature: Debt overview page
   A customer can see how much they owe, which way it is moving, and where it sits.
-  Covers UI specification v5, section 6.7.
+  Covers the UI specification, section 6.7.
 
   Background:
     Given Alex holds the "drilldown" persona

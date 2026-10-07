@@ -1,4 +1,4 @@
-# version: 3 | created: 2026-10-05T20:00Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 4 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @api
 Feature: Total debt
   Total debt counts what is owed on open accounts that count towards totals, and shows which way it is moving.
@@ -11,9 +11,13 @@ Feature: Total debt
     Given Alex owes 423.60 on a credit card
     And Alex owes 12524.00 on a loan with a limit
     And Alex owes 1161.00 on a loan with no limit
+    And Alex owes 185000.00 on a mortgage
+    And Alex owes 32.00 on a utilities and telecoms account
+    And Alex owes 300.00 on a credit account
     And Alex has a credit card that is 44.00 in credit
     When Alex asks for the debt overview
-    Then the total debt is 12947.60
+    Then the total debt is 198279.60
+    And the debt on credit cards is 423.60
 
   # Arranged by test-control overrides (DR-020): these two accounts replace the persona's.
   # Sample: fixtures/overrides/br07-current-account.json.

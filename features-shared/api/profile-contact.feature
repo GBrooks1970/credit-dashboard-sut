@@ -1,8 +1,8 @@
-# version: 1 | created: 2026-10-04T23:19Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 2 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @api @profile
 Feature: Email and mobile verification
   A customer can change their email and add a mobile number, and each must be verified before it is trusted.
-  Covers the My Profile UI feature spec v4, section 5, and API spec v7, section 6.6.
+  Covers the My Profile UI feature spec, section 5, and the API specification, section 6.6.
 
   Background:
     Given Alex holds the "excellent" persona

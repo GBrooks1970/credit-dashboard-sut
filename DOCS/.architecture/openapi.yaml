@@ -1,15 +1,16 @@
-# version: 9
-# created: 2026-10-06T09:06Z
-# supersedes: v8 (2026-10-05T20:41Z); earlier versions are in git history (DR-040) and, up to v7, in the
+# version: 10
+# created: 2026-10-07T10:25Z
+# supersedes: v9 (2026-10-06T09:06Z); earlier versions are in git history (DR-040) and, up to v7, in the
 # portfolio's Phase 0 pack
-# change: path-parameter examples for the mock smoke run; the Prism server entry has no /api/v1 prefix (DR-039, CDS-14)
+# change: CDS-18 review fixes: DebtOverview.byType (DR-046); one Problem type per rule outcome under
+# /problems/rule-violation/ (DR-048)
 # project: credit-dashboard-sut
 # type: architecture-doc
 # language: en-GB
 openapi: 3.1.0
 info:
   title: Credit Dashboard SUT API
-  version: 0.6.2
+  version: 0.7.0
   license:
     name: MIT
     identifier: MIT
@@ -142,7 +143,7 @@ paths:
               schema: { $ref: '#/components/schemas/PreferredName' }
         '400': { $ref: '#/components/responses/Validation' }
         '401': { $ref: '#/components/responses/Unauthenticated' }
-        '422': { $ref: '#/components/responses/RuleViolation' }
+        '422': { $ref: '#/components/responses/PreferredNameRefused' }
 
   /me/profile/email:
     put:
@@ -176,7 +177,8 @@ paths:
       summary: Send the verification link again
       description: >-
         Allowed once at least 60 seconds have passed since the last link was sent, on the controlled clock
-        (PR-09). Sooner is a 429 with Retry-After. An email that is already verified is a 422 and nothing is sent.
+        (PR-09). Sooner is a 429 with Retry-After. An email that is already verified is a 422
+        (`/problems/rule-violation/already-verified`) and nothing is sent.
       responses:
         '202':
           description: Link sent
@@ -185,7 +187,7 @@ paths:
               schema: { $ref: '#/components/schemas/VerificationSent' }
               example: { sentAt: '2026-10-03T10:01:00Z', nextResendAt: '2026-10-03T10:02:00Z' }
         '401': { $ref: '#/components/responses/Unauthenticated' }
-        '422': { $ref: '#/components/responses/RuleViolation' }
+        '422': { $ref: '#/components/responses/AlreadyVerified' }
         '429': { $ref: '#/components/responses/RateLimited' }
 
   /me/profile/mobile:
@@ -195,7 +197,8 @@ paths:
       summary: Add or change the mobile number
       description: >-
         A UK number (PR-06) is stored at once, normalised to +44, as unverified, and a six-digit code is issued
-        (PR-10). The demo sends no message: the code is always 123456. A number outside PR-06 is a 422.
+        (PR-10). The demo sends no message: the code is always 123456. A number outside PR-06 is a 422
+        (`/problems/rule-violation/mobile-number`).
       requestBody:
         required: true
         content:
@@ -211,7 +214,7 @@ paths:
               example: { lastDigits: '456', status: unverified, expiresAt: '2026-10-03T10:10:00Z', attemptsRemaining: 3 }
         '400': { $ref: '#/components/responses/Validation' }
         '401': { $ref: '#/components/responses/Unauthenticated' }
-        '422': { $ref: '#/components/responses/RuleViolation' }
+        '422': { $ref: '#/components/responses/MobileNumberRefused' }
 
   /me/profile/mobile/verification:
     post:
@@ -220,8 +223,9 @@ paths:
       summary: Submit the one-time code
       description: >-
         The correct code, while less than 10 minutes have passed since issue, marks the number verified (PR-10).
-        A wrong code is a 422 with the attempts remaining; the third wrong code voids the challenge (PR-11). An
-        expired or voided code, or a code with nothing pending, is a 422 asking for a new code.
+        A wrong code with attempts left is a 422 `/problems/rule-violation/code-wrong` carrying
+        `attemptsRemaining` (PR-11). The third wrong code voids the challenge; it, an expired or voided code, and
+        a code with nothing pending are a 422 `/problems/rule-violation/code-invalid`, asking for a new code.
       requestBody:
         required: true
         content:
@@ -237,7 +241,7 @@ paths:
               example: { lastDigits: '456', status: verified }
         '400': { $ref: '#/components/responses/Validation' }
         '401': { $ref: '#/components/responses/Unauthenticated' }
-        '422': { $ref: '#/components/responses/RuleViolation' }
+        '422': { $ref: '#/components/responses/CodeRefused' }
 
   /bureaux:
     get:
@@ -301,6 +305,11 @@ paths:
                     amountMinor: 1294760
                     currency: GBP
                   trend: steady
+                  byType:
+                  - type: creditcard
+                    amount: { amountMinor: 42360, currency: GBP }
+                  - type: loan
+                    amount: { amountMinor: 1252400, currency: GBP }
                 accountTypes:
                 - type: creditcard
                   balance:
@@ -766,10 +775,10 @@ paths:
     get:
       tags: [supporting]
       operationId: getDebtOverview
-      summary: Total debt and trend
+      summary: Total debt, trend and the breakdown by account type
       responses:
         '200':
-          description: Total debt and trend (BR-07)
+          description: Total debt, trend and the breakdown by account type (BR-07)
           content:
             application/json:
               example:
@@ -777,6 +786,11 @@ paths:
                   amountMinor: 1294760
                   currency: GBP
                 trend: steady
+                byType:
+                - type: creditcard
+                  amount: { amountMinor: 42360, currency: GBP }
+                - type: loan
+                  amount: { amountMinor: 1252400, currency: GBP }
               schema: { $ref: '#/components/schemas/DebtOverview' }
         '401': { $ref: '#/components/responses/Unauthenticated' }
 
@@ -912,7 +926,8 @@ paths:
         named for a bureau replaces that bureau's list, for this user only, until rebound or reset. Overrides are
         source data in the fixture format (API spec section 9.1); derived values are recomputed from them. A body
         that fails the schema is a 400; overrides that break a business rule (for example a stored utilisation
-        that does not match its balance and limit, BR-03) are a 422; an unknown bureau ID is a 404.
+        that does not match its balance and limit, BR-03) are a 422 (`/problems/rule-violation/overrides-inconsistent`);
+        an unknown bureau ID is a 404.
       security: [ { testControlKey: [] } ]
       parameters:
         - { name: username, in: path, required: true, schema: { type: string, example: alex } }
@@ -964,7 +979,7 @@ paths:
         '204': { description: Bound }
         '400': { $ref: '#/components/responses/Validation' }
         '404': { $ref: '#/components/responses/TestControlDisabled' }
-        '422': { $ref: '#/components/responses/RuleViolation' }
+        '422': { $ref: '#/components/responses/OverridesInconsistent' }
   /__test/bugs:
     put:
       tags: [test-control]
@@ -1136,19 +1151,89 @@ components:
             detail: No account with this ID was found.
             instance: /api/v1/accounts/acc_zz9zz
     RuleViolation:
-      description: Breaks a business rule
+      description: An account detail is out of range (BR-14)
       content:
         application/problem+json:
           schema: { $ref: '#/components/schemas/Problem' }
           example:
-            type: /problems/rule-violation
-            title: Breaks a business rule
+            type: /problems/rule-violation/out-of-range
+            title: Value out of range
             status: 422
             detail: interestRate must be between 0 and 100 (BR-14).
             instance: /api/v1/accounts/acc_7f3k2q/details
             errors:
             - field: value
               message: must be between 0 and 100
+    PreferredNameRefused:
+      description: The preferred name breaks PR-02 after trimming
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: /problems/rule-violation/preferred-name
+            title: Preferred name not allowed
+            status: 422
+            detail: A preferred name is 1 to 30 letters, spaces, hyphens or apostrophes (PR-02).
+            instance: /api/v1/me/profile/preferred-name
+    AlreadyVerified:
+      description: The email is already verified; nothing is sent (PR-09)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: /problems/rule-violation/already-verified
+            title: Email already verified
+            status: 422
+            detail: This email address is already verified.
+            instance: /api/v1/me/profile/email/verification
+    MobileNumberRefused:
+      description: The number is not a UK mobile number (PR-06)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: /problems/rule-violation/mobile-number
+            title: Not a UK mobile number
+            status: 422
+            detail: Enter a UK mobile number starting 07 or +447 (PR-06).
+            instance: /api/v1/me/profile/mobile
+    CodeRefused:
+      description: >-
+        The code is refused. `code-wrong` while attempts remain (PR-11); `code-invalid` for the third wrong code,
+        an expired or voided code, or nothing pending (PR-10, PR-11, DR-026)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          examples:
+            codeWrong:
+              summary: A wrong code, attempts remaining
+              value:
+                type: /problems/rule-violation/code-wrong
+                title: Wrong code
+                status: 422
+                detail: That code is not right. You have 2 attempts left.
+                instance: /api/v1/me/profile/mobile/verification
+                attemptsRemaining: 2
+            codeInvalid:
+              summary: No valid code; request a new one
+              value:
+                type: /problems/rule-violation/code-invalid
+                title: Request a new code
+                status: 422
+                detail: This code can no longer be used. Add the number again to get a new code.
+                instance: /api/v1/me/profile/mobile/verification
+                attemptsRemaining: 0
+    OverridesInconsistent:
+      description: Test-control overrides break a business rule (DR-020)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+          example:
+            type: /problems/rule-violation/overrides-inconsistent
+            title: Overrides break a business rule
+            status: 422
+            detail: acc_ovcc01 utilisation 40 does not match its balance and limit (BR-03).
+            instance: /api/v1/__test/users/alex/persona
     RateLimited:
       description: Too many requests; try again after Retry-After seconds
       headers:
@@ -1572,9 +1657,21 @@ components:
         electoralRoll: { type: boolean }
     DebtOverview:
       type: object
-      required: [total, trend]
+      required: [total, trend, byType]
       properties:
         total: { $ref: '#/components/schemas/Money' }
+        byType:
+          type: array
+          description: >-
+            The total split by account type (BR-07, DR-046): for each type, the sum of positive balances of open
+            accounts with includedInTotals true. One entry per type whose sum is above zero, in AccountType enum
+            order; current accounts never appear. The entries sum to total.
+          items:
+            type: object
+            required: [type, amount]
+            properties:
+              type: { $ref: '#/components/schemas/AccountType' }
+              amount: { $ref: '#/components/schemas/Money' }
         trend:
           type: string
           enum: [up, down, steady]
@@ -1612,11 +1709,21 @@ components:
       type: object
       required: [type, title, status]
       properties:
-        type: { type: string, format: uri-reference }
+        type:
+          type: string
+          format: uri-reference
+          description: >-
+            The problem type (API specification section 8). A 422 names its rule outcome under
+            /problems/rule-violation/ (DR-048); clients and tests branch on type, never on title or detail.
         title: { type: string }
         status: { type: integer }
         detail: { type: string }
         instance: { type: string }
+        attemptsRemaining:
+          type: integer
+          minimum: 0
+          maximum: 3
+          description: code-wrong and code-invalid only (PR-11)
         errors:
           type: array
           items:

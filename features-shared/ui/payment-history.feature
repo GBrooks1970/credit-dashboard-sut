@@ -1,8 +1,8 @@
-# version: 3 | created: 2026-10-05T20:00Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 4 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @ui
 Feature: Payment history page
   A customer can see, year by year, whether payments were made on time and which ones were missed.
-  Covers UI specification v5, section 6.3.
+  Covers the UI specification, section 6.3.
 
   Background:
     Given Alex holds the "struggling" persona

@@ -1,8 +1,8 @@
-# version: 3 | created: 2026-10-05T20:00Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 4 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @ui
 Feature: Signing in
   A customer signs in with the demo details and lands on their own report.
-  Covers UI specification v5, section 6.1.
+  Covers the UI specification, section 6.1.
 
   Background:
     Given Alex holds the "excellent" persona

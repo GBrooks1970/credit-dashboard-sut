@@ -1,8 +1,8 @@
-# version: 3 | created: 2026-10-05T20:00Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 4 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @ui
 Feature: Report overview
   The overview gives a customer their score, how it compares, and a route into every part of the report.
-  Covers UI specification v5, section 6.2.
+  Covers the UI specification, section 6.2.
 
   Background:
     Given Alex holds the "excellent" persona
@@ -42,5 +42,6 @@ Feature: Report overview
     Then Alex is told the report updates in <wording>
     Examples:
       | days   | wording |
+      | 0 days | 0 days  |
       | 1 day  | 1 day   |
       | 2 days | 2 days  |

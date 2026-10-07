@@ -2,6 +2,12 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-07: CDS-18 review fixes (contract v10)
+
+- An independent re-review of the behaviour against contract v9 found 5 Blocker, 12 Change and 8 Note findings (`.review/2026-10-07_cds-18-behaviour-re-review.md`); all Blockers and Changes and four Notes are fixed here, specification first.
+- Contract v10 (`info.version` 0.7.0): `DebtOverview.byType` (DR-046); one Problem type per rule outcome under `/problems/rule-violation/` (DR-048). API specification v12, UI specification v9 (the changes toggle fetches every change, DR-047), glossary v8, step glossary v6, decision register v12.
+- Scenarios: the debt total and breakdown, the preferred-name save, *account information*, a BR-02 gap scenario, a 0-day row, expired-token and test-control-off scenarios, closed-accounts and mobile-page UI scenarios; 22 files, 70 scenarios. Four new override samples (a zero-limit card; three BR-12 2025 rows). Client types regenerated.
+
 ## 2026-10-07: Kanban board; Phase 1 closed (CDS-17)
 
 - The backlog summary is one `auth-table` table per phase: Type, Tier and explicit 'Blocked by'; `Done <date>` or `Open`, with Ready and Backlog derived on the board. CDS-04 is placed in Phase 1 and CDS-11 in Phase 0. Backlog v31.

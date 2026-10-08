@@ -63,6 +63,23 @@ internal sealed class ServiceHost : IDisposable
     public async Task Freeze(string instant) =>
         Assert.That((await Control(HttpMethod.Put, "/clock", $$"""{"now":"{{instant}}"}""")).StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
 
+    /// <summary>The path of a repository file, found by walking up to the folder that has the specification.</summary>
+    public static string RepoFile(params string[] parts)
+    {
+        for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir is not null; dir = dir.Parent)
+            if (File.Exists(Path.Combine(dir.FullName, "DOCS", ".design", "api-specification.md"))) return Path.Combine([dir.FullName, .. parts]);
+        throw new DirectoryNotFoundException("repository root not found");
+    }
+
+    /// <summary>Binds a user with an override sample from fixtures/overrides, as a scenario arranges data no persona holds (DR-020).</summary>
+    public async Task BindSample(string username, string sample)
+    {
+        var file = JsonNode.Parse(File.ReadAllText(RepoFile("fixtures", "overrides", sample + ".json")))!.AsObject();
+        var body = new JsonObject { ["persona"] = file["base"]!.DeepClone(), ["overrides"] = file["overrides"]!.DeepClone() }.ToJsonString();
+        var response = await Control(HttpMethod.Put, $"/users/{username}/persona", body);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent), await response.Content.ReadAsStringAsync());
+    }
+
     public async Task Bind(string username, string persona) =>
         Assert.That((await Control(HttpMethod.Put, $"/users/{username}/persona", $$"""{"persona":"{{persona}}"}""")).StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
 

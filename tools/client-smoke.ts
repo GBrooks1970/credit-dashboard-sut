@@ -1,12 +1,15 @@
 // version: 1 | created: 2026-10-06T16:41Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Client smoke run (CDS-15): typed calls through packages/api-client against the Prism mock. Proves the generated
 // client, the mock and the contract agree at run time; the package's own check proves it at compile time.
-// Run from the repository root:  npm run check:client-smoke   (Node runs this TypeScript file directly)
+// Run from the repository root:  npm run check:client-smoke   (Node runs this TypeScript file directly; MOCK_PORT overrides 4010)
 import { startPrism } from './lib/prism.mjs';
 import { createCreditClient, MOCK_BASE_URL } from '../packages/api-client/src/index.ts';
 
 const contractPath = new URL('../DOCS/.architecture/openapi.yaml', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
-const prism = startPrism({ contractPath, port: 4010 });
+// MOCK_PORT moves the mock off 4010, as for the mock smoke, when another process holds the default port.
+const port = Number(process.env.MOCK_PORT || 4010);
+const mockUrl = process.env.MOCK_PORT ? `http://localhost:${port}` : MOCK_BASE_URL;
+const prism = startPrism({ contractPath, port });
 const failures: string[] = [];
 const expect = (ok: boolean, what: string): void => { if (!ok) failures.push(what); };
 
@@ -14,11 +17,11 @@ try {
   await prism.ready;
 
   // Public operation: no token.
-  const anon = createCreditClient({ baseUrl: MOCK_BASE_URL });
+  const anon = createCreditClient({ baseUrl: mockUrl });
   const login = await anon.POST('/auth/login', { body: { username: 'alex', password: 'demo-only' } });
   expect(login.response.status === 200 && typeof login.data?.token === 'string', `login: status ${login.response.status}`);
 
-  const api = createCreditClient({ baseUrl: MOCK_BASE_URL, token: login.data?.token ?? 'client-smoke' });
+  const api = createCreditClient({ baseUrl: mockUrl, token: login.data?.token ?? 'client-smoke' });
 
   // Query parameter typed by the AccountType enum. Prism answers with the contract's static example whatever the
   // query, so only the status and the presence of the figures are checked here, not the echoed type.

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- credit-dashboard-sut business rules BR-01 to BR-15 (DR-017, CDS-20). Pure functions: no ASP.NET, no contract types,
+       no packages. Integer arithmetic only; "today" is a DateOnly supplied by the caller. Cases: DOCS/.design/business-rules-cases.md -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RootNamespace>CreditDashboard.BusinessRules</RootNamespace>
+  </PropertyGroup>
+
+</Project>

@@ -1,6 +1,6 @@
 ---
-version: 39
-created: 2026-10-07T19:44Z
+version: 40
+created: 2026-10-08T00:15Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 39 (CDS-26 closed: accepted and recorded, DR-051)
+**Version:** 40 (CDS-20 Done: business-rules library; CDS-27 added: profile rules)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -59,11 +59,12 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | ID | Ticket | Type | Priority | Tier | Blocked by | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | `CDS-19` | Phase 3 plan and service scaffold: ASP.NET Core minimal API (DR-017), `global.json` (DR-044), C# types generated from the contract | Service | — | — | `CDS-17`, `CDS-18` | Done 2026-10-07 |
-| `CDS-20` | Business-rules library with NUnit tests tagged by BR ID (DR-017) | Service | — | MEDIUM | `CDS-19` | Open |
+| `CDS-20` | Business-rules library with NUnit tests tagged by BR ID (DR-017) | Service | — | MEDIUM | `CDS-19` | Done 2026-10-08 |
 | `CDS-21` | Test-control endpoints as API specification section 6.5 specifies: reset, persona binding with overrides (DR-020), clock, bug flags | Service | — | MEDIUM | `CDS-19` | Open |
 | `CDS-22` | Serenity/JS harness: `CallAnApi` and `ControlTheTestEnvironment` abilities; `@api` and `@security` scenarios green with every response validated against the contract (DR-006, DR-042) | Harness | — | HIGH | `CDS-20`, `CDS-21`, `CDS-25` | Open |
 | `CDS-23` | Schemathesis pinned and run clean against the service (Phase 3 gate) | Service | — | HIGH | `CDS-19` | Open |
-| `CDS-25` | Serve the contract operations from the fixture store: store and clock, session, report, accounts, profile, supporting; each removed from the coverage test's pending list as it is served | Service | — | HIGH | `CDS-19`, `CDS-20`, `CDS-21` | Open |
+| `CDS-25` | Serve the contract operations from the fixture store: store and clock, session, report, accounts, profile, supporting; each removed from the coverage test's pending list as it is served | Service | — | HIGH | `CDS-19`, `CDS-20`, `CDS-21`, `CDS-27` | Open |
+| `CDS-27` | Profile rules library: PR-01, PR-02, PR-04, PR-06, PR-07 and PR-09 to PR-11 as the API enforces them (API specification 6.6), with case tables first and NUnit tests tagged by PR ID | Service | — | MEDIUM | `CDS-20` | Open |
 | `CDS-26` | Risk: the development-dependency audit reports 15 vulnerabilities (9 high, 6 moderate), all through Prism 5.16.0; owner to accept, wait for a fixed Prism release, or apply npm overrides | Tooling | — | MEDIUM | — | Done 2026-10-07 |
 
 ## Items
@@ -183,6 +184,14 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 **COMPLETE (2026-10-07). The Phase 2 exit gate is met (DR-049).** Implemented to the plan and its two addenda (`DOCS/implementation-plans/2026-10-07_cds-18-*.md`). Three independent passes, each by a fresh agent: blind (5 Blocker, 12 Change, 8 Note), confirmation (1, 10, 11) and scoped to the fixes (0, 3, 6), with two re-checks ending at no Blocker or Change. Fixes in #16 (contract v10; DR-046 to DR-048), #17 and #18. Record: `.review/2026-10-07_cds-18-behaviour-re-review.md`. Signed off by the owner. Plan Outcomes and implementation log in #19. CDS-24 holds the remaining Notes; CDS-19 (Phase 3) is ready.
 
 **Update (2026-10-07).** Portfolio status follows the gate, as brief 7 required: registry label "Phases 1 and 2 complete 2026-10-07" (NeoCognitus70/portfolio-prompts#115, `63f31ae`), landing card summary (GBrooks1970/portfolio#60, `a49da0a`; its first CI run failed on a transient HTTP 500 for another project's URL and passed on re-run), capability matrix (test-automation-portfolio#290, `a10ba69`). Handover v11 written.
+
+### CDS-27: Profile rules library
+
+**Added (2026-10-08, CDS-20 plan decision D3).** CDS-20 covers the business rules BR-01 to BR-15. The profile rules the API enforces (PR-01, PR-02, PR-04, PR-06, PR-07 and PR-09 to PR-11, API specification 6.6) need verification state, resend timing on the controlled clock and one-time-code handling that no case table describes yet, so they are a separate item: case tables first (`DOCS/.design/`), then the library and NUnit tests tagged by PR ID, in the same pattern as CDS-20. CDS-25's profile operations wait on it.
+
+### CDS-20: Business-rules library
+
+**COMPLETE (2026-10-08; plan and case tables merged in #26, squash `7440527`; code in PR 2, see the plan's Outcome).** Implemented to the approved plan (`DOCS/implementation-plans/2026-10-07_cds-20-business-rules-library.md`). `CreditDashboard.BusinessRules`: pure functions over integer minor units and a `DateOnly` today, no ASP.NET or contract dependency; `CreditDashboard.BusinessRules.Tests`: 159 NUnit tests tagged `[Category("BR-nn")]`, a traceability gate over API specification section 7, and a parity test over the seven personas' 28 accounts. DR-052. Negative exact halves round towards positive infinity (D2); the three Readings in `business-rules-cases.md` stand (owner, 2026-10-08). CDS-27 added for the profile rules (D3).
 
 ### CDS-26: Prism development-dependency audit risk
 

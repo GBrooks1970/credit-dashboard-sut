@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Credit Dashboard SUT API",
-    "version": "0.8.1",
+    "version": "0.9.0",
     "license": {
       "name": "MIT",
       "identifier": "MIT"
@@ -629,6 +629,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal"
           }
         }
       }
@@ -694,6 +697,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal"
           }
         }
       }
@@ -708,13 +714,6 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/BureauId"
-          },
-          {
-            "name": "tags",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
           },
           {
             "name": "sentiment",
@@ -770,6 +769,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal"
           }
         }
       }
@@ -807,6 +809,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal"
           }
         }
       }
@@ -879,6 +884,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal"
           }
         }
       }
@@ -943,6 +951,12 @@
           },
           "401": {
             "$ref": "#/components/responses/Unauthenticated"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal"
           }
         }
       }
@@ -993,6 +1007,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal"
           }
         }
       }
@@ -1070,6 +1087,9 @@
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal"
           }
         }
       }
@@ -1134,6 +1154,12 @@
           },
           "401": {
             "$ref": "#/components/responses/Unauthenticated"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal"
           }
         }
       }
@@ -1635,6 +1661,12 @@
           },
           "401": {
             "$ref": "#/components/responses/Unauthenticated"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/Internal"
           }
         }
       }
@@ -3113,6 +3145,7 @@
             }
           },
           "payments": {
+            "description": "onReport is the number of (account, month) pairs with status missed in the BR-12 window across the bureau's accounts; newMissed is those in the three months ending at the current month (decision brief 9 D4).",
             "type": "object",
             "required": [
               "newMissed",

@@ -1,7 +1,7 @@
 ---
-version: 18
-created: 2026-10-08T08:16Z
-supersedes: v17 (earlier today); earlier versions are in git history (DR-040)
+version: 19
+created: 2026-10-08T10:02Z
+supersedes: v18 (earlier today); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
 language: en-GB
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v19:** decision brief 9 (CDS-25): section 3 'Auth' row (token lifetime setting, authentication before shape) and the session-state sentence; section 6.2 notes the 404 and 500 every report operation documents, the `payments` definition and the removal of `tags`; section 6.4 points to the assistant table; section 8 drops the 503 and states the order of checks. Contract v13 (`info.version` 0.9.0). Cases: [operations-cases.md](operations-cases.md).
 **Changes in v18:** the test-control build (CDS-21): section 6.5 states the clock and latency inputs and their 400s, the 404 for an unknown user, and that a refused binding changes nothing. Contract v12 (`info.version` 0.8.1): `Problem.attemptsRemaining` is for `code-wrong` only.
 **Changes in v17:** the test-control and profile-rule plans (CDS-21, CDS-27): section 6.5 states the key, the order of checks, the state model and what reset clears; section 6.6 and section 8 settle `code-invalid` (no `attemptsRemaining`) and PR-06 spaces; section 11 gains 'Test control' and 'Profile rule tests'. Contract v11 (`info.version` 0.8.0): a `BugFlag` enum of 30 flags, so an unknown flag is a 400; the stray `attemptsRemaining` is gone from the `code-invalid` example. Cases: [profile-rules-cases.md](profile-rules-cases.md).
 **Changes in v16:** the business-rules library (CDS-20): BR-03 says how half up rounds a negative value; section 3 'Business rules' row names the library and its tests; section 11 gains 'Rule unit tests' and 'Rule traceability'; the case tables are in [business-rules-cases.md](business-rules-cases.md).
@@ -56,12 +57,12 @@ Out of scope: real credit scoring, real open-banking consent, persistent storage
 | Framework | ASP.NET Core minimal API, `demo-apps/demoapp001-dotnet-api/` (`CreditDashboard.Api`, tested by `CreditDashboard.Api.Tests` with NUnit 5.0.0). Contract first: C# data types generated from `openapi.yaml` by NSwag 14.7.1 into `Contract/`, with the contract embedded; requests validated against the contract at the edge by the service's middleware (JsonSchema.Net 9.4.0); no code-first contract generation (DR-050). Listens on port 4000 under `/api/v1` | Accepted (DR-017, DR-050) |
 | Business rules | A C# class library in the service's solution, `CreditDashboard.BusinessRules`, with no ASP.NET or contract dependency: pure functions over integer minor units and a `DateOnly` today. Unit-tested by `CreditDashboard.BusinessRules.Tests` (NUnit), each test tagged `[Category("BR-nn")]`; the cases are in [business-rules-cases.md](business-rules-cases.md) | Accepted (DR-017, CDS-20 plan) |
 | Data | In-memory store, loaded from `fixtures/personas/*.json` at start and on reset | Proposed |
-| Auth | Bearer token issued by `POST /auth/login`; each test user is bound to one persona. A token's `expiresAt` is judged on the controlled clock, so moving the clock past it expires the token (the `@security` expiry scenario) | Proposed (DR-007) |
+| Auth | Bearer token issued by `POST /auth/login`; each test user is bound to one persona. A token's `expiresAt` is the issue instant plus the setting `TOKEN_LIFETIME_MINUTES` (default 60), and is judged on the controlled clock, so moving the clock to or past it expires the token (the `@security` expiry scenario). Authentication is checked after the route is matched and before the shape of the request, so a missing, expired or revoked token is always 401 | Proposed (DR-007); lifetime and order accepted (DR-055) |
 | Container | Single Docker image; `docker compose up` brings up API and UI | Proposed |
 | Mock | Prism 5.16.0 (`@stoplight/prism-cli`, pinned in the root `package.json`, DR-009) serving `openapi.yaml` examples on port 4010, without the `/api/v1` prefix (DR-039): `npm run mock` | Accepted |
 | Client | Generated TypeScript client, `packages/api-client`, a standalone package with its own lock (DR-043): types generated from `openapi.yaml` by `openapi-typescript` 7.13.0, requests made by `openapi-fetch` 0.17.0, TypeScript 5.9.3. Each consumer chooses the base URL: the mock at `http://localhost:4010`, the service at `http://localhost:4000/api/v1` (DR-039). Its consumer is the UI; the harness consumes the API independently (DR-042) | Accepted |
 
-The service is stateless apart from the in-memory store, the active bug flags and the controlled clock. A reset returns all three to their defaults.
+The service is stateless apart from the in-memory store, the active bug flags, the controlled clock and each user's session state: account details edits, notification read flags, summary feedback and profile edits. A reset returns all of them to their defaults, and binding a persona to a user clears that user's session state (DR-055).
 
 ## 4. Conventions
 
@@ -111,6 +112,8 @@ Payment status per month: `on-time`, `missed`, `no-data`. For one account, a mon
 
 ### 6.2 Report
 
+Every operation below documents 404 for an unknown bureau and 500 (the `error` persona, whose every report operation fails). The changes list filters by `sentiment` only: the `tags` parameter was removed in contract v13. In the overview, `payments.onReport` is the number of (account, month) pairs with status `missed` in the BR-12 window across the bureau's accounts, and `payments.newMissed` is those in the three months ending at the current month (DR-055).
+
 | Method | Path | Purpose | Success | Errors |
 | --- | --- | --- | --- | --- |
 | GET | `/bureaux` | Bureaux available to the user | 200 `Bureau[]` | 401 |
@@ -144,7 +147,7 @@ Payment status per month: `on-time`, `missed`, `no-data`. For one account, a mon
 | GET | `/notifications` | Notifications, unread first | 200 `Page<Notification>` | 401 |
 | PATCH | `/notifications/{id}` | Mark read | 200 `Notification` | 401, 404 |
 | PUT | `/reports/{bureauId}/summary/feedback` | Like / dislike / clear (BR-10) | 200 `{ value }` | 400, 401 |
-| POST | `/assistant/messages` | Mock assistant; canned reply keyed by intent | 200 `{ reply, disclaimer }` | 400, 401 |
+| POST | `/assistant/messages` | Mock assistant; canned reply keyed by intent (the table is in [operations-cases.md](operations-cases.md) section 5) | 200 `{ reply, disclaimer }` | 400, 401 |
 
 ### 6.5 Test control (off by default)
 
@@ -223,6 +226,8 @@ The customer's own account record, behind the My Profile page. Rules PR-01 to PR
 
 ## 8. Error catalogue
 
+The checks run in this order (DR-055): the route is matched (404 if no operation fits); authentication (401); the shape of the path, query and body (400); the target and its owner (404); the persona behaviours (500 for the `error` persona on report operations); the rules (422).
+
 | Status | `type` suffix | When |
 | --- | --- | --- |
 | 400 | `/validation` | Bad query or body shape; `errors[]` lists each field |
@@ -231,7 +236,6 @@ The customer's own account record, behind the My Profile page. Rules PR-01 to PR
 | 422 | `/rule-violation/{outcome}` | Shape valid, but breaks a rule. One type per outcome (DR-048): `out-of-range` (BR-14), `preferred-name` (PR-02), `already-verified` (PR-09), `mobile-number` (PR-06), `code-wrong` with `attemptsRemaining` (PR-11), `code-invalid` (the third wrong code, an expired or voided code, or nothing pending; PR-10, PR-11; it carries no `attemptsRemaining`), `overrides-inconsistent` (test control, DR-020). Clients and tests branch on `type`, never on `title` or `detail` |
 | 429 | `/rate-limited` | A verification link resent within 60 seconds (PR-09). There is no general rate limit (DR-035) |
 | 500 | `/internal` | `error` persona, or an unhandled fault; no stack trace in the body |
-| 503 | `/unavailable` | Bureau marked offline in fixtures |
 
 ## 9. Personas
 

@@ -1,15 +1,15 @@
-# version: 12
-# created: 2026-10-08T08:16Z
-# supersedes: v11 (2026-10-08T00:29Z); earlier versions are in git history (DR-040) and, up to v7, in the
+# version: 13
+# created: 2026-10-08T10:02Z
+# supersedes: v12 (earlier today); earlier versions are in git history (DR-040) and, up to v7, in the
 # portfolio's Phase 0 pack
-# change: CDS-21 build: Problem.attemptsRemaining is for code-wrong only (description; code-invalid carries none)
+# change: CDS-25 spec (brief 9): the changes list loses its tags parameter (D6); getAccountTotals and listSearches document 404; every report operation documents 500 (the error persona); payments is defined (D4)
 # project: credit-dashboard-sut
 # type: architecture-doc
 # language: en-GB
 openapi: 3.1.0
 info:
   title: Credit Dashboard SUT API
-  version: 0.8.1
+  version: 0.9.0
   license:
     name: MIT
     identifier: MIT
@@ -358,6 +358,7 @@ paths:
               schema: { $ref: '#/components/schemas/Score' }
               example: { current: 720, max: 1000, nationalAverage: 600, localAverage: 615 }
         '401': { $ref: '#/components/responses/Unauthenticated' }
+        '500': { $ref: '#/components/responses/Internal' }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /reports/{bureauId}/score/history:
@@ -385,6 +386,7 @@ paths:
                 - { month: '2026-10', score: 720 }
         '400': { $ref: '#/components/responses/Validation' }
         '401': { $ref: '#/components/responses/Unauthenticated' }
+        '500': { $ref: '#/components/responses/Internal' }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /reports/{bureauId}/changes:
@@ -394,7 +396,6 @@ paths:
       summary: Report changes, newest first
       parameters:
         - { $ref: '#/components/parameters/BureauId' }
-        - { name: tags, in: query, schema: { type: string } }
         - { name: sentiment, in: query, schema: { $ref: '#/components/schemas/Sentiment' } }
         - { $ref: '#/components/parameters/Page' }
         - { $ref: '#/components/parameters/PageSize' }
@@ -421,6 +422,7 @@ paths:
               schema: { $ref: '#/components/schemas/ChangePage' }
         '400': { $ref: '#/components/responses/Validation' }
         '401': { $ref: '#/components/responses/Unauthenticated' }
+        '500': { $ref: '#/components/responses/Internal' }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /reports/{bureauId}/impact:
@@ -437,6 +439,7 @@ paths:
               schema: { $ref: '#/components/schemas/Impact' }
               example: { actionNeeded: 0, monitor: 1, doingWell: 10 }
         '401': { $ref: '#/components/responses/Unauthenticated' }
+        '500': { $ref: '#/components/responses/Internal' }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /reports/{bureauId}/payment-history:
@@ -473,6 +476,7 @@ paths:
               schema: { $ref: '#/components/schemas/PaymentHistory' }
         '400': { $ref: '#/components/responses/Validation' }
         '401': { $ref: '#/components/responses/Unauthenticated' }
+        '500': { $ref: '#/components/responses/Internal' }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /reports/{bureauId}/searches:
@@ -506,6 +510,8 @@ paths:
               schema: { $ref: '#/components/schemas/SearchPage' }
         '400': { $ref: '#/components/responses/Validation' }
         '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/Internal' }
 
   /reports/{bureauId}/personal-details:
     get:
@@ -532,6 +538,7 @@ paths:
                   current: false
               schema: { $ref: '#/components/schemas/PersonalDetails' }
         '401': { $ref: '#/components/responses/Unauthenticated' }
+        '500': { $ref: '#/components/responses/Internal' }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /reports/{bureauId}/accounts:
@@ -570,6 +577,7 @@ paths:
                 items: { $ref: '#/components/schemas/AccountSummary' }
         '400': { $ref: '#/components/responses/Validation' }
         '401': { $ref: '#/components/responses/Unauthenticated' }
+        '500': { $ref: '#/components/responses/Internal' }
         '404': { $ref: '#/components/responses/NotFound' }
 
   /reports/{bureauId}/accounts/totals:
@@ -602,6 +610,8 @@ paths:
                     balance: { amountMinor: 116100, currency: GBP }
         '400': { $ref: '#/components/responses/Validation' }
         '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/Internal' }
 
   /accounts/{accountId}:
     get:
@@ -872,6 +882,8 @@ paths:
               schema: { $ref: '#/components/schemas/Feedback' }
         '400': { $ref: '#/components/responses/Validation' }
         '401': { $ref: '#/components/responses/Unauthenticated' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/Internal' }
 
   /assistant/messages:
     post:
@@ -1518,6 +1530,9 @@ components:
         debt: { $ref: '#/components/schemas/DebtOverview' }
         accountTypes: { type: array, items: { $ref: '#/components/schemas/AccountTotals' } }
         payments:
+          description: >-
+            onReport is the number of (account, month) pairs with status missed in the BR-12 window across the bureau's
+            accounts; newMissed is those in the three months ending at the current month (decision brief 9 D4).
           type: object
           required: [newMissed, onReport]
           properties:

@@ -5,14 +5,14 @@ project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-25
 status: approved
-approved: "2026-10-08, Gary Brooks, the plan and its slicing; decisions D1 to D8 are put to the owner in decision brief 9 and are not yet answered; merge authority: per PR, on request, after its own CI run reports success"
+approved: "2026-10-08, Gary Brooks, the plan and its slicing; decisions D1 to D8 answered in decision brief 9 on 2026-10-08 (D2 option 5, all others as recommended); merge authority: per PR, on request, after its own CI run reports success"
 delivered: not yet
 language: en-GB
 ---
 
 # Implementation plan: CDS-25, serve the 29 business operations
 
-**History of this plan.** Presented in full to the owner at 08:32Z on 2026-10-08 (clock read at 08:32:40Z), after a read-only spike. The owner approved the plan and its slicing and asked for the eight open decisions to be put as a decision brief (brief 9). This file records the plan as presented; the decisions table below is completed from brief 9 when it is decided, and no work starts before then.
+**History of this plan.** Presented in full to the owner at 08:32Z on 2026-10-08 (clock read at 08:32:40Z), after a read-only spike. The owner approved the plan and its slicing and asked for the eight open decisions to be put as a decision brief (brief 9). This file records the plan as presented; the decisions table below is completed from brief 9 when it is decided, and no work started before then.
 
 **Goal.** Serve every remaining contract operation from the fixture store, so the contract coverage test's pending list reaches zero (a Phase 3 gate condition; CDS-22 and CDS-23 depend on it). The service reads each user's bound persona document (`PersonaStore.Document`), derives responses with the CDS-20 and CDS-27 libraries, and checks every response against the contract in its own tests.
 
@@ -66,14 +66,14 @@ Put as decision brief 9 (`DOCS/decision-briefs/credit-dashboard-sut_decision-bri
 
 | Decision | Options | Recommended | Owner's answer |
 |---|---|---|---|
-| D1 Structure | (a) Specification PR, then S1 to S5 as separate PRs, records last. (b) One large PR | (a) | Not yet answered (brief 9) |
-| D2 Token lifetime | (a) 1 hour. (b) 8 hours. (c) 24 hours | (a) | Not yet answered (brief 9) |
-| D3 401 versus 400 | (a) Authentication first. (b) Shape first, as today | (a) | Not yet answered (brief 9) |
-| D4 The `payments` block | (a) `onReport` over the BR-12 window; `newMissed` over the last three months. (b) `newMissed` the current month only. (c) Both fixed at 0 | (a) | Not yet answered (brief 9) |
-| D5 The assistant | (a) A small keyword table plus a fallback. (b) One fixed reply | (a) | Not yet answered (brief 9) |
-| D6 `tags` on `listChanges` | (a) Remove from the contract. (b) Keep, accept and ignore. (c) Define it as a filter on `impact` | (a) | Not yet answered (brief 9) |
-| D7 The 503 | (a) Drop it from specification section 8. (b) Add a fixture field and a contract 503 | (a) | Not yet answered (brief 9) |
-| D8 A rebind or reset | (a) Rebinding clears that user's session state; reset clears all. (b) Only reset clears it | (a) | Not yet answered (brief 9) |
+| D1 Structure | (a) Specification PR, then S1 to S5 as separate PRs, records last. (b) One large PR | (a) | Option 1, 2026-10-08 |
+| D2 Token lifetime | (a) 1 hour. (b) 8 hours. (c) 24 hours | (a) | Option 5 (a setting, default 60 minutes), 2026-10-08 |
+| D3 401 versus 400 | (a) Authentication first. (b) Shape first, as today | (a) | Option 1, 2026-10-08 |
+| D4 The `payments` block | (a) `onReport` over the BR-12 window; `newMissed` over the last three months. (b) `newMissed` the current month only. (c) Both fixed at 0 | (a) | Option 1, 2026-10-08 |
+| D5 The assistant | (a) A small keyword table plus a fallback. (b) One fixed reply | (a) | Option 1, 2026-10-08 |
+| D6 `tags` on `listChanges` | (a) Remove from the contract. (b) Keep, accept and ignore. (c) Define it as a filter on `impact` | (a) | Option 1, 2026-10-08 |
+| D7 The 503 | (a) Drop it from specification section 8. (b) Add a fixture field and a contract 503 | (a) | Option 1, 2026-10-08 |
+| D8 A rebind or reset | (a) Rebinding clears that user's session state; reset clears all. (b) Only reset clears it | (a) | Option 1, 2026-10-08 |
 
 ## Outcome
 

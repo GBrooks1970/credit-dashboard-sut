@@ -809,6 +809,7 @@ export interface components {
             impact: components["schemas"]["Impact"];
             debt: components["schemas"]["DebtOverview"];
             accountTypes: components["schemas"]["AccountTotals"][];
+            /** @description onReport is the number of (account, month) pairs with status missed in the BR-12 window across the bureau's accounts; newMissed is those in the three months ending at the current month (decision brief 9 D4). */
             payments: {
                 newMissed: number;
                 onReport: number;
@@ -1722,6 +1723,7 @@ export interface operations {
             };
             401: components["responses"]["Unauthenticated"];
             404: components["responses"]["NotFound"];
+            500: components["responses"]["Internal"];
         };
     };
     getScoreHistory: {
@@ -1765,12 +1767,12 @@ export interface operations {
             400: components["responses"]["Validation"];
             401: components["responses"]["Unauthenticated"];
             404: components["responses"]["NotFound"];
+            500: components["responses"]["Internal"];
         };
     };
     listChanges: {
         parameters: {
             query?: {
-                tags?: string;
                 sentiment?: components["schemas"]["Sentiment"];
                 page?: components["parameters"]["Page"];
                 pageSize?: components["parameters"]["PageSize"];
@@ -1818,6 +1820,7 @@ export interface operations {
             400: components["responses"]["Validation"];
             401: components["responses"]["Unauthenticated"];
             404: components["responses"]["NotFound"];
+            500: components["responses"]["Internal"];
         };
     };
     getImpact: {
@@ -1849,6 +1852,7 @@ export interface operations {
             };
             401: components["responses"]["Unauthenticated"];
             404: components["responses"]["NotFound"];
+            500: components["responses"]["Internal"];
         };
     };
     getReportPaymentHistory: {
@@ -1912,6 +1916,7 @@ export interface operations {
             400: components["responses"]["Validation"];
             401: components["responses"]["Unauthenticated"];
             404: components["responses"]["NotFound"];
+            500: components["responses"]["Internal"];
         };
     };
     listSearches: {
@@ -1956,6 +1961,8 @@ export interface operations {
             };
             400: components["responses"]["Validation"];
             401: components["responses"]["Unauthenticated"];
+            404: components["responses"]["NotFound"];
+            500: components["responses"]["Internal"];
         };
     };
     getPersonalDetails: {
@@ -2000,6 +2007,7 @@ export interface operations {
             };
             401: components["responses"]["Unauthenticated"];
             404: components["responses"]["NotFound"];
+            500: components["responses"]["Internal"];
         };
     };
     listAccounts: {
@@ -2050,6 +2058,7 @@ export interface operations {
             400: components["responses"]["Validation"];
             401: components["responses"]["Unauthenticated"];
             404: components["responses"]["NotFound"];
+            500: components["responses"]["Internal"];
         };
     };
     getAccountTotals: {
@@ -2102,6 +2111,8 @@ export interface operations {
             };
             400: components["responses"]["Validation"];
             401: components["responses"]["Unauthenticated"];
+            404: components["responses"]["NotFound"];
+            500: components["responses"]["Internal"];
         };
     };
     getAccount: {
@@ -2527,6 +2538,8 @@ export interface operations {
             };
             400: components["responses"]["Validation"];
             401: components["responses"]["Unauthenticated"];
+            404: components["responses"]["NotFound"];
+            500: components["responses"]["Internal"];
         };
     };
     sendAssistantMessage: {

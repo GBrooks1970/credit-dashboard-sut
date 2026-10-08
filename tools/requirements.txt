@@ -1,0 +1,2 @@
+gherkin-official==29.0.0
+schemathesis==4.29.4

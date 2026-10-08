@@ -130,6 +130,14 @@ public class SupportingTests
         Assert.That((body!["items"]!.AsArray().Count, body["total"]!.GetValue<int>(), body["unread"]!.GetValue<int>()), Is.EqualTo((0, 0, 0)));
     }
 
+    [TestCase("?page=59720084612818352996352")]
+    public async Task A_page_number_beyond_any_integer_type_is_valid_and_empty(string query)
+    {
+        var (status, body) = await Call("listNotifications", "/notifications" + query);
+        Assert.That(status, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That((body!["items"]!.AsArray().Count, body["total"]!.GetValue<int>()), Is.EqualTo((0, 2)), "the excellent persona holds two notifications");
+    }
+
     [TestCase("?pageSize=101")]
     [TestCase("?page=0")]
     public async Task A_page_that_breaks_the_contract_is_a_400(string query)

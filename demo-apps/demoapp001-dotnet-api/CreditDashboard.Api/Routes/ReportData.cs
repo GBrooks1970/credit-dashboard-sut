@@ -134,7 +134,10 @@ internal static class ReportData
 
     public static (int Page, int PageSize) Paging(HttpRequest request)
     {
-        int Read(string name, int fallback) => int.TryParse(request.Query[name], NumberStyles.None, CultureInfo.InvariantCulture, out var v) ? v : fallback;
+        // A page number can be any size the schema allows (it has no maximum), so it is read wide and clamped.
+        int Read(string name, int fallback) =>
+            System.Numerics.BigInteger.TryParse(request.Query[name], NumberStyles.None, CultureInfo.InvariantCulture, out var v)
+                ? (int)System.Numerics.BigInteger.Min(v, int.MaxValue) : fallback;
         return (Read("page", 1), Read("pageSize", 20));
     }
 
@@ -145,7 +148,7 @@ internal static class ReportData
             ["page"] = page,
             ["pageSize"] = pageSize,
             ["total"] = all.Count,
-            ["items"] = new JsonArray(all.Skip((page - 1) * pageSize).Take(pageSize).Select(n => n.DeepClone()).ToArray()),
+            ["items"] = new JsonArray(all.Skip((int)Math.Min((long)(page - 1) * pageSize, int.MaxValue)).Take(pageSize).Select(n => n.DeepClone()).ToArray()),
         };
         foreach (var (name, value) in extra) body[name] = value;
         return body;

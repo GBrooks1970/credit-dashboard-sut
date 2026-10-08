@@ -154,6 +154,15 @@ public class ReportTests
         Assert.That(body!["items"]!.AsArray().Select(c => c!["date"]!.GetValue<string>()), Is.EqualTo(new[] { "2026-09-28", "2026-08-31", "2026-07-15" }));
     }
 
+    [Test]
+    public async Task A_page_number_beyond_any_integer_type_is_valid_and_empty_for_changes_and_searches()
+    {
+        var (status, changes) = await Get("listChanges", A + "/changes?page=976590856586021400090628849664");
+        Assert.That((status, changes!["items"]!.AsArray().Count, changes["total"]!.GetValue<int>()), Is.EqualTo((HttpStatusCode.OK, 0, 2)));
+        var (_, searches) = await Get("listSearches", A + "/searches?kind=hard&page=2638427293580793399476224&pageSize=100");
+        Assert.That((searches!["items"]!.AsArray().Count, searches["total"]!.GetValue<int>()), Is.EqualTo((0, 1)));
+    }
+
     [TestCase("?sentiment=bad")]
     [TestCase("?pageSize=101")]
     [TestCase("?page=0")]

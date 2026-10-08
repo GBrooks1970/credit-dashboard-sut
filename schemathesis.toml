@@ -1,0 +1,55 @@
+# Schemathesis configuration for tools/schemathesis-run.mjs (CDS-23, DR-056).
+
+# Identifiers the generator cannot invent: they come from the drilldown persona the runner binds (fixtures/personas).
+[parameters]
+accountId = "acc_ddcc01"
+notificationId = "ntf_dd01"
+bureauId = "bureau-a"
+
+# A schema-valid request that breaks a business rule is a 422 by design (DR-048); that is not a rejection of valid data.
+# The contract's own example for verifyMobile, for one, gets 422 code-invalid while no code is pending.
+[checks.positive_data_acceptance]
+expected-statuses = [200, 201, 202, 204, 401, 403, 404, 409, 422, 429, "5xx"]
+
+# Three operations take values whose valid range depends on other data or on the field, which a JSON Schema cannot say:
+# the payment-history year must fall in the seven-year window around today (BR-12), and a detail value must suit its field
+# (BR-14). The contract documents the 400 for these; the generator's schema-valid values can still earn it.
+[[operations]]
+include-name = "GET /reports/{bureauId}/payment-history"
+[operations.checks.positive_data_acceptance]
+expected-statuses = [200, 201, 202, 204, 400, 401, 403, 404, 409, 422, 429, "5xx"]
+
+[[operations]]
+include-name = "GET /accounts/{accountId}/payment-history"
+[operations.checks.positive_data_acceptance]
+expected-statuses = [200, 201, 202, 204, 400, 401, 403, 404, 409, 422, 429, "5xx"]
+
+[[operations]]
+include-name = "PATCH /accounts/{accountId}/details"
+[operations.checks.positive_data_acceptance]
+expected-statuses = [200, 201, 202, 204, 400, 401, 403, 404, 409, 422, 429, "5xx"]
+
+# Without the key, test control answers 404, the same as when it is switched off, so its existence is not revealed
+# (DR-008, API specification 6.5). That is a deliberate answer to a missing header.
+[[operations]]
+include-tag = "test-control"
+[operations.checks.missing_required_header]
+expected-statuses = [400, 401, 403, 404, 406, 415, 422]
+# ... and likewise to a request with no key at all, which must not say 401 or 403.
+[operations.checks.ignored_auth]
+enabled = false
+
+# RFC 3339 allows instants (year 0000, offsets that fall outside year 0001 to 9999) that a .NET clock cannot hold, so the
+# service answers 400 to some format-valid values.
+[[operations]]
+include-name = "PUT /__test/clock"
+[operations.checks.positive_data_acceptance]
+expected-statuses = [200, 201, 202, 204, 400, 401, 403, 404, 409, 422, 429, "5xx"]
+
+# The contract names a preferred name with the pattern \p{L}, which Schemathesis's Python validator reads as ASCII letters only, so
+# it reports a response such as "µ" (a letter, accepted by PR-02) as a schema violation. The operation's responses are checked
+# against the contract in the service tests, which use a validator that understands \p{L}.
+[[operations]]
+include-name = "PATCH /me/profile/preferred-name"
+[operations.checks.response_schema_conformance]
+enabled = false

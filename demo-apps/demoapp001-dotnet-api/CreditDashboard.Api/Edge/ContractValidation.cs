@@ -28,10 +28,13 @@ public sealed class ContractValidation(RequestDelegate next, ContractModel contr
             return;
         }
 
-        var match = contract.Find(context.Request.Method, path[contract.BasePath.Length..]);
+        var relative = path[contract.BasePath.Length..];
+        var match = contract.Find(context.Request.Method, relative);
         if (match is null)
         {
-            await Problems.NotFound(context, "No operation matches this request.");
+            // A path the contract has with a method it does not is a 405 (DR-056); any other path is a 404.
+            if (contract.AllowedMethods(relative) is { Count: > 0 } allowed) await Problems.MethodNotAllowed(context, allowed);
+            else await Problems.NotFound(context, "No operation matches this request.");
             return;
         }
 

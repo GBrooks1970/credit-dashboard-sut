@@ -92,7 +92,6 @@ public class EdgeValidationTests
     }
 
     [TestCase("GET", "/api/v1/nowhere", TestName = "A path outside the contract is not found")]
-    [TestCase("DELETE", "/api/v1/me", TestName = "A method the contract does not define is not found")]
     [TestCase("GET", "/me", TestName = "A path outside the base path is not found")]
     public async Task Requests_outside_the_contract_are_not_found(string method, string url)
     {
@@ -102,5 +101,31 @@ public class EdgeValidationTests
         Assert.That(type, Is.EqualTo("application/problem+json"));
         Assert.That(body.GetProperty("type").GetString(), Is.EqualTo("/problems/not-found"));
         Assert.That(body.GetProperty("detail").GetString(), Is.EqualTo("No operation matches this request."));
+    }
+
+    [TestCase("DELETE", "/api/v1/me", "GET", TestName = "A method the contract does not define on a path it has is 405")]
+    [TestCase("POST", "/api/v1/bureaux", "GET", TestName = "POST on a read-only path is 405")]
+    [TestCase("PUT", "/api/v1/me/profile", "GET", TestName = "PUT on the profile is 405")]
+    [TestCase("TRACE", "/api/v1/accounts/acc_ddcc01", "GET", TestName = "An exotic method is 405")]
+    [TestCase("GET", "/api/v1/auth/login", "POST", TestName = "GET on login is 405")]
+    public async Task A_method_the_contract_does_not_define_on_a_path_it_has_is_405_with_the_allowed_methods(string method, string url, string allow)
+    {
+        var response = await Send(new HttpMethod(method), url);
+        var allowed = response.Content.Headers.Allow.ToList(); // Allow is a content header in HttpClient
+        var (status, type, body) = await Read(response);
+
+        Assert.That(status, Is.EqualTo(HttpStatusCode.MethodNotAllowed));
+        Assert.That(type, Is.EqualTo("application/problem+json"));
+        Assert.That(body.GetProperty("type").GetString(), Is.EqualTo("/problems/method-not-allowed"));
+        Assert.That(allowed, Does.Contain(allow));
+    }
+
+    [Test]
+    public async Task The_allowed_methods_of_a_path_with_several_are_all_listed()
+    {
+        // /accounts/{accountId}/details has only PATCH; /me/profile/email has PUT; each lists its own.
+        var response = await Send(HttpMethod.Get, "/api/v1/accounts/acc_ddcc01/details");
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.MethodNotAllowed));
+        Assert.That(string.Join(",", response.Content.Headers.Allow), Is.EqualTo("PATCH"));
     }
 }

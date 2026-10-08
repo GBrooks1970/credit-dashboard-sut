@@ -118,6 +118,15 @@ public class TestControlTests
         await Problem(response, HttpStatusCode.Unauthorized, "/problems/unauthenticated");
     }
 
+    [Test]
+    public async Task A_wrong_method_on_a_test_control_path_is_405_with_the_key_and_the_gate_404_without_it()
+    {
+        var with = await Send(HttpMethod.Get, "/reset");
+        Assert.That(with.StatusCode, Is.EqualTo(HttpStatusCode.MethodNotAllowed));
+        Assert.That(string.Join(",", with.Content.Headers.Allow), Is.EqualTo("POST"));
+        await Problem(await Send(HttpMethod.Get, "/reset", key: null), HttpStatusCode.NotFound, "/problems/not-found");
+    }
+
     // State and reset
 
     [Test]

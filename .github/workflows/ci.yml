@@ -16,7 +16,7 @@ concurrency:
 jobs:
   specification:
     # Every check that keeps the repository green, through the one command (README 'Checks', CDS-15).
-    name: Verify (contract lint, fixtures, Gherkin, mock smoke, client, service, Kanban)
+    name: Verify (contract lint, fixtures, Gherkin, mock smoke, client, service, Schemathesis, Kanban)
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -43,8 +43,8 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Python prerequisite for the Gherkin check
-        run: pip install gherkin-official==29.0.0
+      - name: Python prerequisites (Gherkin check, Schemathesis run)
+        run: pip install -r tools/requirements.txt
 
       - name: Verify
         run: |

@@ -20,6 +20,13 @@ public static class Problems
     public static Task NotFound(HttpContext context, string detail) =>
         Write(context, 404, "/problems/not-found", "Not found", detail, null);
 
+    /// <summary>A path the contract has, with a method it does not: 405 with an Allow header (DR-056).</summary>
+    public static Task MethodNotAllowed(HttpContext context, IReadOnlyList<string> allowed)
+    {
+        context.Response.Headers.Allow = string.Join(", ", allowed);
+        return Write(context, 405, "/problems/method-not-allowed", "Method not allowed", $"This path does not support {context.Request.Method}; it supports {string.Join(", ", allowed)}.", null);
+    }
+
     /// <summary>The error persona, or an unhandled fault: 500, with no stack trace (API specification section 8).</summary>
     public static Task Internal(HttpContext context, string detail) =>
         Write(context, 500, "/problems/internal", "Server fault", detail, null);

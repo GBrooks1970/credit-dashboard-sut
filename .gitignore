@@ -12,3 +12,7 @@ obj/
 !.env.example
 __pycache__/
 .DS_Store
+
+# Schemathesis caches (CDS-23)
+.schemathesis/
+.hypothesis/

@@ -94,6 +94,16 @@ public sealed class ContractModel
             .FirstOrDefault();
     }
 
+    /// <summary>
+    /// The methods the contract defines for a path (relative to the base path), whatever the request used: when this is not
+    /// empty and <see cref="Find"/> found nothing, the path exists and the method is the problem (405, DR-056).
+    /// </summary>
+    public IReadOnlyList<string> AllowedMethods(string relativePath)
+    {
+        var segments = relativePath.Trim('/').Split('/');
+        return Operations.Where(o => o.Match(segments) is not null).Select(o => o.Method).Distinct().Order(StringComparer.Ordinal).ToList();
+    }
+
     private IEnumerable<ContractOperation> ReadOperations()
     {
         foreach (var (template, item) in _contract["paths"]!.AsObject())
@@ -192,7 +202,7 @@ public sealed class ContractModel
     {
         string? json = valueType switch
         {
-            "integer" => long.TryParse(raw, out var i) ? i.ToString() : null,
+            "integer" => System.Numerics.BigInteger.TryParse(raw, System.Globalization.NumberStyles.AllowLeadingSign, System.Globalization.CultureInfo.InvariantCulture, out var i) ? i.ToString(System.Globalization.CultureInfo.InvariantCulture) : null, // any size: the schema, not int64, bounds it
             "number" => double.TryParse(raw, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var d) ? raw : null,
             "boolean" => raw is "true" or "false" ? raw : null,
             _ => JsonSerializer.Serialize(raw),

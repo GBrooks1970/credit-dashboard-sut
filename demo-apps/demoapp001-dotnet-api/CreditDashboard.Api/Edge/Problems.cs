@@ -20,6 +20,10 @@ public static class Problems
     public static Task NotFound(HttpContext context, string detail) =>
         Write(context, 404, "/problems/not-found", "Not found", detail, null);
 
+    /// <summary>A shape-valid request that breaks a rule: 422 under /problems/rule-violation/ (DR-048).</summary>
+    public static Task RuleViolation(HttpContext context, string outcome, string title, string detail) =>
+        Write(context, 422, "/problems/rule-violation/" + outcome, title, detail, null);
+
     private static async Task Write(HttpContext context, int status, string type, string title, string detail, IReadOnlyList<FieldError>? errors)
     {
         context.Response.StatusCode = status;

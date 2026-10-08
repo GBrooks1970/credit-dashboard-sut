@@ -1,15 +1,15 @@
-# version: 11
-# created: 2026-10-08T00:29Z
-# supersedes: v10 (2026-10-07T10:25Z); earlier versions are in git history (DR-040) and, up to v7, in the
+# version: 12
+# created: 2026-10-08T08:16Z
+# supersedes: v11 (2026-10-08T00:29Z); earlier versions are in git history (DR-040) and, up to v7, in the
 # portfolio's Phase 0 pack
-# change: CDS-21 plan: BugFlag enum (30 flags); `PUT /__test/bugs` and `GET /__test/state` use it, so an unknown flag is a 400 (DR-053)
+# change: CDS-21 build: Problem.attemptsRemaining is for code-wrong only (description; code-invalid carries none)
 # project: credit-dashboard-sut
 # type: architecture-doc
 # language: en-GB
 openapi: 3.1.0
 info:
   title: Credit Dashboard SUT API
-  version: 0.8.0
+  version: 0.8.1
   license:
     name: MIT
     identifier: MIT
@@ -1758,7 +1758,7 @@ components:
           type: integer
           minimum: 0
           maximum: 3
-          description: code-wrong and code-invalid only (PR-11)
+          description: code-wrong only (PR-11); code-invalid carries none
         errors:
           type: array
           items:

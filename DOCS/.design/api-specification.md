@@ -1,7 +1,7 @@
 ---
-version: 17
-created: 2026-10-08T00:30Z
-supersedes: v16 (earlier today); earlier versions are in git history (DR-040)
+version: 18
+created: 2026-10-08T08:16Z
+supersedes: v17 (earlier today); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
 language: en-GB
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v18:** the test-control build (CDS-21): section 6.5 states the clock and latency inputs and their 400s, the 404 for an unknown user, and that a refused binding changes nothing. Contract v12 (`info.version` 0.8.1): `Problem.attemptsRemaining` is for `code-wrong` only.
 **Changes in v17:** the test-control and profile-rule plans (CDS-21, CDS-27): section 6.5 states the key, the order of checks, the state model and what reset clears; section 6.6 and section 8 settle `code-invalid` (no `attemptsRemaining`) and PR-06 spaces; section 11 gains 'Test control' and 'Profile rule tests'. Contract v11 (`info.version` 0.8.0): a `BugFlag` enum of 30 flags, so an unknown flag is a 400; the stray `attemptsRemaining` is gone from the `code-invalid` example. Cases: [profile-rules-cases.md](profile-rules-cases.md).
 **Changes in v16:** the business-rules library (CDS-20): BR-03 says how half up rounds a negative value; section 3 'Business rules' row names the library and its tests; section 11 gains 'Rule unit tests' and 'Rule traceability'; the case tables are in [business-rules-cases.md](business-rules-cases.md).
 **Changes in v15:** the service scaffold (CDS-19, DR-050): section 3 'Framework' row; section 8 says what a request outside the contract, or for an operation not served yet, receives; section 11 gains 'Service contract drift', 'Edge validation' and 'Contract coverage'.
@@ -150,6 +151,8 @@ Payment status per month: `on-time`, `missed`, `no-data`. For one account, a mon
 Enabled only when `TEST_CONTROL=true`. Absent from production builds; returns 404 otherwise. Requires header `X-Test-Control-Key`.
 
 **The gate (CDS-21).** The key is the value of the environment variable `TEST_CONTROL_KEY`. A service started with `TEST_CONTROL=true` and no key refuses to start; there is no default key. The development launch profile sets the synthetic test value `demo-only`. When test control is off, or the header is missing or wrong, every `/__test/*` operation answers the same 404 `TestControlDisabled`, so its existence is not revealed. The order of checks is: the gate, then the request's shape (400), then the target (404), then the rules (422).
+
+**Inputs.** `PUT /__test/clock` takes an RFC 3339 date-time with a time part (`2026-10-03T09:00:00Z`); a date alone or any other text is a 400. `PUT /__test/latency` takes `fixedMs`, or `minMs` with `maxMs` (`minMs` at most `maxMs`); `fixedMs` together with a range, a lone `minMs` or `maxMs`, or a range the wrong way round is a 400; `{}` clears it; no delay exceeds 10,000 ms. An unknown username (`PUT /__test/users/{username}/persona`, `POST /__test/verify-email`) is a 404; so is an overrides bureau the persona does not have. A binding that is refused (400, 404 or 422) changes nothing.
 
 **State.** The store holds, for the life of the process: each test user's bound persona and overrides, the active bug flags (names from the contract's `BugFlag` enum; any other name is a 400), the controlled clock (`now`, null while it follows real time), the latency setting and the set of users whose email has been marked verified. `POST /__test/reset` reloads the fixtures and clears all of it. Latency applies to every request except `/__test/*`. The persona behaviours (`latencyMs`, `failReportEndpoints`) belong to the report operations (CDS-25), not to test control.
 

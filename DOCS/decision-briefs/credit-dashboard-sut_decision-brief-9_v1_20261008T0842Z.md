@@ -7,7 +7,7 @@ brief: 9
 subject: "Serving the 29 business operations (CDS-25): structure, token lifetime, check order, and five gaps in the specification"
 blocks: CDS-25 and so CDS-22 and CDS-23; the Phase 3 gate
 approver: the project owner (Gary Brooks)
-status: awaiting-decision
+status: decided
 supersedes: none
 language: en-GB
 ---
@@ -245,14 +245,44 @@ The blast radius is the 29 operations, `API specification` sections 3, 6 and 8, 
 
 | File | Section | Change required | Done |
 |---|---|---|---|
-| `DOCS/decision-register.md` | New entry | The outcome, citing this brief (DR-055) | [ ] |
-| `DOCS/implementation-plans/2026-10-08_cds-25-serve-operations.md` | Decisions table | Owner's answers | [ ] |
-| `DOCS/.design/api-specification.md` | Sections 3, 6.4, 8 | v19: token lifetime (D2), check order (D3), `payments` (D4), assistant (D5), the 503 (D7), rebind (D8) | [ ] |
-| `DOCS/.design/operations-cases.md` | New | Response composition per operation; the assistant table (D5) | [ ] |
-| `DOCS/.architecture/openapi.yaml` | `listChanges` | Remove `tags` (D6 option 1), with the client and service types regenerated | [ ] |
-| `DOCS/.design/ui-specification.md` | Section 5 route | Drop `tags=` (D6 option 1) | [ ] |
+| `DOCS/decision-register.md` | New entry | The outcome, citing this brief (DR-055) | [x] DR-055 |
+| `DOCS/implementation-plans/2026-10-08_cds-25-serve-operations.md` | Decisions table | Owner's answers | [x] |
+| `DOCS/.design/api-specification.md` | Sections 3, 6.4, 8 | v19: token lifetime (D2), check order (D3), `payments` (D4), assistant (D5), the 503 (D7), rebind (D8) | [x] |
+| `DOCS/.design/operations-cases.md` | New | Response composition per operation; the assistant table (D5) | [x] |
+| `DOCS/.architecture/openapi.yaml` | `listChanges` | Remove `tags` (D6 option 1), with the client and service types regenerated | [x] contract v13 |
+| `DOCS/.design/ui-specification.md` | Section 5 route | Drop `tags=` (D6 option 1) | [x] UI specification v11 |
 | `DOCS/decision-briefs/_index.md` | Brief 9 row | Status and where the decision landed | [x] row added as awaiting-decision |
 
 ## 7. Decision record
 
-Not yet decided. Completed after the owner's reply and a read-back.
+The owner decided on 2026-10-08, by reply in chat. The first reply was "D1:1, D2:5, D2:1, D4:1, D5:1, D6:1, D7:1, D8:1": it named D2 twice and had no D3. It was read back with the reading "D2: option 5, D3: option 1", and the owner confirmed: "D2: option 5, D3: option 1".
+
+### 7.1 Read-back
+
+1. **D1 option 1.** A specification PR, then five slices (foundation, report, accounts, supporting, profile), then records.
+2. **D2 option 5 (the reframe).** The token lifetime is a setting, `TOKEN_LIFETIME_MINUTES`, with a default of 60 minutes; the value must be a whole number of minutes from 1 to 1,440 or the service does not start.
+3. **D3 option 1.** Authentication after the route is matched and before shape: a missing, expired or revoked token is 401 whatever else is wrong.
+4. **D4 option 1.** `onReport` is the missed account-months in the BR-12 window; `newMissed` those in the three months ending at the current month.
+5. **D5 option 1.** A small keyword table (score, debt, payment) with a fallback and a fixed disclaimer.
+6. **D6 option 1.** The `tags` parameter is removed from the contract (v13) and from the UI route text.
+7. **D7 option 1.** The 503 is dropped from API specification section 8.
+8. **D8 option 1.** A rebind clears that user's session state; a reset clears everyone's.
+
+### 7.2 Decisions
+
+| Ref | Item | Decision | Conditions | Who | When |
+|---|---|---|---|---|---|
+| D1 | Structure | **Option 1** | | Gary Brooks | 2026-10-08 |
+| D2 | Token lifetime | **Option 5** (a setting, default 60 minutes) | Whole minutes 1 to 1,440 | Gary Brooks | 2026-10-08 |
+| D3 | 401 before 400 | **Option 1** | | Gary Brooks | 2026-10-08 |
+| D4 | The `payments` block | **Option 1** | | Gary Brooks | 2026-10-08 |
+| D5 | The assistant | **Option 1** | | Gary Brooks | 2026-10-08 |
+| D6 | `tags` | **Option 1** (remove) | Contract v13 | Gary Brooks | 2026-10-08 |
+| D7 | The 503 | **Option 1** (drop) | | Gary Brooks | 2026-10-08 |
+| D8 | Rebind | **Option 1** | | Gary Brooks | 2026-10-08 |
+
+**Recorded, not argued away.** Every answer but D2 followed the recommendation. D2 took the reframe, which the brief listed as Considered: a setting instead of a fixed number. The arguments against the recommendations stand: seven merges for D1, a re-sign-in after an hour for D2 (now adjustable), a diagnosable 400 for D3, an invented definition for D4, surface for no scenario for D5, a UI route edited for D6, a missing resilience scenario for D7, and lost mid-scenario edits for D8.
+
+### 7.3 Corrections after decision
+
+None.

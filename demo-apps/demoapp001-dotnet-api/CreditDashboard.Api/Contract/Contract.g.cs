@@ -833,6 +833,9 @@ namespace CreditDashboard.Api.Contract
         [System.ComponentModel.DataAnnotations.Required]
         public System.Collections.Generic.ICollection<AccountTotals> AccountTypes { get; set; } = new System.Collections.ObjectModel.Collection<AccountTotals>();
 
+        /// <summary>
+        /// onReport is the number of (account, month) pairs with status missed in the BR-12 window across the bureau's accounts; newMissed is those in the three months ending at the current month (decision brief 9 D4).
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("payments")]
         [System.ComponentModel.DataAnnotations.Required]
         public Payments Payments { get; set; } = new Payments();

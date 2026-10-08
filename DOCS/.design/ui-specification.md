@@ -1,7 +1,7 @@
 ---
-version: 10
-created: 2026-10-07T12:50Z
-supersedes: v9 (2026-10-07T10:25Z); earlier versions are in git history (DR-040)
+version: 11
+created: 2026-10-08T10:02Z
+supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-spec
 language: en-GB
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v11:** the report changes route drops `tags=` (decision brief 9 D6; contract v13).
 **Changes in v10:** section 6.7 names the searches list and personal-details hooks (CDS-18 confirmation pass).
 **Changes in v9:** CDS-18 review fixes. The overview's changes toggle fetches every change with one further call (section 6.2, DR-047); the debt breakdown reads `byType` (section 6.7, DR-046); the report-changes route carries `sentiment`; the edit-form catalogue row also names the open-redirect security scenarios; section 6.9 cites PR-01 to PR-11.
 **Changes in v8:** the framework versions are resolved (CDS-16, DR-044): section 3 'Framework' row.
@@ -103,7 +104,7 @@ WCAG 2.2 AA. With all bug flags off, an axe-core scan of every page returns zero
 | Account detail | `/credit-health/report/:bureauId/account/:accountId` | 2 | `GET /accounts/{id}`, `/balance-history`, `/payment-history` | `ui/account-drilldown.feature` |
 | Detail edit form | `/data-capture/:field?accountId=&redirectUrl=` | 2 | `PATCH /accounts/{id}/details` | `ui/account-details-form.feature`, `security/open-redirect.feature` |
 | Closed accounts | `/credit-health/report/:bureauId/closed-accounts` | 2 | `GET /reports/{id}/accounts?status=closed` | `ui/account-drilldown.feature` |
-| Report changes | `/insights/updates?bureauId=&tags=&sentiment=` | 2 | `GET /reports/{id}/changes` | `ui/report-changes.feature` |
+| Report changes | `/insights/updates?bureauId=&sentiment=` | 2 | `GET /reports/{id}/changes` | `ui/report-changes.feature` |
 | Searches | `/credit-health/report/:bureauId/searches/:kind` | 3 | `GET /reports/{id}/searches` | `ui/searches.feature` |
 | Personal details | `/credit-health/report/:bureauId/personal-details` | 3 | `GET /reports/{id}/personal-details` | `ui/personal-details.feature` |
 | Debt overview | `/credit-health/debt-overview` | 3 | `GET /debt/overview` | `ui/debt.feature` |

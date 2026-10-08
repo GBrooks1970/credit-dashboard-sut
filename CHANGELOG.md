@@ -2,6 +2,13 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-08: all 36 operations served (CDS-25)
+
+- Decision brief 9 (D2 option 5, the rest as recommended) and DR-055; `DOCS/.design/operations-cases.md`; API specification v19 to v21; contract v13 to v15 (`tags` removed; 404 and 500 documented where the specification said so; 400 on the account-by-ID and notification operations); UI specification v11.
+- Five slices (#36, #37, #38, #40, #41): the session and identity operations, the nine report operations, the six account operations, the debt overview, notifications and assistant, and the six profile operations. A token store on the controlled clock (`TOKEN_LIFETIME_MINUTES`); authentication before request shape; per-user session state cleared by a rebind or a reset; the `error` and `slow` persona behaviours.
+- 290 service tests (68 before) and 234 rule tests; every response of every served operation is checked against the contract; the pending list is empty. `tools/client-smoke.ts` honours `MOCK_PORT`.
+- Backlog v42: CDS-25 Done; CDS-22 and CDS-23 Ready.
+
 ## 2026-10-08: test control and the profile rules (CDS-21, CDS-27)
 
 - **CDS-21** (#29, #31): the seven `/__test/*` operations, gated by `TEST_CONTROL` and `TEST_CONTROL_KEY` (no default key), with the in-memory store, the controlled clock, global latency and the overrides rules (BR-03/06, 05, 09, 12, 13, 15) in C#. Contract v11 (`BugFlag` enum, 30 flags) and v12; API specification v17 and v18. 68 service tests; the pending list is 29. DR-053.

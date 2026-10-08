@@ -4,9 +4,9 @@ created: 2026-10-08T08:32Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-25
-status: approved
+status: implemented
 approved: "2026-10-08, Gary Brooks, the plan and its slicing; decisions D1 to D8 answered in decision brief 9 on 2026-10-08 (D2 option 5, all others as recommended); merge authority: per PR, on request, after its own CI run reports success"
-delivered: not yet
+delivered: "#33 (plan, brief 9), #34, #35 (specification), #36, #37, #38, #40, #41 (the five slices), squash 4128ff0 last; records PR to follow"
 language: en-GB
 ---
 
@@ -77,4 +77,26 @@ Put as decision brief 9 (`DOCS/decision-briefs/credit-dashboard-sut_decision-bri
 
 ## Outcome
 
-[Appended after delivery.]
+Delivered as planned: a specification PR and five slices, in order, each its own pull request merged on the owner's authority after its own CI run passed.
+
+| PR | Content | Squash | PR CI run |
+|---|---|---|---|
+| #33, #34 | Plan, decision brief 9; frontmatter fix | `ad6882c`, `50162e8` | 37751881142, 37757581120 |
+| #35 | Decisions, DR-055, operation cases, API specification v19, contract v13, UI specification v11 | `d84fc3c` | 37760916414 |
+| #36 | S1 foundation: login, logout, getMe, listBureaux (4) | `273cfb5` | 37763518862 |
+| #37 | S2 report (9); `client-smoke` honours `MOCK_PORT` | `9ad62c7` | 37766490748 (first run 37766149510 failed) |
+| #38 | S3 accounts (6); contract v14, specification v20 | `6f44b40` | 37771222801 |
+| #40 | S4 supporting (4); contract v15, specification v21 | `0403739` | 37773175339 |
+| #41 | S5 profile (6); the pending list empty | `4128ff0` | 37774916792 |
+
+Service tests grew 68, 103, 161, 211, 241, 290 (35, 58, 50, 30 and 49 new per slice). Every slice ran probes that had to fail, and each failed as intended after the corrections below.
+
+Differences from the plan:
+
+- **Contract v14 and v15 and specification v20 and v21** were not in the plan. The response check (every served response against the contract) found operations that could answer 400 without the contract saying so: the account-by-ID operations (S3) and the two notification operations (S4). The specification already said 400 for one of them.
+- **A first CI failure in S2.** The `MOCK_PORT` change to `tools/client-smoke.ts` used `process`, which the client package type-checks without Node typings; the client check failed in CI. It was fixed in the same PR (reading the environment through `globalThis`). The local full `verify` had not been re-run after that edit.
+- **A probe that passed in S4.** Replacing unread-first with newest-first did not turn a test red, because no fixture had an older unread notification under a newer read one. A test for that case was added and the probe redone.
+- **Edge tests removed in S5.** The two tests for an operation "not served yet" lost their last operation when the pending list emptied.
+- **Readings** in the cases (accountTypes, default bureau for the debt overview, a closed account past its window as a 404, minimum-payment shape, the payment-method values, null clearing a field, the slow persona's delay added to test control's, expiry at or after `expiresAt`) were treated as standing when the specification PR was merged.
+
+Full record: [`DOCS/implementation-logs/2026-10-08_cds-25-serve-operations.md`](../implementation-logs/2026-10-08_cds-25-serve-operations.md).

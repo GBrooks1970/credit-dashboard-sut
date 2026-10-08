@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Credit Dashboard SUT API",
-    "version": "0.9.1",
+    "version": "0.9.2",
     "license": {
       "name": "MIT",
       "identifier": "MIT"
@@ -1555,6 +1555,9 @@
               }
             }
           },
+          "400": {
+            "$ref": "#/components/responses/Validation"
+          },
           "401": {
             "$ref": "#/components/responses/Unauthenticated"
           }
@@ -1616,6 +1619,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/Validation"
           },
           "401": {
             "$ref": "#/components/responses/Unauthenticated"

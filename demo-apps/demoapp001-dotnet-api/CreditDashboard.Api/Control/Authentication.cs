@@ -72,6 +72,7 @@ public sealed class UserSession
     private string? _preferredName;
     private readonly Dictionary<string, CreditDashboard.BusinessRules.FeedbackValue> _feedback = [];
     private readonly Dictionary<string, Dictionary<string, JsonNode?>> _details = [];
+    private readonly Dictionary<string, bool> _notificationRead = [];
 
     public void SetPreferredName(string? name)
     {
@@ -96,6 +97,17 @@ public sealed class UserSession
             if (_details.TryGetValue(accountId, out var edits))
                 foreach (var (field, value) in edits) details[field] = value?.DeepClone();
         return details;
+    }
+
+    public void SetNotificationRead(string notificationId, bool read)
+    {
+        lock (_lock) _notificationRead[notificationId] = read;
+    }
+
+    /// <summary>Whether a notification is read: this session change when there is one, otherwise the stored flag.</summary>
+    public bool NotificationReadOr(string notificationId, bool stored)
+    {
+        lock (_lock) return _notificationRead.TryGetValue(notificationId, out var read) ? read : stored;
     }
 
     public void SetFeedback(string bureauId, CreditDashboard.BusinessRules.FeedbackValue value)

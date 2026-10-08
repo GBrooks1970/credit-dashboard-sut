@@ -104,7 +104,7 @@ public class EdgeValidationTests
         Assert.That(body.GetProperty("detail").GetString(), Is.EqualTo("No operation matches this request."));
     }
 
-    [TestCase("GET", "/api/v1/notifications", null, TestName = "A valid request for an operation not served yet is not found")]
+    [TestCase("GET", "/api/v1/me/profile", null, TestName = "A valid request for an operation not served yet is not found")]
     [TestCase("PATCH", "/api/v1/me/profile/preferred-name", "{\"preferredName\":null}", TestName = "A valid body for an operation not served yet is not found")]
     public async Task Valid_requests_for_operations_not_served_yet_are_not_found(string method, string url, string? json)
     {

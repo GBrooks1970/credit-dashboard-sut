@@ -7,8 +7,10 @@ import { createCreditClient, MOCK_BASE_URL } from '../packages/api-client/src/in
 
 const contractPath = new URL('../DOCS/.architecture/openapi.yaml', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
 // MOCK_PORT moves the mock off 4010, as for the mock smoke, when another process holds the default port.
-const port = Number(process.env.MOCK_PORT || 4010);
-const mockUrl = process.env.MOCK_PORT ? `http://localhost:${port}` : MOCK_BASE_URL;
+// The package type-checks this file without Node typings, so the environment is read through globalThis.
+const mockPort = (globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env.MOCK_PORT;
+const port = Number(mockPort || 4010);
+const mockUrl = mockPort ? `http://localhost:${port}` : MOCK_BASE_URL;
 const prism = startPrism({ contractPath, port });
 const failures: string[] = [];
 const expect = (ok: boolean, what: string): void => { if (!ok) failures.push(what); };

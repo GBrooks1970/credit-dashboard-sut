@@ -191,7 +191,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-20: Business-rules library
 
-**COMPLETE (2026-10-08; plan and case tables merged in #26, squash `7440527`; code in PR 2, see the plan's Outcome).** Implemented to the approved plan (`DOCS/implementation-plans/2026-10-07_cds-20-business-rules-library.md`). `CreditDashboard.BusinessRules`: pure functions over integer minor units and a `DateOnly` today, no ASP.NET or contract dependency; `CreditDashboard.BusinessRules.Tests`: 159 NUnit tests tagged `[Category("BR-nn")]`, a traceability gate over API specification section 7, and a parity test over the seven personas' 28 accounts. DR-052. Negative exact halves round towards positive infinity (D2); the three Readings in `business-rules-cases.md` stand (owner, 2026-10-08). CDS-27 added for the profile rules (D3).
+**COMPLETE (2026-10-08; plan and case tables merged in #26, squash `7440527`; code in #27, squash `b220898`, CI run 37706799351; plan Outcome and implementation log in the records PR).** Implemented to the approved plan (`DOCS/implementation-plans/2026-10-07_cds-20-business-rules-library.md`). `CreditDashboard.BusinessRules`: pure functions over integer minor units and a `DateOnly` today, no ASP.NET or contract dependency; `CreditDashboard.BusinessRules.Tests`: 159 NUnit tests tagged `[Category("BR-nn")]`, a traceability gate over API specification section 7, and a parity test over the seven personas' 28 accounts. DR-052. Negative exact halves round towards positive infinity (D2); the three Readings in `business-rules-cases.md` stand (owner, 2026-10-08). CDS-27 added for the profile rules (D3).
 
 ### CDS-26: Prism development-dependency audit risk
 

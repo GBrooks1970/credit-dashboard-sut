@@ -4,9 +4,9 @@ created: 2026-10-07T19:19Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-20
-status: approved
-approved: "2026-10-07, Gary Brooks, 'all as recommended' (decisions D1 to D4 as recommended); merge authority: not yet given"
-delivered: not yet
+status: implemented
+approved: "2026-10-07, Gary Brooks, 'all as recommended' (decisions D1 to D4 as recommended); merges of #26 and #27 authorised by the owner (2026-10-07 and 2026-10-08), each after its own CI run reported success"
+delivered: "#26, squash 7440527 (plan, cases, specification v16); #27, squash b220898 (library and tests); records PR to follow"
 language: en-GB
 ---
 
@@ -81,8 +81,22 @@ Branch from `main`; never to `main` directly.
 | D2 Negative exact halves (for example -4.5%) | (a) Round towards positive infinity, `floor(x + 0.5)`; (b) away from zero | (a) | (a), 'all as recommended' (2026-10-07) |
 | D3 PR rules (PR-02, 04, 06, 09 to 11) | (a) Out of CDS-20; a new item CDS-27 covers them; (b) in | (a) | (a), 'all as recommended' (2026-10-07) |
 | D4 Fixture parity test | (a) Include; (b) hand-written cases only | (a) | (a), 'all as recommended' (2026-10-07) |
-| Merge authority | Merge each PR when its own CI is green; the owner merges | (owner's call) | Not given; asked at hand-off |
+| Merge authority | Merge each PR when its own CI is green; the owner merges | (owner's call) | Given per PR on request: #26 (2026-10-07), #27 (2026-10-08) |
 
 ## Outcome
 
-[Appended after delivery.]
+Delivered as planned in two pull requests.
+
+- **#26** (squash `7440527`, CI green): this plan, `business-rules-cases.md`, API specification v16. The owner confirmed the three Readings before PR 2.
+- **#27** (squash `b220898`, PR CI run 37706799351: `verify` 11 of 11, job 51 s): the library, 159 NUnit tests (151 rule tests, 3 traceability tests, 5 parity tests), DR-052, backlog v40, CDS-27, README row, Kanban board (27 tickets).
+
+The three probes failed as intended: a removed tag (the gate named BR-14), a rounding change (the BR-03 and parity tests failed), and an altered fixture value (the parity test named the account).
+
+Differences from the plan:
+
+- **BR-06's "balance stays" row has no test**: the library has no function that touches a balance.
+- **The closed-account parity check** only asserts that stored closed balances are 0; it recomputes nothing.
+- **`YearMonth`** was added as a supporting type.
+- **Local `verify` passed 9 of 11** because port 4010 was held by another process; CI passed 11 of 11.
+
+Full record: [`DOCS/implementation-logs/2026-10-08_cds-20-business-rules-library.md`](../implementation-logs/2026-10-08_cds-20-business-rules-library.md).

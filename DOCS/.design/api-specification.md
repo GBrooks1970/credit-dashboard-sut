@@ -1,7 +1,7 @@
 ---
-version: 20
-created: 2026-10-08T11:31Z
-supersedes: v19 (earlier today); earlier versions are in git history (DR-040)
+version: 21
+created: 2026-10-08T11:46Z
+supersedes: v20 (earlier today); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
 language: en-GB
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v21:** CDS-25 S4: section 6.4 lists 400 for the notifications list (paging) and for marking one read (the body); contract v15 (`info.version` 0.9.2) documents it.
 **Changes in v20:** CDS-25 S3: section 6.3 lists 400 for the account detail and balance history (a malformed account ID) as it already did for the payment history; contract v14 (`info.version` 0.9.1) documents it.
 **Changes in v19:** decision brief 9 (CDS-25): section 3 'Auth' row (token lifetime setting, authentication before shape) and the session-state sentence; section 6.2 notes the 404 and 500 every report operation documents, the `payments` definition and the removal of `tags`; section 6.4 points to the assistant table; section 8 drops the 503 and states the order of checks. Contract v13 (`info.version` 0.9.0). Cases: [operations-cases.md](operations-cases.md).
 **Changes in v18:** the test-control build (CDS-21): section 6.5 states the clock and latency inputs and their 400s, the 404 for an unknown user, and that a refused binding changes nothing. Contract v12 (`info.version` 0.8.1): `Problem.attemptsRemaining` is for `code-wrong` only.
@@ -145,8 +146,8 @@ Every operation below documents 404 for an unknown bureau and 500 (the `error` p
 | Method | Path | Purpose | Success | Errors |
 | --- | --- | --- | --- | --- |
 | GET | `/debt/overview` | Total debt, trend and the breakdown by type (BR-07) | 200 `DebtOverview` | 401 |
-| GET | `/notifications` | Notifications, unread first | 200 `Page<Notification>` | 401 |
-| PATCH | `/notifications/{id}` | Mark read | 200 `Notification` | 401, 404 |
+| GET | `/notifications` | Notifications, unread first | 200 `Page<Notification>` | 400, 401 |
+| PATCH | `/notifications/{id}` | Mark read | 200 `Notification` | 400, 401, 404 |
 | PUT | `/reports/{bureauId}/summary/feedback` | Like / dislike / clear (BR-10) | 200 `{ value }` | 400, 401 |
 | POST | `/assistant/messages` | Mock assistant; canned reply keyed by intent (the table is in [operations-cases.md](operations-cases.md) section 5) | 200 `{ reply, disclaimer }` | 400, 401 |
 

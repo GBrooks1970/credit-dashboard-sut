@@ -2459,6 +2459,7 @@ export interface operations {
                     "application/json": components["schemas"]["NotificationPage"];
                 };
             };
+            400: components["responses"]["Validation"];
             401: components["responses"]["Unauthenticated"];
         };
     };
@@ -2501,6 +2502,7 @@ export interface operations {
                     "application/json": components["schemas"]["Notification"];
                 };
             };
+            400: components["responses"]["Validation"];
             401: components["responses"]["Unauthenticated"];
             404: components["responses"]["NotFound"];
         };

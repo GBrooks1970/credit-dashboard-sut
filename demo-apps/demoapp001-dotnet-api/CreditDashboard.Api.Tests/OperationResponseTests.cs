@@ -38,6 +38,10 @@ public class OperationResponseTests
         ("getBalanceHistory", HttpMethod.Get, "/accounts/acc_excc01/balance-history", null, HttpStatusCode.OK),
         ("getAccountPaymentHistory", HttpMethod.Get, "/accounts/acc_excc01/payment-history", null, HttpStatusCode.OK),
         ("updateAccountDetail", new HttpMethod("PATCH"), "/accounts/acc_excc01/details", """{"field":"apr","value":19.9}""", HttpStatusCode.OK),
+        ("getDebtOverview", HttpMethod.Get, "/debt/overview", null, HttpStatusCode.OK),
+        ("listNotifications", HttpMethod.Get, "/notifications", null, HttpStatusCode.OK),
+        ("markNotificationRead", new HttpMethod("PATCH"), "/notifications/ntf_ex01", """{"read":true}""", HttpStatusCode.OK),
+        ("sendAssistantMessage", HttpMethod.Post, "/assistant/messages", """{"message":"What is my score?"}""", HttpStatusCode.OK),
         // logout revokes the token, so it runs last
         ("logout", HttpMethod.Post, "/auth/logout", null, HttpStatusCode.NoContent),
     ];

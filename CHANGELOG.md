@@ -2,6 +2,12 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-08: Schemathesis pinned and clean (CDS-23)
+
+- Schemathesis 4.29.4 (`tools/requirements.txt`) runs against the live service as the 12th `verify` step: `tools/schemathesis-run.mjs` starts the built service with test control on, runs examples, coverage and fuzzing over every operation but `logout`, then the test-control operations (not the latency control); `schemathesis.toml` holds the path parameters and the per-operation expectations. DR-056.
+- Service: 405 with `Allow` for a path the contract has with a method it does not (API specification v22); a page number beyond int64 is a valid, empty page. 298 service tests.
+- Backlog v43: CDS-23 Done; CDS-22 is the one Phase 3 gate condition left.
+
 ## 2026-10-08: all 36 operations served (CDS-25)
 
 - Decision brief 9 (D2 option 5, the rest as recommended) and DR-055; `DOCS/.design/operations-cases.md`; API specification v19 to v21; contract v13 to v15 (`tags` removed; 404 and 500 documented where the specification said so; 400 on the account-by-ID and notification operations); UI specification v11.

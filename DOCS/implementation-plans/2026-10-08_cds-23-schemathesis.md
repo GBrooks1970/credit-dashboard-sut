@@ -4,9 +4,9 @@ created: 2026-10-08T12:59Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-23
-status: approved
+status: implemented
 approved: "2026-10-08, Gary Brooks, 'approve all as recommended' (decisions D1 to D3); merge authority: given for the pull requests of this item ('push PR and merge')"
-delivered: not yet
+delivered: "#44 (plan, API specification v22, DR-056), squash b0884bb; #45 (the run), squash 3119f4a; records PR to follow"
 language: en-GB
 ---
 
@@ -63,4 +63,21 @@ Specification first. Delivered as two pull requests, then a records pull request
 
 ## Outcome
 
-[Appended after delivery.]
+Delivered as planned in three pull requests.
+
+- **#44** (squash `b0884bb`, CI run 37799608720): this plan, the CDS-22 plan, API specification v22, DR-056.
+- **#45** (squash `3119f4a`, PR CI run 37807279334: `verify` 12 of 12, job 95 s, the Schemathesis step 18.6 s): the 405, the runner, `schemathesis.toml`, `tools/requirements.txt`, the 12th step.
+- **Local:** the full `verify` passed 12 of 12 in 1 m 43 s (the Schemathesis step 29.8 s); 298 service tests and 234 rule tests; ten consecutive runs of the Schemathesis step passed.
+
+Probes that had to fail, and did: a required response key renamed, an undocumented status (202), a 500 for a valid input (a page of 10 or more), and the 405 reverted to 404. A first 500 probe on the details edit was not detected: the contract's `DetailUpdate.value` is untyped, so the generator rarely pairs a field with a matching value.
+
+Differences from the plan:
+
+- **No hooks file.** The plan had `logout` revoking the run's token handled by an authentication hook. The runner signs in once and passes the token, and `logout` is excluded from the run (the service tests cover it).
+- **The stateful phase is left out.** It chooses each call from the last response, so two runs of the same seed differed; the gate runs examples, coverage and fuzzing.
+- **Checks are configured in `schemathesis.toml`, not `--checks all`.** A command-line list of checks overrides a per-operation `enabled = false`.
+- **A second real finding.** A page number larger than int64 was a 400 (the edge read integers as int64); it appeared in about one run in five. Fixed: integers are read at any size and a page is clamped.
+- **Configured differences:** the payment-history year (a business window around today) and a detail value (valid only for its field) can earn a 400 from schema-valid data; the clock rejects instants .NET cannot hold; the test-control key's 404 is deliberate; and the preferred-name response check is off because the Python validator reads `\p{L}` as ASCII.
+- **A leftover service answered the run.** For several runs my own manual service on the run's port answered instead of the runner's, with a different key, which produced misleading failures. The runner now stops if anything already answers on its port.
+
+Full record: [`DOCS/implementation-logs/2026-10-08_cds-23-schemathesis.md`](../implementation-logs/2026-10-08_cds-23-schemathesis.md).

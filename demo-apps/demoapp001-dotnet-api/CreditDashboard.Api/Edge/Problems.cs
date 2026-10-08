@@ -32,7 +32,18 @@ public static class Problems
     public static Task RuleViolation(HttpContext context, string outcome, string title, string detail) =>
         Write(context, 422, "/problems/rule-violation/" + outcome, title, detail, null);
 
-    private static async Task Write(HttpContext context, int status, string type, string title, string detail, IReadOnlyList<FieldError>? errors)
+    /// <summary>A wrong one-time code: 422 <c>code-wrong</c> with the attempts left (PR-11). The only Problem that carries them.</summary>
+    public static Task CodeWrong(HttpContext context, int attemptsRemaining) =>
+        Write(context, 422, "/problems/rule-violation/code-wrong", "Wrong code", "That code is not right. Check it and try again.", null, attemptsRemaining);
+
+    /// <summary>A verification link requested too soon: 429 with <c>Retry-After</c> in seconds (PR-09, API specification section 8).</summary>
+    public static Task RateLimited(HttpContext context, int retryAfterSeconds)
+    {
+        context.Response.Headers.RetryAfter = retryAfterSeconds.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        return Write(context, 429, "/problems/rate-limited", "Too many requests", "A verification link was sent less than 60 seconds ago (PR-09).", null);
+    }
+
+    private static async Task Write(HttpContext context, int status, string type, string title, string detail, IReadOnlyList<FieldError>? errors, int? attemptsRemaining = null)
     {
         context.Response.StatusCode = status;
         context.Response.ContentType = "application/problem+json";
@@ -44,6 +55,7 @@ public static class Problems
             ["detail"] = detail,
             ["instance"] = (context.Request.PathBase + context.Request.Path).Value,
         };
+        if (attemptsRemaining is not null) body["attemptsRemaining"] = attemptsRemaining;
         if (errors is not null) body["errors"] = errors; // absent rather than null: the contract's errors is an array
         await context.Response.WriteAsync(JsonSerializer.Serialize(body), context.RequestAborted);
     }

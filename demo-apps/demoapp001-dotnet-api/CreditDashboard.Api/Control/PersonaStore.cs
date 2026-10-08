@@ -89,6 +89,7 @@ public sealed class PersonaStore
     public void MarkEmailVerified(string username)
     {
         lock (_lock) _verifiedEmails.Add(username);
+        Session(username).MarkEmailVerified(); // the newest change wins: a later email change makes it unverified again
     }
 
     /// <summary>This user session state (created on first use).</summary>

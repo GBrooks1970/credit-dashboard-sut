@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text.Json.Nodes;
+using CreditDashboard.BusinessRules.Profile;
 
 namespace CreditDashboard.Api.Control;
 
@@ -73,6 +74,10 @@ public sealed class UserSession
     private readonly Dictionary<string, CreditDashboard.BusinessRules.FeedbackValue> _feedback = [];
     private readonly Dictionary<string, Dictionary<string, JsonNode?>> _details = [];
     private readonly Dictionary<string, bool> _notificationRead = [];
+    private string? _emailAddress;
+    private EmailStatus? _emailStatus;
+    private DateTimeOffset? _linkSentAt;
+    private MobileState? _mobile;
 
     public void SetPreferredName(string? name)
     {
@@ -110,6 +115,35 @@ public sealed class UserSession
         lock (_lock) return _notificationRead.TryGetValue(notificationId, out var read) ? read : stored;
     }
 
+    /// <summary>The email this session: an edit when there is one, otherwise the stored address and status; and when a link was last sent.</summary>
+    public (string Address, EmailStatus Status, DateTimeOffset? LinkSentAt) Email(string storedAddress, EmailStatus storedStatus)
+    {
+        lock (_lock) return (_emailAddress ?? storedAddress, _emailStatus ?? storedStatus, _linkSentAt);
+    }
+
+    public void SetEmail(string address, EmailStatus status, DateTimeOffset? linkSentAt)
+    {
+        lock (_lock) { _emailAddress = address; _emailStatus = status; _linkSentAt = linkSentAt; }
+    }
+
+    /// <summary>Test control marks the email verified without the link (PR-04).</summary>
+    public void MarkEmailVerified()
+    {
+        lock (_lock) _emailStatus = EmailStatus.Verified;
+    }
+
+    public void SetLinkSent(DateTimeOffset at)
+    {
+        lock (_lock) _linkSentAt = at;
+    }
+
+    /// <summary>The mobile this session when the user has added one; null until then (the stored contact is read instead).</summary>
+    public MobileState? Mobile
+    {
+        get { lock (_lock) return _mobile; }
+        set { lock (_lock) _mobile = value; }
+    }
+
     public void SetFeedback(string bureauId, CreditDashboard.BusinessRules.FeedbackValue value)
     {
         lock (_lock) _feedback[bureauId] = value;
@@ -127,3 +161,6 @@ public sealed class UserSession
         lock (_lock) return _preferredNameEdited ? _preferredName : stored;
     }
 }
+
+/// <summary>A mobile number the user added this session: its last three digits, whether it is verified, and the pending code (PR-06, PR-10, PR-11).</summary>
+public sealed record MobileState(string LastDigits, bool Verified, MobileChallenge? Challenge);

@@ -42,9 +42,22 @@ public class OperationResponseTests
         ("listNotifications", HttpMethod.Get, "/notifications", null, HttpStatusCode.OK),
         ("markNotificationRead", new HttpMethod("PATCH"), "/notifications/ntf_ex01", """{"read":true}""", HttpStatusCode.OK),
         ("sendAssistantMessage", HttpMethod.Post, "/assistant/messages", """{"message":"What is my score?"}""", HttpStatusCode.OK),
+        ("getProfile", HttpMethod.Get, "/me/profile", null, HttpStatusCode.OK),
+        ("updatePreferredName", new HttpMethod("PATCH"), "/me/profile/preferred-name", """{"preferredName":"Sam"}""", HttpStatusCode.OK),
+        ("changeEmail", HttpMethod.Put, "/me/profile/email", """{"address":"new@example.com"}""", HttpStatusCode.OK),
+        ("changeMobile", HttpMethod.Put, "/me/profile/mobile", """{"number":"07700 900456"}""", HttpStatusCode.OK),
+        ("verifyMobile", HttpMethod.Post, "/me/profile/mobile/verification", """{"code":"123456"}""", HttpStatusCode.OK),
+        ("resendEmailVerification", HttpMethod.Post, "/me/profile/email/verification", null, HttpStatusCode.Accepted),
         // logout revokes the token, so it runs last
         ("logout", HttpMethod.Post, "/auth/logout", null, HttpStatusCode.NoContent),
     ];
+
+    /// <summary>Setup a sample needs before it can answer its success status.</summary>
+    private static readonly Dictionary<string, Func<ServiceHost, Task>> Before = new()
+    {
+        // The struggling persona has an unverified email and no link sent, so a resend is accepted.
+        ["resendEmailVerification"] = service => service.Bind("alex", "struggling"),
+    };
 
     [Test]
     public async Task Every_sample_answers_its_success_status_and_validates_against_the_contract()
@@ -53,6 +66,7 @@ public class OperationResponseTests
         var token = await service.Token();
         foreach (var (operationId, method, path, body, status) in Samples)
         {
+            if (Before.TryGetValue(operationId, out var setup)) await setup(service);
             var response = await service.Send(method, path, body, token, ServiceHost.ControlKey);
             Assert.That(response.StatusCode, Is.EqualTo(status), $"{operationId}: {await response.Content.ReadAsStringAsync()}");
             await service.Checked(operationId, response);

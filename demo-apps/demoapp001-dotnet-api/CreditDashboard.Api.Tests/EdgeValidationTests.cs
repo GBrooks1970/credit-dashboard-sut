@@ -10,7 +10,7 @@ namespace CreditDashboard.Api.Tests;
 
 /// <summary>
 /// Requests are checked against the contract at the edge (DR-017, DR-050). Shape failures are 400
-/// <c>/problems/validation</c> with <c>errors[]</c>; requests outside the contract, and operations not served yet,
+/// <c>/problems/validation</c> with <c>errors[]</c>; requests outside the contract
 /// are 404 <c>/problems/not-found</c> (API specification section 8).
 /// </summary>
 public class EdgeValidationTests
@@ -102,16 +102,5 @@ public class EdgeValidationTests
         Assert.That(type, Is.EqualTo("application/problem+json"));
         Assert.That(body.GetProperty("type").GetString(), Is.EqualTo("/problems/not-found"));
         Assert.That(body.GetProperty("detail").GetString(), Is.EqualTo("No operation matches this request."));
-    }
-
-    [TestCase("GET", "/api/v1/me/profile", null, TestName = "A valid request for an operation not served yet is not found")]
-    [TestCase("PATCH", "/api/v1/me/profile/preferred-name", "{\"preferredName\":null}", TestName = "A valid body for an operation not served yet is not found")]
-    public async Task Valid_requests_for_operations_not_served_yet_are_not_found(string method, string url, string? json)
-    {
-        var (status, _, body) = await Read(await Send(new HttpMethod(method), url, json));
-
-        Assert.That(status, Is.EqualTo(HttpStatusCode.NotFound));
-        Assert.That(body.GetProperty("type").GetString(), Is.EqualTo("/problems/not-found"));
-        Assert.That(body.GetProperty("detail").GetString(), Is.EqualTo("This operation is not served yet."));
     }
 }

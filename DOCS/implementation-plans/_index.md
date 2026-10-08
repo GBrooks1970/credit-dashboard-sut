@@ -21,5 +21,5 @@ Every implementation plan is written to a file here before implementation starts
 | [`2026-10-07_cds-18-fixes-addendum-2.md`](2026-10-07_cds-18-fixes-addendum-2.md) | CDS-18 fixes addendum 2: confirmation-pass fixes and a scoped third pass | 2026-10-07 | implemented | #17, #18 |
 | [`2026-10-07_cds-19-service-scaffold.md`](2026-10-07_cds-19-service-scaffold.md) | CDS-19 Phase 3 service scaffold: contract types, edge validation, coverage gate | 2026-10-07 | implemented | #21, `1608eac` |
 | [`2026-10-07_cds-20-business-rules-library.md`](2026-10-07_cds-20-business-rules-library.md) | CDS-20 Business-rules library with NUnit tests tagged by BR ID | 2026-10-07 | implemented | #26, `7440527`; #27, `b220898` |
-| [`2026-10-08_cds-21-test-control.md`](2026-10-08_cds-21-test-control.md) | CDS-21 Test-control endpoints | 2026-10-08 | approved | not yet |
-| [`2026-10-08_cds-27-profile-rules.md`](2026-10-08_cds-27-profile-rules.md) | CDS-27 Profile rules library | 2026-10-08 | approved | not yet |
+| [`2026-10-08_cds-21-test-control.md`](2026-10-08_cds-21-test-control.md) | CDS-21 Test-control endpoints | 2026-10-08 | implemented | #29, `3dfdcaa`; #31, `643e131` |
+| [`2026-10-08_cds-27-profile-rules.md`](2026-10-08_cds-27-profile-rules.md) | CDS-27 Profile rules library | 2026-10-08 | implemented | #29, `3dfdcaa`; #30, `4f04d7a` |

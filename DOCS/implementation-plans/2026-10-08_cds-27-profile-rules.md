@@ -4,9 +4,9 @@ created: 2026-10-08T00:24Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-27
-status: approved
-approved: "2026-10-08, Gary Brooks, 'all as recommended' (decisions D1 to D3); merge authority: per PR, on request, after its own CI run reports success"
-delivered: not yet
+status: implemented
+approved: "2026-10-08, Gary Brooks, 'all as recommended' (decisions D1 to D3); merges of #29 and #30 authorised by the owner (2026-10-08), each after its own CI run reported success"
+delivered: "#29, squash 3dfdcaa (cases, specification); #30, squash 4f04d7a (library and tests); records PR to follow"
 language: en-GB
 ---
 
@@ -60,4 +60,16 @@ Specification first. Delivered in two pull requests.
 
 ## Outcome
 
-[Appended after delivery.]
+Delivered as planned in two pull requests.
+
+- **#29** (squash `3dfdcaa`): the plans, `profile-rules-cases.md`, API specification v17 and My Profile specification v7. The owner merged it without amending the six Readings, which therefore stand.
+- **#30** (squash `4f04d7a`, PR CI run 37709106361: `verify` 11 of 11, job 40 s): the `Profile/` library and 75 new tests (234 in all) against 66 case rows; the traceability test now covers the PR rules, with PR-01, 05 and 08 exempt.
+
+The probes failed as intended: the PR tag removed, the resend interval 60 to 61 seconds, the code lifetime 10 to 11 minutes, and hyphens accepted. The first tag-removal probe did not fail (the edit missed tags written as `[Test, Category(...)]`) and was redone.
+
+Differences from the plan:
+
+- **PR-07's finances tile** is a record with a single `Added` field, so no figure can ride in it.
+- **Contract v12** (not in this plan) corrected a second stale statement that `code-invalid` carries `attemptsRemaining`.
+
+Full record: [`DOCS/implementation-logs/2026-10-08_cds-27-profile-rules.md`](../implementation-logs/2026-10-08_cds-27-profile-rules.md).

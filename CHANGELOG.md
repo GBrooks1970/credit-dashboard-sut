@@ -2,6 +2,20 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-08: test control and the profile rules (CDS-21, CDS-27)
+
+- **CDS-21** (#29, #31): the seven `/__test/*` operations, gated by `TEST_CONTROL` and `TEST_CONTROL_KEY` (no default key), with the in-memory store, the controlled clock, global latency and the overrides rules (BR-03/06, 05, 09, 12, 13, 15) in C#. Contract v11 (`BugFlag` enum, 30 flags) and v12; API specification v17 and v18. 68 service tests; the pending list is 29. DR-053.
+- **CDS-27** (#29, #30): PR-02, 03, 04, 06, 07, 09, 10 and 11 as pure functions in `CreditDashboard.BusinessRules/Profile/`; 75 new tests (234 in all); spaces are ignored in a mobile number (My Profile specification v7). DR-054.
+- Backlog v41, decision register v17.
+
+## 2026-10-08: business-rules library (CDS-20)
+
+- `CreditDashboard.BusinessRules` and `CreditDashboard.BusinessRules.Tests` (#26, #27, #28): BR-01 to BR-15 as pure functions over integer minor units; 159 NUnit tests tagged by BR ID, a traceability gate over API specification section 7 and a parity test over the seven personas. "Half up" rounds towards positive infinity (API specification v16). DR-052; CDS-27 added.
+
+## 2026-10-07: Prism audit findings accepted (CDS-26)
+
+- Decision brief 8 (#25): the 15 development-only findings in the Prism 5.16.0 tree are accepted as a recorded, bounded risk (DR-051); `npm audit --omit=dev` is the gate-relevant audit.
+
 ## 2026-10-07: service scaffold (CDS-19, Phase 3 starts)
 
 - `demo-apps/demoapp001-dotnet-api/`: ASP.NET Core minimal API on .NET 10 (`global.json` 10.0.401, latest patch), contract first (DR-050). NSwag 14.7.1 generates the C# types and the contract is embedded (`npm run generate:service-contract`; drift-checked); a middleware validates every request against the contract with JsonSchema.Net 9.4.0 (400 `/problems/validation` with `errors[]`, 404 outside the contract). No operation is served yet; a contract coverage test lists all 36 as pending.

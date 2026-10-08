@@ -2168,6 +2168,7 @@ export interface operations {
                     "application/json": components["schemas"]["Account"];
                 };
             };
+            400: components["responses"]["Validation"];
             401: components["responses"]["Unauthenticated"];
             404: components["responses"]["NotFound"];
         };
@@ -2262,6 +2263,7 @@ export interface operations {
                     "application/json": components["schemas"]["BalancePoint"][];
                 };
             };
+            400: components["responses"]["Validation"];
             401: components["responses"]["Unauthenticated"];
             404: components["responses"]["NotFound"];
         };
@@ -2324,6 +2326,7 @@ export interface operations {
                     "application/json": components["schemas"]["PaymentHistory"];
                 };
             };
+            400: components["responses"]["Validation"];
             401: components["responses"]["Unauthenticated"];
             404: components["responses"]["NotFound"];
         };

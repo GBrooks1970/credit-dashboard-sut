@@ -7,5 +7,5 @@ namespace CreditDashboard.Api.Routes;
 /// </summary>
 public static class ApiOperations
 {
-    public static RouteGroupBuilder MapOperations(this RouteGroupBuilder api) => api.MapTestControl();
+    public static RouteGroupBuilder MapOperations(this RouteGroupBuilder api) => api.MapTestControl().MapSession();
 }

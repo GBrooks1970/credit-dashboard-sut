@@ -20,6 +20,10 @@ public static class Problems
     public static Task NotFound(HttpContext context, string detail) =>
         Write(context, 404, "/problems/not-found", "Not found", detail, null);
 
+    /// <summary>A missing, unknown, expired or revoked token: 401 (API specification section 8).</summary>
+    public static Task Unauthenticated(HttpContext context, string detail) =>
+        Write(context, 401, "/problems/unauthenticated", "Missing or invalid token", detail, null);
+
     /// <summary>A shape-valid request that breaks a rule: 422 under /problems/rule-violation/ (DR-048).</summary>
     public static Task RuleViolation(HttpContext context, string outcome, string title, string detail) =>
         Write(context, 422, "/problems/rule-violation/" + outcome, title, detail, null);

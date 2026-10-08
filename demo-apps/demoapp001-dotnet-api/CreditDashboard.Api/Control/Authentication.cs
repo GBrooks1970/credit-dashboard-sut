@@ -69,10 +69,22 @@ public sealed class UserSession
     private readonly object _lock = new();
     private bool _preferredNameEdited;
     private string? _preferredName;
+    private readonly Dictionary<string, CreditDashboard.BusinessRules.FeedbackValue> _feedback = [];
 
     public void SetPreferredName(string? name)
     {
         lock (_lock) { _preferredNameEdited = true; _preferredName = name; }
+    }
+
+    public void SetFeedback(string bureauId, CreditDashboard.BusinessRules.FeedbackValue value)
+    {
+        lock (_lock) _feedback[bureauId] = value;
+    }
+
+    /// <summary>The user feedback on a bureau summary (BR-10) when they have set one this session; otherwise the stored one.</summary>
+    public CreditDashboard.BusinessRules.FeedbackValue FeedbackOr(string bureauId, CreditDashboard.BusinessRules.FeedbackValue stored)
+    {
+        lock (_lock) return _feedback.TryGetValue(bureauId, out var value) ? value : stored;
     }
 
     /// <summary>The edited preferred name when there is one (null clears it); otherwise the stored one.</summary>

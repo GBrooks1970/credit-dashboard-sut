@@ -20,6 +20,10 @@ public static class Problems
     public static Task NotFound(HttpContext context, string detail) =>
         Write(context, 404, "/problems/not-found", "Not found", detail, null);
 
+    /// <summary>The error persona, or an unhandled fault: 500, with no stack trace (API specification section 8).</summary>
+    public static Task Internal(HttpContext context, string detail) =>
+        Write(context, 500, "/problems/internal", "Server fault", detail, null);
+
     /// <summary>A missing, unknown, expired or revoked token: 401 (API specification section 8).</summary>
     public static Task Unauthenticated(HttpContext context, string detail) =>
         Write(context, 401, "/problems/unauthenticated", "Missing or invalid token", detail, null);

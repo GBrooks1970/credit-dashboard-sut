@@ -23,6 +23,15 @@ public class OperationResponseTests
         ("testSetClock", HttpMethod.Put, "/__test/clock", """{"now":"2026-10-03T09:00:00Z"}""", HttpStatusCode.NoContent),
         ("testSetLatency", HttpMethod.Put, "/__test/latency", """{"fixedMs":0}""", HttpStatusCode.NoContent),
         ("testVerifyEmail", HttpMethod.Post, "/__test/verify-email", """{"username":"alex"}""", HttpStatusCode.NoContent),
+        ("getReportOverview", HttpMethod.Get, "/reports/bureau-a/overview", null, HttpStatusCode.OK),
+        ("getScore", HttpMethod.Get, "/reports/bureau-a/score", null, HttpStatusCode.OK),
+        ("getScoreHistory", HttpMethod.Get, "/reports/bureau-a/score/history?range=6m", null, HttpStatusCode.OK),
+        ("listChanges", HttpMethod.Get, "/reports/bureau-a/changes", null, HttpStatusCode.OK),
+        ("getImpact", HttpMethod.Get, "/reports/bureau-a/impact", null, HttpStatusCode.OK),
+        ("getReportPaymentHistory", HttpMethod.Get, "/reports/bureau-a/payment-history", null, HttpStatusCode.OK),
+        ("listSearches", HttpMethod.Get, "/reports/bureau-a/searches?kind=hard", null, HttpStatusCode.OK),
+        ("getPersonalDetails", HttpMethod.Get, "/reports/bureau-a/personal-details", null, HttpStatusCode.OK),
+        ("setSummaryFeedback", HttpMethod.Put, "/reports/bureau-a/summary/feedback", """{"value":"like"}""", HttpStatusCode.OK),
         // logout revokes the token, so it runs last
         ("logout", HttpMethod.Post, "/auth/logout", null, HttpStatusCode.NoContent),
     ];

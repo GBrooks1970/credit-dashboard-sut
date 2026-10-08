@@ -88,16 +88,15 @@ public static class Session
     private static async Task ListBureaux(HttpContext context, PersonaStore store, IControlledClock clock)
     {
         var today = DateOnly.FromDateTime(clock.UtcNow.UtcDateTime);
-        var bureaux = new JsonArray();
-        foreach (var bureau in store.Document(Http.Username(context))["bureaux"]!.AsArray().Select(b => b!.AsObject()))
-        {
-            bureaux.Add(new JsonObject
-            {
-                ["id"] = bureau["id"]!.GetValue<string>(),
-                ["name"] = bureau["name"]!.GetValue<string>(),
-                ["nextUpdateInDays"] = Refresh.DaysUntil(today, DateOnly.Parse(bureau["nextRefreshDate"]!.GetValue<string>(), CultureInfo.InvariantCulture)),
-            });
-        }
-        await Http.Json(context, bureaux);
+        var bureaux = store.Document(Http.Username(context))["bureaux"]!.AsArray().Select(b => (JsonNode)BureauJson(b!.AsObject(), today)).ToArray();
+        await Http.Json(context, new JsonArray(bureaux));
     }
+
+    /// <summary>A bureau as <c>Bureau</c>: its ID and name, and the days to its next refresh on the controlled clock (BR-08).</summary>
+    internal static JsonObject BureauJson(JsonObject bureau, DateOnly today) => new()
+    {
+        ["id"] = bureau["id"]!.GetValue<string>(),
+        ["name"] = bureau["name"]!.GetValue<string>(),
+        ["nextUpdateInDays"] = Refresh.DaysUntil(today, DateOnly.Parse(bureau["nextRefreshDate"]!.GetValue<string>(), CultureInfo.InvariantCulture)),
+    };
 }

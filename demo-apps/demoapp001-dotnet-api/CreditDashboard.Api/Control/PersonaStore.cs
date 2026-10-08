@@ -109,6 +109,14 @@ public sealed class PersonaStore
         return Fixtures.Personas[persona]["behaviour"]?["latencyMs"]?.GetValue<int>() ?? 0;
     }
 
+    /// <summary>The error persona fails every report operation (persona behaviour failReportEndpoints).</summary>
+    public bool FailsReports(string username)
+    {
+        string persona;
+        lock (_lock) persona = _bindings[username].Persona;
+        return Fixtures.Personas[persona]["behaviour"]?["failReportEndpoints"]?.GetValue<bool>() ?? false;
+    }
+
     public bool IsEmailMarkedVerified(string username)
     {
         lock (_lock) return _verifiedEmails.Contains(username);

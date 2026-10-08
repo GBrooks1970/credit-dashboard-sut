@@ -4,7 +4,8 @@ using System.Text.Json.Nodes;
 namespace CreditDashboard.Api.Control;
 
 /// <summary>A test user from <c>fixtures/users.json</c> (synthetic, DR-010).</summary>
-public sealed record TestUser(string Username, string DefaultPersona);
+public sealed record TestUser(
+    string Username, string Password, string Id, string DisplayName, string LegalName, string DateOfBirth, string Email, string DefaultPersona);
 
 /// <summary>
 /// The persona fixtures and test users, read once from the <c>Fixtures/</c> folder the build copies from the repository's
@@ -32,7 +33,10 @@ public sealed class FixtureSet
         var personas = Directory.GetFiles(Path.Combine(folder, "personas"), "*.json").Order()
             .ToDictionary(f => Path.GetFileNameWithoutExtension(f)!, f => JsonNode.Parse(File.ReadAllText(f))!.AsObject());
         var users = JsonNode.Parse(File.ReadAllText(Path.Combine(folder, "users.json")))!["users"]!.AsArray()
-            .Select(u => new TestUser(u!["username"]!.GetValue<string>(), u["defaultPersona"]!.GetValue<string>()))
+            .Select(u => new TestUser(
+                u!["username"]!.GetValue<string>(), u["password"]!.GetValue<string>(), u["id"]!.GetValue<string>(),
+                u["displayName"]!.GetValue<string>(), u["legalName"]!.GetValue<string>(), u["dateOfBirth"]!.GetValue<string>(),
+                u["email"]!.GetValue<string>(), u["defaultPersona"]!.GetValue<string>()))
             .ToList();
         return new FixtureSet(personas, users);
     }

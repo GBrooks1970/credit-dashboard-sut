@@ -1,4 +1,5 @@
 using System.Text.Json;
+using CreditDashboard.Api.Control;
 using Json.Schema;
 
 namespace CreditDashboard.Api.Edge;
@@ -14,7 +15,7 @@ namespace CreditDashboard.Api.Edge;
 /// Shape only: business rules are the service's own 422s (for example BR-14 ranges, which the PATCH body schema does
 /// not carry).
 /// </summary>
-public sealed class ContractValidation(RequestDelegate next, ContractModel contract)
+public sealed class ContractValidation(RequestDelegate next, ContractModel contract, TokenStore tokens, PersonaStore store)
 {
     private static readonly EvaluationOptions Evaluation = new() { OutputFormat = OutputFormat.List };
 
@@ -35,6 +36,20 @@ public sealed class ContractValidation(RequestDelegate next, ContractModel contr
         }
 
         var (operation, pathValues) = match.Value;
+
+        // Authentication comes before the shape of the request (decision brief 9 D3, DR-055).
+        if (operation.Authentication == Authentication.Bearer)
+        {
+            var token = TokenStore.FromHeader(context.Request.Headers.Authorization.ToString());
+            var username = token is null ? null : tokens.Validate(token);
+            if (username is null)
+            {
+                await Problems.Unauthenticated(context, token is null ? "A bearer token is required." : "The token is not valid, or has expired.");
+                return;
+            }
+            context.Items["user"] = username;
+            context.Items["token"] = token;
+        }
         var errors = new List<FieldError>();
         foreach (var parameter in operation.Parameters)
         {
@@ -89,6 +104,11 @@ public sealed class ContractValidation(RequestDelegate next, ContractModel contr
         }
 
         context.Items[nameof(ContractOperation)] = operation;
+
+        // The slow persona delays every authenticated operation (persona behaviour latencyMs).
+        if (context.Items["user"] is string signedIn && store.PersonaLatencyMs(signedIn) is > 0 and var persona)
+            await Task.Delay(persona, context.RequestAborted);
+
         await next(context);
     }
 

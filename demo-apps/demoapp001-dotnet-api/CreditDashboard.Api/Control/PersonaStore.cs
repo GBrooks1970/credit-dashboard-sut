@@ -33,6 +33,7 @@ public sealed class PersonaStore
     private List<string> _flags = [];
     private LatencySetting _latency = LatencySetting.None;
     private HashSet<string> _verifiedEmails = [];
+    private Dictionary<string, UserSession> _sessions = [];
 
     public PersonaStore(FixtureSet fixtures, ControlledClock clock)
     {
@@ -56,13 +57,18 @@ public sealed class PersonaStore
             _flags = [];
             _latency = LatencySetting.None;
             _verifiedEmails = [];
+            _sessions = [];
             _clock.Release();
         }
     }
 
     public void Bind(string username, string persona, JsonObject? overrides)
     {
-        lock (_lock) _bindings[username] = (persona, overrides is null ? null : (JsonObject)overrides.DeepClone());
+        lock (_lock)
+        {
+            _bindings[username] = (persona, overrides is null ? null : (JsonObject)overrides.DeepClone());
+            _sessions.Remove(username); // a new persona is a clean start (decision brief 9 D8)
+        }
     }
 
     public void SetFlags(IEnumerable<string> flags)
@@ -83,6 +89,24 @@ public sealed class PersonaStore
     public void MarkEmailVerified(string username)
     {
         lock (_lock) _verifiedEmails.Add(username);
+    }
+
+    /// <summary>This user session state (created on first use).</summary>
+    public UserSession Session(string username)
+    {
+        lock (_lock)
+        {
+            if (!_sessions.TryGetValue(username, out var session)) _sessions[username] = session = new UserSession();
+            return session;
+        }
+    }
+
+    /// <summary>The delay the bound persona adds to every authenticated operation (persona slow), in milliseconds.</summary>
+    public int PersonaLatencyMs(string username)
+    {
+        string persona;
+        lock (_lock) persona = _bindings[username].Persona;
+        return Fixtures.Personas[persona]["behaviour"]?["latencyMs"]?.GetValue<int>() ?? 0;
     }
 
     public bool IsEmailMarkedVerified(string username)

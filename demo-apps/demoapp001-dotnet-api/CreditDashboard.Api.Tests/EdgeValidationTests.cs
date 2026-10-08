@@ -23,6 +23,15 @@ public class EdgeValidationTests
     {
         _factory = new WebApplicationFactory<Program>();
         _client = _factory.CreateClient();
+        SignIn();
+    }
+
+    /// <summary>Protected operations need a token (decision brief 9 D3), so the edge tests sign in once.</summary>
+    private void SignIn()
+    {
+        var response = _client.PostAsync("/api/v1/auth/login", new StringContent("{\"username\":\"alex\",\"password\":\"demo-only\"}", Encoding.UTF8, "application/json")).GetAwaiter().GetResult();
+        var token = JsonDocument.Parse(response.Content.ReadAsStringAsync().GetAwaiter().GetResult()).RootElement.GetProperty("token").GetString()!;
+        _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
     }
 
     [OneTimeTearDown]
@@ -95,7 +104,7 @@ public class EdgeValidationTests
         Assert.That(body.GetProperty("detail").GetString(), Is.EqualTo("No operation matches this request."));
     }
 
-    [TestCase("GET", "/api/v1/reports/bureau-a/score/history?range=6m", null, TestName = "A valid request for an operation not served yet is not found")]
+    [TestCase("GET", "/api/v1/notifications", null, TestName = "A valid request for an operation not served yet is not found")]
     [TestCase("PATCH", "/api/v1/me/profile/preferred-name", "{\"preferredName\":null}", TestName = "A valid body for an operation not served yet is not found")]
     public async Task Valid_requests_for_operations_not_served_yet_are_not_found(string method, string url, string? json)
     {

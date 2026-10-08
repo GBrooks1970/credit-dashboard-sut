@@ -16,9 +16,12 @@ builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<ControlledClock>();
 builder.Services.AddSingleton<IControlledClock>(sp => sp.GetRequiredService<ControlledClock>());
 builder.Services.AddSingleton<PersonaStore>();
+builder.Services.AddSingleton(sp => AuthOptions.From(sp.GetRequiredService<IConfiguration>()));
+builder.Services.AddSingleton<TokenStore>();
 
 var app = builder.Build();
 _ = app.Services.GetRequiredService<TestControlOptions>(); // TEST_CONTROL=true without a key stops the service here
+_ = app.Services.GetRequiredService<AuthOptions>(); // so does a TOKEN_LIFETIME_MINUTES outside 1 to 1440
 app.UseMiddleware<TestControlGate>();
 app.UseMiddleware<LatencyMiddleware>();
 app.UseMiddleware<ContractValidation>();

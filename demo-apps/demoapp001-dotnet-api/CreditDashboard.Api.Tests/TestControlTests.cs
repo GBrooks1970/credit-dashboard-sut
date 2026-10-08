@@ -113,8 +113,9 @@ public class TestControlTests
     [Test]
     public async Task The_gate_does_not_touch_other_paths()
     {
+        // Not a test-control path: with no token the answer is the ordinary 401, not the gate 404.
         var response = await _client.GetAsync("/api/v1/debt/overview");
-        await Problem(response, HttpStatusCode.NotFound, "/problems/not-found");
+        await Problem(response, HttpStatusCode.Unauthorized, "/problems/unauthenticated");
     }
 
     // State and reset

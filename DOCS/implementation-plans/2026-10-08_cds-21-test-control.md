@@ -4,9 +4,9 @@ created: 2026-10-08T00:24Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-21
-status: approved
-approved: "2026-10-08, Gary Brooks, 'all as recommended' (decisions D1 to D4); merge authority: per PR, on request, after its own CI run reports success"
-delivered: not yet
+status: implemented
+approved: "2026-10-08, Gary Brooks, 'all as recommended' (decisions D1 to D4); merges of #29 and #31 authorised by the owner (2026-10-08), each after its own CI run reported success"
+delivered: "#29, squash 3dfdcaa (plan, contract v11, specification v17); #31, squash 643e131 (service); records PR to follow"
 language: en-GB
 ---
 
@@ -64,4 +64,18 @@ Specification first. Delivered in two pull requests.
 
 ## Outcome
 
-[Appended after delivery.]
+Delivered as planned in two pull requests.
+
+- **#29** (squash `3dfdcaa`, CI run 37708230910): this plan, the CDS-27 plan and cases, contract v11 (the `BugFlag` enum), API specification v17.
+- **#31** (squash `643e131`, PR CI run 37748925204: `verify` 11 of 11, job 56 s): the store, gate, seven handlers, overrides rules, latency middleware, 52 new service tests (68 in all), contract v12, API specification v18.
+
+The probes failed as intended: the gate removed (3 tests failed), the BR-09 check disabled (its 422 test failed), `testReset` left in the pending list (the coverage test failed). A live run on port 4000 answered as specified.
+
+Differences from the plan:
+
+- **Contract v12 and API specification v18** were added: the clock and latency inputs, the 404 for an unknown user and the `attemptsRemaining` description were not in the plan's specification step.
+- **Gate placement.** The gate runs before the edge, as the specification says; the plan's step 3 said "after edge validation", which would have let shape errors answer before the 404.
+- **Options are read lazily** from the final configuration, so the host and the tests can supply them.
+- **Local `verify`** was not run end to end: port 4010 was held by another process. The pieces were run separately (see the log).
+
+Full record: [`DOCS/implementation-logs/2026-10-08_cds-21-test-control.md`](../implementation-logs/2026-10-08_cds-21-test-control.md).

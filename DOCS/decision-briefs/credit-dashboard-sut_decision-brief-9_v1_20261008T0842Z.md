@@ -4,7 +4,7 @@ created: 2026-10-08T08:42Z
 project: credit-dashboard-sut
 type: decision-brief
 brief: 9
-subject: Serving the 29 business operations (CDS-25): structure, token lifetime, check order, and five gaps in the specification
+subject: "Serving the 29 business operations (CDS-25): structure, token lifetime, check order, and five gaps in the specification"
 blocks: CDS-25 and so CDS-22 and CDS-23; the Phase 3 gate
 approver: the project owner (Gary Brooks)
 status: awaiting-decision

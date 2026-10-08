@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Security.Cryptography;
+using System.Text.Json.Nodes;
 
 namespace CreditDashboard.Api.Control;
 
@@ -70,10 +71,31 @@ public sealed class UserSession
     private bool _preferredNameEdited;
     private string? _preferredName;
     private readonly Dictionary<string, CreditDashboard.BusinessRules.FeedbackValue> _feedback = [];
+    private readonly Dictionary<string, Dictionary<string, JsonNode?>> _details = [];
 
     public void SetPreferredName(string? name)
     {
         lock (_lock) { _preferredNameEdited = true; _preferredName = name; }
+    }
+
+    /// <summary>Records an edit to one account detail (BR-14); a null value clears the field.</summary>
+    public void SetDetail(string accountId, string field, JsonNode? value)
+    {
+        lock (_lock)
+        {
+            if (!_details.TryGetValue(accountId, out var edits)) _details[accountId] = edits = [];
+            edits[field] = value?.DeepClone();
+        }
+    }
+
+    /// <summary>The account details with this session edits applied over the stored ones (a new object).</summary>
+    public JsonObject DetailsOf(string accountId, JsonObject stored)
+    {
+        var details = (JsonObject)stored.DeepClone();
+        lock (_lock)
+            if (_details.TryGetValue(accountId, out var edits))
+                foreach (var (field, value) in edits) details[field] = value?.DeepClone();
+        return details;
     }
 
     public void SetFeedback(string bureauId, CreditDashboard.BusinessRules.FeedbackValue value)

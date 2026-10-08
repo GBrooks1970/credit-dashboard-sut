@@ -1,7 +1,7 @@
 ---
-version: 19
-created: 2026-10-08T10:02Z
-supersedes: v18 (earlier today); earlier versions are in git history (DR-040)
+version: 20
+created: 2026-10-08T11:31Z
+supersedes: v19 (earlier today); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
 language: en-GB
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v20:** CDS-25 S3: section 6.3 lists 400 for the account detail and balance history (a malformed account ID) as it already did for the payment history; contract v14 (`info.version` 0.9.1) documents it.
 **Changes in v19:** decision brief 9 (CDS-25): section 3 'Auth' row (token lifetime setting, authentication before shape) and the session-state sentence; section 6.2 notes the 404 and 500 every report operation documents, the `payments` definition and the removal of `tags`; section 6.4 points to the assistant table; section 8 drops the 503 and states the order of checks. Contract v13 (`info.version` 0.9.0). Cases: [operations-cases.md](operations-cases.md).
 **Changes in v18:** the test-control build (CDS-21): section 6.5 states the clock and latency inputs and their 400s, the 404 for an unknown user, and that a refused binding changes nothing. Contract v12 (`info.version` 0.8.1): `Problem.attemptsRemaining` is for `code-wrong` only.
 **Changes in v17:** the test-control and profile-rule plans (CDS-21, CDS-27): section 6.5 states the key, the order of checks, the state model and what reset clears; section 6.6 and section 8 settle `code-invalid` (no `attemptsRemaining`) and PR-06 spaces; section 11 gains 'Test control' and 'Profile rule tests'. Contract v11 (`info.version` 0.8.0): a `BugFlag` enum of 30 flags, so an unknown flag is a 400; the stray `attemptsRemaining` is gone from the `code-invalid` example. Cases: [profile-rules-cases.md](profile-rules-cases.md).
@@ -132,8 +133,8 @@ Every operation below documents 404 for an unknown bureau and 500 (the `error` p
 | --- | --- | --- | --- | --- |
 | GET | `/reports/{bureauId}/accounts?type=&status=open\|closed` | Account rows for a type list or the closed page | 200 `AccountSummary[]` | 400, 401, 404 |
 | GET | `/reports/{bureauId}/accounts/totals?type=` | Summary card figures for one type (BR-04) | 200 `AccountTotals` | 400, 401, 404 |
-| GET | `/accounts/{accountId}` | Account detail | 200 `Account` | 401, 404 |
-| GET | `/accounts/{accountId}/balance-history` | Last 6 months, oldest first | 200 `BalancePoint[]` | 401, 404 |
+| GET | `/accounts/{accountId}` | Account detail | 200 `Account` | 400, 401, 404 |
+| GET | `/accounts/{accountId}/balance-history` | Last 6 months, oldest first | 200 `BalancePoint[]` | 400, 401, 404 |
 | GET | `/accounts/{accountId}/payment-history?year=` | That account's statuses | 200 `PaymentHistory` | 400, 401, 404 |
 | PATCH | `/accounts/{accountId}/details` | Set one user-supplied field | 200 `AccountDetails` | 400, 401, 404, 422 |
 

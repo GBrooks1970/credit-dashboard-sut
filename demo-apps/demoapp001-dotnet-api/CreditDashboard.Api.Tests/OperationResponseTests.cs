@@ -32,6 +32,12 @@ public class OperationResponseTests
         ("listSearches", HttpMethod.Get, "/reports/bureau-a/searches?kind=hard", null, HttpStatusCode.OK),
         ("getPersonalDetails", HttpMethod.Get, "/reports/bureau-a/personal-details", null, HttpStatusCode.OK),
         ("setSummaryFeedback", HttpMethod.Put, "/reports/bureau-a/summary/feedback", """{"value":"like"}""", HttpStatusCode.OK),
+        ("listAccounts", HttpMethod.Get, "/reports/bureau-a/accounts", null, HttpStatusCode.OK),
+        ("getAccountTotals", HttpMethod.Get, "/reports/bureau-a/accounts/totals?type=creditcard", null, HttpStatusCode.OK),
+        ("getAccount", HttpMethod.Get, "/accounts/acc_excc01", null, HttpStatusCode.OK),
+        ("getBalanceHistory", HttpMethod.Get, "/accounts/acc_excc01/balance-history", null, HttpStatusCode.OK),
+        ("getAccountPaymentHistory", HttpMethod.Get, "/accounts/acc_excc01/payment-history", null, HttpStatusCode.OK),
+        ("updateAccountDetail", new HttpMethod("PATCH"), "/accounts/acc_excc01/details", """{"field":"apr","value":19.9}""", HttpStatusCode.OK),
         // logout revokes the token, so it runs last
         ("logout", HttpMethod.Post, "/auth/logout", null, HttpStatusCode.NoContent),
     ];

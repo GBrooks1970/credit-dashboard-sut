@@ -1,15 +1,15 @@
-# version: 13
-# created: 2026-10-08T10:02Z
-# supersedes: v12 (earlier today); earlier versions are in git history (DR-040) and, up to v7, in the
+# version: 14
+# created: 2026-10-08T11:31Z
+# supersedes: v13 (earlier today); earlier versions are in git history (DR-040) and, up to v7, in the
 # portfolio's Phase 0 pack
-# change: CDS-25 spec (brief 9): the changes list loses its tags parameter (D6); getAccountTotals and listSearches document 404; every report operation documents 500 (the error persona); payments is defined (D4)
+# change: CDS-25 S3: getAccount, getBalanceHistory and getAccountPaymentHistory document 400 (a malformed account ID, or a year outside the window)
 # project: credit-dashboard-sut
 # type: architecture-doc
 # language: en-GB
 openapi: 3.1.0
 info:
   title: Credit Dashboard SUT API
-  version: 0.9.0
+  version: 0.9.1
   license:
     name: MIT
     identifier: MIT
@@ -652,6 +652,7 @@ paths:
                   paymentMethod: direct-debit
                 closed: false
               schema: { $ref: '#/components/schemas/Account' }
+        '400': { $ref: '#/components/responses/Validation' }
         '401': { $ref: '#/components/responses/Unauthenticated' }
         '404': { $ref: '#/components/responses/NotFound' }
 
@@ -713,6 +714,7 @@ paths:
                 type: array
                 maxItems: 6
                 items: { $ref: '#/components/schemas/BalancePoint' }
+        '400': { $ref: '#/components/responses/Validation' }
         '401': { $ref: '#/components/responses/Unauthenticated' }
         '404': { $ref: '#/components/responses/NotFound' }
 
@@ -748,6 +750,7 @@ paths:
                 selectedYear: 2026
                 missed: []
               schema: { $ref: '#/components/schemas/PaymentHistory' }
+        '400': { $ref: '#/components/responses/Validation' }
         '401': { $ref: '#/components/responses/Unauthenticated' }
         '404': { $ref: '#/components/responses/NotFound' }
 

@@ -1,7 +1,7 @@
 ---
-version: 21
-created: 2026-10-08T11:46Z
-supersedes: v20 (earlier today); earlier versions are in git history (DR-040)
+version: 22
+created: 2026-10-08T15:18Z
+supersedes: v21 (earlier today); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
 language: en-GB
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v22:** CDS-23 (Schemathesis): section 8 gains 405 `/method-not-allowed` for a path the contract has with a method it does not, and the 404 row keeps the unknown-path case (DR-056); section 11's Schemathesis row says the run is a `verify` step with a fixed seed.
 **Changes in v21:** CDS-25 S4: section 6.4 lists 400 for the notifications list (paging) and for marking one read (the body); contract v15 (`info.version` 0.9.2) documents it.
 **Changes in v20:** CDS-25 S3: section 6.3 lists 400 for the account detail and balance history (a malformed account ID) as it already did for the payment history; contract v14 (`info.version` 0.9.1) documents it.
 **Changes in v19:** decision brief 9 (CDS-25): section 3 'Auth' row (token lifetime setting, authentication before shape) and the session-state sentence; section 6.2 notes the 404 and 500 every report operation documents, the `payments` definition and the removal of `tags`; section 6.4 points to the assistant table; section 8 drops the 503 and states the order of checks. Contract v13 (`info.version` 0.9.0). Cases: [operations-cases.md](operations-cases.md).
@@ -228,13 +229,14 @@ The customer's own account record, behind the My Profile page. Rules PR-01 to PR
 
 ## 8. Error catalogue
 
-The checks run in this order (DR-055): the route is matched (404 if no operation fits); authentication (401); the shape of the path, query and body (400); the target and its owner (404); the persona behaviours (500 for the `error` persona on report operations); the rules (422).
+The checks run in this order (DR-055): the route is matched (404 if no contract path fits; 405 with an `Allow` header if the path fits but not the method); authentication (401); the shape of the path, query and body (400); the target and its owner (404); the persona behaviours (500 for the `error` persona on report operations); the rules (422).
 
 | Status | `type` suffix | When |
 | --- | --- | --- |
 | 400 | `/validation` | Bad query or body shape; `errors[]` lists each field |
 | 401 | `/unauthenticated` | Missing, expired or revoked token |
-| 404 | `/not-found` | Unknown resource, or one owned by another user (BR-15); also a request that fits no contract operation, and, while the service is being built, an operation it does not serve yet (DR-050) |
+| 404 | `/not-found` | Unknown resource, or one owned by another user (BR-15); also a request that fits no contract path (DR-050) |
+| 405 | `/method-not-allowed` | A method the contract does not define on a path it does; the `Allow` header lists the methods it defines (DR-056) |
 | 422 | `/rule-violation/{outcome}` | Shape valid, but breaks a rule. One type per outcome (DR-048): `out-of-range` (BR-14), `preferred-name` (PR-02), `already-verified` (PR-09), `mobile-number` (PR-06), `code-wrong` with `attemptsRemaining` (PR-11), `code-invalid` (the third wrong code, an expired or voided code, or nothing pending; PR-10, PR-11; it carries no `attemptsRemaining`), `overrides-inconsistent` (test control, DR-020). Clients and tests branch on `type`, never on `title` or `detail` |
 | 429 | `/rate-limited` | A verification link resent within 60 seconds (PR-09). There is no general rate limit (DR-035) |
 | 500 | `/internal` | `error` persona, or an unhandled fault; no stack trace in the body |
@@ -318,7 +320,7 @@ UI-only flags (labels, ARIA, rendering) are listed in the UI spec.
 | Profile rule tests | `CreditDashboard.BusinessRules.Tests`: every case in profile-rules-cases.md, tagged by PR ID; the traceability test covers the PR rules the API enforces | Phase 3 onwards (CDS-27) |
 | Rule traceability | A test reads the BR IDs from section 7 and fails if a rule has no tagged test, or a tag names no rule | Phase 3 onwards (CDS-20) |
 | Response validation | Every API scenario response checked against the contract | Phase 3 onwards |
-| Property-based | Schemathesis against the running service | Nightly |
+| Property-based | Schemathesis 4.29.4 against the running service: every operation but `logout` (it revokes the run's own token) and the latency control (delays of up to 10 s), a fixed seed (DR-056) | Every commit, as a `verify` step (CDS-23) |
 | Business rules | `@api` Gherkin scenarios tagged with `BR-` IDs | Phase 3 onwards |
 | Security | `@security` scenarios: BR-15, auth expiry, test control off by default | Phase 3 onwards |
 

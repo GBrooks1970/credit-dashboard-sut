@@ -658,6 +658,11 @@ export interface components {
         PaymentStatus: "on-time" | "missed" | "no-data";
         /** @enum {string} */
         Persona: "excellent" | "struggling" | "thin-file" | "boundary" | "drilldown" | "error" | "slow";
+        /**
+         * @description A defect that test control can switch on (DR-008). The API flags are in API specification section 10; the UI and profile flags are in the UI specification section 8 and the My Profile feature specification. A name outside this list is a 400, so a typo cannot silently do nothing.
+         * @enum {string}
+         */
+        BugFlag: "excluded-in-total" | "rounding-down" | "history-carry-forward" | "idor" | "problem-json-missing" | "mask-format" | "currency-float" | "duplicate-nav" | "util-mismatch" | "currency-format" | "minor-units-label" | "placeholder-aria" | "chart-no-values" | "range-stale" | "toggle-label" | "like-both" | "plural" | "button-href" | "double-render" | "ph-a11y" | "open-redirect" | "truncate-summary" | "negative-balance" | "nested-button" | "decorative-alt" | "preferred-on-report" | "preferred-no-trim" | "email-stays-verified" | "pii-in-title" | "lost-edit";
         MaskedNumber: string;
         /** @enum {string} */
         VerificationStatus: "verified" | "unverified";
@@ -2633,7 +2638,7 @@ export interface operations {
                  *     }
                  */
                 "application/json": {
-                    flags: string[];
+                    flags: components["schemas"]["BugFlag"][];
                 };
             };
         };
@@ -2750,7 +2755,7 @@ export interface operations {
                         overridden?: {
                             [key: string]: boolean;
                         };
-                        flags?: string[];
+                        flags?: components["schemas"]["BugFlag"][];
                         /** Format: date-time */
                         now?: string | null;
                         latency?: Record<string, never>;

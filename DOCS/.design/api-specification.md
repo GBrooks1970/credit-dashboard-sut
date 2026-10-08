@@ -1,7 +1,7 @@
 ---
-version: 16
-created: 2026-10-07T19:46Z
-supersedes: v15 (2026-10-07T14:39Z); earlier versions are in git history (DR-040)
+version: 17
+created: 2026-10-08T00:30Z
+supersedes: v16 (earlier today); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
 language: en-GB
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v17:** the test-control and profile-rule plans (CDS-21, CDS-27): section 6.5 states the key, the order of checks, the state model and what reset clears; section 6.6 and section 8 settle `code-invalid` (no `attemptsRemaining`) and PR-06 spaces; section 11 gains 'Test control' and 'Profile rule tests'. Contract v11 (`info.version` 0.8.0): a `BugFlag` enum of 30 flags, so an unknown flag is a 400; the stray `attemptsRemaining` is gone from the `code-invalid` example. Cases: [profile-rules-cases.md](profile-rules-cases.md).
 **Changes in v16:** the business-rules library (CDS-20): BR-03 says how half up rounds a negative value; section 3 'Business rules' row names the library and its tests; section 11 gains 'Rule unit tests' and 'Rule traceability'; the case tables are in [business-rules-cases.md](business-rules-cases.md).
 **Changes in v15:** the service scaffold (CDS-19, DR-050): section 3 'Framework' row; section 8 says what a request outside the contract, or for an operation not served yet, receives; section 11 gains 'Service contract drift', 'Edge validation' and 'Contract coverage'.
 **Changes in v14:** section 6.6 cites PR-01 to PR-11 and the rules the API enforces (CDS-18 third pass).
@@ -148,6 +149,10 @@ Payment status per month: `on-time`, `missed`, `no-data`. For one account, a mon
 
 Enabled only when `TEST_CONTROL=true`. Absent from production builds; returns 404 otherwise. Requires header `X-Test-Control-Key`.
 
+**The gate (CDS-21).** The key is the value of the environment variable `TEST_CONTROL_KEY`. A service started with `TEST_CONTROL=true` and no key refuses to start; there is no default key. The development launch profile sets the synthetic test value `demo-only`. When test control is off, or the header is missing or wrong, every `/__test/*` operation answers the same 404 `TestControlDisabled`, so its existence is not revealed. The order of checks is: the gate, then the request's shape (400), then the target (404), then the rules (422).
+
+**State.** The store holds, for the life of the process: each test user's bound persona and overrides, the active bug flags (names from the contract's `BugFlag` enum; any other name is a 400), the controlled clock (`now`, null while it follows real time), the latency setting and the set of users whose email has been marked verified. `POST /__test/reset` reloads the fixtures and clears all of it. Latency applies to every request except `/__test/*`. The persona behaviours (`latencyMs`, `failReportEndpoints`) belong to the report operations (CDS-25), not to test control.
+
 Every operation documents a `404` (`TestControlDisabled` in the contract): test control is off, or the target does not exist. Operations that take a body also document `400`.
 
 | Method | Path | Purpose |
@@ -162,7 +167,7 @@ Every operation documents a `404` (`TestControlDisabled` in the contract): test 
 
 **Overrides (DR-020; contract schema `PersonaOverrides`).** A scenario arranges data no persona holds by binding with `overrides`: for each named bureau, the lists it supplies (`accounts`, `changes`, `searches`) replace that bureau's lists for this user; lists not named are kept. Accounts use the contract's `FixtureAccount`, the fixture format of section 9.1. `POST /__test/reset`, or binding again without `overrides`, clears them; `GET /__test/state` reports which users have overrides in force.
 
-- A body that fails the schema is a `400`; an unknown bureau ID is a `404`.
+- A body that fails the schema is a `400`; an unknown bureau ID is a `404`. The overrides rules are the business rules of section 7, applied by the same library (CDS-20).
 - Overrides that break a rule a stored value must obey are a `422`: utilisation against balance and limit (BR-03, BR-06), a loan without a limit counted in totals (BR-05), a mask against its source (BR-09), a closed account with a balance (BR-13), missed months outside the seven-year window (BR-12), or an account ID used elsewhere (BR-15).
 - Two persona conventions do **not** apply, because scenarios arrange exactly these states: changes need not be stored newest first (the service sorts them, BR-11), and a closed account may sit outside the six-year window (the service does not list it, BR-13).
 - Derived values (section 9.1) are recomputed from the overridden source data, never supplied.
@@ -176,7 +181,7 @@ The customer's own account record, behind the My Profile page. Rules PR-01 to PR
 | GET | `/me/profile` | Identity header, preferred name and tile summaries | 200 `Profile` | 401 |
 | PATCH | `/me/profile/preferred-name` | Set or clear the preferred name (PR-02) | 200 `PreferredName` | 400, 401, 422 |
 
-`PATCH` body: `{ "preferredName": "  Sam  " }`. The service trims first, then applies PR-02; the response carries the stored value (`"Sam"`). An empty string or `null` clears the name and returns `null`. A body that is not a string or null, or is over 100 characters, is a `400`; a trimmed value that breaks PR-02 is a `422`.
+`PATCH` body: `{ "preferredName": "  Sam  " }`. The service trims first, then applies PR-02; a mobile number ignores spaces (and no other separator) before PR-06 is applied, and the stored form is the normalised `+44` one; the response carries the stored value (`"Sam"`). An empty string or `null` clears the name and returns `null`. A body that is not a string or null, or is over 100 characters, is a `400`; a trimmed value that breaks PR-02 is a `422`.
 
 `Profile` summaries follow PR-07 and the masking convention in section 4: finances report only `added: true|false`, and the mobile number reports only its last three digits.
 
@@ -220,7 +225,7 @@ The customer's own account record, behind the My Profile page. Rules PR-01 to PR
 | 400 | `/validation` | Bad query or body shape; `errors[]` lists each field |
 | 401 | `/unauthenticated` | Missing, expired or revoked token |
 | 404 | `/not-found` | Unknown resource, or one owned by another user (BR-15); also a request that fits no contract operation, and, while the service is being built, an operation it does not serve yet (DR-050) |
-| 422 | `/rule-violation/{outcome}` | Shape valid, but breaks a rule. One type per outcome (DR-048): `out-of-range` (BR-14), `preferred-name` (PR-02), `already-verified` (PR-09), `mobile-number` (PR-06), `code-wrong` with `attemptsRemaining` (PR-11), `code-invalid` (the third wrong code, an expired or voided code, or nothing pending; PR-10, PR-11), `overrides-inconsistent` (test control, DR-020). Clients and tests branch on `type`, never on `title` or `detail` |
+| 422 | `/rule-violation/{outcome}` | Shape valid, but breaks a rule. One type per outcome (DR-048): `out-of-range` (BR-14), `preferred-name` (PR-02), `already-verified` (PR-09), `mobile-number` (PR-06), `code-wrong` with `attemptsRemaining` (PR-11), `code-invalid` (the third wrong code, an expired or voided code, or nothing pending; PR-10, PR-11; it carries no `attemptsRemaining`), `overrides-inconsistent` (test control, DR-020). Clients and tests branch on `type`, never on `title` or `detail` |
 | 429 | `/rate-limited` | A verification link resent within 60 seconds (PR-09). There is no general rate limit (DR-035) |
 | 500 | `/internal` | `error` persona, or an unhandled fault; no stack trace in the body |
 | 503 | `/unavailable` | Bureau marked offline in fixtures |
@@ -300,6 +305,8 @@ UI-only flags (labels, ARIA, rendering) are listed in the UI spec.
 | Edge validation | `CreditDashboard.Api.Tests`: requests breaking the contract get 400 `/problems/validation` with `errors[]`, requests outside it get 404, and every problem body validates against the contract's `Problem` schema | Phase 3 onwards (CDS-19) |
 | Contract coverage | `CreditDashboard.Api.Tests`: every contract operation is served or listed as pending, and no route exists outside the contract; the pending list is empty at the Phase 3 gate | Phase 3 onwards (CDS-19) |
 | Rule unit tests | `CreditDashboard.BusinessRules.Tests`: every case in business-rules-cases.md, tagged by BR ID; the fixture parity test recomputes the seven personas' derived values | Phase 3 onwards (CDS-20) |
+| Test control | `CreditDashboard.Api.Tests`: the gate (disabled, no key, wrong key, right key), each operation, each 422 outcome of the overrides, reset clearing every part of the state, and an unknown bug flag | Phase 3 onwards (CDS-21) |
+| Profile rule tests | `CreditDashboard.BusinessRules.Tests`: every case in profile-rules-cases.md, tagged by PR ID; the traceability test covers the PR rules the API enforces | Phase 3 onwards (CDS-27) |
 | Rule traceability | A test reads the BR IDs from section 7 and fails if a rule has no tagged test, or a tag names no rule | Phase 3 onwards (CDS-20) |
 | Response validation | Every API scenario response checked against the contract | Phase 3 onwards |
 | Property-based | Schemathesis against the running service | Nightly |

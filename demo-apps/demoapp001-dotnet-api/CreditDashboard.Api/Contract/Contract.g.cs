@@ -154,6 +154,105 @@ namespace CreditDashboard.Api.Contract
 
     }
 
+    /// <summary>
+    /// A defect that test control can switch on (DR-008). The API flags are in API specification section 10; the UI and profile flags are in the UI specification section 8 and the My Profile feature specification. A name outside this list is a 400, so a typo cannot silently do nothing.
+    /// </summary>
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public enum BugFlag
+    {
+
+        [System.Runtime.Serialization.EnumMember(Value = @"excluded-in-total")]
+        ExcludedInTotal = 0,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"rounding-down")]
+        RoundingDown = 1,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"history-carry-forward")]
+        HistoryCarryForward = 2,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"idor")]
+        Idor = 3,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"problem-json-missing")]
+        ProblemJsonMissing = 4,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"mask-format")]
+        MaskFormat = 5,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"currency-float")]
+        CurrencyFloat = 6,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"duplicate-nav")]
+        DuplicateNav = 7,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"util-mismatch")]
+        UtilMismatch = 8,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"currency-format")]
+        CurrencyFormat = 9,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"minor-units-label")]
+        MinorUnitsLabel = 10,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"placeholder-aria")]
+        PlaceholderAria = 11,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"chart-no-values")]
+        ChartNoValues = 12,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"range-stale")]
+        RangeStale = 13,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"toggle-label")]
+        ToggleLabel = 14,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"like-both")]
+        LikeBoth = 15,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"plural")]
+        Plural = 16,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"button-href")]
+        ButtonHref = 17,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"double-render")]
+        DoubleRender = 18,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"ph-a11y")]
+        PhA11y = 19,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"open-redirect")]
+        OpenRedirect = 20,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"truncate-summary")]
+        TruncateSummary = 21,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"negative-balance")]
+        NegativeBalance = 22,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"nested-button")]
+        NestedButton = 23,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"decorative-alt")]
+        DecorativeAlt = 24,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"preferred-on-report")]
+        PreferredOnReport = 25,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"preferred-no-trim")]
+        PreferredNoTrim = 26,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"email-stays-verified")]
+        EmailStaysVerified = 27,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"pii-in-title")]
+        PiiInTitle = 28,
+
+        [System.Runtime.Serialization.EnumMember(Value = @"lost-edit")]
+        LostEdit = 29,
+
+    }
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum VerificationStatus
     {
@@ -1377,8 +1476,9 @@ namespace CreditDashboard.Api.Contract
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("flags")]
+        // TODO(system.text.json): Add ItemConverterType with enum converter when supported
         [System.ComponentModel.DataAnnotations.Required]
-        public System.Collections.Generic.ICollection<string> Flags { get; set; } = new System.Collections.ObjectModel.Collection<string>();
+        public System.Collections.Generic.ICollection<BugFlag> Flags { get; set; } = new System.Collections.ObjectModel.Collection<BugFlag>();
 
         private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
 
@@ -1484,7 +1584,8 @@ namespace CreditDashboard.Api.Contract
         public System.Collections.Generic.IDictionary<string, bool> Overridden { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("flags")]
-        public System.Collections.Generic.ICollection<string> Flags { get; set; }
+        // TODO(system.text.json): Add ItemConverterType with enum converter when supported
+        public System.Collections.Generic.ICollection<BugFlag> Flags { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("now")]
         public System.DateTimeOffset? Now { get; set; }

@@ -1,7 +1,7 @@
 ---
-version: 6
-created: 2026-10-07T13:09Z
-supersedes: v5 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
+version: 7
+created: 2026-10-08T00:30Z
+supersedes: v6 (2026-10-07T13:09Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-feature-spec
 language: en-GB
@@ -11,6 +11,7 @@ language: en-GB
 
 **Status:** Phase 0 draft, for review
 **Parent:** [UI specification](ui-specification.md) (conventions in its section 4 apply here unchanged)
+**Changes in v7:** PR-06 says spaces are ignored (CDS-27 plan D1; CDS-18 review Note F-15).
 **Changes in v6:** section 4.1 specifies the mobile sub-page: its hooks, and that it stays open for the code and returns to the profile once the number is verified (CDS-18 third pass).
 **Changes in v5:** the mobile tile gains a status badge, `profile-mobile-badge`, as the email tile has (CDS-18 confirmation pass).
 **Changes in v4:** decision brief 3 applied: PR-04 amended (the address already held is not a change, DR-027); new rules PR-09 resend limit (DR-024), PR-10 one-time code (DR-025), PR-11 wrong-code lock-out (DR-026); the email and mobile operations are in the contract (v6, CDS-11).
@@ -120,7 +121,7 @@ Each sub-page has Save and Cancel, returns to the profile on save, and shows the
 | PR-03 | When set, the preferred name replaces the legal first name in greetings across the app (e.g. header menu); it never appears on report pages. |
 | PR-04 | Changing the email sets it to Unverified until the mock verification link is followed, and sends that link. Submitting the address already held is not a change: address and status are kept (DR-027). |
 | PR-05 | Address history has no overlapping date ranges; exactly one address is current. |
-| PR-06 | Mobile numbers are UK format (`07` plus 9 digits, or `+447` plus 9 digits) and stored normalised to `+44`. |
+| PR-06 | Mobile numbers are UK format (`07` plus 9 digits, or `+447` plus 9 digits) and stored normalised to `+44`. Spaces are ignored; no other separator is. |
 | PR-07 | Finance figures are integer minor units (DR-004) and are never shown on the profile overview. |
 | PR-08 | Profile data never appears in URLs, page titles or client-side logs. |
 | PR-09 | A verification link may be resent once at least 60 seconds have passed since the last link was sent, on the controlled clock; sooner is refused (429, `Retry-After`). An email already verified is not resent (DR-024). |

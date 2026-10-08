@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Credit Dashboard SUT API",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "license": {
       "name": "MIT",
       "identifier": "MIT"
@@ -1889,7 +1889,7 @@
                     "type": "array",
                     "uniqueItems": true,
                     "items": {
-                      "type": "string"
+                      "$ref": "#/components/schemas/BugFlag"
                     }
                   }
                 }
@@ -2057,7 +2057,7 @@
                     "flags": {
                       "type": "array",
                       "items": {
-                        "type": "string"
+                        "$ref": "#/components/schemas/BugFlag"
                       }
                     },
                     "now": {
@@ -2348,8 +2348,7 @@
                   "title": "Request a new code",
                   "status": 422,
                   "detail": "This code can no longer be used. Add the number again to get a new code.",
-                  "instance": "/api/v1/me/profile/mobile/verification",
-                  "attemptsRemaining": 0
+                  "instance": "/api/v1/me/profile/mobile/verification"
                 }
               }
             }
@@ -2509,6 +2508,42 @@
           "drilldown",
           "error",
           "slow"
+        ]
+      },
+      "BugFlag": {
+        "description": "A defect that test control can switch on (DR-008). The API flags are in API specification section 10; the UI and profile flags are in the UI specification section 8 and the My Profile feature specification. A name outside this list is a 400, so a typo cannot silently do nothing.",
+        "type": "string",
+        "enum": [
+          "excluded-in-total",
+          "rounding-down",
+          "history-carry-forward",
+          "idor",
+          "problem-json-missing",
+          "mask-format",
+          "currency-float",
+          "duplicate-nav",
+          "util-mismatch",
+          "currency-format",
+          "minor-units-label",
+          "placeholder-aria",
+          "chart-no-values",
+          "range-stale",
+          "toggle-label",
+          "like-both",
+          "plural",
+          "button-href",
+          "double-render",
+          "ph-a11y",
+          "open-redirect",
+          "truncate-summary",
+          "negative-balance",
+          "nested-button",
+          "decorative-alt",
+          "preferred-on-report",
+          "preferred-no-trim",
+          "email-stays-verified",
+          "pii-in-title",
+          "lost-edit"
         ]
       },
       "MaskedNumber": {

@@ -1360,7 +1360,7 @@ namespace CreditDashboard.Api.Contract
         public string Instance { get; set; }
 
         /// <summary>
-        /// code-wrong and code-invalid only (PR-11)
+        /// code-wrong only (PR-11); code-invalid carries none
         /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("attemptsRemaining")]
         [System.ComponentModel.DataAnnotations.Range(0, 3)]

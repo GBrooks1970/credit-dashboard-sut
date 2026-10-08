@@ -970,7 +970,7 @@ export interface components {
             status: number;
             detail?: string;
             instance?: string;
-            /** @description code-wrong and code-invalid only (PR-11) */
+            /** @description code-wrong only (PR-11); code-invalid carries none */
             attemptsRemaining?: number;
             errors?: {
                 field?: string;

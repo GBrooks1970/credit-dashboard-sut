@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Credit Dashboard SUT API",
-    "version": "0.8.0",
+    "version": "0.8.1",
     "license": {
       "name": "MIT",
       "identifier": "MIT"
@@ -3793,7 +3793,7 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 3,
-            "description": "code-wrong and code-invalid only (PR-11)"
+            "description": "code-wrong only (PR-11); code-invalid carries none"
           },
           "errors": {
             "type": "array",

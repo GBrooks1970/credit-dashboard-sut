@@ -428,8 +428,12 @@
       "creditdashboard.api": {
         "type": "Project",
         "dependencies": {
+          "CreditDashboard.BusinessRules": "[1.0.0, )",
           "JsonSchema.Net": "[9.4.0, )"
         }
+      },
+      "creditdashboard.businessrules": {
+        "type": "Project"
       }
     }
   }

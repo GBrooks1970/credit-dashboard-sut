@@ -15,6 +15,16 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CreditDashboard.BusinessRules\CreditDashboard.BusinessRules.csproj" />
+  </ItemGroup>
+
+  <!-- The fixtures are copied from the repository into the build output (CDS-21 plan D3): one copy, still plain JSON. -->
+  <ItemGroup>
+    <Content Include="..\..\..\fixtures\personas\*.json" Link="Fixtures\personas\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\..\..\fixtures\users.json" Link="Fixtures\users.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <EmbeddedResource Include="Contract\contract.json" LogicalName="contract.json" />
   </ItemGroup>
 

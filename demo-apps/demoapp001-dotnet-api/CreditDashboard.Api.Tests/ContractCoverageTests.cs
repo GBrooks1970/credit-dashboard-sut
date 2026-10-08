@@ -13,15 +13,14 @@ namespace CreditDashboard.Api.Tests;
 /// </summary>
 public class ContractCoverageTests
 {
-    /// <summary>Contract operations not served yet, by operationId (36 of 36 at CDS-19).</summary>
+    /// <summary>Contract operations not served yet, by operationId (36 of 36 at CDS-19; 29 once CDS-21 serves test control).</summary>
     private static readonly string[] Pending =
     [
         "login", "logout", "getMe", "getProfile", "updatePreferredName", "changeEmail", "resendEmailVerification",
         "changeMobile", "verifyMobile", "listBureaux", "getReportOverview", "getScore", "getScoreHistory", "listChanges",
         "getImpact", "getReportPaymentHistory", "listSearches", "getPersonalDetails", "listAccounts", "getAccountTotals",
         "getAccount", "getBalanceHistory", "getAccountPaymentHistory", "updateAccountDetail", "getDebtOverview",
-        "listNotifications", "markNotificationRead", "setSummaryFeedback", "sendAssistantMessage", "testReset",
-        "testBindPersona", "testSetBugs", "testSetClock", "testSetLatency", "testGetState", "testVerifyEmail",
+        "listNotifications", "markNotificationRead", "setSummaryFeedback", "sendAssistantMessage",
     ];
 
     [Test]

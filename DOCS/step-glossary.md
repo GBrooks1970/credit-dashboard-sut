@@ -1,6 +1,6 @@
 ---
-version: 7
-created: 2026-10-07T12:50Z
+version: 8
+created: 2026-10-09T11:35Z
 project: credit-dashboard-sut
 type: step-glossary
 language: en-GB
@@ -11,7 +11,7 @@ status: normative
 
 **What this is.** The agreed Gherkin phrases for `features-shared/`, one pattern per meaning, with the parameter types the harness will define and how each Given is arranged. The words inside the phrases are defined in `DOCS/glossary.md`; this document defines the sentences.
 
-**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. A new step is added here before it is used in a feature file. Version 7 applies the CDS-18 confirmation pass (section 6.6); version 6 applied the CDS-18 independent re-review; version 5 applied the three-amigos review (section 6); earlier versions added the email and mobile steps (v4), recorded the overrides (v3) and the in-credit step (v2).
+**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. A new step is added here before it is used in a feature file. Version 8 adds the harness rules for *that account* and a wrong code (CDS-22; `DOCS/.design/harness-design.md`); version 7 applies the CDS-18 confirmation pass (section 6.6); version 6 applied the CDS-18 independent re-review; version 5 applied the three-amigos review (section 6); earlier versions added the email and mobile steps (v4), recorded the overrides (v3) and the in-credit step (v2).
 
 ---
 
@@ -78,6 +78,7 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 - **Fixture:** the bound persona already holds this data; the step checks it is so and fails loudly if not.
 - **Overrides:** test control binds the persona with `overrides` (API spec v6 section 6.5). Each row names the sample in `fixtures/overrides/` that the fixture check validates.
 - **Environment:** the harness runs the step against a service instance started for it (for example without `TEST_CONTROL`).
+- **That account:** a Given that describes one account stores that account as *that account* for its actor, which `asks for that account` then requests; the harness resolves it against the bound persona (or the overrides applied), and an ambiguous or missing match fails the step. Two accounts in one scenario are referred to by provider (`the {provider} card`).
 - **GAP:** nothing can make it true. None remain since version 3; section 6.1 records how they were closed.
 
 | Pattern | Means | Arranged by | Used in |
@@ -136,7 +137,7 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 | `{actor} changes their email to the address already held` | `PUT /me/profile/email` | `api/profile-contact` |
 | `{actor} asks for another verification link` (optionally `at {time}`) | `POST /me/profile/email/verification` | `api/profile-contact` |
 | `{actor} adds the mobile number {string}` | `PUT /me/profile/mobile` | `api/profile-contact` |
-| `{actor} enters the code {code}` (optionally `at {time}`) / `enters a wrong code {count} times` | `POST /me/profile/mobile/verification` | `api/profile-contact` |
+| `{actor} enters the code {code}` (optionally `at {time}`) / `enters a wrong code {count} times` | `POST /me/profile/mobile/verification`; the correct code is always `123456` (DR-025), a wrong code is `000000` | `api/profile-contact` |
 
 ### 4.2 UI
 

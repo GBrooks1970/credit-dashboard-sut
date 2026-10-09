@@ -26,6 +26,7 @@ harness code exists yet. See 'SDD workflow' below and
 | [`DOCS/.design/api-specification.md`](DOCS/.design/api-specification.md) | API specification: conventions, endpoints, business rules BR-01 to BR-15, personas, fixture format, bug flags |
 | [`DOCS/.design/ui-specification.md`](DOCS/.design/ui-specification.md) | UI specification: page catalogue, test hooks, component states, UI bug flags |
 | [`DOCS/.design/ui-feature-profile.md`](DOCS/.design/ui-feature-profile.md) | My Profile feature spec: rules PR-01 to PR-11 |
+| [`DOCS/.design/harness-design.md`](DOCS/.design/harness-design.md) | Harness design: layout, abilities, contract validation, service lifecycle, clock-and-token rule, where each step pattern lands (CDS-22) |
 | [`DOCS/.design/page-survey.md`](DOCS/.design/page-survey.md) | Structure survey that informed the specifications (input, not a specification) |
 | [`DOCS/decision-register.md`](DOCS/decision-register.md) | Decisions DR-001 to DR-050 |
 | [`DOCS/decision-briefs/`](DOCS/decision-briefs/_index.md) | The reasoning behind decisions: options, a recommendation and the argument against |

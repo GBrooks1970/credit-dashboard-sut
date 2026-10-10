@@ -871,19 +871,41 @@ export interface components {
         RateUpdate: {
             /** @enum {string} */
             field: "apr" | "interestRate";
-            /** @description BR-14 range 0 to 100, up to two decimals (422 otherwise) */
+            /**
+             * @description BR-14 range 0 to 100, up to two decimals (422 otherwise)
+             * @example 0
+             * @example 24.9
+             * @example 75
+             * @example 100
+             */
             value: number | null;
         };
         PromoPeriodUpdate: {
             /** @constant */
             field: "promoPeriodMonths";
-            /** @description BR-14 whole months 0 to 60 (422 otherwise) */
+            /**
+             * @description BR-14 whole months 0 to 60 (422 otherwise)
+             * @example 0
+             * @example 6
+             * @example 60
+             */
             value: number | null;
         };
         MinPaymentUpdate: {
             /** @constant */
             field: "minPayment";
-            /** @description Exactly one of amount or percent (BR-14 ranges are 422) */
+            /**
+             * @description Exactly one of amount or percent (BR-14 ranges are 422)
+             * @example {
+             *       "percent": 5
+             *     }
+             * @example {
+             *       "amount": {
+             *         "amountMinor": 2500,
+             *         "currency": "GBP"
+             *       }
+             *     }
+             */
             value: ({
                 amount?: components["schemas"]["Money"];
                 percent?: number;
@@ -892,7 +914,11 @@ export interface components {
         PaymentMethodUpdate: {
             /** @constant */
             field: "paymentMethod";
-            /** @description direct-debit or manual (422 otherwise) */
+            /**
+             * @description direct-debit or manual (422 otherwise)
+             * @example direct-debit
+             * @example manual
+             */
             value: string | null;
         };
         BalancePoint: {

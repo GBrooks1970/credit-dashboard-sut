@@ -1617,14 +1617,14 @@ components:
       required: [field, value]
       properties:
         field: { type: string, enum: [apr, interestRate] }
-        value: { type: [number, 'null'], description: 'BR-14 range 0 to 100, up to two decimals (422 otherwise)' }
+        value: { type: [number, 'null'], description: 'BR-14 range 0 to 100, up to two decimals (422 otherwise)', examples: [0, 24.9, 75, 100] }
     PromoPeriodUpdate:
       type: object
       additionalProperties: false
       required: [field, value]
       properties:
         field: { type: string, const: promoPeriodMonths }
-        value: { type: [number, 'null'], description: 'BR-14 whole months 0 to 60 (422 otherwise)' }
+        value: { type: [number, 'null'], description: 'BR-14 whole months 0 to 60 (422 otherwise)', examples: [0, 6, 60] }
     MinPaymentUpdate:
       type: object
       additionalProperties: false
@@ -1635,6 +1635,9 @@ components:
           type: [object, 'null']
           additionalProperties: false
           description: 'Exactly one of amount or percent (BR-14 ranges are 422)'
+          examples:
+            - { percent: 5 }
+            - { amount: { amountMinor: 2500, currency: GBP } }
           properties:
             amount: { $ref: '#/components/schemas/Money' }
             percent: { type: number }
@@ -1647,7 +1650,7 @@ components:
       required: [field, value]
       properties:
         field: { type: string, const: paymentMethod }
-        value: { type: [string, 'null'], description: 'direct-debit or manual (422 otherwise)' }
+        value: { type: [string, 'null'], description: 'direct-debit or manual (422 otherwise)', examples: [direct-debit, manual] }
     BalancePoint:
       type: object
       required: [month, balance]

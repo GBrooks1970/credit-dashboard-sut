@@ -2,7 +2,13 @@
 
 All notable changes to this project. Dates are UTC.
 
-## 2026-10-08: Schemathesis pinned and clean (CDS-23)
+## 2026-10-10: the Serenity/JS harness (CDS-22)
+
+- `test-harnesses/harness-serenity/` (own lock; Serenity/JS 3.48.2, Cucumber 13.3.0, tsx 4.23.15, TypeScript 6.0.3, Ajv 8.20.0): `CallAnApi` validates every response against the contract by operation and status; `ControlTheTestEnvironment` wraps `/__test/*`; the runner builds, starts and stops the service on port 4600 and a second instance without test control on 4601. Design note `DOCS/.design/harness-design.md`; step glossary v8 to v10. DR-057.
+- 58 scenarios (31 scenarios and outlines in 12 files) pass; `verify` has 14 steps (the install and the harness run added).
+- Backlog v44: CDS-22 Done; the three Phase 3 exit conditions are met.
+
+## 2026-10-10: Schemathesis pinned and clean (CDS-23)
 
 - Schemathesis 4.29.4 (`tools/requirements.txt`) runs against the live service as the 12th `verify` step: `tools/schemathesis-run.mjs` starts the built service with test control on, runs examples, coverage and fuzzing over every operation but `logout`, then the test-control operations (not the latency control); `schemathesis.toml` holds the path parameters and the per-operation expectations. DR-056.
 - Service: 405 with `Allow` for a path the contract has with a method it does not (API specification v22); a page number beyond int64 is a valid, empty page. 298 service tests.

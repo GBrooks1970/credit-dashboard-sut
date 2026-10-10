@@ -6,7 +6,7 @@ import { ControlTheTestEnvironment } from '../abilities/ControlTheTestEnvironmen
 import { bindWithOverrides, setBalance } from '../fixtures/arrange.js';
 import { maybeOne, personaFile, theOne } from '../fixtures/load.js';
 import { STAGE_MANAGER } from '../support/hooks.js';
-import { scenario } from '../support/world.js';
+import { offBaseUrl, scenario } from '../support/world.js';
 
 const control = () => actorCalled(STAGE_MANAGER).abilityTo(ControlTheTestEnvironment);
 const personaOf = (actor: string) => {
@@ -170,4 +170,12 @@ Given("{actor}'s token has expired", async (actor: string) => {
     await control().setClock(new Date(expiresAt).toISOString().replace('.000Z', 'Z'));
     state.tokens.set(name, token);
     state.keepToken.add(name);
+});
+
+// Environment (glossary section 3): the runner started a second instance with no test control and no key (design section 8).
+// From here the scenario's calls go to that instance, so the surface is shown absent and not merely guarded.
+Given('test control is switched off', () => {
+    const url = offBaseUrl();
+    if (!url) throw new Error('HARNESS_OFF_BASE_URL is not set: the runner starts the instance without test control');
+    scenario.state.baseUrl = url;
 });

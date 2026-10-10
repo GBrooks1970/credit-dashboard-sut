@@ -11,6 +11,7 @@ Feature: Expired sessions and test control
     Then Alex is refused as not signed in
 
   # No persona is bound here: binding is itself a test-control call (DR-008).
+  @no-test-control
   Scenario: Test control is off by default
     Given test control is switched off
     When the clock is set through test control

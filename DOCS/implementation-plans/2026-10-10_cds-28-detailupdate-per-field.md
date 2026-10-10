@@ -75,10 +75,10 @@ Specification first. Two pull requests.
 
 ## Outcome
 
-Delivered as planned in two pull requests (both unmerged when this was written).
+Delivered in two pull requests (both unmerged when this was written), with one change to the split: the typed contract made Schemathesis fail the specification pull request (#54) on the rounds-to-zero bug, so the service fix and its tests (steps 6 and 7) travelled with the contract in #54, and the second pull request holds only `schemathesis.toml`, the records and the log.
 
 - **Specification (#54):** the plan, `operations-cases.md`, API specification v23, contract v16 (`info.version` 0.9.3), regenerated C# types and typed client. Corrections made before merge: a missing value was never a clear (it was already a 400); in-range `examples` were added to the typed values.
-- **Code:** `Routes/Accounts.cs` (no kind checks of its own; a number that is not zero but rounds to zero is 422), 11 new tests, `schemathesis.toml` (no 400 for schema-valid data on the details edit).
+- **Service and tests (in #54):** `Routes/Accounts.cs` (no kind checks of its own; a number that is not zero but rounds to zero is 422), 11 new tests. **Second pull request:** `schemathesis.toml` (no 400 for schema-valid data on the details edit) and the records.
 - **Local:** `npm run verify` 14 of 14 (steps sum to 201.7 s); 309 service tests, 234 rule tests; harness 58 of 58; ten consecutive Schemathesis runs passed; `npm audit --omit=dev` 0.
 
 Probes that had to fail: the `apr` over 50 500 was **not** caught with the body typed by kind alone, and was caught once in-range examples were added; the old untyped schema put back broke 10 service tests.

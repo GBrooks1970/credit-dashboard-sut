@@ -47,7 +47,7 @@ The request body of `PATCH /accounts/{accountId}/details` is now typed per field
 - `DOCS/.design/api-specification.md` v23 section 6.3; `DOCS/.design/operations-cases.md` section 3 rows; `DOCS/implementation-plans/2026-10-10_cds-28-detailupdate-per-field.md` and its index row.
 - Regenerated: `Contract/Contract.g.cs`, `Contract/contract.json`, `packages/api-client/src/generated/schema.d.ts`.
 
-### Service and tests (code pull request)
+### Service and tests (in #54, because the typed contract failed its CI without them; the second pull request holds  and the records)
 
 **Files changed:**
 - `demo-apps/demoapp001-dotnet-api/CreditDashboard.Api/Routes/Accounts.cs`: `Validate` no longer has an `error` out parameter, because the edge now refuses the wrong kind, an unknown field and a minimum payment with both or neither of amount and percent. A number a decimal cannot hold, or one that is not zero but rounds to zero, is 422 `out-of-range` (`Number`).
@@ -69,7 +69,7 @@ No structural decision, so no new register entry: it carries out brief 10 D3 (DR
 |---|---|---|
 | Type by kind only (D1) | Keeps every documented status: `"cheque"` and 12.5 months stay 422 | Also enum, range and integer in the contract (they would become 400) |
 | In-range `examples` on the typed values | A generator without a range finds the 50 to 100 band by luck; the examples run the in-range path every time | A `minimum` and `maximum` (turns out-of-range into 400) |
-| A specification pull request, then the code | The contract change must regenerate the C# and client in the same pull request or CI fails | One combined pull request |
+| A specification pull request, then the code; the service fix moved into the first | The contract change must regenerate the C# and client in the same pull request or CI fails, and the typed body made Schemathesis fail #54 until the rounds-to-zero fix was in it | One combined pull request |
 | Number that rounds to zero is 422 | Stored as sent it would break the whole-number or two-decimal rule | Store the rounded value (changes what the customer sent) |
 
 ---

@@ -2,6 +2,12 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-10: contract v16, DetailUpdate per field (CDS-28)
+
+- `PATCH /accounts/{accountId}/details` is typed per field by kind in the contract (`info.version` 0.9.3): numbers or null for the rates and months, an object with exactly one of `amount` or `percent` for the minimum payment, a string or null for the method. Ranges stay BR-14 (422). API specification v23.
+- Service: the wrong kind and an unknown field are refused at the edge; a number a decimal cannot hold, or that rounds to zero, is 422 `out-of-range` (it was 400 or accepted). 309 service tests. Schemathesis now catches a 500 on an in-range details edit.
+- Backlog v47: CDS-28 Done.
+
 ## 2026-10-10: the Serenity/JS harness (CDS-22)
 
 - `test-harnesses/harness-serenity/` (own lock; Serenity/JS 3.48.2, Cucumber 13.3.0, tsx 4.23.15, TypeScript 6.0.3, Ajv 8.20.0): `CallAnApi` validates every response against the contract by operation and status; `ControlTheTestEnvironment` wraps `/__test/*`; the runner builds, starts and stops the service on port 4600 and a second instance without test control on 4601. Design note `DOCS/.design/harness-design.md`; step glossary v8 to v10. DR-057.

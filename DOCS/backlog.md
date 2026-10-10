@@ -1,6 +1,6 @@
 ---
-version: 46
-created: 2026-10-10T16:58Z
+version: 47
+created: 2026-10-10T17:24Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 46 (Phase 3 gate recorded, DR-058; CDS-28 contract v16 and CDS-29 Phase 4 plan added)
+**Version:** 47 (CDS-28 Done: contract v16, DetailUpdate per field)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -66,7 +66,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-25` | Serve the contract operations from the fixture store: store and clock, session, report, accounts, profile, supporting; each removed from the coverage test's pending list as it is served | Service | — | HIGH | `CDS-19`, `CDS-20`, `CDS-21`, `CDS-27` | Done 2026-10-08 |
 | `CDS-27` | Profile rules library: PR-01, PR-02, PR-04, PR-06, PR-07 and PR-09 to PR-11 as the API enforces them (API specification 6.6), with case tables first and NUnit tests tagged by PR ID | Service | — | MEDIUM | `CDS-20` | Done 2026-10-08 |
 | `CDS-26` | Risk: the development-dependency audit reports 15 vulnerabilities (9 high, 6 moderate), all through Prism 5.16.0; owner to accept, wait for a fixed Prism release, or apply npm overrides | Tooling | — | MEDIUM | — | Done 2026-10-07 |
-| `CDS-28` | Contract v16: model `DetailUpdate` per field (decision brief 10 D3); the details-edit 500 probe must then be caught | Specification | — | MEDIUM | `CDS-22` | Open |
+| `CDS-28` | Contract v16: model `DetailUpdate` per field (decision brief 10 D3); the details-edit 500 probe must then be caught | Specification | — | MEDIUM | `CDS-22` | Done 2026-10-10 |
 
 ### Phase 4 — UI
 
@@ -200,7 +200,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-28: Contract v16, `DetailUpdate` per field
 
-**OPEN.** Plan: `DOCS/implementation-plans/2026-10-10_cds-28-detailupdate-per-field.md`. Decided by brief 10 D3 (2026-10-10); a specification pull request, then the code.
+**COMPLETE in review (2026-10-10).** Plan `DOCS/implementation-plans/2026-10-10_cds-28-detailupdate-per-field.md`; decided by brief 10 D3. The specification pull request (#54) types the request body per field by kind (contract v16, `info.version` 0.9.3, API specification v23); the code pull request removes the route's own kind checks, refuses a number that rounds to zero (422; found by Schemathesis) and adds 11 tests (309 service tests). The details-edit 500 probe from CDS-23 is now caught. Status is Done when both merge.
 
 ### CDS-29: Phase 4 plan
 

@@ -4,9 +4,9 @@ created: 2026-10-10T11:24Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-28
-status: approved
+status: implemented
 approved: "2026-10-10, Gary Brooks, 'approve all as recommended' and 'Do the specification PR first, then the code PR'; merge authority: per pull request, on request"
-delivered: not yet
+delivered: "#54 (specification), then the code pull request; squash commits recorded when merged"
 language: en-GB
 ---
 
@@ -75,4 +75,18 @@ Specification first. Two pull requests.
 
 ## Outcome
 
-[Appended after delivery.]
+Delivered as planned in two pull requests (both unmerged when this was written).
+
+- **Specification (#54):** the plan, `operations-cases.md`, API specification v23, contract v16 (`info.version` 0.9.3), regenerated C# types and typed client. Corrections made before merge: a missing value was never a clear (it was already a 400); in-range `examples` were added to the typed values.
+- **Code:** `Routes/Accounts.cs` (no kind checks of its own; a number that is not zero but rounds to zero is 422), 11 new tests, `schemathesis.toml` (no 400 for schema-valid data on the details edit).
+- **Local:** `npm run verify` 14 of 14 (steps sum to 201.7 s); 309 service tests, 234 rule tests; harness 58 of 58; ten consecutive Schemathesis runs passed; `npm audit --omit=dev` 0.
+
+Probes that had to fail: the `apr` over 50 500 was **not** caught with the body typed by kind alone, and was caught once in-range examples were added; the old untyped schema put back broke 10 service tests.
+
+Differences from the plan:
+
+- **The missing-value claim was wrong** and corrected: no behaviour change there. The real changes are that the wrong kind and an unknown field are refused at the edge, and that a number a decimal cannot hold (400 before) or that rounds to zero (accepted before) is 422.
+- **Examples were added to the contract** (not in the plan), because typing by kind alone did not let the generator reach the 500.
+- **A real bug found** by the first Schemathesis run on the typed body: 4.56e-124 accepted as `promoPeriodMonths` and stored as sent.
+
+Full record: [`DOCS/implementation-logs/2026-10-10_cds-28-detailupdate-per-field.md`](../implementation-logs/2026-10-10_cds-28-detailupdate-per-field.md).

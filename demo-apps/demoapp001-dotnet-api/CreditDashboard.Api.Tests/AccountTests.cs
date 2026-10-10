@@ -241,6 +241,10 @@ public class AccountTests
     [TestCase("""{"field":"minPayment","value":{"percent":100.01}}""")]
     [TestCase("""{"field":"minPayment","value":{"amount":{"amountMinor":-1,"currency":"GBP"}}}""")]
     [TestCase("""{"field":"paymentMethod","value":"cheque"}""")]
+    [TestCase("""{"field":"apr","value":1e300}""", TestName = "A number a decimal cannot hold is out of range")]
+    [TestCase("""{"field":"promoPeriodMonths","value":1e-130}""", TestName = "A tiny number that rounds to zero is not a whole number of months")]
+    [TestCase("""{"field":"apr","value":1e-130}""", TestName = "A tiny number that rounds to zero has more than two decimals")]
+    [TestCase("""{"field":"minPayment","value":{"amount":{"amountMinor":99999999999999999999999999999999,"currency":"GBP"}}}""", TestName = "An amount a decimal cannot hold is out of range")]
     public async Task A_value_out_of_range_is_a_422_and_changes_nothing(string json)
     {
         var (status, body) = await Patch(json);
@@ -273,6 +277,13 @@ public class AccountTests
     [TestCase("""{"field":"minPayment","value":{"percent":5,"amount":{"amountMinor":1,"currency":"GBP"}}}""", TestName = "A minimum payment with both an amount and a percent is a 400")]
     [TestCase("""{"field":"minPayment","value":{}}""", TestName = "A minimum payment with neither is a 400")]
     [TestCase("""{"field":"apr"}""", TestName = "A missing value is a 400")]
+    [TestCase("""{"field":"interestRate","value":true}""", TestName = "A boolean for a rate is a 400")]
+    [TestCase("""{"field":"promoPeriodMonths","value":"12"}""", TestName = "A string for months is a 400")]
+    [TestCase("""{"field":"paymentMethod","value":5}""", TestName = "A number for the payment method is a 400")]
+    [TestCase("""{"field":"minPayment","value":5}""", TestName = "A number for the minimum payment is a 400")]
+    [TestCase("""{"field":"minPayment","value":{"percent":5,"colour":"red"}}""", TestName = "An extra property on the minimum payment is a 400")]
+    [TestCase("""{"field":"minPayment","value":{"amount":{"amountMinor":100,"currency":"USD"}}}""", TestName = "An amount that is not pounds is a 400")]
+    [TestCase("""{"field":"apr","value":5,"extra":1}""", TestName = "An extra property on the body is a 400")]
     public async Task An_unusable_edit_is_a_400(string json) =>
         Assert.That((await Patch(json)).Status, Is.EqualTo(HttpStatusCode.BadRequest));
 

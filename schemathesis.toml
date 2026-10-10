@@ -24,10 +24,11 @@ include-name = "GET /accounts/{accountId}/payment-history"
 [operations.checks.positive_data_acceptance]
 expected-statuses = [200, 201, 202, 204, 400, 401, 403, 404, 409, 422, 429, "5xx"]
 
+# The body is typed per field by kind (contract v16), so schema-valid data is never a 400; a number outside BR-14 is a 422.
 [[operations]]
 include-name = "PATCH /accounts/{accountId}/details"
 [operations.checks.positive_data_acceptance]
-expected-statuses = [200, 201, 202, 204, 400, 401, 403, 404, 409, 422, 429, "5xx"]
+expected-statuses = [200, 201, 202, 204, 401, 403, 404, 409, 422, 429, "5xx"]
 
 # Without the key, test control answers 404, the same as when it is switched off, so its existence is not revealed
 # (DR-008, API specification 6.5). That is a deliberate answer to a missing header.

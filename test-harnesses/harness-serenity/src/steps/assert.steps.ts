@@ -183,3 +183,7 @@ Then('the code {code} is no longer accepted', async (code: string) => {
 Then('{actor} is refused as not signed in', (_actor: string) => {
     problem(401, '/problems/unauthenticated');
 });
+
+Then('test control is not found', () => {
+    problem(404, '/problems/not-found');
+});

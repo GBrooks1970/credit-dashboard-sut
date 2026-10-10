@@ -13,6 +13,7 @@
     "check:client-smoke": "node tools/client-smoke.ts",
     "generate:service-contract": "node tools/generate-service-contract.mjs",
     "check:service-contract": "node tools/generate-service-contract.mjs --check",
+    "check:harness": "npm --prefix test-harnesses/harness-serenity run test:api",
     "check:schemathesis": "node tools/schemathesis-run.mjs",
     "check:service": "dotnet test demo-apps/demoapp001-dotnet-api/CreditDashboard.sln -c Release --nologo",
     "service": "dotnet run --project demo-apps/demoapp001-dotnet-api/CreditDashboard.Api",

@@ -1,5 +1,5 @@
-// version: 4 | created: 2026-10-08T16:20Z | project: credit-dashboard-sut | type: tool | language: en-GB
-// One command for every check that keeps the repository green (CDS-15; README 'Checks'). Installs the two
+// version: 5 | created: 2026-10-10T11:20Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// One command for every check that keeps the repository green (CDS-15; README 'Checks'). Installs the three
 // sub-packages, runs each check in turn whatever the previous result, prints one result line per check and exits
 // non-zero if any failed. Needs Python with the pins in tools/requirements.txt (gherkin-official for the Gherkin check, Schemathesis for the property-based run; PYTHON overrides 'python')
 // and the .NET 10 SDK for the service steps (CDS-19).
@@ -14,6 +14,7 @@ const python = process.env.PYTHON || 'python';
 const steps = [
   { name: 'install fixtures', cwd: 'fixtures', cmd: 'npm ci --no-audit --no-fund', setup: true },
   { name: 'install api-client', cwd: 'packages/api-client', cmd: 'npm ci --no-audit --no-fund', setup: true },
+  { name: 'install harness', cwd: 'test-harnesses/harness-serenity', cmd: 'npm ci --no-audit --no-fund', setup: true },
   { name: 'contract lint', cwd: '.', cmd: 'npx --yes @redocly/cli@2.57.0 lint' },
   { name: 'fixture check', cwd: 'fixtures', cmd: 'npm run check' },
   { name: 'Gherkin parse and rule coverage', cwd: '.', cmd: `${python} tools/check-gherkin.py` },
@@ -23,6 +24,7 @@ const steps = [
   { name: 'service contract drift', cwd: '.', cmd: 'node tools/generate-service-contract.mjs --check' },
   { name: 'service build and tests', cwd: 'demo-apps/demoapp001-dotnet-api', cmd: 'dotnet test CreditDashboard.sln -c Release --nologo' },
   { name: 'Schemathesis (property-based, against the live service)', cwd: '.', cmd: 'node tools/schemathesis-run.mjs' },
+  { name: 'Harness (Serenity/JS, @api scenarios against the live service)', cwd: 'test-harnesses/harness-serenity', cmd: 'npm run test:api' },
   { name: 'Kanban board current (drift check)', cwd: '.', cmd: 'npm run --silent check:kanban' },
 ];
 

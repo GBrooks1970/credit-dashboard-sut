@@ -4,9 +4,9 @@ created: 2026-10-08T12:59Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-22
-status: approved
+status: implemented
 approved: "2026-10-08, Gary Brooks, 'approve all as recommended' (decisions D1 to D5); merge authority: per pull request, on request"
-delivered: not yet
+delivered: "#47 (design note, glossary v8), squash 920441e; #48 (H1), 2b919b9; #49 (H2), beda9c4; #50 (H3), c772b8d; H4 and the records in one pull request"
 language: en-GB
 ---
 
@@ -62,4 +62,24 @@ Specification first. Delivered as a specification pull request and four slices, 
 
 ## Outcome
 
-[Appended after delivery.]
+Delivered as planned, in a specification pull request and four slices.
+
+- **#47** (`920441e`, CI run 37921798367, 105 s): `DOCS/.design/harness-design.md` and glossary v8.
+- **#48** (`2b919b9`, run 38009903581, 84 s): H1, the package, abilities, contract validation, runner; the `score` feature green.
+- **#49** (`beda9c4`, run 38043754517, 99 s): H2, every Given and When; glossary v9.
+- **#50** (`c772b8d`, run 38044905781, 94 s): H3, every Then but three; glossary v10; 57 of 58 scenarios passed.
+- **H4 (this records pull request):** the second service instance, the three test-control-off steps, the `@no-test-control` tag, the harness as the 13th check, DR-057 and the records.
+- **Local, on `main` with H4:** the full `verify` passed 14 of 14 (137.7 s; the install of the harness 24.9 s, the harness step 13.5 s); 58 scenarios passed; 298 service tests and 234 rule tests; `npm audit --omit=dev` 0 vulnerabilities.
+
+Probes that had to fail, and did (each reverted): a required key added to the contract's `Score` schema; BR-02 carried forward (H1). A Given the persona does not hold; an override sample over the wrong persona (H2). BR-03 truncation (1 failed, 9 broken), BR-11 oldest first (3 of 3), BR-14 range 101 (1 broken, by contract validation), BR-09 mask leak (2 broken) (H3). The clock-and-token rule ignored (a scratch scenario that signs in, moves the clock a day and asks again: 401 instead of 200); test control not actually off (`Expected 404, got 204`) (H4).
+
+Differences from the plan:
+
+- **`verify` has 14 steps, not 13:** the plan counted the harness as one step; its install is a second.
+- **Serenity/JS 3.48.2, not 3.48.1** (the current release, same line). TypeScript 6.0.3 (7.0.2 was not tried).
+- **One Then makes a call** (`the code 123456 is no longer accepted`), an exception to the plan's order of arrange, act and assert, recorded in the design note and glossary v10.
+- **An optional `at {time}` is two definitions** and spaced parameter-type names are camel case, both because Cucumber requires it (glossary v9, v10).
+- **The expired-token scenario passed from H3.** The clock-and-token rule is shown by a scratch scenario because no committed scenario moves the clock forward after a sign-in; adding one would be a scenario change for the owner.
+- **`npm audit` in the harness package** reports 7 high packages from one advisory (`braces` via `fast-glob` inside `@serenity-js/core`); development-only, fix offered is a downgrade, recorded and left.
+
+Full record: [`DOCS/implementation-logs/2026-10-10_cds-22-serenity-harness.md`](../implementation-logs/2026-10-10_cds-22-serenity-harness.md).

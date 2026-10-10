@@ -31,7 +31,10 @@ export const resetScenario = () => {
     scenario.state = new ScenarioState();
 };
 
-export const controlKey = () => process.env.HARNESS_CONTROL_KEY ?? '';
+/** The instance started without test control (design section 8). */
+export const offBaseUrl = () => process.env.HARNESS_OFF_BASE_URL ?? '';
+
+export const controlKey =() => process.env.HARNESS_CONTROL_KEY ?? '';
 
 let contract: Contract | undefined;
 export const setContract = (c: Contract) => {

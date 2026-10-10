@@ -1,7 +1,7 @@
 import { When } from '@cucumber/cucumber';
 import { actorCalled } from '@serenity-js/core';
 
-import { CallAnApi } from '../abilities/CallAnApi.js';
+import { CallAnApi, send } from '../abilities/CallAnApi.js';
 import { ControlTheTestEnvironment } from '../abilities/ControlTheTestEnvironment.js';
 import { accountsOf, testUser } from '../fixtures/load.js';
 import { STAGE_MANAGER } from '../support/hooks.js';
@@ -109,4 +109,9 @@ When('{actor} enters the code {code} at {time}', enterCode);
 // The correct code is always 123456 (DR-025), so any other six digits is wrong.
 When('{actor} enters a wrong code {count} times', async (actor: string, times: number) => {
     for (let i = 0; i < times; i++) await api(actor).request('verifyMobile', { body: { code: '000000' } });
+});
+
+// The only act that calls test control directly: it sends the key, so a 404 shows the surface is absent (design section 8).
+When('the clock is set through test control', async () => {
+    scenario.state.last = await send('testSetClock', { body: { now: '2026-10-03T09:00:00Z' } });
 });

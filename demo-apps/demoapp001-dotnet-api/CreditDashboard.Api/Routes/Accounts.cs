@@ -150,12 +150,7 @@ public static class Accounts
         var field = body["field"]!.GetValue<string>();
         var value = body["value"];
 
-        var outcome = Validate(field, value, out var error);
-        if (error is not null)
-        {
-            await Problems.Validation(context, [new FieldError("value", error)]);
-            return;
-        }
+        var outcome = Validate(field, value);
         if (outcome == DetailOutcome.OutOfRange)
         {
             await Problems.RuleViolation(context, "out-of-range", "Value out of range", $"{field} is outside its allowed range (BR-14).");
@@ -168,48 +163,47 @@ public static class Accounts
     }
 
     /// <summary>
-    /// BR-14 on the edited value. <paramref name="error"/> is set when the value is the wrong kind of JSON (a 400); otherwise
-    /// the outcome says whether it is in range (a 422 when not). A null clears the field. Readings: the payment method must be
-    /// one of the contract's two values, and a minimum payment gives an amount or a percent, not both.
+    /// BR-14 on the edited value. The edge has already typed the body per field (contract v16): the wrong kind, a missing value,
+    /// an unknown field and a minimum payment with both or neither of amount and percent are 400 before this runs. The outcome
+    /// says whether the value is in range (a 422 when not). A null clears the field. A number that a decimal cannot hold is out of
+    /// range. Reading: the payment method must be one of the contract's two values.
     /// </summary>
-    private static DetailOutcome Validate(string field, JsonNode? value, out string? error)
+    private static DetailOutcome Validate(string field, JsonNode? value)
     {
-        error = null;
         if (value is null) return DetailOutcome.Valid;
 
-        try
+        switch (field)
         {
-            switch (field)
-            {
-                case "apr" or "interestRate" or "promoPeriodMonths":
-                    if (value is not JsonValue number || !number.TryGetValue<decimal>(out var decimalValue)) { error = "must be a number or null"; return DetailOutcome.Valid; }
-                    return AccountDetails.Validate(field == "apr" ? DetailField.Apr : field == "interestRate" ? DetailField.InterestRate : DetailField.PromoPeriodMonths, decimalValue);
+            case "apr" or "interestRate" or "promoPeriodMonths":
+                return Number(value, out var number)
+                    ? AccountDetails.Validate(field == "apr" ? DetailField.Apr : field == "interestRate" ? DetailField.InterestRate : DetailField.PromoPeriodMonths, number)
+                    : DetailOutcome.OutOfRange;
 
-                case "paymentMethod":
-                    if (value is not JsonValue text || !text.TryGetValue<string>(out var method)) { error = "must be a string or null"; return DetailOutcome.Valid; }
-                    return method is "direct-debit" or "manual" ? DetailOutcome.Valid : DetailOutcome.OutOfRange;
+            case "paymentMethod":
+                return value.GetValue<string>() is "direct-debit" or "manual" ? DetailOutcome.Valid : DetailOutcome.OutOfRange;
 
-                case "minPayment":
-                    if (value is not JsonObject payment) { error = "must be an object or null"; return DetailOutcome.Valid; }
-                    var amount = payment["amount"];
-                    var percent = payment["percent"];
-                    if ((amount is null) == (percent is null)) { error = "give an amount or a percent, not both and not neither"; return DetailOutcome.Valid; }
-                    if (percent is not null)
-                    {
-                        if (percent is not JsonValue p || !p.TryGetValue<decimal>(out var percentValue)) { error = "percent must be a number"; return DetailOutcome.Valid; }
-                        return AccountDetails.Validate(DetailField.MinPaymentPercent, percentValue);
-                    }
-                    if (amount is not JsonObject money || money["amountMinor"] is not JsonValue minor || !minor.TryGetValue<decimal>(out var minorValue)) { error = "amount must be money"; return DetailOutcome.Valid; }
-                    return AccountDetails.Validate(DetailField.MinPaymentAmountMinor, minorValue);
+            case "minPayment":
+                var payment = value.AsObject();
+                if (payment["percent"] is { } percent)
+                {
+                    return Number(percent, out var percentValue) ? AccountDetails.Validate(DetailField.MinPaymentPercent, percentValue) : DetailOutcome.OutOfRange;
+                }
+                return Number(payment["amount"]!["amountMinor"], out var minor) ? AccountDetails.Validate(DetailField.MinPaymentAmountMinor, minor) : DetailOutcome.OutOfRange;
 
-                default:
-                    error = "is not an editable field";
-                    return DetailOutcome.Valid;
-            }
+            default:
+                throw new InvalidOperationException($"'{field}' is not an editable field: the edge should have refused it.");
         }
-        catch (OverflowException)
-        {
-            return DetailOutcome.OutOfRange;
-        }
+    }
+
+    /// <summary>
+    /// A JSON number as a decimal. A number the decimal cannot hold is refused, and so is one that is not zero but rounds to zero
+    /// (1e-130): stored as sent, it would pass the range check and then break the whole-number or two-decimal rule (found by
+    /// Schemathesis in CDS-28).
+    /// </summary>
+    private static bool Number(JsonNode? node, out decimal value)
+    {
+        value = 0;
+        if (node is not JsonValue json || !json.TryGetValue(out value)) return false;
+        return value != 0 || !json.TryGetValue<double>(out var asDouble) || asDouble == 0;
     }
 }

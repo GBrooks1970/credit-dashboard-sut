@@ -866,10 +866,60 @@ export interface components {
             details: components["schemas"]["AccountDetails"];
             closed: boolean;
         };
-        DetailUpdate: {
+        /** @description One user-supplied detail, typed per field by kind (v16). The kind is checked at the edge (400); the range, the two allowed payment methods and whole months stay business rules (BR-14, 422). A null clears the field; a missing value is a 400. */
+        DetailUpdate: components["schemas"]["RateUpdate"] | components["schemas"]["PromoPeriodUpdate"] | components["schemas"]["MinPaymentUpdate"] | components["schemas"]["PaymentMethodUpdate"];
+        RateUpdate: {
             /** @enum {string} */
-            field: "apr" | "interestRate" | "promoPeriodMonths" | "minPayment" | "paymentMethod";
-            value: unknown;
+            field: "apr" | "interestRate";
+            /**
+             * @description BR-14 range 0 to 100, up to two decimals (422 otherwise)
+             * @example 0
+             * @example 24.9
+             * @example 75
+             * @example 100
+             */
+            value: number | null;
+        };
+        PromoPeriodUpdate: {
+            /** @constant */
+            field: "promoPeriodMonths";
+            /**
+             * @description BR-14 whole months 0 to 60 (422 otherwise)
+             * @example 0
+             * @example 6
+             * @example 60
+             */
+            value: number | null;
+        };
+        MinPaymentUpdate: {
+            /** @constant */
+            field: "minPayment";
+            /**
+             * @description Exactly one of amount or percent (BR-14 ranges are 422)
+             * @example {
+             *       "percent": 5
+             *     }
+             * @example {
+             *       "amount": {
+             *         "amountMinor": 2500,
+             *         "currency": "GBP"
+             *       }
+             *     }
+             */
+            value: ({
+                amount?: components["schemas"]["Money"];
+                percent?: number;
+            } | null) & (unknown | unknown);
+        };
+        PaymentMethodUpdate: {
+            /** @constant */
+            field: "paymentMethod";
+            /**
+             * @description direct-debit or manual (422 otherwise)
+             * @example direct-debit
+             * @example manual
+             */
+            value: string | null;
         };
         BalancePoint: {
             month: string;

@@ -1,6 +1,6 @@
 ---
-version: 44
-created: 2026-10-10T10:51Z
+version: 46
+created: 2026-10-10T16:58Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 44 (CDS-22 Done: the harness is green and a `verify` step; all three Phase 3 exit conditions are met)
+**Version:** 46 (Phase 3 gate recorded, DR-058; CDS-28 contract v16 and CDS-29 Phase 4 plan added)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -66,6 +66,13 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-25` | Serve the contract operations from the fixture store: store and clock, session, report, accounts, profile, supporting; each removed from the coverage test's pending list as it is served | Service | — | HIGH | `CDS-19`, `CDS-20`, `CDS-21`, `CDS-27` | Done 2026-10-08 |
 | `CDS-27` | Profile rules library: PR-01, PR-02, PR-04, PR-06, PR-07 and PR-09 to PR-11 as the API enforces them (API specification 6.6), with case tables first and NUnit tests tagged by PR ID | Service | — | MEDIUM | `CDS-20` | Done 2026-10-08 |
 | `CDS-26` | Risk: the development-dependency audit reports 15 vulnerabilities (9 high, 6 moderate), all through Prism 5.16.0; owner to accept, wait for a fixed Prism release, or apply npm overrides | Tooling | — | MEDIUM | — | Done 2026-10-07 |
+| `CDS-28` | Contract v16: model `DetailUpdate` per field (decision brief 10 D3); the details-edit 500 probe must then be caught | Specification | — | MEDIUM | `CDS-22` | Open |
+
+### Phase 4 — UI
+
+| ID | Ticket | Type | Priority | Tier | Blocked by | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| `CDS-29` | Phase 4 plan: the React UI against the Prism mock first, then the live API; a spike, slices and the harness `@ui` profile (decision brief 10 D2) | UI | — | HIGH | `CDS-28`, `CDS-24` | Open |
 
 ## Items
 
@@ -188,6 +195,18 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 ### CDS-22: The Serenity/JS harness
 
 **COMPLETE (2026-10-10).** Implemented to the approved plan (`DOCS/implementation-plans/2026-10-08_cds-22-serenity-harness.md`) in a specification pull request and four slices: the design note and glossary v8 (#47, `920441e`), H1 foundation (#48, `2b919b9`), H2 arrange and act (#49, `beda9c4`), H3 assert (#50, `c772b8d`) and H4 security, the gate and the records. All 58 scenarios of the 12 `@api` files (31 scenarios and outlines) pass against the live service, every response validated against the contract, and the harness is the 13th check (14th step) of `npm run verify`. The three Phase 3 exit conditions (every operation served, Schemathesis clean, the harness green) are now met; recording the gate (a decision register entry, as for Phases 1 and 2) is the owner's decision.
+
+**Update (2026-10-10).** Decision brief 10 (#53, `DOCS/decision-briefs/credit-dashboard-sut_decision-brief-10_v1_20261010T1108Z.md`) put the gate record (D1), what closure covers (D2) and the residual items (D3) to the owner; it was decided on 2026-10-10 as recommended (DR-058). The walkthrough for #44 to #50 is `DOCS/walkthroughs/2026-10-10_cds-23-to-cds-22-h3.md` (#51). Contract v16 is CDS-28.
+
+### CDS-28: Contract v16, `DetailUpdate` per field
+
+**OPEN.** Plan: `DOCS/implementation-plans/2026-10-10_cds-28-detailupdate-per-field.md`. Decided by brief 10 D3 (2026-10-10); a specification pull request, then the code.
+
+### CDS-29: Phase 4 plan
+
+**OPEN.** Brief 10 D2 (2026-10-10) chose to continue to the React UI. A plan with a spike and slices comes first, after CDS-28 and CDS-24.
+
+**Update (2026-10-10).** Decision brief 10 is decided (all as recommended): the Phase 3 gate is recorded as met (DR-058), the project continues to Phase 4, and CDS-28 and CDS-24 come before it.
 
 ### CDS-23: Schemathesis pinned and clean
 

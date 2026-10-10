@@ -13,9 +13,8 @@ All data is synthetic. No real bureau, lender, brand or person's financial data 
 
 Phase 1 (contract) is closed: its exit gate was met on 6 October 2026 (DR-045), and its last item, CDS-17, was
 done on 7 October. Phase 2 (behaviour) is closed: its exit gate was met on 7 October 2026 (DR-049), after
-an independent re-review (CDS-18). Phase 3 (API) has started. Phase 0 (specify) was accepted as the baseline on 5 October 2026 (DR-038) and seeded this repository. The
-service validates every request against the contract (CDS-19) and serves all 36 operations (test control, CDS-21; the business operations, CDS-25); a clean Schemathesis run (CDS-23) and the Serenity/JS harness (CDS-22: 58 `@api` scenarios against the live service) are `verify` steps; the Phase 3 exit conditions are met and the gate is the owner's to record. No UI or
-harness code exists yet. See 'SDD workflow' below and
+an independent re-review (CDS-18). Phase 3 (API) is closed: its exit gate was met on 10 October 2026 (DR-058). Phase 0 (specify) was accepted as the baseline on 5 October 2026 (DR-038) and seeded this repository. The
+service validates every request against the contract (CDS-19) and serves all 36 operations (test control, CDS-21; the business operations, CDS-25); a clean Schemathesis run (CDS-23) and the Serenity/JS harness (CDS-22: 58 `@api` scenarios against the live service) are `verify` steps; the Phase 3 exit gate was met on 10 October 2026 (DR-058). No UI exists yet; Phase 4 is next (CDS-29). See 'SDD workflow' below and
 [`DOCS/backlog.md`](DOCS/backlog.md).
 
 ## What is here
@@ -87,8 +86,8 @@ Phase 0 pack; 'Gate status' is the current state.
 | **0. Specify** | Survey, API specification, UI specification, contract draft, seed scenarios, decision register | Owner accepts the DRs; DR-005 decided; the pack frozen | **Met** 5 October 2026 (DR-038); pack frozen at CDS-09 |
 | **1. Contract** | Own repository (DR-001); versions resolved (DR-009, DR-044); lint ruleset; an example for every response; Prism mock; generated TypeScript client | Lint clean; every example validates against its schema; mock serves every operation | **Closed** 7 October 2026: gate met 6 October (DR-045), all three run in CI through `npm run verify`; last item CDS-17 |
 | **2. Behaviour** | `features-shared/` covering every BR and every page in Releases 1 and 2 (DR-015); step glossary; persona fixtures validated against the schemas | Three-amigos review recorded; every BR tagged by at least one scenario; fixtures pass schema validation | **Met** 7 October 2026 (DR-049): evidence complete (brief 4, DR-033; BR 15 of 15; fixtures pass), re-reviewed independently to no Blocker or Change (CDS-18) |
-| **3. API** | The service against the contract (DR-017); test-control endpoints; harness abilities `CallAnApi` and `ControlTheTestEnvironment` | All `@api` and `@security` scenarios green; every response validated against the contract; Schemathesis run clean | In progress: the service serves all 36 operations (CDS-19 to CDS-25, 7 October to 8 October 2026); a clean Schemathesis run (CDS-23) and the harness (CDS-22) are `verify` steps; the exit conditions are met, 10 October 2026 |
-| **4. UI** | Pages against the Prism mock first, then the live API; component tests for every state in UI specification section 4.3 | All `@ui` scenarios green against the mock and live; axe-core zero violations with flags off | Not started |
+| **3. API** | The service against the contract (DR-017); test-control endpoints; harness abilities `CallAnApi` and `ControlTheTestEnvironment` | All `@api` and `@security` scenarios green; every response validated against the contract; Schemathesis run clean | **Met** 10 October 2026 (DR-058): the service serves all 36 operations (CDS-19 to CDS-25, 7 to 8 October 2026); a clean Schemathesis run (CDS-23) and the harness (CDS-22, 58 scenarios) are `verify` steps; exceptions recorded in DR-058 |
+| **4. UI** | Pages against the Prism mock first, then the live API; component tests for every state in UI specification section 4.3 | All `@ui` scenarios green against the mock and live; axe-core zero violations with flags off | Not started; next after CDS-28 and CDS-24, planned first (CDS-29, brief 10 D2) |
 | **5. Defects and evidence** | Bug flags implemented; each flag proved caught; visual regression; CI publishes the Serenity report | Every flag turns at least one scenario red for the stated reason; report published | Not started |
 
 ## Licence

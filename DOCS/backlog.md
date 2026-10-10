@@ -1,6 +1,6 @@
 ---
-version: 44
-created: 2026-10-10T10:51Z
+version: 45
+created: 2026-10-10T11:09Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 44 (CDS-22 Done: the harness is green and a `verify` step; all three Phase 3 exit conditions are met)
+**Version:** 45 (decision brief 10 awaiting the owner: recording the Phase 3 gate, closure, residual items)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -188,6 +188,8 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 ### CDS-22: The Serenity/JS harness
 
 **COMPLETE (2026-10-10).** Implemented to the approved plan (`DOCS/implementation-plans/2026-10-08_cds-22-serenity-harness.md`) in a specification pull request and four slices: the design note and glossary v8 (#47, `920441e`), H1 foundation (#48, `2b919b9`), H2 arrange and act (#49, `beda9c4`), H3 assert (#50, `c772b8d`) and H4 security, the gate and the records. All 58 scenarios of the 12 `@api` files (31 scenarios and outlines) pass against the live service, every response validated against the contract, and the harness is the 13th check (14th step) of `npm run verify`. The three Phase 3 exit conditions (every operation served, Schemathesis clean, the harness green) are now met; recording the gate (a decision register entry, as for Phases 1 and 2) is the owner's decision.
+
+**Update (2026-10-10).** Decision brief 10 (#53, `DOCS/decision-briefs/credit-dashboard-sut_decision-brief-10_v1_20261010T1108Z.md`) puts the gate record (D1), what closure covers (D2: Phase 4 or close at the API) and the residual items (D3) to the owner; it is awaiting a reply. The walkthrough for #44 to #50 is `DOCS/walkthroughs/2026-10-10_cds-23-to-cds-22-h3.md` (#51). Contract v16 (model `DetailUpdate` per field) is proposed and needs a plan and the owner's approval first.
 
 ### CDS-23: Schemathesis pinned and clean
 

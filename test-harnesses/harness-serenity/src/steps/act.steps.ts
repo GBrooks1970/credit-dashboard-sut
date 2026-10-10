@@ -77,6 +77,7 @@ When('{actor} sets the interest rate on the {provider} card to {percent}', async
     const persona = scenario.state.personas.get(actor.toLowerCase())!;
     const cards = accountsOf(persona).filter((a) => a.type === 'creditcard' && !a.closed && a.provider === provider);
     if (cards.length !== 1) throw new Error(`The '${persona}' fixture holds ${cards.length} open credit cards from ${provider}, expected one`);
+    scenario.state.pending.rate = rate;
     await api(actor).request('updateAccountDetail', { path: { accountId: cards[0].id }, body: { field: 'interestRate', value: rate } });
 });
 

@@ -81,6 +81,24 @@ defineParameterType({
 /** A provider's display name from the bound persona, unquoted: capitalised words (Lender X, Harbour Bank). */
 defineParameterType({ name: 'provider', regexp: /[A-Z][A-Za-z]*(?: [A-Z][A-Za-z]*)*/, transformer: (value: string) => value });
 
+/** BR-07 trend. */
+defineParameterType({ name: 'trend', regexp: /up|down|steady/, transformer: (value: string) => value });
+
+/** BR-12 year status, as the contract's PaymentStatus. */
+defineParameterType({
+    name: 'yearStatus',
+    regexp: /on time|missed|no data/,
+    transformer: (value: string) => ({ 'on time': 'on-time', missed: 'missed', 'no data': 'no-data' })[value]!,
+});
+
+// Outcome words. Glossary names with spaces ({listed or not listed}, {refused or sent}, ...) are camel case here, because
+// Cucumber parameter-type names cannot hold a space. Each transformer returns the word; the assertion maps it to a status.
+defineParameterType({ name: 'listedOrNot', regexp: /not listed|listed/, transformer: (value: string) => value === 'listed' });
+defineParameterType({ name: 'acceptedOrRefused', regexp: /accepted|refused/, transformer: (value: string) => value });
+defineParameterType({ name: 'refusedOrSent', regexp: /refused|sent/, transformer: (value: string) => value });
+defineParameterType({ name: 'verifiedOrStillUnverified', regexp: /verified|still unverified/, transformer: (value: string) => value });
+defineParameterType({ name: 'mobileOutcome', regexp: /held as unverified|refused/, transformer: (value: string) => value });
+
 /** BR-12: each pattern is arranged by one checked override sample (glossary section 3). Camel case: the glossary calls it {payment pattern}. */
 const paymentSamples: Record<string, string> = {
     'all on time': 'br12-all-on-time-2025.json',

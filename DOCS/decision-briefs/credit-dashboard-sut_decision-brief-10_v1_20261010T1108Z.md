@@ -7,7 +7,7 @@ brief: 10
 subject: "Recording the Phase 3 gate, and what closure means now"
 blocks: Phase 3 gate record (DR-058); README status; registry label; the choice of next work
 approver: the project owner (Gary Brooks)
-status: awaiting-decision
+status: decided
 supersedes: none
 language: en-GB
 ---
@@ -116,28 +116,32 @@ On 10 October 2026 the last of the three Phase 3 exit conditions was met: CDS-22
 
 | File | Section | Change required | Done |
 |---|---|---|---|
-| `DOCS/decision-register.md` | New entry DR-058 | The Phase 3 gate (D1) with the exceptions in B5 listed; D2 and D3 outcomes | [ ] |
-| `README.md` | 'SDD workflow' Phase 3 row and status line | "Met" or the chosen wording, with the date | [ ] |
-| `DOCS/backlog.md` | Phase 3 section; new items | Close the phase; D3 schedule; Phase 4 plan item if D2 is option 1 | [ ] |
-| `portfolio-prompts/registry.yml` and README row | Status label and notes | Wording follows D1 and D2 | [ ] |
-| `portfolio-landing` card, capability matrix | Summary | Wording follows D1 and D2 | [ ] |
+| `DOCS/decision-register.md` | New entry DR-058 | The Phase 3 gate (D1) with the exceptions in B5 listed; D2 and D3 outcomes | [x] DR-058 |
+| `README.md` | 'SDD workflow' Phase 3 row and status line | "Met" or the chosen wording, with the date | [x] |
+| `DOCS/backlog.md` | Phase 3 section; new items | Close the phase; D3 schedule; Phase 4 plan item if D2 is option 1 | [x] v46: CDS-28, CDS-29 |
+| `portfolio-prompts/registry.yml` and README row | Status label and notes | Wording follows D1 and D2 | [ ] follows this PR |
+| `portfolio-landing` card, capability matrix | Summary | Wording follows D1 and D2 | [ ] follows this PR |
 | `DOCS/decision-briefs/_index.md` | Brief 10 row | Status and where the decision landed | [x] row added as awaiting-decision |
 
 ## 7. Decision record
 
-*Awaiting the owner's reply.*
+The owner decided on 2026-10-10, by reply in chat: "approve all as recommended". The brief's recommendations were D1 option 1, D2 option 1 and D3 option 1. The reply came after a message that also put the contract v16 plan to the owner, so the read-back below says what was taken to be covered; section 7.3 is where a correction goes.
 
 ### 7.1 Read-back
 
-*To be written when the owner replies.*
+1. **D1 option 1.** The Phase 3 exit gate is recorded as met on 10 October 2026 (DR-058) on the evidence of B2 to B4. The three exceptions in B5 (no committed scenario for the clock-and-token rule; the details-edit 500 not caught by Schemathesis until contract v16; probes chosen by the author) and the absence of an independent review (B6) are listed in the record.
+2. **D2 option 1.** The project continues to Phase 4 (the React UI), planned next with a spike and slices, as for CDS-25 and CDS-22. Nothing is closed with `close-project`.
+3. **D3 option 1.** Contract v16 (CDS-28) and CDS-24 are done before Phase 4 starts. Dependabot alerts, `@scarf/scarf`, the three merged local branches and the nightly Schemathesis run stay listed once as owner or low-priority items.
+4. **Taken as covered by the same reply:** the contract v16 plan (approved as written, a specification pull request then a code pull request).
+5. **Not done here:** an independent review of the Phase 3 service and harness is not commissioned (option 2 was not chosen).
 
 ### 7.2 Decisions
 
 | Ref | Item | Decision | Conditions | Who | When |
 |---|---|---|---|---|---|
-| D1 | Recording the Phase 3 gate | *awaiting* | | Gary Brooks | |
-| D2 | What closure covers | *awaiting* | | Gary Brooks | |
-| D3 | Residual items | *awaiting* | | Gary Brooks | |
+| D1 | Recording the Phase 3 gate | **Option 1.** Record now (DR-058) | Exceptions B5 and B6 listed in the record | Gary Brooks | 2026-10-10 |
+| D2 | What closure covers | **Option 1.** Continue to Phase 4 | A plan with a spike first | Gary Brooks | 2026-10-10 |
+| D3 | Residual items | **Option 1.** Schedule by weight | CDS-28 and CDS-24 before Phase 4 starts | Gary Brooks | 2026-10-10 |
 
 ### 7.3 Corrections after decision
 

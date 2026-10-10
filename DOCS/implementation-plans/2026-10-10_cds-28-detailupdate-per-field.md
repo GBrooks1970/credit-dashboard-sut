@@ -14,6 +14,8 @@ language: en-GB
 
 **History of this plan.** Presented in full to the owner on 2026-10-10, as the third of the owner's five requests that day, then approved with all decisions as recommended. The same reply decided decision brief 10 (DR-058), which schedules this item before Phase 4.
 
+**Correction before the specification pull request merged (2026-10-10).** The first draft of this plan, and of the cases and the pull request text, said a missing `value` was a clear before v16. That was wrong: `value` was already required, so a missing one was already a 400. The real behaviour changes are that the wrong kind and an unknown field are now refused at the edge (the route refused them before), and that a number a decimal cannot hold (for example 1e300) is now 422 `out-of-range` where it was 400. The contract, the generator and the client gain the per-field types.
+
 **Goal.** Type the request body of `PATCH /accounts/{accountId}/details` per field, so the edge, the generated client and Schemathesis see the real shapes. It serves brief 10 D3 and closes the one Schemathesis probe that went undetected in CDS-23 (a 500 on the details edit for `apr` over 50).
 
 ## Evidence gathered before planning
@@ -22,7 +24,7 @@ Read-only; nothing in the repository was changed.
 
 | Finding | Consequence for the plan |
 |---|---|
-| `DetailUpdate.value` is `{}` (any JSON). The route reads `field` and `value` itself and answers 400 for the wrong kind of JSON, 422 `out-of-range` for a value outside BR-14, and treats a missing `value` as a clear | The contract cannot tell a generator which values go with which field, so Schemathesis seldom pairs `apr` with a number large enough to reach a rule |
+| `DetailUpdate.value` is `{}` (any JSON). The route reads `field` and `value` itself and answers 400 for the wrong kind of JSON, 422 `out-of-range` for a value outside BR-14, and answers 400 when `value` is missing (the contract already requires it, and a service test says so); a JSON `null` clears | The contract cannot tell a generator which values go with which field, so Schemathesis seldom pairs `apr` with a number large enough to reach a rule |
 | `operations-cases.md` section 3 fixes the readings: `"cheque"` for `paymentMethod` is 422, a non-whole `promoPeriodMonths` is 422 (BR-14 library), a clear is `null` | The new types must be by **kind**, not by range or enum, or those 422s would become 400s. Ranges stay business rules |
 | The response schema `AccountDetails` already types each field (`apr`, `interestRate` numbers; `promoPeriodMonths` integer; `minPayment` object; `paymentMethod` enum) | The request keeps the same kinds but a looser value: number for `promoPeriodMonths`, string for `paymentMethod` |
 | `minPayment` carries exactly one of `amount` (Money) or `percent`; the route returns 400 for both or neither | Expressible in the contract as a `oneOf` over `required`, so the edge takes over that 400 |
@@ -48,7 +50,7 @@ Specification first. Two pull requests.
 
 6. Service: the edge now rejects the wrong kind, a missing `value` and an unknown field before the route; the route's own kind checks stay only where the contract cannot say them (a `minPayment` amount that is not valid money), and the missing-value-as-clear path is removed.
 7. Tests: one per field and per wrong kind; the 422 readings re-asserted; a missing `value` is 400.
-8. `schemathesis.toml`: the details-edit operation may answer 422 for schema-valid data (a number outside BR-14); the 400 allowance for schema-valid data is removed. Re-run, ten times in a row.
+8. `schemathesis.toml`: the details-edit operation keeps 422 as an expected answer for schema-valid data (a number outside BR-14); the 400 allowance for schema-valid data is removed. Re-run, ten times in a row.
 9. Records: DR entry if a decision is made, backlog, CHANGELOG, plan Outcome, implementation log.
 
 ## Verification
@@ -69,7 +71,7 @@ Specification first. Two pull requests.
 |---|---|---|---|
 | D1 Typing | (a) By kind only; ranges, the two-value method and whole-number months stay BR-14 (422). (b) Also enum, range and integer in the contract, so those become 400 | (a) | (a), taken as covered by 'approve all as recommended' (2026-10-10); this choice was in the presented design ("ranges stay business rules") but not listed as a decision, so it is flagged for confirmation in the pull request |
 | D2 Delivery | (a) Specification pull request, then code pull request. (b) One pull request | (a) | (a), 'Do the specification PR first, then the code PR' (2026-10-10) |
-| D3 A missing `value` | (a) 400, a clear is `value: null`. (b) Keep it as a clear | (a) | (a), taken as covered by 'approve all as recommended' (2026-10-10); this behaviour change was not in the presented plan and is flagged for confirmation in the pull request |
+| D3 A missing `value` | (a) 400, a clear is `value: null`. (b) Make a missing value a clear | (a) | (a), not a change: a missing value is already a 400 (the contract requires `value`), and this plan keeps it so |
 
 ## Outcome
 

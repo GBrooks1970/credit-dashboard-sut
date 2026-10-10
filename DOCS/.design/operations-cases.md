@@ -171,7 +171,8 @@ Brief 9 D6: the `tags` parameter is removed from the contract.
 | Detail cleared | `value: null` | 200; the field is `null` (**Reading**) |
 | Detail, wrong kind (v16) | `{ field: "apr", value: "high" }`; `{ field: "promoPeriodMonths", value: true }`; `{ field: "paymentMethod", value: 5 }`; `{ field: "minPayment", value: 5 }` | 400 `/problems/validation` at the edge |
 | Detail, minimum payment shape (v16) | `value: {}`; `value: { percent: 5, amount: { amountMinor: 1, currency: "GBP" } }`; an extra property | 400 (exactly one of `amount` or `percent`) |
-| Detail, missing value (v16) | `{ field: "apr" }` | 400; **Reading:** it was a clear before v16, and a clear is now `value: null` only |
+| Detail, missing value | `{ field: "apr" }` | 400 (`value` is required; unchanged by v16). A clear is `value: null` |
+| Detail, a number a decimal cannot hold (v16) | `{ field: "apr", value: 1e300 }` | 422 `out-of-range` (**Reading:** it was a 400 before v16; the kind is right, the range is not) |
 | Detail, unknown field (v16) | `{ field: "balance", value: 1 }` | 400 |
 | Detail, kind right, rule broken (v16) | `{ field: "promoPeriodMonths", value: 12.5 }`; `{ field: "paymentMethod", value: "cheque" }` | 422 `out-of-range` (BR-14), as before |
 | Detail on another persona's account | | 404 (BR-15) |

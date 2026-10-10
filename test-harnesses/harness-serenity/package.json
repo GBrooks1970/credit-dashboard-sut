@@ -1,0 +1,25 @@
+{
+  "name": "@cds/harness-serenity",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Serenity/JS harness driving features-shared/ against the credit-dashboard-sut service (CDS-22, DR-042).",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test:api": "node scripts/run.mjs api"
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "13.3.0",
+    "@serenity-js/assertions": "3.48.2",
+    "@serenity-js/console-reporter": "3.48.2",
+    "@serenity-js/core": "3.48.2",
+    "@serenity-js/cucumber": "3.48.2",
+    "@types/node": "24.19.0",
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "yaml": "2.9.1"
+  }
+}

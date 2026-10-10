@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Credit Dashboard SUT API",
-    "version": "0.9.2",
+    "version": "0.9.3",
     "license": {
       "name": "MIT",
       "identifier": "MIT"
@@ -3405,7 +3405,25 @@
         ]
       },
       "DetailUpdate": {
+        "description": "One user-supplied detail, typed per field by kind (v16). The kind is checked at the edge (400); the range, the two allowed payment methods and whole months stay business rules (BR-14, 422). A null clears the field; a missing value is a 400.",
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/RateUpdate"
+          },
+          {
+            "$ref": "#/components/schemas/PromoPeriodUpdate"
+          },
+          {
+            "$ref": "#/components/schemas/MinPaymentUpdate"
+          },
+          {
+            "$ref": "#/components/schemas/PaymentMethodUpdate"
+          }
+        ]
+      },
+      "RateUpdate": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "field",
           "value"
@@ -3415,13 +3433,100 @@
             "type": "string",
             "enum": [
               "apr",
-              "interestRate",
-              "promoPeriodMonths",
-              "minPayment",
-              "paymentMethod"
+              "interestRate"
             ]
           },
-          "value": {}
+          "value": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "BR-14 range 0 to 100, up to two decimals (422 otherwise)"
+          }
+        }
+      },
+      "PromoPeriodUpdate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "field",
+          "value"
+        ],
+        "properties": {
+          "field": {
+            "type": "string",
+            "const": "promoPeriodMonths"
+          },
+          "value": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "description": "BR-14 whole months 0 to 60 (422 otherwise)"
+          }
+        }
+      },
+      "MinPaymentUpdate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "field",
+          "value"
+        ],
+        "properties": {
+          "field": {
+            "type": "string",
+            "const": "minPayment"
+          },
+          "value": {
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": false,
+            "description": "Exactly one of amount or percent (BR-14 ranges are 422)",
+            "properties": {
+              "amount": {
+                "$ref": "#/components/schemas/Money"
+              },
+              "percent": {
+                "type": "number"
+              }
+            },
+            "oneOf": [
+              {
+                "required": [
+                  "amount"
+                ]
+              },
+              {
+                "required": [
+                  "percent"
+                ]
+              }
+            ]
+          }
+        }
+      },
+      "PaymentMethodUpdate": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "field",
+          "value"
+        ],
+        "properties": {
+          "field": {
+            "type": "string",
+            "const": "paymentMethod"
+          },
+          "value": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "direct-debit or manual (422 otherwise)"
+          }
         }
       },
       "BalancePoint": {

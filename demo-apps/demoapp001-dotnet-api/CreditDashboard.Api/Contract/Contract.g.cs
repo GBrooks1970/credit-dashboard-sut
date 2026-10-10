@@ -1026,18 +1026,59 @@ namespace CreditDashboard.Api.Contract
         [System.Text.Json.Serialization.JsonConverter(typeof(System.Text.Json.Serialization.JsonStringEnumConverter<DetailUpdateField>))]
         public DetailUpdateField Field { get; set; }
 
+        /// <summary>
+        /// BR-14 range 0 to 100, up to two decimals (422 otherwise)
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("value")]
-        [System.ComponentModel.DataAnnotations.Required]
+        public double? Value { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PromoPeriodUpdate
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("field")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Field { get; set; }
+
+        /// <summary>
+        /// BR-14 whole months 0 to 60 (422 otherwise)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public double? Value { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class MinPaymentUpdate
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("field")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Field { get; set; }
+
+        /// <summary>
+        /// Exactly one of amount or percent (BR-14 ranges are 422)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
         public object Value { get; set; }
 
-        private System.Collections.Generic.IDictionary<string, object> _additionalProperties;
+    }
 
-        [System.Text.Json.Serialization.JsonExtensionData]
-        public System.Collections.Generic.IDictionary<string, object> AdditionalProperties
-        {
-            get { return _additionalProperties ?? (_additionalProperties = new System.Collections.Generic.Dictionary<string, object>()); }
-            set { _additionalProperties = value; }
-        }
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.7.1.0 (NJsonSchema v11.6.1.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PaymentMethodUpdate
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("field")]
+        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        public string Field { get; set; }
+
+        /// <summary>
+        /// direct-debit or manual (422 otherwise)
+        /// </summary>
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public string Value { get; set; }
 
     }
 
@@ -1821,15 +1862,6 @@ namespace CreditDashboard.Api.Contract
 
         [System.Runtime.Serialization.EnumMember(Value = @"interestRate")]
         InterestRate = 1,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"promoPeriodMonths")]
-        PromoPeriodMonths = 2,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"minPayment")]
-        MinPayment = 3,
-
-        [System.Runtime.Serialization.EnumMember(Value = @"paymentMethod")]
-        PaymentMethod = 4,
 
     }
 

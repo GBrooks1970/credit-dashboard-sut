@@ -1,7 +1,7 @@
 ---
-version: 22
-created: 2026-10-08T15:18Z
-supersedes: v21 (earlier today); earlier versions are in git history (DR-040)
+version: 23
+created: 2026-10-10T16:59Z
+supersedes: v22 (2026-10-08); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
 language: en-GB
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v23:** CDS-28: section 6.3 types the `PATCH` body per field by kind (contract v16, `info.version` 0.9.3): a wrong kind of value, an unknown field and a missing `value` are 400 at the edge; the range, the two allowed payment methods and whole months stay BR-14 (422); a clear is `value: null`.
 **Changes in v22:** CDS-23 (Schemathesis): section 8 gains 405 `/method-not-allowed` for a path the contract has with a method it does not, and the 404 row keeps the unknown-path case (DR-056); section 11's Schemathesis row says the run is a `verify` step with a fixed seed.
 **Changes in v21:** CDS-25 S4: section 6.4 lists 400 for the notifications list (paging) and for marking one read (the body); contract v15 (`info.version` 0.9.2) documents it.
 **Changes in v20:** CDS-25 S3: section 6.3 lists 400 for the account detail and balance history (a malformed account ID) as it already did for the payment history; contract v14 (`info.version` 0.9.1) documents it.
@@ -140,7 +141,7 @@ Every operation below documents 404 for an unknown bureau and 500 (the `error` p
 | GET | `/accounts/{accountId}/payment-history?year=` | That account's statuses | 200 `PaymentHistory` | 400, 401, 404 |
 | PATCH | `/accounts/{accountId}/details` | Set one user-supplied field | 200 `AccountDetails` | 400, 401, 404, 422 |
 
-`PATCH` body: `{ "field": "interestRate", "value": 29.9 }`. Allowed fields: `apr`, `interestRate`, `promoPeriodMonths`, `minPayment`, `paymentMethod`.
+`PATCH` body: `{ "field": "interestRate", "value": 29.9 }`. Allowed fields: `apr`, `interestRate`, `promoPeriodMonths`, `minPayment`, `paymentMethod`. The contract types the value per field by kind (v16): a number or `null` for `apr`, `interestRate` and `promoPeriodMonths`; an object with exactly one of `amount` (money) or `percent`, or `null`, for `minPayment`; a string or `null` for `paymentMethod`. The wrong kind, an unknown field, an extra property and a missing `value` are 400. The ranges stay rules (BR-14, 422 `out-of-range`): 0 to 100 with up to two decimals, whole months 0 to 60, a method of `direct-debit` or `manual`. `null` clears a field.
 
 ### 6.4 Supporting
 

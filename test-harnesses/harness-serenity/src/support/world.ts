@@ -20,6 +20,8 @@ export class ScenarioState {
     thatAccount?: string;
     /** Values one Given holds for the next (the earlier debt for the trend sample). */
     readonly pending: Record<string, unknown> = {};
+    /** Every response body this scenario received, for "no response contains" (BR-09). */
+    readonly bodies: string[] = [];
     last?: Response;
     baseUrl = process.env.HARNESS_BASE_URL ?? '';
 }

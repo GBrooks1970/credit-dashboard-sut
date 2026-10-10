@@ -61,6 +61,7 @@ export async function send(operationId: string, options: CallOptions, token?: st
         body: options.body === undefined ? undefined : JSON.stringify(options.body),
     });
     const text = await http.text();
+    scenario.state.bodies.push(text);
     const body = text ? JSON.parse(text) : undefined;
     contract.validate(operationId, http.status, body, text.length > 0);
     return { status: http.status, body };

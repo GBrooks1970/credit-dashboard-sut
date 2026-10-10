@@ -1,6 +1,6 @@
 ---
-version: 9
-created: 2026-10-10T10:10Z
+version: 10
+created: 2026-10-10T10:40Z
 project: credit-dashboard-sut
 type: step-glossary
 language: en-GB
@@ -11,7 +11,7 @@ status: normative
 
 **What this is.** The agreed Gherkin phrases for `features-shared/`, one pattern per meaning, with the parameter types the harness will define and how each Given is arranged. The words inside the phrases are defined in `DOCS/glossary.md`; this document defines the sentences.
 
-**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. A new step is added here before it is used in a feature file. Version 9 records how the harness reads five patterns (CDS-22 H2: section 2 note, `the source supplies…`, the totals bureau, the optional time); version 8 adds the harness rules for *that account* and a wrong code (CDS-22; `DOCS/.design/harness-design.md`); version 7 applies the CDS-18 confirmation pass (section 6.6); version 6 applied the CDS-18 independent re-review; version 5 applied the three-amigos review (section 6); earlier versions added the email and mobile steps (v4), recorded the overrides (v3) and the in-credit step (v2).
+**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. A new step is added here before it is used in a feature file. Version 10 records how the harness reads the API assertions (CDS-22 H3: the outcome-word types, the totals, list and expiry readings, and the one Then that calls); version 9 records how the harness reads five patterns (CDS-22 H2: section 2 note, `the source supplies…`, the totals bureau, the optional time); version 8 adds the harness rules for *that account* and a wrong code (CDS-22; `DOCS/.design/harness-design.md`); version 7 applies the CDS-18 confirmation pass (section 6.6); version 6 applied the CDS-18 independent re-review; version 5 applied the three-amigos review (section 6); earlier versions added the email and mobile steps (v4), recorded the overrides (v3) and the in-credit step (v2).
 
 ---
 
@@ -69,7 +69,7 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 | `{tile}` | `email`, `mobile`, `address`, `employment`, `finances` | Profile details list |
 | `{accepted or refused}` | `accepted`, `refused` | BR-14: accepted is 200 with the value stored; refused is 422 `/problems/rule-violation/out-of-range` |
 
-**Harness notes (v9).** Cucumber parameter-type names cannot hold a space, so `{payment pattern}` is defined as `{paymentPattern}` (and the other spaced names the same way when they are built). A Cucumber expression cannot hold a parameter inside an optional, so a pattern with an optional `at {time}` is two definitions (with and without) that share one function.
+**Harness notes (v9).** Cucumber parameter-type names cannot hold a space, so `{payment pattern}` is defined as `{paymentPattern}`, `{listed or not listed}` as `{listedOrNot}`, `{accepted or refused}` as `{acceptedOrRefused}`, `{refused or sent}` as `{refusedOrSent}`, `{verified or still unverified}` as `{verifiedOrStillUnverified}` and `{mobile outcome}` as `{mobileOutcome}`. In `@api` files `the total remaining` reads the loan totals' balance (BR-05), `the credit card is listed` and `its balance is` read the credit card in the list the last When returned, `the mobile number is still unverified` is a 422 `code-invalid` (an expired code, PR-10), and `the code {code} is no longer accepted` is the one Then that makes a call (it submits the code again and expects 422 `code-invalid`). A Cucumber expression cannot hold a parameter inside an optional, so a pattern with an optional `at {time}` is two definitions (with and without) that share one function.
 
 ## 3. Arrange (Given)
 

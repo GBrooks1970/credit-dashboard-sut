@@ -186,3 +186,12 @@ These are the probes the plan requires, each expected to fail and then reverted;
 - The exact fields each overrides pattern patches (section 6): H2, by reading each sample and probing.
 - Whether Serenity/JS's `Cast` and `Actor` are used for the actors or a plain world object suffices; the choice is made in H1 against the first feature and recorded in the H1 log, with Serenity/JS kept as the actor model if it costs no more than a few lines (the portfolio shows the Screenplay pattern).
 - Whether the number of executions after outline expansion differs from 31: counted in H1.
+
+## 15. Settled in H1 (2026-10-10)
+
+- **Actors:** Serenity/JS `Cast` and `actorCalled` are used (the Stage Manager holds `ControlTheTestEnvironment`; Alex and Sam hold `CallAnApi`); it cost a dozen lines in `src/support/hooks.ts`, so the Screenplay model stays.
+- **Pins:** Serenity/JS 3.48.2 (3.48.1 was the plan's figure; 3.48.2 is the current release, same line), Cucumber 13.3.0, tsx 4.23.15, TypeScript 6.0.3 (7.0.2 is published but was not tried), Ajv 8.20.0, yaml 2.9.1, console reporter 3.48.2. The exact versions are in `package-lock.json`.
+- **Executions:** the `api` profile selects 58 scenarios after outlines expand (31 scenarios and outlines in 12 files).
+- **Running one feature:** `node scripts/run.mjs api api/score`; Cucumber adds positional paths to a profile's paths, so a named run uses the `select` profile, which has none.
+- **Not yet probed:** rule 2 of section 7 (a token kept across a clock change). The `score` scenarios sign in after the clock is set and the clock only moves back, so no scenario in H1 can show it; the expired-token scenario in H4 does.
+- **Audit:** `npm audit` in the harness package reports one high finding, `braces` (stack exhaustion on deeply nested glob patterns), reached through `fast-glob` inside `@serenity-js/core`. It is a development-only dependency that globs paths the repository itself supplies, and the only fix offered is a downgrade to Serenity/JS 2.19.4, so it is recorded and not changed. Revisit when Serenity/JS updates its glob dependency.

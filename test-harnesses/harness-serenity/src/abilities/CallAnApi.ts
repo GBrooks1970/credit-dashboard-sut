@@ -31,6 +31,7 @@ export class CallAnApi extends Ability {
         const response = await send('login', { body: { username: user.username, password: user.password } });
         if (response.status !== 200) throw new Error(`Sign-in as ${this.username} failed with ${response.status}`);
         state.tokens.set(this.username, response.body.token);
+        state.expiresAt.set(this.username, response.body.expiresAt);
         return response.body.token;
     }
 

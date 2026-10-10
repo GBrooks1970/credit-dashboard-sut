@@ -63,3 +63,33 @@ defineParameterType({
     regexp: /3 months|6 months|1 year/,
     transformer: (value: string) => ({ '3 months': '3m', '6 months': '6m', '1 year': '1y' })[value]!,
 });
+
+/** Singular or plural account type phrases (glossary section 4.2), as the contract's AccountType value. */
+const accountTypes: Record<string, string> = {
+    'credit card': 'creditcard', 'credit cards': 'creditcard',
+    loan: 'loan', loans: 'loan',
+    mortgage: 'mortgage', mortgages: 'mortgage',
+    'utilities and telecoms account': 'telecomsandutilities', 'utilities and telecoms': 'telecomsandutilities',
+    'credit account': 'lineofcredit', 'credit accounts': 'lineofcredit',
+};
+defineParameterType({
+    name: 'accountType',
+    regexp: /credit cards?|loans?|mortgages?|utilities and telecoms account|utilities and telecoms|credit accounts?/,
+    transformer: (value: string) => accountTypes[value]!,
+});
+
+/** A provider's display name from the bound persona, unquoted: capitalised words (Lender X, Harbour Bank). */
+defineParameterType({ name: 'provider', regexp: /[A-Z][A-Za-z]*(?: [A-Z][A-Za-z]*)*/, transformer: (value: string) => value });
+
+/** BR-12: each pattern is arranged by one checked override sample (glossary section 3). Camel case: the glossary calls it {payment pattern}. */
+const paymentSamples: Record<string, string> = {
+    'all on time': 'br12-all-on-time-2025.json',
+    'on time, apart from one missed month': 'br12-payments-2025.json',
+    'not reported in any month': 'br12-no-data-2025.json',
+    'on time in the months reported': 'br12-part-year-2025.json',
+};
+defineParameterType({
+    name: 'paymentPattern',
+    regexp: /all on time|on time, apart from one missed month|not reported in any month|on time in the months reported/,
+    transformer: (value: string) => paymentSamples[value]!,
+});

@@ -1,6 +1,6 @@
 ---
-version: 8
-created: 2026-10-09T11:35Z
+version: 9
+created: 2026-10-10T10:10Z
 project: credit-dashboard-sut
 type: step-glossary
 language: en-GB
@@ -11,7 +11,7 @@ status: normative
 
 **What this is.** The agreed Gherkin phrases for `features-shared/`, one pattern per meaning, with the parameter types the harness will define and how each Given is arranged. The words inside the phrases are defined in `DOCS/glossary.md`; this document defines the sentences.
 
-**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. A new step is added here before it is used in a feature file. Version 8 adds the harness rules for *that account* and a wrong code (CDS-22; `DOCS/.design/harness-design.md`); version 7 applies the CDS-18 confirmation pass (section 6.6); version 6 applied the CDS-18 independent re-review; version 5 applied the three-amigos review (section 6); earlier versions added the email and mobile steps (v4), recorded the overrides (v3) and the in-credit step (v2).
+**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. A new step is added here before it is used in a feature file. Version 9 records how the harness reads five patterns (CDS-22 H2: section 2 note, `the source supplies…`, the totals bureau, the optional time); version 8 adds the harness rules for *that account* and a wrong code (CDS-22; `DOCS/.design/harness-design.md`); version 7 applies the CDS-18 confirmation pass (section 6.6); version 6 applied the CDS-18 independent re-review; version 5 applied the three-amigos review (section 6); earlier versions added the email and mobile steps (v4), recorded the overrides (v3) and the in-credit step (v2).
 
 ---
 
@@ -69,6 +69,8 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 | `{tile}` | `email`, `mobile`, `address`, `employment`, `finances` | Profile details list |
 | `{accepted or refused}` | `accepted`, `refused` | BR-14: accepted is 200 with the value stored; refused is 422 `/problems/rule-violation/out-of-range` |
 
+**Harness notes (v9).** Cucumber parameter-type names cannot hold a space, so `{payment pattern}` is defined as `{paymentPattern}` (and the other spaced names the same way when they are built). A Cucumber expression cannot hold a parameter inside an optional, so a pattern with an optional `at {time}` is two definitions (with and without) that share one function.
+
 ## 3. Arrange (Given)
 
 **Arranged by** says how the harness makes the step true:
@@ -103,7 +105,7 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 | `{actor}'s email is verified` | Email status verified | Fixture (`excellent`) | `api/profile-contact`, `ui/profile` |
 | `{actor}'s preferred name is {string}` | Preferred name set | Fixture (`excellent`, "Al") | `ui/profile` |
 | `{actor} has added their finances` | Finances added | Fixture (`excellent`) | `ui/profile` |
-| `the source supplies the account number {string}` | The source mask is this | Fixture for `4821`, `**10`, `ab3f`; Test control (overrides, `fixtures/overrides/br09-source-mask.json`) for `12345678` | `api/masking` |
+| `the source supplies the account number {string}` | The source mask is this; the step names no user, so it is the first user the scenario bound (Alex in `api/masking`) | Fixture for `4821`, `**10`, `ab3f`; Test control (overrides, `fixtures/overrides/br09-source-mask.json`) for `12345678` | `api/masking` |
 | `{actor}'s total debt three months ago was {money}` / `now is {money}` | Debt history gives this trend | Test control (overrides, `fixtures/overrides/br07-debt-trend.json`) | `api/debt` |
 | `{actor}'s payments in {year} were {payment pattern}` | That year's months are as described (month statuses: API spec section 5) | Test control (overrides): `br12-all-on-time-2025.json`, `br12-payments-2025.json` (one missed month), `br12-no-data-2025.json`, `br12-part-year-2025.json`, in `fixtures/overrides/`, one per row | `api/payment-history` |
 | `{actor} has {count} report changes` | The bureau holds that many changes | Fixture (`drilldown` 5) | `api/report-changes`, `ui/report-changes` |
@@ -122,7 +124,7 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 
 | Pattern | Calls | Used in |
 |---|---|---|
-| `{actor} asks for the {accountType} totals` | `GET /reports/{id}/accounts/totals?type=` | `api/account-totals` |
+| `{actor} asks for the {accountType} totals` | `GET /reports/{id}/accounts/totals?type=`, for Bureau A (the step names no bureau; every account the scenarios count is in Bureau A) | `api/account-totals` |
 | `{actor} asks for one of {actor}'s accounts` | `GET /accounts/{id}` with another user's ID | `security/access-control` |
 | `{actor} asks for that account` | `GET /accounts/{id}` | `api/credit-balances`, `api/masking` |
 | `{actor} asks for the debt overview` | `GET /debt/overview` | `api/debt` |

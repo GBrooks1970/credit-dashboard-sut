@@ -11,6 +11,15 @@ export class ScenarioState {
     readonly tokens = new Map<string, string>();
     /** Actors whose (expired) token is kept on purpose. */
     readonly keepToken = new Set<string>();
+    /** The persona each actor is bound to, and the date the clock was last frozen on (YYYY-MM-DD). */
+    readonly personas = new Map<string, string>();
+    today?: string;
+    /** When each cached token expires, from the sign-in response. */
+    readonly expiresAt = new Map<string, string>();
+    /** The account the last account-describing Given stored (glossary section 3, 'That account'). */
+    thatAccount?: string;
+    /** Values one Given holds for the next (the earlier debt for the trend sample). */
+    readonly pending: Record<string, unknown> = {};
     last?: Response;
     baseUrl = process.env.HARNESS_BASE_URL ?? '';
 }

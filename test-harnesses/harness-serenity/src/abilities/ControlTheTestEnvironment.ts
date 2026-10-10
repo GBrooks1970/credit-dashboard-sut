@@ -19,10 +19,12 @@ export class ControlTheTestEnvironment extends Ability {
         await this.expect(send('testBindPersona', { path: { username }, body: { persona, overrides } }), 204, `bind ${username}`);
         scenario.state.tokens.delete(username);
         scenario.state.keepToken.delete(username);
+        scenario.state.personas.set(username, persona);
     }
 
     async setClock(now: string): Promise<void> {
         await this.expect(send('testSetClock', { body: { now } }), 204, 'set the clock');
+        scenario.state.today = now.slice(0, 10);
         scenario.state.tokens.clear();
         scenario.state.keepToken.clear();
     }

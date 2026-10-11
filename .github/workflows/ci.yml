@@ -46,7 +46,10 @@ jobs:
       - name: Python prerequisites (Gherkin check, Schemathesis run)
         run: pip install -r tools/requirements.txt
 
+      # @scarf/scarf (a Prism dependency) reports install analytics to scarf.sh unless this is set (DR-059).
       - name: Verify
+        env:
+          SCARF_ANALYTICS: "false"
         run: |
           npm ci
           npm run verify

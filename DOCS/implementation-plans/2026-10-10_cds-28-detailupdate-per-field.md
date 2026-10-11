@@ -92,3 +92,5 @@ Differences from the plan:
 Full record: [`DOCS/implementation-logs/2026-10-10_cds-28-detailupdate-per-field.md`](../implementation-logs/2026-10-10_cds-28-detailupdate-per-field.md).
 
 **Merged (2026-10-10).** #54 `fa00b2f` (CI run 38072179169) and #56 `222af98` (CI run 38094737461). GitHub closed #55 when #54 merged and its base branch was deleted; the same content went in as #56. Decision brief 10 (#53, `16b90fd`) was merged by the owner first.
+
+**Confirmed (2026-10-11).** The owner confirmed D1, typing by kind only (ranges, the two payment methods and whole months stay BR-14, 422), when asked after delivery; the alternative (also enum, range and integer in the contract) was declined.

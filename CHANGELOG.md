@@ -5,7 +5,7 @@ All notable changes to this project. Dates are UTC.
 ## 2026-10-11: the Kanban board on GitHub Pages (CDS-30)
 
 - `.github/workflows/pages.yml` publishes the committed board (and only the board) on a push to `main` that changes it, after checking the ticket payload is present. Pages was enabled with the source set to GitHub Actions. DR-060.
-- Backlog v49: CDS-30 added (Open until the live page is checked).
+- Backlog v50: CDS-30 Done. The live page, <https://gbrooks1970.github.io/credit-dashboard-sut/>, returns 200 and carries all 30 tickets.
 
 ## 2026-10-11: scarf opt-out and confirmations
 

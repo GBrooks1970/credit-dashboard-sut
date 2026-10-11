@@ -1,6 +1,6 @@
 ---
-version: 47
-created: 2026-10-10T17:24Z
+version: 48
+created: 2026-10-11T08:49Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 47 (CDS-28 Done: contract v16, DetailUpdate per field)
+**Version:** 48 (CDS-28 merged; the Phase 3 gate is recorded, DR-058)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -200,7 +200,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-28: Contract v16, `DetailUpdate` per field
 
-**COMPLETE in review (2026-10-10).** Plan `DOCS/implementation-plans/2026-10-10_cds-28-detailupdate-per-field.md`; decided by brief 10 D3. The specification pull request (#54) types the request body per field by kind (contract v16, `info.version` 0.9.3, API specification v23); the code pull request removes the route's own kind checks, refuses a number that rounds to zero (422; found by Schemathesis) and adds 11 tests (309 service tests). The details-edit 500 probe from CDS-23 is now caught. Status is Done when both merge.
+**COMPLETE (2026-10-10; merged in #54 `fa00b2f` and #56 `222af98`; #55 was closed by GitHub when #54's base branch was deleted and its content merged as #56).** Plan `DOCS/implementation-plans/2026-10-10_cds-28-detailupdate-per-field.md`; decided by brief 10 D3. The specification pull request (#54) types the request body per field by kind (contract v16, `info.version` 0.9.3, API specification v23); the code pull request removes the route's own kind checks, refuses a number that rounds to zero (422; found by Schemathesis) and adds 11 tests (309 service tests). The details-edit 500 probe from CDS-23 is now caught. 
 
 ### CDS-29: Phase 4 plan
 

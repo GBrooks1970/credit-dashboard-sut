@@ -27,3 +27,4 @@ Every implementation plan is written to a file here before implementation starts
 | [`2026-10-08_cds-23-schemathesis.md`](2026-10-08_cds-23-schemathesis.md) | CDS-23 Schemathesis pinned and clean | 2026-10-08 | implemented | #44, `b0884bb`; #45, `3119f4a` |
 | [`2026-10-08_cds-22-serenity-harness.md`](2026-10-08_cds-22-serenity-harness.md) | CDS-22 The Serenity/JS harness | 2026-10-08 | implemented | #47, `920441e`; #48, `2b919b9`; #49, `beda9c4`; #50, `c772b8d`; H4 with the records |
 | [`2026-10-10_cds-28-detailupdate-per-field.md`](2026-10-10_cds-28-detailupdate-per-field.md) | CDS-28 Contract v16, DetailUpdate per field | 2026-10-10 | implemented | #54, `fa00b2f`; #56, `222af98` |
+| [`2026-10-11_cds-30-publish-kanban-board.md`](2026-10-11_cds-30-publish-kanban-board.md) | CDS-30 Publish the Kanban board on Pages | 2026-10-11 | approved | not yet |

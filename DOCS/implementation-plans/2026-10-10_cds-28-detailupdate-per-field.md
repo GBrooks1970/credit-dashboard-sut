@@ -6,7 +6,7 @@ type: implementation-plan
 item: CDS-28
 status: implemented
 approved: "2026-10-10, Gary Brooks, 'approve all as recommended' and 'Do the specification PR first, then the code PR'; merge authority: per pull request, on request"
-delivered: "#54 (specification), then the code pull request; squash commits recorded when merged"
+delivered: "#54 (contract v16, service fix, API specification v23), squash fa00b2f; #56 (Schemathesis config, records, implementation log), squash 222af98; #55 closed by GitHub, content merged as #56"
 language: en-GB
 ---
 
@@ -90,3 +90,5 @@ Differences from the plan:
 - **A real bug found** by the first Schemathesis run on the typed body: 4.56e-124 accepted as `promoPeriodMonths` and stored as sent.
 
 Full record: [`DOCS/implementation-logs/2026-10-10_cds-28-detailupdate-per-field.md`](../implementation-logs/2026-10-10_cds-28-detailupdate-per-field.md).
+
+**Merged (2026-10-10).** #54 `fa00b2f` (CI run 38072179169) and #56 `222af98` (CI run 38094737461). GitHub closed #55 when #54 merged and its base branch was deleted; the same content went in as #56. Decision brief 10 (#53, `16b90fd`) was merged by the owner first.

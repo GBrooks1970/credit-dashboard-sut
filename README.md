@@ -31,7 +31,7 @@ service validates every request against the contract (CDS-19) and serves all 36 
 | [`DOCS/decision-briefs/`](DOCS/decision-briefs/_index.md) | The reasoning behind decisions: options, a recommendation and the argument against |
 | [`DOCS/glossary.md`](DOCS/glossary.md), [`DOCS/step-glossary.md`](DOCS/step-glossary.md) | Normative vocabulary and agreed Gherkin steps |
 | [`DOCS/backlog.md`](DOCS/backlog.md) | Backlog: the source of truth for status |
-| [`credit-dashboard-sut_implementation-kanban_v1.html`](credit-dashboard-sut_implementation-kanban_v1.html) | Kanban board generated from the backlog by `portfolio-kanban-generator` (one self-contained file; `npm run kanban`); published on GitHub Pages by `.github/workflows/pages.yml` when it changes (CDS-30, DR-060) |
+| [`credit-dashboard-sut_implementation-kanban_v1.html`](credit-dashboard-sut_implementation-kanban_v1.html) | Kanban board generated from the backlog by `portfolio-kanban-generator` (one self-contained file; `npm run kanban`); published at <https://gbrooks1970.github.io/credit-dashboard-sut/> by `.github/workflows/pages.yml` when it changes (CDS-30, DR-060) |
 | [`features-shared/`](features-shared/) | Gherkin scenarios by layer: `api/`, `ui/`, `security/` |
 | [`fixtures/`](fixtures/) | Seven personas, test users, override samples, the fixture schema and its check |
 | [`DOCS/implementation-plans/`](DOCS/implementation-plans/_index.md) | Implementation plans, written and approved before the work starts (DR-041) |

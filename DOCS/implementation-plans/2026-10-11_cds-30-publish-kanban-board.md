@@ -4,9 +4,9 @@ created: 2026-10-11T09:58Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-30
-status: approved
+status: implemented
 approved: "2026-10-11, Gary Brooks, 'approve Kanban plan as recommended, run the one gh api, Landing card link - Leave it for now'; merge authority: per pull request, on request"
-delivered: not yet
+delivered: "#59 (workflow, plan, DR-060, backlog v49), squash 6079496; records in the following pull request"
 language: en-GB
 ---
 
@@ -57,4 +57,10 @@ Read-only; nothing in the repository was changed.
 
 ## Outcome
 
-[Appended after delivery.]
+Delivered as planned in one pull request.
+
+- **#59** (`6079496`, PR CI run 38130319008, `verify` 1 m 56 s). The Pages workflow ran on the merge: run 38130860560, job "Publish the Kanban board", success in 11 s (10:08:10Z to 10:08:21Z).
+- **Live check (2026-10-11):** `https://gbrooks1970.github.io/credit-dashboard-sut/` returned HTTP 200 (22,563 bytes, `text/html`); it carries `id="payload-tickets"`, `CDS-01`, `CDS-28` and `CDS-30`; its 30 tickets are 27 Done, 2 Ready and 1 Backlog; it is identical to the committed board after line-ending normalisation; an unknown path returns 404.
+- **Probe that had to fail, and did:** the payload checks failed against an empty file (run locally before the merge).
+
+Differences from the plan: none. Pages was enabled by the agent with the one `gh api` call at the owner's request, before the pull request. The landing card was not linked (owner's choice).

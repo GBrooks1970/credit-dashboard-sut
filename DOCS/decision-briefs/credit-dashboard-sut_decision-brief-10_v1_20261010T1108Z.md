@@ -145,4 +145,4 @@ The owner decided on 2026-10-10, by reply in chat: "approve all as recommended".
 
 ### 7.3 Corrections after decision
 
-None.
+None. **Confirmed 2026-10-11:** the owner confirmed the read-back in 7.1 as intended (D1 option 1, D2 option 1, D3 option 1), by answering "Confirmed as read back" when asked.

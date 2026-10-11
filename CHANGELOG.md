@@ -2,6 +2,11 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-11: scarf opt-out and confirmations
+
+- CI sets `SCARF_ANALYTICS=false`; the README says how to do the same locally (DR-059).
+- Owner confirmations recorded: decision brief 10 stands as read back; CDS-28 stays typed by kind only.
+
 ## 2026-10-10: contract v16, DetailUpdate per field (CDS-28)
 
 - `PATCH /accounts/{accountId}/details` is typed per field by kind in the contract (`info.version` 0.9.3): numbers or null for the rates and months, an object with exactly one of `amount` or `percent` for the minimum payment, a string or null for the method. Ranges stay BR-14 (422). API specification v23.

@@ -1,6 +1,6 @@
 ---
-version: 48
-created: 2026-10-11T08:49Z
+version: 49
+created: 2026-10-11T09:59Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 48 (CDS-28 merged; the Phase 3 gate is recorded, DR-058)
+**Version:** 49 (CDS-30 added: publish the Kanban board on Pages)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -67,6 +67,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-27` | Profile rules library: PR-01, PR-02, PR-04, PR-06, PR-07 and PR-09 to PR-11 as the API enforces them (API specification 6.6), with case tables first and NUnit tests tagged by PR ID | Service | — | MEDIUM | `CDS-20` | Done 2026-10-08 |
 | `CDS-26` | Risk: the development-dependency audit reports 15 vulnerabilities (9 high, 6 moderate), all through Prism 5.16.0; owner to accept, wait for a fixed Prism release, or apply npm overrides | Tooling | — | MEDIUM | — | Done 2026-10-07 |
 | `CDS-28` | Contract v16: model `DetailUpdate` per field (decision brief 10 D3); the details-edit 500 probe must then be caught | Specification | — | MEDIUM | `CDS-22` | Done 2026-10-10 |
+| `CDS-30` | Publish the Kanban board on GitHub Pages (workflow as `auth-separation`; the board only) | Tooling | — | LOW | — | Open |
 
 ### Phase 4 — UI
 
@@ -207,6 +208,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 **OPEN.** Brief 10 D2 (2026-10-10) chose to continue to the React UI. A plan with a spike and slices comes first, after CDS-28 and CDS-24.
 
 **Update (2026-10-10).** Decision brief 10 is decided (all as recommended): the Phase 3 gate is recorded as met (DR-058), the project continues to Phase 4, and CDS-28 and CDS-24 come before it.
+
+### CDS-30: Publish the Kanban board
+
+**OPEN (2026-10-11).** Plan `DOCS/implementation-plans/2026-10-11_cds-30-publish-kanban-board.md`, approved by the owner. Pages was enabled (source: GitHub Actions) at the owner's request; `.github/workflows/pages.yml` deploys the committed board on a push to `main`. Done when the live page is checked (HTTP 200, 29-plus tickets). The landing card link is left alone (owner's choice).
 
 ### CDS-23: Schemathesis pinned and clean
 

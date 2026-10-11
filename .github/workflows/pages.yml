@@ -1,0 +1,60 @@
+# Publishes the implementation Kanban board (CDS-30; DR-060).
+#
+# Just the board. The specifications, service, tests and tooling are not published: the board is a single
+# self-contained file generated from DOCS/backlog.md (portfolio-kanban-generator, no framework, no CDN, no
+# vendored files), and CI already fails if it drifts from the backlog. Same design as auth-separation's Pages workflow.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - credit-dashboard-sut_implementation-kanban_v1.html
+      - .github/workflows/pages.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Never cancel a running deployment; let it finish and queue behind it.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Publish the Kanban board
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Assemble the site
+        run: |
+          mkdir -p _site
+          cp credit-dashboard-sut_implementation-kanban_v1.html _site/index.html
+
+      # A published board that renders zero cards has shipped before elsewhere in this portfolio. Assert the payload is
+      # present and carries tickets from both ends of the backlog before deploying, so an empty shell fails here.
+      - name: The published copy carries the board
+        run: |
+          grep -q 'id="payload-tickets"' _site/index.html
+          grep -q '"id":"CDS-01"' _site/index.html
+          grep -q '"id":"CDS-28"' _site/index.html
+          echo "payload present"
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
+        timeout-minutes: 30

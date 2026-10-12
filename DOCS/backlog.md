@@ -1,6 +1,6 @@
 ---
-version: 52
-created: 2026-10-12T16:24Z
+version: 53
+created: 2026-10-12T18:33Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 52 (CDS-24 Done: merged; CDS-29 unblocked)
+**Version:** 53 (CDS-29 plan written; Phase 4 slices CDS-31 to CDS-36 added)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -73,7 +73,13 @@ This backlog is the source of truth for status. It moved here from the portfolio
 
 | ID | Ticket | Type | Priority | Tier | Blocked by | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| `CDS-29` | Phase 4 plan: the React UI against the Prism mock first, then the live API; a spike, slices and the harness `@ui` profile (decision brief 10 D2) | UI | — | HIGH | `CDS-28`, `CDS-24` | Open |
+| `CDS-29` | Phase 4 plan: the React UI against the live service; a spike, slices and the harness `@ui` profile (decision briefs 10 D2 and 11) | UI | — | HIGH | `CDS-28`, `CDS-24` | Done 2026-10-12 |
+| `CDS-31` | U1 foundation: the UI package, app shell, the service serves the UI, the harness `ui` profile, login green (3 scenarios), the `ui` CI job | UI | — | HIGH | `CDS-29` | Open |
+| `CDS-32` | U2 report overview (5 scenarios) | UI | — | HIGH | `CDS-31` | Open |
+| `CDS-33` | U3 report pages: payment history, report changes, searches, personal details, debt (14 scenarios) | UI | — | HIGH | `CDS-32` | Open |
+| `CDS-34` | U4 accounts: lists, closed, detail, edit form, open-redirect guard (9 scenarios) | UI | — | HIGH | `CDS-33` | Open |
+| `CDS-35` | U5 profile: profile, email and mobile sub-pages (10 scenarios) | UI | — | HIGH | `CDS-34` | Open |
+| `CDS-36` | U6 exit: axe-core on every page, layouts, the full `@ui` run against the live service, the Phase 4 gate | UI | — | HIGH | `CDS-35` | Open |
 
 ## Items
 
@@ -205,7 +211,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-29: Phase 4 plan
 
-**OPEN.** Brief 10 D2 (2026-10-10) chose to continue to the React UI. A plan with a spike and slices comes first, after CDS-28 and CDS-24.
+**COMPLETE (2026-10-12).** Plan `DOCS/implementation-plans/2026-10-12_cds-29-phase-4-ui.md` (status proposed, for the owner's approval) and decision brief 11 (D1 to D6 answered; DR-062). The slices are CDS-31 to CDS-36 (3, 5, 14, 9, 10 and 0 scenarios: 41 in all); about 7 to 8 sessions.
 
 **Update (2026-10-10).** Decision brief 10 is decided (all as recommended): the Phase 3 gate is recorded as met (DR-058), the project continues to Phase 4, and CDS-28 and CDS-24 come before it.
 

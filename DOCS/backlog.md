@@ -1,6 +1,6 @@
 ---
-version: 51
-created: 2026-10-12T09:49Z
+version: 52
+created: 2026-10-12T16:24Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 51 (CDS-24 Done in review: the remaining CDS-18 review Notes)
+**Version:** 52 (CDS-24 Done: merged; CDS-29 unblocked)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -211,7 +211,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-24: The remaining CDS-18 review Notes
 
-**COMPLETE in review (2026-10-12).** Plan `DOCS/implementation-plans/2026-10-12_cds-24-review-notes.md`. Of the 25 Notes across the three passes, 14 were already closed or deliberate; this item closed ten specification and documentation Notes (glossary v11, UI specification v12, My Profile v8 with the email sub-page hooks, contract v17, DR-061), tagged two UI scenarios (`@BR-04`, `@BR-11`) and added the BR-15 'change' scenario (73 scenarios; the harness runs 59). Left to later plans: the three bug-flag catches (Phase 5) and the changes-toggle page size (CDS-29). Status is Done when merged.
+**COMPLETE (2026-10-12; #61 `fdfc682`, CI run 38233159852).** Plan `DOCS/implementation-plans/2026-10-12_cds-24-review-notes.md`. Of the 25 Notes across the three passes, 14 were already closed or deliberate; this item closed ten specification and documentation Notes (glossary v11, UI specification v12, My Profile v8 with the email sub-page hooks, contract v17, DR-061), tagged two UI scenarios (`@BR-04`, `@BR-11`) and added the BR-15 'change' scenario (73 scenarios; the harness runs 59). Left to later plans: the three bug-flag catches (Phase 5) and the changes-toggle page size (CDS-29). Public counts updated in `portfolio-prompts#120`, `portfolio#69` and `test-automation-portfolio#316`. Implementation log `DOCS/implementation-logs/2026-10-12_cds-24-review-notes.md`.
 
 ### CDS-30: Publish the Kanban board
 

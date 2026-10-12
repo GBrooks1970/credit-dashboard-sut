@@ -219,3 +219,7 @@ These are the probes the plan requires, each expected to fail and then reverted;
 - **Run result:** all 58 scenarios pass (31 scenarios and outlines in 12 files); the harness is `npm run check:harness` and a `verify` step (DR-057): `verify` has 14 steps, the install of the harness being the extra one.
 - **Probes that had to fail, and did:** the clock-and-token rule ignored (a scratch scenario: sign in, move the clock a day, ask again; 401 instead of 200); test control not really off (`Expected 404, got 204`).
 - **Not done:** a committed scenario that moves the clock forward after a sign-in. It would be a scenario change for the owner; the rule is covered by the scratch probe and, in the committed set, by the expired-token scenario.
+
+## 19. Changed by CDS-24 (2026-10-12)
+
+- One scenario is added ('Another customer's account cannot be changed', `@BR-15`) with one step, `{actor} sets the interest rate on one of {actor}'s accounts to {percent}`; the `api` profile now selects 59 scenarios (32 scenarios and outlines in 12 files). `{accountType}` accepts `current account(s)`.

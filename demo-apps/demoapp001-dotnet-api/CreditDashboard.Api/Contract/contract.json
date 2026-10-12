@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Credit Dashboard SUT API",
-    "version": "0.9.3",
+    "version": "0.9.4",
     "license": {
       "name": "MIT",
       "identifier": "MIT"
@@ -2296,7 +2296,7 @@
         }
       },
       "RuleViolation": {
-        "description": "An account detail is out of range (BR-14)",
+        "description": "An account detail is out of range or too precise (BR-14)",
         "content": {
           "application/problem+json": {
             "schema": {

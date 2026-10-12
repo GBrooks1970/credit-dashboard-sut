@@ -1,6 +1,6 @@
 ---
-version: 10
-created: 2026-10-10T10:40Z
+version: 11
+created: 2026-10-12T09:49Z
 project: credit-dashboard-sut
 type: step-glossary
 language: en-GB
@@ -11,7 +11,7 @@ status: normative
 
 **What this is.** The agreed Gherkin phrases for `features-shared/`, one pattern per meaning, with the parameter types the harness will define and how each Given is arranged. The words inside the phrases are defined in `DOCS/glossary.md`; this document defines the sentences.
 
-**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. A new step is added here before it is used in a feature file. Version 10 records how the harness reads the API assertions (CDS-22 H3: the outcome-word types, the totals, list and expiry readings, and the one Then that calls); version 9 records how the harness reads five patterns (CDS-22 H2: section 2 note, `the source supplies…`, the totals bureau, the optional time); version 8 adds the harness rules for *that account* and a wrong code (CDS-22; `DOCS/.design/harness-design.md`); version 7 applies the CDS-18 confirmation pass (section 6.6); version 6 applied the CDS-18 independent re-review; version 5 applied the three-amigos review (section 6); earlier versions added the email and mobile steps (v4), recorded the overrides (v3) and the in-credit step (v2).
+**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. A new step is added here before it is used in a feature file. Version 11 applies the CDS-24 review Notes (UI money precision, the clock time of day, current accounts in `{accountType}`, `{provider}` and the Lender X card, and the BR-15 change step); version 10 records how the harness reads the API assertions (CDS-22 H3: the outcome-word types, the totals, list and expiry readings, and the one Then that calls); version 9 records how the harness reads five patterns (CDS-22 H2: section 2 note, `the source supplies…`, the totals bureau, the optional time); version 8 adds the harness rules for *that account* and a wrong code (CDS-22; `DOCS/.design/harness-design.md`); version 7 applies the CDS-18 confirmation pass (section 6.6); version 6 applied the CDS-18 independent re-review; version 5 applied the three-amigos review (section 6); earlier versions added the email and mobile steps (v4), recorded the overrides (v3) and the in-credit step (v2).
 
 ---
 
@@ -28,6 +28,7 @@ These describe the files as they stand; section 6 flags where they are not yet f
 | UI outcome verbs | `sees` for content; `is told` for a message; `shows` for an element's state | `Then Alex is told there are no hard searches` |
 | API outcome form | `the {thing} is {value}` | `Then the balance is -44.00` |
 | Money | Bare number, two decimal places, no currency sign or thousands separator; negative with a leading `-` | `12524.00`, `-44.00` |
+| UI money | A UI step compares at the precision the figure is shown: a total of 198279.60 shown as £198,280 is checked to the pound. API steps compare to the penny | `Then the total debt is 198279.60` in `ui/debt` and `api/debt` |
 | Percentages | Number followed by `%` in steps; bare number in an `utilisation` column | `29.9%`, `115%` |
 | Dates | Long form, always (DR-031) | `3 October 2026` |
 | Counts | Digits, with the noun in the right number | `1 soft search is listed`, `3 hard searches are listed` |
@@ -54,10 +55,10 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 | `{range}` | `3 months`, `6 months`, `1 year` | BR-02 |
 | `{trend}` | `up`, `down`, `steady` | BR-07 |
 | `{yearStatus}` | `on time`, `missed`, `no data` | BR-12 |
-| `{accountType}` | Singular `credit card`, `loan`, `mortgage`, `utilities and telecoms account`, `credit account`; plural display names `credit cards`, `loans`, `mortgages`, `utilities and telecoms`, `credit accounts` | Glossary section 4.2 |
+| `{accountType}` | Singular `credit card`, `loan`, `mortgage`, `current account`, `utilities and telecoms account`, `credit account`; plural display names `credit cards`, `loans`, `mortgages`, `current accounts`, `utilities and telecoms`, `credit accounts` | Glossary section 4.2 |
 | `{month}` | `(January…December) \d{4}` | A calendar month, long form (BR-02) |
 | `{string}` | Double-quoted text | Cucumber's built-in type |
-| `{provider}` | A provider's display name from the bound persona, unquoted: `Harbour Bank`, `Northgate Finance`, `Lender Y` | Resolved against the fixture, not a fixed list |
+| `{provider}` | A provider's display name from the bound persona, unquoted: `Harbour Bank`, `Northgate Finance`, `Lender X`, `Lender Y` | Resolved against the fixture, not a fixed list |
 | `{payment pattern}` | `all on time`, `on time, apart from one missed month`, `not reported in any month`, `on time in the months reported` | BR-12; each arranged by a sample (section 3) |
 | `{hard or soft}` | `hard`, `soft` | Search kind |
 | `{listed or not listed}` | `listed`, `not listed` | BR-13 |
@@ -86,7 +87,7 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 | Pattern | Means | Arranged by | Used in |
 |---|---|---|---|
 | `{actor} holds the {persona} persona` | Bind the test user to the persona | Test control (`PUT /__test/users/{username}/persona`) | All files |
-| `today is {date}` | Freeze server time | Test control (`PUT /__test/clock`) | `api/closed-accounts`, `api/debt`, `api/payment-history`, `api/profile-contact`, `api/score`, `ui/account-drilldown`, `ui/debt`, `ui/payment-history` |
+| `today is {date}` | Freeze server time at 09:00:00 UTC on that date (a step with `at {time}` moves it within the day) | Test control (`PUT /__test/clock`) | `api/closed-accounts`, `api/debt`, `api/payment-history`, `api/profile-contact`, `api/score`, `ui/account-drilldown`, `ui/debt`, `ui/payment-history` |
 | `the next bureau refresh is {days} away` | Set the clock that many days before the bureau's `nextRefreshDate` | Test control (clock) | `ui/report-overview` |
 | `{actor} has signed in` | A valid session exists | Navigation | `ui/login` |
 | `{actor} is viewing the report for {bureau}` | On the report overview | Navigation | `ui/report-overview` |
@@ -128,7 +129,8 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 | `{actor} asks for one of {actor}'s accounts` | `GET /accounts/{id}` with another user's ID | `security/access-control` |
 | `{actor} asks for that account` | `GET /accounts/{id}` | `api/credit-balances`, `api/masking` |
 | `{actor} asks for the debt overview` | `GET /debt/overview` | `api/debt` |
-| `{actor} sets the interest rate on the {provider} card to {percent}` | `PATCH /accounts/{id}/details` with `{ "field": "interestRate", "value": … }` | `api/account-details` |
+| `{actor} sets the interest rate on the {provider} card to {percent}` | `PATCH /accounts/{id}/details` with `{ "field": "interestRate", "value": … }`; `the {provider} card` is that provider's open credit card in the bound persona | `api/account-details` |
+| `{actor} sets the interest rate on one of {actor}'s accounts to {percent}` | `PATCH /accounts/{id}/details` with another user's account ID (the other user's first account in the bound persona) | `security/access-control` |
 | `{actor} asks for the closed accounts for {bureau}` | `GET /reports/{id}/accounts?status=closed` | `api/closed-accounts` |
 | `{actor} asks for the payment history for {bureau}` | `GET /reports/{id}/payment-history` | `api/payment-history` |
 | `{actor} asks for the report changes for {bureau}` | `GET /reports/{id}/changes` | `api/report-changes` |
@@ -234,6 +236,6 @@ A separate agent with fresh context re-checked every scenario and this glossary 
 
 ## 8. Provenance
 
-Version 7 (7 October 2026): checked against 23 feature files, 72 scenarios and 269 step lines, every line matching a pattern here; new rows' 'Used in' set from the files. Version 6 (7 October 2026): 'Used in' regenerated from the files, against 22 feature files, 70 scenarios and 258 step lines, every line matching a pattern here. Version 5 (5 October 2026) was checked against 19 feature files, 65 scenarios, after the three-amigos review; every Given in section 3 is arranged by fixture, navigation, test control, overrides or environment.
+Version 11 (2026-10-12): 23 feature files and 73 scenarios (one new, 'Another customer's account cannot be changed'; two UI scenarios tagged). Version 7 (7 October 2026): checked against 23 feature files, 72 scenarios and 269 step lines, every line matching a pattern here; new rows' 'Used in' set from the files. Version 6 (7 October 2026): 'Used in' regenerated from the files, against 22 feature files, 70 scenarios and 258 step lines, every line matching a pattern here. Version 5 (5 October 2026) was checked against 19 feature files, 65 scenarios, after the three-amigos review; every Given in section 3 is arranged by fixture, navigation, test control, overrides or environment.
 
 Extracted on 4 October 2026 with `gherkin-official` from the 18 feature files in `features-shared/` (54 scenarios, 160 distinct step texts, And and But resolved to their keyword). Section 3's *Arranged by* column was checked against `fixtures/personas/*.json` (contract v4, fixture check 241 of 241) and API spec v4 section 6.5.

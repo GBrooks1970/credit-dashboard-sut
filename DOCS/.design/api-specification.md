@@ -1,6 +1,6 @@
 ---
-version: 23
-created: 2026-10-10T16:59Z
+version: 24
+created: 2026-10-12T09:49Z
 supersedes: v22 (2026-10-08); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v24:** CDS-24: the `RuleViolation` response description reads 'out of range or too precise (BR-14)' (contract v17, `info.version` 0.9.4); `out-of-range` covers both the range and the two-decimal limit (DR-061).
 **Changes in v23:** CDS-28: section 6.3 types the `PATCH` body per field by kind (contract v16, `info.version` 0.9.3): a wrong kind of value and an unknown field are now refused at the edge (400, as before); a number a decimal cannot hold is 422 `out-of-range` (it was 400); the range, the two allowed payment methods and whole months stay BR-14 (422); a clear is `value: null`.
 **Changes in v22:** CDS-23 (Schemathesis): section 8 gains 405 `/method-not-allowed` for a path the contract has with a method it does not, and the 404 row keeps the unknown-path case (DR-056); section 11's Schemathesis row says the run is a `verify` step with a fixed seed.
 **Changes in v21:** CDS-25 S4: section 6.4 lists 400 for the notifications list (paging) and for marking one read (the body); contract v15 (`info.version` 0.9.2) documents it.

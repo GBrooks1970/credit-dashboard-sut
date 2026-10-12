@@ -1,6 +1,6 @@
 ---
-version: 11
-created: 2026-10-08T10:02Z
+version: 12
+created: 2026-10-12T09:49Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-spec
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v12:** CDS-24 (CDS-18 review Notes): the detail tile hook is `detail-tile-{field}` with the field in kebab case (section 6.5); section 6.6 gives the BR-14 error copy.
 **Changes in v11:** the report changes route drops `tags=` (decision brief 9 D6; contract v13).
 **Changes in v10:** section 6.7 names the searches list and personal-details hooks (CDS-18 confirmation pass).
 **Changes in v9:** CDS-18 review fixes. The overview's changes toggle fetches every change with one further call (section 6.2, DR-047); the debt breakdown reads `byType` (section 6.7, DR-046); the report-changes route carries `sentiment`; the edit-form catalogue row also names the open-redirect security scenarios; section 6.9 cites PR-01 to PR-11.
@@ -185,7 +186,7 @@ The widget is one component (`PaymentHistoryWidget`) reused on account detail wi
 | Header | region | `detail-header` | All |
 | Promo (mock link-your-account) | region | `detail-promo` | Credit cards, current accounts |
 | Balance card | region | `detail-balance`, `detail-balance-bar`, `detail-updated` | All |
-| Details tiles | link (not button) | `detail-tile-{field}` | Credit cards, credit accounts |
+| Details tiles | link (not button) | `detail-tile-{field}`, the field in kebab case: `detail-tile-apr`, `detail-tile-interest-rate`, `detail-tile-promo-period-months`, `detail-tile-min-payment`, `detail-tile-payment-method` | Credit cards, credit accounts |
 | Balances chart | img + table alternative | `detail-balance-chart` | Credit cards, credit accounts, loans |
 | Payment history | region | `detail-payment-history` | All open accounts |
 | Metadata | description list | `detail-meta-frequency`, `detail-meta-status`, `detail-meta-opened` | All |
@@ -200,7 +201,7 @@ Sections not shown for a type are not rendered at all, rather than rendered empt
 | Prompt and hint | heading, text | `dc-prompt`, `dc-hint` | Copy per field |
 | Preset options | radio group | `dc-option-{value}` | Single choice; current value pre-selected |
 | Other | radio | `dc-option-other` | Reveals `dc-input` (numeric, 2 dp) |
-| Field error | text, linked via `aria-describedby` | `dc-error` | Client check mirrors BR-14; server 422 shown verbatim |
+| Field error | text, linked via `aria-describedby` | `dc-error` | Client check mirrors BR-14; server 422 shown verbatim. Copy for a rate: "The rate must be between 0% and 100%, with up to two decimal places." |
 | Help | button, `aria-expanded` | `dc-help-where`, `dc-help-why` | Disclosure |
 | Save | button | `dc-save` | Disabled until a change; on 200 returns to `redirectUrl` |
 | Cancel | button | `dc-cancel` | Returns without saving |

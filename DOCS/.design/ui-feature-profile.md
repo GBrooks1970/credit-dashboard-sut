@@ -1,6 +1,6 @@
 ---
-version: 7
-created: 2026-10-08T00:30Z
+version: 8
+created: 2026-10-12T09:49Z
 supersedes: v6 (2026-10-07T13:09Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-feature-spec
@@ -11,6 +11,7 @@ language: en-GB
 
 **Status:** Phase 0 draft, for review
 **Parent:** [UI specification](ui-specification.md) (conventions in its section 4 apply here unchanged)
+**Changes in v8:** section 4.2 specifies the email sub-page: its hooks (CDS-24; CDS-18 review Note, pass 3 F-12).
 **Changes in v7:** PR-06 says spaces are ignored (CDS-27 plan D1; CDS-18 review Note F-15).
 **Changes in v6:** section 4.1 specifies the mobile sub-page: its hooks, and that it stays open for the code and returns to the profile once the number is verified (CDS-18 third pass).
 **Changes in v5:** the mobile tile gains a status badge, `profile-mobile-badge`, as the email tile has (CDS-18 confirmation pass).
@@ -111,6 +112,18 @@ Each sub-page has Save and Cancel, returns to the profile on save, and shows the
 | Submit code | button | `mobile-code-submit` | `POST /me/profile/mobile/verification`; on 200 returns to the profile, whose tile badge `profile-mobile-badge` shows Verified |
 | Code error | text, `aria-describedby` | `mobile-code-error` | From 422 `code-wrong` (with the attempts left, `mobile-attempts`) or `code-invalid` (asks for the number to be added again) |
 | Cancel | button | `mobile-cancel` | Returns to the profile; a number already saved stays Unverified |
+
+### 4.2 Email sub-page (Release 3)
+
+| Element | Role | `data-testid` | Notes |
+| --- | --- | --- | --- |
+| Current address | text | `email-current` | The address held, with its status (Verified or Unverified) |
+| Address | textbox, labelled | `email-input` | Pre-filled with the address held; format checked (400 `/problems/validation` shown at `email-error`) |
+| Save | button | `email-save` | `PUT /me/profile/email`; on 200 returns to the profile, whose tile badge `profile-email-badge` shows Unverified for a new address; submitting the address already held changes nothing (PR-04, DR-027) |
+| Address error | text, `aria-describedby` | `email-error` | From 400 validation |
+| Resend | button | `email-resend` | `POST /me/profile/email/verification`; absent while the address is Verified (PR-09) |
+| Resend status | text, `role="status"` | `email-resend-status` | 202 'Link sent'; 429 'Try again in {n} seconds' from `Retry-After`; 422 `already-verified` 'This address is already verified' |
+| Cancel | button | `email-cancel` | Returns to the profile without saving |
 
 ## 5. Rules
 

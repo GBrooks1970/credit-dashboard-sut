@@ -1090,7 +1090,7 @@ export interface components {
                 "application/problem+json": components["schemas"]["Problem"];
             };
         };
-        /** @description An account detail is out of range (BR-14) */
+        /** @description An account detail is out of range or too precise (BR-14) */
         RuleViolation: {
             headers: {
                 [name: string]: unknown;

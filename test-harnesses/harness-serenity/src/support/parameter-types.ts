@@ -69,12 +69,13 @@ const accountTypes: Record<string, string> = {
     'credit card': 'creditcard', 'credit cards': 'creditcard',
     loan: 'loan', loans: 'loan',
     mortgage: 'mortgage', mortgages: 'mortgage',
+    'current account': 'currentaccount', 'current accounts': 'currentaccount',
     'utilities and telecoms account': 'telecomsandutilities', 'utilities and telecoms': 'telecomsandutilities',
     'credit account': 'lineofcredit', 'credit accounts': 'lineofcredit',
 };
 defineParameterType({
     name: 'accountType',
-    regexp: /credit cards?|loans?|mortgages?|utilities and telecoms account|utilities and telecoms|credit accounts?/,
+    regexp: /credit cards?|loans?|mortgages?|current accounts?|utilities and telecoms account|utilities and telecoms|credit accounts?/,
     transformer: (value: string) => accountTypes[value]!,
 });
 

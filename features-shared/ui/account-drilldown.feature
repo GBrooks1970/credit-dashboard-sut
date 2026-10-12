@@ -1,4 +1,4 @@
-# version: 6 | created: 2026-10-07T12:50Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 7 | created: 2026-10-12T09:49Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @ui
 Feature: Account drilldown
   A customer can move from a summary of each account type down to a single account.
@@ -7,6 +7,7 @@ Feature: Account drilldown
   Background:
     Given Alex holds the "drilldown" persona
 
+  @BR-04
   Scenario: The type list agrees with the overview card
     Given Alex has noted the credit card total on the report overview
     When Alex opens the credit card list

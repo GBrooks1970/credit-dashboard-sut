@@ -4,9 +4,9 @@ created: 2026-10-11T15:09Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-24
-status: approved
+status: implemented
 approved: "2026-10-12, Gary Brooks, 'approve plan as recommended, one PR' (scope answers of 2026-10-11: tag the two UI scenarios, add the BR-15 change scenario, defer the bug-flag catches to Phase 5, decide the changes-toggle page size in the CDS-29 plan); merge authority: per pull request, on request"
-delivered: not yet
+delivered: "#61 (specification, scenarios, harness step, contract v17, records), squash fdfc682"
 language: en-GB
 ---
 
@@ -66,4 +66,17 @@ The three bug-flag scenarios (Phase 5 plan); the changes-toggle page size (CDS-2
 
 ## Outcome
 
-[Appended after delivery.]
+Delivered as planned in one pull request.
+
+- **#61** (`fdfc682`, PR CI run 38233159852: `Verify` success, 1 m 30 s). Local: `npm run verify` 14 of 14 (steps sum to 284.7 s on a busy machine), 309 service tests, 234 rule tests, harness 59 of 59, Gherkin check 73 scenarios and 15 of 15 BR tags.
+- **Public counts** after the merge: `portfolio-prompts#120` (`6cdbfb7`), `portfolio#69` (`962bfd9`), `test-automation-portfolio#316` (`6d932d5`).
+
+Probes: the BR-15 scenario fails when the details edit ignores ownership (`Expected 404, got 200`). Removing the `@BR-11` tag from the UI scenario was **not** caught: the Gherkin gate checks that each rule is tagged somewhere, and the API scenarios still carry it.
+
+Differences from the plan:
+
+- **The tag probe in the plan could not fail** for the reason above; it is reported as it ran.
+- **Pass 1 F-22 was smaller than planned:** the personal-details hooks were already in UI specification 6.7; only the BR-14 error copy was added.
+- **No change** to the service or its tests (309 unchanged).
+
+Full record: [`DOCS/implementation-logs/2026-10-12_cds-24-review-notes.md`](../implementation-logs/2026-10-12_cds-24-review-notes.md).

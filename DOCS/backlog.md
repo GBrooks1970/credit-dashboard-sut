@@ -1,6 +1,6 @@
 ---
-version: 50
-created: 2026-10-11T10:09Z
+version: 51
+created: 2026-10-12T09:49Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 50 (CDS-30 Done: the Kanban board is live on Pages)
+**Version:** 51 (CDS-24 Done in review: the remaining CDS-18 review Notes)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -52,7 +52,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-08` | Persona fixtures (7) written and validated against the contract schemas | Behaviour | — | — | — | Done 2026-10-04 |
 | `CDS-13` | Arrange data no persona holds: test-control overrides (DR-020) | Specification | — | — | — | Done 2026-10-04 |
 | `CDS-18` | Independent re-review of the feature files and step glossary against contract v9, then owner sign-off; records the Phase 2 gate (DR-046) | Behaviour | — | — | `CDS-17` | Done 2026-10-07 |
-| `CDS-24` | Address the CDS-18 review Notes (boundary rows, contract 404s, clock time of day, hook casing and email sub-page hooks, money precision, stale text, current accounts in `{accountType}`, rule tags, bug-flag catches for Phase 5) | Specification | — | LOW | `CDS-18` | Open |
+| `CDS-24` | Address the CDS-18 review Notes (boundary rows, contract 404s, clock time of day, hook casing and email sub-page hooks, money precision, stale text, current accounts in `{accountType}`, rule tags, bug-flag catches for Phase 5) | Specification | — | LOW | `CDS-18` | Done 2026-10-12 |
 
 ### Phase 3 — API
 
@@ -208,6 +208,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 **OPEN.** Brief 10 D2 (2026-10-10) chose to continue to the React UI. A plan with a spike and slices comes first, after CDS-28 and CDS-24.
 
 **Update (2026-10-10).** Decision brief 10 is decided (all as recommended): the Phase 3 gate is recorded as met (DR-058), the project continues to Phase 4, and CDS-28 and CDS-24 come before it.
+
+### CDS-24: The remaining CDS-18 review Notes
+
+**COMPLETE in review (2026-10-12).** Plan `DOCS/implementation-plans/2026-10-12_cds-24-review-notes.md`. Of the 25 Notes across the three passes, 14 were already closed or deliberate; this item closed ten specification and documentation Notes (glossary v11, UI specification v12, My Profile v8 with the email sub-page hooks, contract v17, DR-061), tagged two UI scenarios (`@BR-04`, `@BR-11`) and added the BR-15 'change' scenario (73 scenarios; the harness runs 59). Left to later plans: the three bug-flag catches (Phase 5) and the changes-toggle page size (CDS-29). Status is Done when merged.
 
 ### CDS-30: Publish the Kanban board
 

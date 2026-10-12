@@ -1,4 +1,4 @@
-# version: 5 | created: 2026-10-07T12:50Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 6 | created: 2026-10-12T09:49Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @ui
 Feature: Report overview
   The overview gives a customer their score, how it compares, and a route into every part of the report.
@@ -29,6 +29,7 @@ Feature: Report overview
     Then the summary is still marked as liked
     And it is not marked as disliked
 
+  @BR-11
   Scenario: Only the three newest changes are shown at first
     Given Sam holds the "drilldown" persona
     And Sam is viewing the report for "Bureau A"

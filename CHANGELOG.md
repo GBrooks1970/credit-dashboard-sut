@@ -2,6 +2,12 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-12: the remaining review Notes (CDS-24)
+
+- Step glossary v11, UI specification v12 (kebab-case tile hooks; the BR-14 error copy), My Profile v8 (email sub-page hooks), contract v17 (`RuleViolation` description), API specification v24, DR-061.
+- Features: `@BR-04` and `@BR-11` tags on two UI scenarios; the BR-15 'Another customer's account cannot be changed' scenario (73 scenarios; the harness runs 59) and its step.
+- Backlog v51: CDS-24 Done in review.
+
 ## 2026-10-11: the Kanban board on GitHub Pages (CDS-30)
 
 - `.github/workflows/pages.yml` publishes the committed board (and only the board) on a push to `main` that changes it, after checking the ticket payload is present. Pages was enabled with the source set to GitHub Actions. DR-060.

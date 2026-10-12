@@ -1,4 +1,4 @@
-# version: 1 | created: 2026-10-05T20:41Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 2 | created: 2026-10-12T09:49Z | project: credit-dashboard-sut | type: feature | language: en-GB
 # Moved unchanged from api/account-totals.feature v4 at CDS-09 (README 'Where Phase 0 files land').
 @security @api
 Feature: Access to other customers' accounts
@@ -11,4 +11,10 @@ Feature: Access to other customers' accounts
   Scenario: Another customer's account cannot be found
     Given Sam holds the "excellent" persona
     When Alex asks for one of Sam's accounts
+    Then the account is not found
+
+  @BR-15
+  Scenario: Another customer's account cannot be changed
+    Given Sam holds the "excellent" persona
+    When Alex sets the interest rate on one of Sam's accounts to 10%
     Then the account is not found

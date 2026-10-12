@@ -73,6 +73,15 @@ When("{actor} asks for one of {actor}'s accounts", async (actor: string, owner: 
     await api(actor).request('getAccount', { path: { accountId: account.id } });
 });
 
+// BR-15: the same edit as above, on a real account in the other user's report, with this user's token.
+When("{actor} sets the interest rate on one of {actor}'s accounts to {percent}", async (actor: string, owner: string, rate: number) => {
+    const persona = scenario.state.personas.get(owner.toLowerCase());
+    if (!persona) throw new Error(`${owner} holds no persona, so has no accounts to edit`);
+    const [account] = accountsOf(persona);
+    scenario.state.pending.rate = rate;
+    await api(actor).request('updateAccountDetail', { path: { accountId: account.id }, body: { field: 'interestRate', value: rate } });
+});
+
 When('{actor} sets the interest rate on the {provider} card to {percent}', async (actor: string, provider: string, rate: number) => {
     const persona = scenario.state.personas.get(actor.toLowerCase())!;
     const cards = accountsOf(persona).filter((a) => a.type === 'creditcard' && !a.closed && a.provider === provider);

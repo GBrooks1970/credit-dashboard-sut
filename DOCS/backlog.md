@@ -1,6 +1,6 @@
 ---
-version: 59
-created: 2026-10-13T22:18Z
+version: 60
+created: 2026-10-13T22:43Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 59 (CDS-36 Done in review: U6, the exit checks; CDS-35 merged)
+**Version:** 60 (CDS-36 merged; Phase 4 delivered, gate with the owner: decision brief 12)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -241,7 +241,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-36: U6, the exit checks
 
-**COMPLETE in review (2026-10-13).** `npm run check:ui-exit` runs axe-core (`@axe-core/playwright` 4.13.0) on 37 pages and states, and 24 layout checks (12 with this machine's text and 12 with wider text) at 375, 768 and 1280 px, against the live service; 0 problems. It runs in the `ui` CI job. The Phase 4 gate is the owner's to record (decision brief 12 follows this pull request). Status is Done when merged.
+**COMPLETE (2026-10-13; #69 `6cbda4f`, CI run 38479216316; the first run, 38477792933, failed on a real layout defect and was fixed).** `npm run check:ui-exit` runs axe-core (`@axe-core/playwright` 4.13.0) on 37 pages and states, and 24 layout checks (12 with this machine's text and 12 with wider text) at 375, 768 and 1280 px, against the live service; 0 problems. It runs in the `ui` CI job. The Phase 4 gate is the owner's to record (decision brief 12). Implementation log: `DOCS/implementation-logs/2026-10-13_cds-29-phase-4-ui-u1-to-u6.md`; plan Outcome written.
 
 ### CDS-30: Publish the Kanban board
 

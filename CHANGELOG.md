@@ -4,7 +4,7 @@ All notable changes to this project. Dates are UTC.
 
 ## 2026-10-13: the exit checks (CDS-36, Phase 4 U6)
 
-- `npm run check:ui-exit`: axe-core on 37 pages and states with the bug flags off (0 violations), and 12 layout checks at 375, 768 and 1280 px (one navigation at a time, no sideways scroll, the demo banner). A step in the `ui` CI job.
+- `npm run check:ui-exit`: axe-core on 37 pages and states with the bug flags off (0 violations), and 24 layout checks at 375, 768 and 1280 px, each with normal and wider text (one navigation at a time, no sideways scroll, the demo banner). The first CI run found the profile scrolling sideways by 5px at 375px with Linux fonts (a long email address); fixed with `overflow-wrap`. A step in the `ui` CI job.
 - Harness: `@axe-core/playwright` 4.13.0; `scripts/run.mjs exit`. UI specification v19. Backlog v59.
 
 ## 2026-10-13: the profile (CDS-35, Phase 4 U5)

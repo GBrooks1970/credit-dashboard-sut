@@ -241,7 +241,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-36: U6, the exit checks
 
-**COMPLETE in review (2026-10-13).** `npm run check:ui-exit` runs axe-core (`@axe-core/playwright` 4.13.0) on 37 pages and states, and 12 layout checks at 375, 768 and 1280 px, against the live service; 0 problems. It runs in the `ui` CI job. The Phase 4 gate is the owner's to record (decision brief 12 follows this pull request). Status is Done when merged.
+**COMPLETE in review (2026-10-13).** `npm run check:ui-exit` runs axe-core (`@axe-core/playwright` 4.13.0) on 37 pages and states, and 24 layout checks (12 with this machine's text and 12 with wider text) at 375, 768 and 1280 px, against the live service; 0 problems. It runs in the `ui` CI job. The Phase 4 gate is the owner's to record (decision brief 12 follows this pull request). Status is Done when merged.
 
 ### CDS-30: Publish the Kanban board
 

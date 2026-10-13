@@ -147,6 +147,13 @@ const LAYOUT_FACTS = `(() => {
     };
 })()`;
 
+// Each layout is looked at with this machine's text and with wider text, so the result does not depend on which fonts the
+// machine has: a long email address scrolled the profile sideways at 375 px in CI (Linux fonts) but not on a Windows machine.
+const TEXT = [
+    { label: '', css: '' },
+    { label: ', wider text', css: 'body { font-size: 19px; }' },
+] as const;
+
 const LAYOUTS = [
     { width: 375, height: 812, nav: 'mobile' },
     { width: 768, height: 1024, nav: 'primary' },
@@ -196,10 +203,12 @@ try {
 
     // 2. The three layouts: one navigation at a time, no sideways scroll, the demo banner shown, and axe at each width.
     for (const layout of LAYOUTS) {
+      for (const text of TEXT) {
         const context = await browser.newContext({ viewport: { width: layout.width, height: layout.height } });
         const page = await context.newPage();
         for (const target of targets.filter((t) => t.layouts)) {
             await visit(page, target.address, target.ready);
+            if (text.css) await page.addStyleTag({ content: text.css });
             const nav = (await page.evaluate(LAYOUT_FACTS)) as { primary: number; mobile: number; overflow: number; banner: boolean };
             const problems: string[] = [];
             if (layout.nav === 'mobile' && !(nav.mobile === 3 && nav.primary === 0)) problems.push(`expected the bottom tab bar only, found ${nav.mobile} tab(s) and ${nav.primary} top link(s)`);
@@ -208,10 +217,11 @@ try {
             if (!nav.banner) problems.push('the demo banner is missing');
             problems.push(...(await violationsOn(page)));
             layoutChecks++;
-            failures.push(...problems.map((p) => `${layout.width}px, ${target.name}: ${p}`));
-            console.log(`  ${problems.length === 0 ? 'pass' : 'FAIL'}  layout ${layout.width}px  ${target.name}${problems.length ? `: ${problems.join('; ')}` : ''}`);
+            failures.push(...problems.map((p) => `${layout.width}px${text.label}, ${target.name}: ${p}`));
+            console.log(`  ${problems.length === 0 ? 'pass' : 'FAIL'}  layout ${layout.width}px${text.label}  ${target.name}${problems.length ? `: ${problems.join('; ')}` : ''}`);
         }
         await context.close();
+      }
     }
 } finally {
     await browser.close();

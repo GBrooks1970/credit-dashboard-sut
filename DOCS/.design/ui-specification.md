@@ -1,6 +1,6 @@
 ---
-version: 16
-created: 2026-10-13T13:58Z
+version: 17
+created: 2026-10-13T18:32Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-spec
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v17:** CDS-34 (U4): what the account pages built settles. Section 6.4: the summary figures have hooks (`list-total-balance`, `list-total-limit`, `list-utilisation`) and show whole pounds like the overview card, so the two compare as text (BR-04); a row's parts are `row-balance-{id}`, `row-util-{id}` and `row-over-{id}`; `list-changes` and the utilities and telecoms sub-groups are not built (section 6.4 says why). Section 6.5: the tiles are links that carry the page to return to. Section 6.6: the five fields, their presets, the client check, and the fallback of the open-redirect guard.
 **Changes in v16:** CDS-33 (U3): what the five report pages built settles. Section 6.3: the year status is a text alternative beside each year button (`ph-year-status-{yyyy}`); the intro reads 'six years of history, plus the current year'. Section 6.7: report changes show 20 a page with the kind and the page in the address (`?bureauId=&sentiment=&page=`); a visitor without a session who opens an address signs in and is brought back to it; `change-card-{id}` carries `data-sentiment`; a search row carries `data-kind`; the debt overview shows summary figures without pence; the header navigation has Report, Debt and Updates.
 **Changes in v15:** CDS-32 (U2): section 6.2 states what the overview built settles: the changes toggle follows the pages of `GET /changes` 100 at a time until it has every change (DR-047; the CDS-18 Note on the toggle's page size); the history chart defaults to 6 months and shows one row per month, a gap included, in its table alternative; `impact-link` and `link-impact` go to the sections on the page; `tile-corrections` leads to the personal details page; the pages later slices build show a 'not built yet' page to a signed-in customer.
 **Changes in v14:** CDS-31 (U1): section 6.1 gives the sign-in error copy; the header of 6.2 is built in stages (U1 has the logo, the report link and the account button; the notifications button follows with the pages that need it).
@@ -186,6 +187,11 @@ The widget is one component (`PaymentHistoryWidget`) reused on account detail wi
 | Utilities and telecoms | None (grouped list) | No | No |
 | Credit accounts | Total balance, total limit | Yes | Yes |
 
+**Built in U4 (CDS-34).**
+- The summary figures have hooks `list-total-balance`, `list-total-limit` and `list-utilisation`, and show whole pounds like the overview card (4.2), so the list total and the overview card compare as text (BR-04). The bar `list-donut` is a progress bar, shown when the type has a limit and the API reports a utilisation.
+- A row is a link `account-row-{accountId}` with parts `row-balance-{id}` (with pence; a negative balance reads 'in credit', DR-018), `row-util-{id}` (the percentage alone, for card, loan and credit account) and `row-over-{id}` ('Over limit' above 100%, DR-013). The part hooks do not start with `account-row-`, so a count of `account-row-*` counts accounts. A loan that does not count in the totals (BR-05) is not a row: it is listed in `list-excluded` as `excluded-row-{id}`, with the reason.
+- Not built: `list-changes`, because the changes endpoint takes no account-type filter, and the sub-group headings `list-group-{name}`, because no field tells a utility from a telecoms account. Both need a contract change and are left to the owner (backlog CDS-34).
+
 ### 6.5 Account detail (Release 2)
 
 | Element | Role | data-testid | Shown for |
@@ -201,6 +207,8 @@ The widget is one component (`PaymentHistoryWidget`) reused on account detail wi
 
 Sections not shown for a type are not rendered at all, rather than rendered empty.
 
+**Built in U4 (CDS-34).** The tiles are links to `/data-capture/{field}?accountId=&redirectUrl=`, with the page they are on as the return address, and a tile with no value reads 'Not recorded'. The promo shows for an open card or current account; a closed account has no payment history. The chart is a bar chart with the visually hidden table `detail-balance-chart-table`.
+
 ### 6.6 Detail edit form (Release 2)
 
 | Element | Role | data-testid | Behaviour |
@@ -215,9 +223,11 @@ Sections not shown for a type are not rendered at all, rather than rendered empt
 
 `redirectUrl` must be a same-origin path starting with `/`. Anything else falls back to the account detail page (open-redirect guard).
 
+**Built in U4 (CDS-34).** Five fields: `apr` and `interestRate` (presets 9.9, 19.9, 24.9 and 34.9), `promoPeriodMonths` (0, 6, 12 and 24), `minPayment` (a percentage: 1, 2, 3 and 5) and `paymentMethod` (direct debit or manual, with no Other). The current value is pre-selected: a preset if it is one, otherwise Other holding the value. The client check mirrors BR-14 (a rate or percentage from 0 to 100 with up to two decimals; whole months from 0 to 60), and a refused value is never sent. The service's own message (a 422 `detail`) is shown as it comes. The open-redirect guard follows a return address only if it is a path that starts with a single `/` (not `//`, not `/\`) and stays on this site once resolved; otherwise the form returns to the account page, built from the signed-in customer's default bureau.
+
 ### 6.7 Closed accounts, report changes, searches, personal details, debt (Releases 2 to 3)
 
-These pages reuse the list patterns above. Closed accounts groups rows under `closed-group-{type}` with no summary. Report changes adds filter chips `changes-filter-{sentiment}` and pagination `pager-prev`, `pager-next`, `pager-status`; filters are reflected in the URL. Searches lists `search-row-{id}` inside `search-list` (empty state `search-list-empty`). Personal details is read-only in v1: the name `pd-name` (the user's legal name), the current address `pd-address-current`, previous addresses `pd-address-previous-{n}` (newest first, from 1), and the electoral roll status `pd-electoral-roll`. Debt overview shows `debt-total`, `debt-trend` and a per-type breakdown `debt-type-{type}`, one row per `byType` entry of `GET /debt/overview` (BR-07, DR-046).
+These pages reuse the list patterns above. Closed accounts (`closed-title`) groups rows under `closed-group-{type}` with no summary. Report changes adds filter chips `changes-filter-{sentiment}` and pagination `pager-prev`, `pager-next`, `pager-status`; filters are reflected in the URL. Searches lists `search-row-{id}` inside `search-list` (empty state `search-list-empty`). Personal details is read-only in v1: the name `pd-name` (the user's legal name), the current address `pd-address-current`, previous addresses `pd-address-previous-{n}` (newest first, from 1), and the electoral roll status `pd-electoral-roll`. Debt overview shows `debt-total`, `debt-trend` and a per-type breakdown `debt-type-{type}`, one row per `byType` entry of `GET /debt/overview` (BR-07, DR-046).
 
 ### 6.8 Debug panel (tooling)
 

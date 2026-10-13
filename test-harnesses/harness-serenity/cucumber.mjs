@@ -41,6 +41,9 @@ export const ui = {
         '../../features-shared/ui/searches.feature',
         '../../features-shared/ui/personal-details.feature',
         '../../features-shared/ui/debt.feature',
+        '../../features-shared/ui/account-drilldown.feature',
+        '../../features-shared/ui/account-details-form.feature',
+        '../../features-shared/security/open-redirect.feature',
     ],
 };
 

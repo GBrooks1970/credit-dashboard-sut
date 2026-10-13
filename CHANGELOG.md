@@ -2,6 +2,12 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-13: the accounts (CDS-34, Phase 4 U4)
+
+- The account-type list (summary, bar, rows, excluded loans), closed accounts, account detail, the detail edit form (five fields, BR-14 client check, the service's message shown as it comes) and the open-redirect guard (`safeRedirect`).
+- Harness: the account steps; `poundsAndPence`; the `ui` profile has 31 scenarios (39 executions). UI specification v17.
+- 102 Vitest tests (47 new). Backlog v57.
+
 ## 2026-10-13: the report pages (CDS-33, Phase 4 U3)
 
 - Payment history with the shared `PaymentHistoryWidget`, report changes (kind and page in the address, 20 a page, a pager), searches (hard and soft apart), personal details (read-only) and the debt overview; sign-in brings a visitor back to the address they asked for; header links to Debt and Updates.

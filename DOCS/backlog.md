@@ -1,6 +1,6 @@
 ---
-version: 56
-created: 2026-10-13T13:58Z
+version: 57
+created: 2026-10-13T18:32Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 56 (CDS-33 Done in review: U3, the report pages; CDS-32 merged)
+**Version:** 57 (CDS-34 Done in review: U4, the accounts; CDS-33 merged)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -77,7 +77,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-31` | U1 foundation: the UI package, app shell, the service serves the UI, the harness `ui` profile, login green (3 scenarios), the `ui` CI job | UI | — | HIGH | `CDS-29` | Done 2026-10-13 |
 | `CDS-32` | U2 report overview (5 scenarios) | UI | — | HIGH | `CDS-31` | Done 2026-10-13 |
 | `CDS-33` | U3 report pages: payment history, report changes, searches, personal details, debt (14 scenarios) | UI | — | HIGH | `CDS-32` | Done 2026-10-13 |
-| `CDS-34` | U4 accounts: lists, closed, detail, edit form, open-redirect guard (9 scenarios) | UI | — | HIGH | `CDS-33` | Open |
+| `CDS-34` | U4 accounts: lists, closed, detail, edit form, open-redirect guard (9 scenarios) | UI | — | HIGH | `CDS-33` | Done 2026-10-13 |
 | `CDS-35` | U5 profile: profile, email and mobile sub-pages (10 scenarios) | UI | — | HIGH | `CDS-34` | Open |
 | `CDS-36` | U6 exit: axe-core on every page, layouts, the full `@ui` run against the live service, the Phase 4 gate | UI | — | HIGH | `CDS-35` | Open |
 
@@ -229,7 +229,11 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-33: U3, the report pages
 
-**COMPLETE in review (2026-10-13).** Payment history (the shared `PaymentHistoryWidget`, BR-12), report changes (kind and page in the address, 20 a page), searches, personal details (read-only) and the debt overview (BR-07, DR-046); sign-in returns the visitor to the address they asked for. 55 Vitest tests; the `ui` profile runs 22 scenarios (30 executions) green. Status is Done when merged.
+**COMPLETE (2026-10-13; #66 `741958f`, CI run 38409514129).** Payment history (the shared `PaymentHistoryWidget`, BR-12), report changes (kind and page in the address, 20 a page), searches, personal details (read-only) and the debt overview (BR-07, DR-046); sign-in returns the visitor to the address they asked for. 55 Vitest tests; the `ui` profile runs 22 scenarios (30 executions) green. Status is Done when merged.
+
+### CDS-34: U4, the accounts
+
+**COMPLETE in review (2026-10-13).** The account-type list with its summary, bar and excluded loans (BR-04, BR-05, BR-06, DR-013, DR-018), closed accounts (BR-13), account detail, the detail edit form with the BR-14 copy, and the open-redirect guard. 102 Vitest tests; the `ui` profile runs 31 scenarios (39 executions) green. **Left to the owner:** `list-changes` and the utilities and telecoms sub-groups of UI specification 6.4 are not built, because the contract has no account-type filter on changes and no field that tells a utility from a telecoms account; each needs a contract change. Status is Done when merged.
 
 ### CDS-30: Publish the Kanban board
 

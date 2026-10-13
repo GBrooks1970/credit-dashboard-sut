@@ -245,3 +245,11 @@ These are the probes the plan requires, each expected to fail and then reverted;
 - **One definition serves a Given and a When.** Cucumber matches a step by its text, so `shows only positive changes` is defined once.
 - The Given `{actor}'s report has {count} changes` is a shared arrange step (the 25-change overrides sample), and `{hard or soft}` is the type `hardOrSoft`.
 - The `ui` profile now selects seven feature files: 22 scenarios, 30 executions (this slice: 14 scenarios, 18 executions).
+
+## 23. The account steps (CDS-34, 2026-10-13)
+
+- `src/ui/steps/account.steps.ts` defines the steps of the account lists, closed accounts, account detail, the detail form and the open-redirect scenario. The accounts the steps need are found in the bound persona's fixture (`theOne`), never on the page: the open Lender X credit card is the one with no interest rate recorded, the loan that counts in the totals is the one a loan page opens, and a provider's card is looked up by provider and type.
+- **Presence, not visibility, for anything below the fold.** `PageElement.isPresent()` (there is no `isPresent` expectation in Serenity/JS 3.49) is the wait for the account cards on the overview, the excluded group, the payment history and the account information; `isVisible` stays for what is at the top of a page (`list-summary`, `detail-balance`, `dc-prompt`). This is the section 22 finding again, in a second place.
+- **A Then that follows a Then.** `the closed {accountType} group lists {count} account(s)` remembers the group in the scenario's `pending` state so `its balance is {money}` reads the row in that group. `its balance is` is also an `@api` step; the two profiles import different step files, so they do not collide.
+- **A refused value is not sent, so the check is made on the card's own page.** `no interest rate is recorded` leaves the form with Cancel and reads the interest rate tile (`Not recorded`), because the `ui` profile has no API ability.
+- The `ui` profile now selects ten feature files: 31 scenarios, 39 executions (this slice: 9 scenarios, 9 executions).

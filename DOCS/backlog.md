@@ -1,6 +1,6 @@
 ---
-version: 58
-created: 2026-10-13T22:02Z
+version: 59
+created: 2026-10-13T22:18Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 58 (CDS-35 Done in review: U5, the profile; CDS-34 merged)
+**Version:** 59 (CDS-36 Done in review: U6, the exit checks; CDS-35 merged)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -79,7 +79,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-33` | U3 report pages: payment history, report changes, searches, personal details, debt (14 scenarios) | UI | — | HIGH | `CDS-32` | Done 2026-10-13 |
 | `CDS-34` | U4 accounts: lists, closed, detail, edit form, open-redirect guard (9 scenarios) | UI | — | HIGH | `CDS-33` | Done 2026-10-13 |
 | `CDS-35` | U5 profile: profile, email and mobile sub-pages (10 scenarios) | UI | — | HIGH | `CDS-34` | Done 2026-10-13 |
-| `CDS-36` | U6 exit: axe-core on every page, layouts, the full `@ui` run against the live service, the Phase 4 gate | UI | — | HIGH | `CDS-35` | Open |
+| `CDS-36` | U6 exit: axe-core on every page, layouts, the full `@ui` run against the live service, the Phase 4 gate | UI | — | HIGH | `CDS-35` | Done 2026-10-13 |
 
 ## Items
 
@@ -237,7 +237,11 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-35: U5, the profile
 
-**COMPLETE in review (2026-10-13).** My profile (identity, the name information dialog, the preferred name, five tiles), the email sub-page and the mobile sub-page with its code step (PR-01 to PR-04, PR-06 to PR-11), and nothing from the profile in the page title or the address (PR-08). 135 Vitest tests; the `ui` profile runs 41 scenarios (51 executions) green. The address, employment and finances sub-pages are stretch (DR-022) and stay unbuilt. Status is Done when merged.
+**COMPLETE (2026-10-13; #68 `b29a066`, CI run 38475665352).** My profile (identity, the name information dialog, the preferred name, five tiles), the email sub-page and the mobile sub-page with its code step (PR-01 to PR-04, PR-06 to PR-11), and nothing from the profile in the page title or the address (PR-08). 135 Vitest tests; the `ui` profile runs 41 scenarios (51 executions) green. The address, employment and finances sub-pages are stretch (DR-022) and stay unbuilt. Status is Done when merged.
+
+### CDS-36: U6, the exit checks
+
+**COMPLETE in review (2026-10-13).** `npm run check:ui-exit` runs axe-core (`@axe-core/playwright` 4.13.0) on 37 pages and states, and 12 layout checks at 375, 768 and 1280 px, against the live service; 0 problems. It runs in the `ui` CI job. The Phase 4 gate is the owner's to record (decision brief 12 follows this pull request). Status is Done when merged.
 
 ### CDS-30: Publish the Kanban board
 

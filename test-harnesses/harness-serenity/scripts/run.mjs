@@ -1,8 +1,9 @@
-// version: 3 | created: 2026-10-13T11:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 4 | created: 2026-10-13T11:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Builds the service, starts it with test control on and a synthetic key, starts a second instance without test control
 // (for the scenario that needs the surface absent), runs the Cucumber profile against them, and always stops both
 // (design section 8, CDS-22). Run from test-harnesses/harness-serenity:  node scripts/run.mjs api|ui [feature ...]
-// The ui profile also builds the UI (demo-apps/demoapp001-react-ui) and has the service serve it (UI_DIRECTORY, brief 11 D2).
+// `exit` runs the Phase 4 exit checks (src/exit/exit-checks.ts: axe-core on every page, the three layouts) instead of Cucumber.
+// The ui and exit runs also build the UI (demo-apps/demoapp001-react-ui) and have the service serve it (UI_DIRECTORY, brief 11 D2).
 // HARNESS_PORT (default 4600) and HARNESS_OFF_PORT (default 4601) override the ports. Anything already answering on
 // either port stops the run, because it would be tested in place of the service started here.
 import { spawn, spawnSync } from 'node:child_process';
@@ -22,6 +23,7 @@ const controlKey = 'harness-run-key'; // synthetic: the service exists only for 
 
 const [requested = 'api', ...features] = process.argv.slice(2);
 const profile = features.length > 0 ? `select-${requested}` : requested;
+const needsUi = requested === 'ui' || requested === 'exit';
 const uiProject = path.resolve(harness, '..', '..', 'demo-apps', 'demoapp001-react-ui');
 
 const answers = (p) => fetch(`${baseOf(p)}/bureaux`).then(() => true, () => false);
@@ -32,7 +34,7 @@ for (const p of [port, offPort]) {
     }
 }
 
-if (requested === 'ui') {
+if (needsUi) {
     // The UI is built once per run; its dependencies are installed when missing (CI installs them in its own step).
     const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
     if (!fs.existsSync(path.join(uiProject, 'node_modules'))) spawnSync(npm, ['ci', '--no-audit', '--no-fund'], { cwd: uiProject, stdio: 'inherit', shell: process.platform === 'win32' });
@@ -97,7 +99,7 @@ async function ready(instance) {
 
 let code = 1;
 try {
-    const main = start('main', port, true, requested === 'ui' ? path.join(uiProject, 'dist') : undefined);
+    const main = start('main', port, true, needsUi ? path.join(uiProject, 'dist') : undefined);
     const off = start('no-test-control', offPort, false);
     await ready(main);
     await ready(off);
@@ -105,13 +107,14 @@ try {
     fs.mkdirSync(path.join(harness, 'reports'), { recursive: true });
     const cucumber = path.join(harness, 'node_modules', '@cucumber', 'cucumber', 'bin', 'cucumber.js');
     const paths = features.map((f) => path.resolve(harness, '..', '..', 'features-shared', f.endsWith('.feature') ? f : `${f}.feature`));
-    const run = spawnSync(process.execPath, ['--import', 'tsx', cucumber, '--profile', profile, ...paths], {
+    const command = requested === 'exit' ? ['--import', 'tsx', path.join(harness, 'src', 'exit', 'exit-checks.ts')] : ['--import', 'tsx', cucumber, '--profile', profile, ...paths];
+    const run = spawnSync(process.execPath, command, {
         cwd: harness,
         stdio: 'inherit',
         env: { ...process.env, HARNESS_BASE_URL: baseOf(port), HARNESS_UI_URL: `http://127.0.0.1:${port}`, HARNESS_OFF_BASE_URL: baseOf(offPort), HARNESS_CONTROL_KEY: controlKey },
     });
     code = run.status ?? 1;
-    console.log(`\nharness: Cucumber exit code ${code}; service logs ${main.logPath}, ${off.logPath}`);
+    console.log(`\nharness: ${requested === 'exit' ? 'exit checks' : 'Cucumber'} exit code ${code}; service logs ${main.logPath}, ${off.logPath}`);
 } catch (error) {
     console.error(`harness: ${error.message}`);
 } finally {

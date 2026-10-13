@@ -16,6 +16,7 @@
     "check:harness": "npm --prefix test-harnesses/harness-serenity run test:api",
     "check:ui": "npm --prefix demo-apps/demoapp001-react-ui run check",
     "check:ui-scenarios": "npm --prefix test-harnesses/harness-serenity run test:ui",
+    "check:ui-exit": "npm --prefix test-harnesses/harness-serenity run test:exit",
     "check:schemathesis": "node tools/schemathesis-run.mjs",
     "check:service": "dotnet test demo-apps/demoapp001-dotnet-api/CreditDashboard.sln -c Release --nologo",
     "service": "dotnet run --project demo-apps/demoapp001-dotnet-api/CreditDashboard.Api",

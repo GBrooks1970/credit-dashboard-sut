@@ -1,6 +1,6 @@
 ---
-version: 17
-created: 2026-10-13T18:32Z
+version: 18
+created: 2026-10-13T22:02Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-spec
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v18:** CDS-35 (U5): the header account button `btn-account` is a link to `/my-account/profile` and follows the preferred name (the session reads the customer again after a save, PR-03). The profile pages are specified in the My Profile feature spec (v9).
 **Changes in v17:** CDS-34 (U4): what the account pages built settles. Section 6.4: the summary figures have hooks (`list-total-balance`, `list-total-limit`, `list-utilisation`) and show whole pounds like the overview card, so the two compare as text (BR-04); a row's parts are `row-balance-{id}`, `row-util-{id}` and `row-over-{id}`; `list-changes` and the utilities and telecoms sub-groups are not built (section 6.4 says why). Section 6.5: the tiles are links that carry the page to return to. Section 6.6: the five fields, their presets, the client check, and the fallback of the open-redirect guard.
 **Changes in v16:** CDS-33 (U3): what the five report pages built settles. Section 6.3: the year status is a text alternative beside each year button (`ph-year-status-{yyyy}`); the intro reads 'six years of history, plus the current year'. Section 6.7: report changes show 20 a page with the kind and the page in the address (`?bureauId=&sentiment=&page=`); a visitor without a session who opens an address signs in and is brought back to it; `change-card-{id}` carries `data-sentiment`; a search row carries `data-kind`; the debt overview shows summary figures without pence; the header navigation has Report, Debt and Updates.
 **Changes in v15:** CDS-32 (U2): section 6.2 states what the overview built settles: the changes toggle follows the pages of `GET /changes` 100 at a time until it has every change (DR-047; the CDS-18 Note on the toggle's page size); the history chart defaults to 6 months and shows one row per month, a gap included, in its table alternative; `impact-link` and `link-impact` go to the sections on the page; `tile-corrections` leads to the personal details page; the pages later slices build show a 'not built yet' page to a signed-in customer.

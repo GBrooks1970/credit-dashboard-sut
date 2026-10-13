@@ -1,6 +1,6 @@
 ---
-version: 57
-created: 2026-10-13T18:32Z
+version: 58
+created: 2026-10-13T22:02Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 57 (CDS-34 Done in review: U4, the accounts; CDS-33 merged)
+**Version:** 58 (CDS-35 Done in review: U5, the profile; CDS-34 merged)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -78,7 +78,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-32` | U2 report overview (5 scenarios) | UI | — | HIGH | `CDS-31` | Done 2026-10-13 |
 | `CDS-33` | U3 report pages: payment history, report changes, searches, personal details, debt (14 scenarios) | UI | — | HIGH | `CDS-32` | Done 2026-10-13 |
 | `CDS-34` | U4 accounts: lists, closed, detail, edit form, open-redirect guard (9 scenarios) | UI | — | HIGH | `CDS-33` | Done 2026-10-13 |
-| `CDS-35` | U5 profile: profile, email and mobile sub-pages (10 scenarios) | UI | — | HIGH | `CDS-34` | Open |
+| `CDS-35` | U5 profile: profile, email and mobile sub-pages (10 scenarios) | UI | — | HIGH | `CDS-34` | Done 2026-10-13 |
 | `CDS-36` | U6 exit: axe-core on every page, layouts, the full `@ui` run against the live service, the Phase 4 gate | UI | — | HIGH | `CDS-35` | Open |
 
 ## Items
@@ -233,7 +233,11 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-34: U4, the accounts
 
-**COMPLETE in review (2026-10-13).** The account-type list with its summary, bar and excluded loans (BR-04, BR-05, BR-06, DR-013, DR-018), closed accounts (BR-13), account detail, the detail edit form with the BR-14 copy, and the open-redirect guard. 102 Vitest tests; the `ui` profile runs 31 scenarios (39 executions) green. **Left to the owner:** `list-changes` and the utilities and telecoms sub-groups of UI specification 6.4 are not built, because the contract has no account-type filter on changes and no field that tells a utility from a telecoms account; each needs a contract change. Status is Done when merged.
+**COMPLETE (2026-10-13; #67 `e6519c4`, CI run 38448281441).** The account-type list with its summary, bar and excluded loans (BR-04, BR-05, BR-06, DR-013, DR-018), closed accounts (BR-13), account detail, the detail edit form with the BR-14 copy, and the open-redirect guard. 102 Vitest tests; the `ui` profile runs 31 scenarios (39 executions) green. **Left to the owner:** `list-changes` and the utilities and telecoms sub-groups of UI specification 6.4 are not built, because the contract has no account-type filter on changes and no field that tells a utility from a telecoms account; each needs a contract change. Status is Done when merged.
+
+### CDS-35: U5, the profile
+
+**COMPLETE in review (2026-10-13).** My profile (identity, the name information dialog, the preferred name, five tiles), the email sub-page and the mobile sub-page with its code step (PR-01 to PR-04, PR-06 to PR-11), and nothing from the profile in the page title or the address (PR-08). 135 Vitest tests; the `ui` profile runs 41 scenarios (51 executions) green. The address, employment and finances sub-pages are stretch (DR-022) and stay unbuilt. Status is Done when merged.
 
 ### CDS-30: Publish the Kanban board
 

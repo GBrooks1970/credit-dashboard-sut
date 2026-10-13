@@ -2,6 +2,12 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-13: the profile (CDS-35, Phase 4 U5)
+
+- My profile, the email sub-page and the mobile sub-page with its code step; the header account button links to the profile and follows the preferred name.
+- Harness: the profile steps, `{nameOutcome}` and `{tile}` types; the `ui` profile has 41 scenarios (51 executions). My Profile feature spec v9, UI specification v18, glossary v13.
+- 135 Vitest tests (33 new). Backlog v58.
+
 ## 2026-10-13: the accounts (CDS-34, Phase 4 U4)
 
 - The account-type list (summary, bar, rows, excluded loans), closed accounts, account detail, the detail edit form (five fields, BR-14 client check, the service's message shown as it comes) and the open-redirect guard (`safeRedirect`).

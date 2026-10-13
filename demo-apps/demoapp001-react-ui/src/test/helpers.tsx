@@ -16,7 +16,7 @@ export function fakeService(handlers: Record<string, Handler>) {
     const path = url.pathname.replace('/api/v1', '');
     seen.push(`${request.method} ${path}${url.search}`);
     if (path === '/auth/login') return json(200, { token: 'tok', expiresAt: '2026-10-13T12:00:00Z' });
-    if (path === '/me') return json(200, { id: 'usr_01', displayName: 'Alex Example', greetingName: 'Alex', defaultBureauId: 'bureau-a' });
+    if (path === '/me' && !handlers['GET /me']) return json(200, { id: 'usr_01', displayName: 'Alex Example', greetingName: 'Alex', defaultBureauId: 'bureau-a' });
     const handler = handlers[`${request.method} ${path}`];
     return handler ? handler(request, url) : problem(404);
   });

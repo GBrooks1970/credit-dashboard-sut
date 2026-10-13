@@ -117,3 +117,9 @@ defineParameterType({
 
 /** The kind of search (glossary section 2). */
 defineParameterType({ name: 'hardOrSoft', regexp: /hard|soft/, transformer: (value: string) => value });
+
+/** PR-02: what became of a preferred name. `saved as Jo-Ann` carries the stored name; the glossary calls this {name outcome}. */
+defineParameterType({ name: 'nameOutcome', regexp: /refused|saved as [A-Za-z' -]+/, transformer: (value: string) => value });
+
+/** A tile on the profile (glossary section 2). */
+defineParameterType({ name: 'tile', regexp: /email|mobile|address|employment|finances/, transformer: (value: string) => value });

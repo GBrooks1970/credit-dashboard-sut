@@ -55,9 +55,9 @@ function Header({ children }: { children?: ReactNode }) {
         ScoreHarbour
       </Link>
       {!mobile && <PrimaryNav mobile={false} reportPath={reportPath} />}
-      <button type="button" data-testid="btn-account" className="account">
+      <Link to="/my-account/profile" data-testid="btn-account" className="account">
         {user?.greetingName}
-      </button>
+      </Link>
       {children}
     </header>
   );

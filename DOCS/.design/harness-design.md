@@ -253,3 +253,12 @@ These are the probes the plan requires, each expected to fail and then reverted;
 - **A Then that follows a Then.** `the closed {accountType} group lists {count} account(s)` remembers the group in the scenario's `pending` state so `its balance is {money}` reads the row in that group. `its balance is` is also an `@api` step; the two profiles import different step files, so they do not collide.
 - **A refused value is not sent, so the check is made on the card's own page.** `no interest rate is recorded` leaves the form with Cancel and reads the interest rate tile (`Not recorded`), because the `ui` profile has no API ability.
 - The `ui` profile now selects ten feature files: 31 scenarios, 39 executions (this slice: 9 scenarios, 9 executions).
+
+## 24. The profile steps (CDS-35, 2026-10-13)
+
+- `src/ui/steps/profile.steps.ts` defines the steps of My profile and its two sub-pages. The Givens that state a fact about the persona (`preferred name is "Al"`, `has added their finances`) read the fixture and fail loudly if it does not hold, as the arrange steps for the API do. `{actor}'s email is verified` is the shared arrange step.
+- **A result that is empty until it arrives.** The preferred name's status line (`profile-preferred-status`) carries 'Saved' or the error text, so one wait (`Text.of(status)` not equal to the empty string) serves both `sets` and `tries to set`. The `Then` steps then say which it was.
+- **Steps that name no user read the last user bound**, so a scenario that binds Sam after the background's Alex is read as Sam.
+- **PR-08 is checked on the page, not by a guess.** The legal name is read from the profile page; the email comes from `users.json` and the mobile digits from the persona's fixture; the title and the address (path and query, plain and URL-encoded) must contain none of them.
+- **A hook the scenarios never read.** The mobile badge hook (`profile-mobile-badge`) is asserted through the tile's text (`the mobile tile shows "Verified"`), so renaming the hook did not fail a scenario. A probe that made the badge always read Unverified did fail one. Hooks the scenarios do not read are checked by the component tests.
+- The `ui` profile now selects eleven feature files: 41 scenarios, 51 executions (this slice: 10 scenarios, 12 executions).

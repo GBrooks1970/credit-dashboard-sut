@@ -1,6 +1,6 @@
 ---
-version: 12
-created: 2026-10-13T13:58Z
+version: 13
+created: 2026-10-13T22:02Z
 project: credit-dashboard-sut
 type: step-glossary
 language: en-GB
@@ -11,7 +11,7 @@ status: normative
 
 **What this is.** The agreed Gherkin phrases for `features-shared/`, one pattern per meaning, with the parameter types the harness will define and how each Given is arranged. The words inside the phrases are defined in `DOCS/glossary.md`; this document defines the sentences.
 
-**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. A new step is added here before it is used in a feature file. Version 12 adds `{hard or soft}` to the camel-case type names (CDS-33); version 11 applies the CDS-24 review Notes (UI money precision, the clock time of day, current accounts in `{accountType}`, `{provider}` and the Lender X card, and the BR-15 change step); version 10 records how the harness reads the API assertions (CDS-22 H3: the outcome-word types, the totals, list and expiry readings, and the one Then that calls); version 9 records how the harness reads five patterns (CDS-22 H2: section 2 note, `the source supplies…`, the totals bureau, the optional time); version 8 adds the harness rules for *that account* and a wrong code (CDS-22; `DOCS/.design/harness-design.md`); version 7 applies the CDS-18 confirmation pass (section 6.6); version 6 applied the CDS-18 independent re-review; version 5 applied the three-amigos review (section 6); earlier versions added the email and mobile steps (v4), recorded the overrides (v3) and the in-credit step (v2).
+**Status.** Normative from 5 October 2026 (DR-033), after the three-amigos review recorded in decision brief 4. A new step is added here before it is used in a feature file. Version 13 adds `{name outcome}` as `{nameOutcome}` and `{tile}` (CDS-35); version 12 adds `{hard or soft}` to the camel-case type names (CDS-33); version 11 applies the CDS-24 review Notes (UI money precision, the clock time of day, current accounts in `{accountType}`, `{provider}` and the Lender X card, and the BR-15 change step); version 10 records how the harness reads the API assertions (CDS-22 H3: the outcome-word types, the totals, list and expiry readings, and the one Then that calls); version 9 records how the harness reads five patterns (CDS-22 H2: section 2 note, `the source supplies…`, the totals bureau, the optional time); version 8 adds the harness rules for *that account* and a wrong code (CDS-22; `DOCS/.design/harness-design.md`); version 7 applies the CDS-18 confirmation pass (section 6.6); version 6 applied the CDS-18 independent re-review; version 5 applied the three-amigos review (section 6); earlier versions added the email and mobile steps (v4), recorded the overrides (v3) and the in-credit step (v2).
 
 ---
 

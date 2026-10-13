@@ -1,6 +1,6 @@
 ---
-version: 8
-created: 2026-10-12T09:49Z
+version: 9
+created: 2026-10-13T22:02Z
 supersedes: v6 (2026-10-07T13:09Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-feature-spec
@@ -11,6 +11,7 @@ language: en-GB
 
 **Status:** Phase 0 draft, for review
 **Parent:** [UI specification](ui-specification.md) (conventions in its section 4 apply here unchanged)
+**Changes in v9:** CDS-35 (U5): what the profile pages built settles. The identity header is a region `profile-identity`, so a test can show nothing in it takes input; the name information button reads 'Why can I not change my name?'; the preferred name's status line `profile-preferred-status` carries the error text as well as 'Saved', and is empty until a result is in; the preferred name is checked on the client against PR-02 and a refused name is not sent; the mobile sub-page shows `mobile-attempts` ('2 attempts left'); the email form is `noValidate`, so the service's message and not the browser's bubble is shown at `email-error`; the header account button is now a link to the profile.
 **Changes in v8:** section 4.2 specifies the email sub-page: its hooks (CDS-24; CDS-18 review Note, pass 3 F-12).
 **Changes in v7:** PR-06 says spaces are ignored (CDS-27 plan D1; CDS-18 review Note F-15).
 **Changes in v6:** section 4.1 specifies the mobile sub-page: its hooks, and that it stays open for the code and returns to the profile once the number is verified (CDS-18 third pass).

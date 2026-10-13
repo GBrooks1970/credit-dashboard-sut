@@ -4,6 +4,7 @@ import { MemoryRouter } from 'react-router';
 import { App } from './App.tsx';
 import { NOT_RECOGNISED } from './pages/LoginPage.tsx';
 import { SessionProvider } from './session.tsx';
+import { overviewFixture } from './test/fixtures.ts';
 
 // Responses taken from the contract's shapes (component fixtures; the Prism mock is not used here, brief 11 D1).
 const json = (status: number, body: unknown) =>
@@ -20,7 +21,8 @@ function fakeService(password = 'demo-only') {
         : json(401, { type: '/problems/unauthenticated', title: 'Missing or invalid token', status: 401 });
     }
     if (pathname.endsWith('/me')) return json(200, { id: 'usr_01', displayName: 'Alex Example', greetingName: 'Alex', defaultBureauId: 'bureau-a' });
-    if (pathname.endsWith('/overview')) return json(200, { bureau: { id: 'bureau-a', name: 'Bureau A', nextUpdateInDays: 3 } });
+    if (pathname.endsWith('/overview')) return json(200, overviewFixture);
+    if (pathname.endsWith('/score/history')) return json(200, [{ month: '2026-09', score: 700 }]);
     return json(404, { type: '/problems/not-found', title: 'Not found', status: 404 });
   });
 }

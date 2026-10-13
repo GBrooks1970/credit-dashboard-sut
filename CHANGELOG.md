@@ -2,6 +2,12 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-13: the report overview (CDS-32, Phase 4 U2)
+
+- The overview page to UI specification 6.2: score hero and comparison, summary with like and dislike (stored by the service) and a chat drawer (dialog, focus trap, Escape), the score history chart (hand-built SVG, a table alternative, gaps for months with no score), the report changes with the toggle (100 a page, following pages), impact, debt, accounts, payments and the tiles. A 'not built yet' page for links to later slices.
+- Harness: the overview steps and a `{days}` parameter type; the `ui` profile has 8 scenarios (12 executions). UI specification v15.
+- 37 Vitest tests. Backlog v55.
+
 ## 2026-10-13: the UI foundation (CDS-31, Phase 4 U1)
 
 - `demo-apps/demoapp001-react-ui/`: React 19.3.0, Vite 8.3.4, TypeScript 5.9.3, React Router 8.4.0, Vitest 5.0.4; app shell (demo banner, header, themes), login (token in memory only), a report page showing the bureau name, `SectionState`, formatting helpers.

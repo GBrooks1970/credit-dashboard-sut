@@ -231,3 +231,9 @@ These are the probes the plan requires, each expected to fail and then reverted;
 - **Runner:** `node scripts/run.mjs ui` builds the UI (installing it first if needed), starts the service with `UI_DIRECTORY` set to `demo-apps/demoapp001-react-ui/dist`, and runs the profile against `HARNESS_UI_URL` (the service's own address). `HARNESS_BROWSER_PATH` points to a Chromium already on the machine; CI installs the one Playwright 1.64 wants (the local Chromium 1243 differs from the revision 1248 that 1.64 expects, and no browser was downloaded for this slice).
 - **Pins:** Serenity/JS 3.49.0 (core, cucumber, assertions, console-reporter, web, playwright) with Playwright 1.64.0.
 - **Selected scenarios:** the `ui` profile lists only the feature files a slice has implemented: U1 has `ui/login.feature` (3 scenarios).
+
+## 21. The overview steps (CDS-32, 2026-10-13)
+
+- `src/ui/steps/overview.steps.ts` defines the report overview's steps: `is viewing the report for` (a fresh sign-in; the token is in memory only, so every visit is a new sign-in), `returns to the report later` (the same), `chooses the {range} range`, `likes the report summary`, `shows all changes`, and the assertions on the score, the chart's rows, the feedback buttons' `aria-pressed`, the change cards and the next-update text. `the next bureau refresh is {days} away` sets the clock that many days before the bureau's `nextRefreshDate` from the persona fixture. A new parameter type `{days}` (`1 day`, `N days`).
+- Steps that name no user use the first user the scenario bound (the Background user), or the last where the scenario ends on another user (the Sam scenario).
+- The `ui` profile now selects `ui/login.feature` and `ui/report-overview.feature`: 8 scenarios, 12 executions after outlines expand.

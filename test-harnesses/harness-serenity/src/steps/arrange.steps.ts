@@ -5,7 +5,7 @@ import { CallAnApi } from '../abilities/CallAnApi.js';
 import { ControlTheTestEnvironment } from '../abilities/ControlTheTestEnvironment.js';
 import { bindWithOverrides, setBalance } from '../fixtures/arrange.js';
 import { maybeOne, personaFile, theOne } from '../fixtures/load.js';
-import { STAGE_MANAGER } from '../support/hooks.js';
+import { STAGE_MANAGER } from '../support/actors.js';
 import { offBaseUrl, scenario } from '../support/world.js';
 
 const control = () => actorCalled(STAGE_MANAGER).abilityTo(ControlTheTestEnvironment);

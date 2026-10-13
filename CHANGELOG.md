@@ -2,6 +2,13 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-13: the UI foundation (CDS-31, Phase 4 U1)
+
+- `demo-apps/demoapp001-react-ui/`: React 19.3.0, Vite 8.3.4, TypeScript 5.9.3, React Router 8.4.0, Vitest 5.0.4; app shell (demo banner, header, themes), login (token in memory only), a report page showing the bureau name, `SectionState`, formatting helpers.
+- Service: `UI_DIRECTORY` serves the built UI from the same origin with a client-route fallback (API specification v25; 9 tests).
+- Harness: a `ui` profile (Serenity/JS 3.49.0, Playwright 1.64.0), the login steps; the runner builds the UI and has the service serve it. A separate `ui` CI job.
+- 3 of 41 `@ui` scenarios green. Backlog v54.
+
 ## 2026-10-12: the Phase 4 plan (CDS-29)
 
 - Plan `DOCS/implementation-plans/2026-10-12_cds-29-phase-4-ui.md` (proposed) and decision brief 11 (DR-062): the `@ui` scenarios run against the live service, which serves the built UI from the same origin; a new `demoapp001-react-ui` package; a separate `ui` CI job; the harness gains a `ui` profile; spec pins with patch bumps. UI specification v13.

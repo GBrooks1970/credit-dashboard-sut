@@ -1,0 +1,36 @@
+// version: 1 | created: 2026-10-13T10:45Z | project: credit-dashboard-sut | type: source | language: en-GB
+// Formatting (UI specification section 4.2, locale en-GB). Money arrives as integer minor units (DR-004) and is never
+// converted through floating point except for display.
+
+const pounds = (fractionDigits: 0 | 2) =>
+  new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits });
+
+const wholePounds = pounds(0);
+const poundsAndPence = pounds(2);
+
+/**
+ * A negative amount reads as the amount without a sign, then 'in credit' (DR-018). Summary figures show no pence
+ * (`£53,024`); detail figures show pence (`£4,236.00`).
+ */
+export function formatMoney(amountMinor: number, options: { pence: boolean }): string {
+  const formatter = options.pence ? poundsAndPence : wholePounds;
+  const text = formatter.format(Math.abs(amountMinor) / 100);
+  return amountMinor < 0 ? `${text} in credit` : text;
+}
+
+/** A whole percentage: `54%`. Above 100 the page adds an 'Over limit' label (DR-013). */
+export function formatPercent(value: number): string {
+  return `${value}%`;
+}
+
+const longDate = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+
+/** `2026-08-12` as `12 August 2026`. */
+export function formatDate(isoDate: string): string {
+  return longDate.format(new Date(`${isoDate}T00:00:00Z`));
+}
+
+/** `1 topic`, `2 topics`. */
+export function plural(count: number, one: string, many: string): string {
+  return `${count} ${count === 1 ? one : many}`;
+}

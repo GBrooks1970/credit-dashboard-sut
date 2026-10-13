@@ -100,3 +100,7 @@ jobs:
       - name: '@ui scenarios against the service'
         run: npm run test:ui
         working-directory: test-harnesses/harness-serenity
+
+      - name: 'Exit checks: axe-core on every page, the three layouts'
+        run: npm run test:exit
+        working-directory: test-harnesses/harness-serenity

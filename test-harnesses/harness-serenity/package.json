@@ -8,9 +8,11 @@
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test:api": "node scripts/run.mjs api",
-    "test:ui": "node scripts/run.mjs ui"
+    "test:ui": "node scripts/run.mjs ui",
+    "test:exit": "node scripts/run.mjs exit"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
     "@cucumber/cucumber": "13.3.0",
     "@serenity-js/assertions": "3.49.0",
     "@serenity-js/console-reporter": "3.49.0",

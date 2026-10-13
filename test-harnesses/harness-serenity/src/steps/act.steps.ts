@@ -4,7 +4,7 @@ import { actorCalled } from '@serenity-js/core';
 import { CallAnApi, send } from '../abilities/CallAnApi.js';
 import { ControlTheTestEnvironment } from '../abilities/ControlTheTestEnvironment.js';
 import { accountsOf, testUser } from '../fixtures/load.js';
-import { STAGE_MANAGER } from '../support/hooks.js';
+import { STAGE_MANAGER } from '../support/actors.js';
 import { scenario } from '../support/world.js';
 
 const api = (actor: string) => actorCalled(actor).abilityTo(CallAnApi);

@@ -1,6 +1,6 @@
 ---
-version: 13
-created: 2026-10-12T18:33Z
+version: 14
+created: 2026-10-13T09:48Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-spec
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v14:** CDS-31 (U1): section 6.1 gives the sign-in error copy; the header of 6.2 is built in stages (U1 has the logo, the report link and the account button; the notifications button follows with the pages that need it).
 **Changes in v13:** Phase 4 choices (decision brief 11, DR-062): principle 2 is service first (the Prism mock has no personas); section 3 gains the hosting row; section 9 runs the `@ui` scenarios against the live service.
 **Changes in v12:** CDS-24 (CDS-18 review Notes): the detail tile hook is `detail-tile-{field}` with the field in kebab case (section 6.5); section 6.6 gives the BR-14 error copy.
 **Changes in v11:** the report changes route drops `tags=` (decision brief 9 D6; contract v13).
@@ -127,7 +128,7 @@ WCAG 2.2 AA. With all bug flags off, an axe-core scan of every page returns zero
 | Sign in | button | `login-submit` | Disabled while submitting |
 | Error | alert | `login-error` | Shown on 401; focus moves to it |
 
-On success the app stores the token in memory (not localStorage) and routes to the user's default bureau.
+On success the app stores the token in memory (not localStorage, not sessionStorage) and routes to the user's default bureau. On 401 the error reads "The sign-in details were not recognised." Demo values: username `alex` or `sam`, password `demo-only`.
 
 ### 6.2 Report overview (Release 1)
 

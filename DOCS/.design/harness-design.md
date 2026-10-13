@@ -223,3 +223,11 @@ These are the probes the plan requires, each expected to fail and then reverted;
 ## 19. Changed by CDS-24 (2026-10-12)
 
 - One scenario is added ('Another customer's account cannot be changed', `@BR-15`) with one step, `{actor} sets the interest rate on one of {actor}'s accounts to {percent}`; the `api` profile now selects 59 scenarios (32 scenarios and outlines in 12 files). `{accountType}` accepts `current account(s)`.
+
+## 20. The ui profile (CDS-31, 2026-10-13)
+
+- **Layout:** `src/api/hooks.ts` (moved from `src/support/hooks.ts`) and `src/ui/hooks.ts` hold each profile's Before and After; `src/support/common-hooks.ts` loads the contract and sets the timeout for both; `src/support/actors.ts` holds the Stage Manager name. The `ui` profile imports `src/support`, `src/ui` and `src/steps/arrange.steps.ts` (persona and clock Givens); UI steps are in `src/ui/steps/`. `cucumber.mjs` has `api`, `ui`, `select-api` and `select-ui` (named features).
+- **Abilities:** the stage manager keeps `ControlTheTestEnvironment`; each user has Serenity/JS `BrowseTheWebWithPlaywright` on a headless Chromium launched once per run. Elements are found by `data-testid` (`byTestId`), the hooks of UI specification 4.1.
+- **Runner:** `node scripts/run.mjs ui` builds the UI (installing it first if needed), starts the service with `UI_DIRECTORY` set to `demo-apps/demoapp001-react-ui/dist`, and runs the profile against `HARNESS_UI_URL` (the service's own address). `HARNESS_BROWSER_PATH` points to a Chromium already on the machine; CI installs the one Playwright 1.64 wants (the local Chromium 1243 differs from the revision 1248 that 1.64 expects, and no browser was downloaded for this slice).
+- **Pins:** Serenity/JS 3.49.0 (core, cucumber, assertions, console-reporter, web, playwright) with Playwright 1.64.0.
+- **Selected scenarios:** the `ui` profile lists only the feature files a slice has implemented: U1 has `ui/login.feature` (3 scenarios).

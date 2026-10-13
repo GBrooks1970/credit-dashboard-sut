@@ -53,3 +53,50 @@ jobs:
         run: |
           npm ci
           npm run verify
+
+  # The UI (Phase 4, decision brief 11 D4): typecheck, component tests, build, then the @ui scenarios in a real browser
+  # against the service, which serves the built UI. A separate job so `verify` stays short and the browser setup is isolated.
+  ui:
+    name: UI (typecheck, component tests, build, @ui scenarios)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            packages/api-client/package-lock.json
+            demo-apps/demoapp001-react-ui/package-lock.json
+            test-harnesses/harness-serenity/package-lock.json
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: demo-apps/demoapp001-dotnet-api/global.json
+          cache: true
+          cache-dependency-path: demo-apps/demoapp001-dotnet-api/*/packages.lock.json
+
+      # The UI imports the generated client's source, which needs openapi-fetch from the client package.
+      - name: Install the client, the UI and the harness
+        env:
+          SCARF_ANALYTICS: "false"
+        run: |
+          npm ci --prefix packages/api-client --no-audit --no-fund
+          npm ci --prefix demo-apps/demoapp001-react-ui --no-audit --no-fund
+          npm ci --prefix test-harnesses/harness-serenity --no-audit --no-fund
+
+      - name: Install the browser
+        run: npx playwright install --with-deps chromium
+        working-directory: test-harnesses/harness-serenity
+
+      - name: UI typecheck, component tests and build
+        run: npm run check
+        working-directory: demo-apps/demoapp001-react-ui
+
+      - name: '@ui scenarios against the service'
+        run: npm run test:ui
+        working-directory: test-harnesses/harness-serenity

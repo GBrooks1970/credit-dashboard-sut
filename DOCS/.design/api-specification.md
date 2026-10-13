@@ -1,6 +1,6 @@
 ---
-version: 24
-created: 2026-10-12T09:49Z
+version: 25
+created: 2026-10-13T09:48Z
 supersedes: v22 (2026-10-08); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v25:** CDS-31 (U1): section 3 gains the hosting row: the service serves a built UI from the same origin when `UI_DIRECTORY` names a folder with an `index.html` (decision brief 11 D2, DR-062). The API, its contract and every operation are unchanged.
 **Changes in v24:** CDS-24: the `RuleViolation` response description reads 'out of range or too precise (BR-14)' (contract v17, `info.version` 0.9.4); `out-of-range` covers both the range and the two-decimal limit (DR-061).
 **Changes in v23:** CDS-28: section 6.3 types the `PATCH` body per field by kind (contract v16, `info.version` 0.9.3): a wrong kind of value and an unknown field are now refused at the edge (400, as before); a number a decimal cannot hold is 422 `out-of-range` (it was 400); the range, the two allowed payment methods and whole months stay BR-14 (422); a clear is `value: null`.
 **Changes in v22:** CDS-23 (Schemathesis): section 8 gains 405 `/method-not-allowed` for a path the contract has with a method it does not, and the 404 row keeps the unknown-path case (DR-056); section 11's Schemathesis row says the run is a `verify` step with a fixed seed.
@@ -63,6 +64,7 @@ Out of scope: real credit scoring, real open-banking consent, persistent storage
 | Business rules | A C# class library in the service's solution, `CreditDashboard.BusinessRules`, with no ASP.NET or contract dependency: pure functions over integer minor units and a `DateOnly` today. Unit-tested by `CreditDashboard.BusinessRules.Tests` (NUnit), each test tagged `[Category("BR-nn")]`; the cases are in [business-rules-cases.md](business-rules-cases.md) | Accepted (DR-017, CDS-20 plan) |
 | Data | In-memory store, loaded from `fixtures/personas/*.json` at start and on reset | Proposed |
 | Auth | Bearer token issued by `POST /auth/login`; each test user is bound to one persona. A token's `expiresAt` is the issue instant plus the setting `TOKEN_LIFETIME_MINUTES` (default 60), and is judged on the controlled clock, so moving the clock to or past it expires the token (the `@security` expiry scenario). Authentication is checked after the route is matched and before the shape of the request, so a missing, expired or revoked token is always 401 | Proposed (DR-007); lifetime and order accepted (DR-055) |
+| Hosting of the UI | Optional. With the setting `UI_DIRECTORY` (a folder holding the built UI, which must contain `index.html`, or the service does not start) the service serves that folder from `/` and returns `index.html` (no-store) for any other `GET` outside the API base path, so client-side routes survive a refresh. Without it every path outside `/api/v1` is a 404 problem. The API is unchanged and there is no CORS (decision brief 11 D2) | Accepted |
 | Container | Single Docker image; `docker compose up` brings up API and UI | Proposed |
 | Mock | Prism 5.16.0 (`@stoplight/prism-cli`, pinned in the root `package.json`, DR-009) serving `openapi.yaml` examples on port 4010, without the `/api/v1` prefix (DR-039): `npm run mock` | Accepted |
 | Client | Generated TypeScript client, `packages/api-client`, a standalone package with its own lock (DR-043): types generated from `openapi.yaml` by `openapi-typescript` 7.13.0, requests made by `openapi-fetch` 0.17.0, TypeScript 5.9.3. Each consumer chooses the base URL: the mock at `http://localhost:4010`, the service at `http://localhost:4000/api/v1` (DR-039). Its consumer is the UI; the harness consumes the API independently (DR-042) | Accepted |

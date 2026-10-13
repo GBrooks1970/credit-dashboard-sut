@@ -1,6 +1,6 @@
 ---
-version: 53
-created: 2026-10-12T18:33Z
+version: 54
+created: 2026-10-13T09:48Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 53 (CDS-29 plan written; Phase 4 slices CDS-31 to CDS-36 added)
+**Version:** 54 (CDS-31 Done in review: U1, the UI foundation)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -74,7 +74,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | ID | Ticket | Type | Priority | Tier | Blocked by | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | `CDS-29` | Phase 4 plan: the React UI against the live service; a spike, slices and the harness `@ui` profile (decision briefs 10 D2 and 11) | UI | — | HIGH | `CDS-28`, `CDS-24` | Done 2026-10-12 |
-| `CDS-31` | U1 foundation: the UI package, app shell, the service serves the UI, the harness `ui` profile, login green (3 scenarios), the `ui` CI job | UI | — | HIGH | `CDS-29` | Open |
+| `CDS-31` | U1 foundation: the UI package, app shell, the service serves the UI, the harness `ui` profile, login green (3 scenarios), the `ui` CI job | UI | — | HIGH | `CDS-29` | Done 2026-10-13 |
 | `CDS-32` | U2 report overview (5 scenarios) | UI | — | HIGH | `CDS-31` | Open |
 | `CDS-33` | U3 report pages: payment history, report changes, searches, personal details, debt (14 scenarios) | UI | — | HIGH | `CDS-32` | Open |
 | `CDS-34` | U4 accounts: lists, closed, detail, edit form, open-redirect guard (9 scenarios) | UI | — | HIGH | `CDS-33` | Open |
@@ -218,6 +218,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 ### CDS-24: The remaining CDS-18 review Notes
 
 **COMPLETE (2026-10-12; #61 `fdfc682`, CI run 38233159852).** Plan `DOCS/implementation-plans/2026-10-12_cds-24-review-notes.md`. Of the 25 Notes across the three passes, 14 were already closed or deliberate; this item closed ten specification and documentation Notes (glossary v11, UI specification v12, My Profile v8 with the email sub-page hooks, contract v17, DR-061), tagged two UI scenarios (`@BR-04`, `@BR-11`) and added the BR-15 'change' scenario (73 scenarios; the harness runs 59). Left to later plans: the three bug-flag catches (Phase 5) and the changes-toggle page size (CDS-29). Public counts updated in `portfolio-prompts#120`, `portfolio#69` and `test-automation-portfolio#316`. Implementation log `DOCS/implementation-logs/2026-10-12_cds-24-review-notes.md`.
+
+### CDS-31: U1, the UI foundation
+
+**COMPLETE in review (2026-10-13).** Plan `DOCS/implementation-plans/2026-10-12_cds-29-phase-4-ui.md` (approved 2026-10-13). `demo-apps/demoapp001-react-ui/` (app shell, login, a report placeholder showing the bureau name, `SectionState`, formatting; 16 Vitest tests); the service serves the built UI (`UI_DIRECTORY`, 9 service tests, API specification v25); the harness gains a `ui` profile, Serenity/JS 3.49.0 with Playwright 1.64.0 and the login steps (3 of 3 scenarios green); a separate `ui` CI job. Status is Done when merged.
 
 ### CDS-30: Publish the Kanban board
 

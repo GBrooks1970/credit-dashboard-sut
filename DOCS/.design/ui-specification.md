@@ -1,6 +1,6 @@
 ---
-version: 12
-created: 2026-10-12T09:49Z
+version: 13
+created: 2026-10-12T18:33Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-spec
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v13:** Phase 4 choices (decision brief 11, DR-062): principle 2 is service first (the Prism mock has no personas); section 3 gains the hosting row; section 9 runs the `@ui` scenarios against the live service.
 **Changes in v12:** CDS-24 (CDS-18 review Notes): the detail tile hook is `detail-tile-{field}` with the field in kebab case (section 6.5); section 6.6 gives the BR-14 error copy.
 **Changes in v11:** the report changes route drops `tags=` (decision brief 9 D6; contract v13).
 **Changes in v10:** section 6.7 names the searches list and personal-details hooks (CDS-18 confirmation pass).
@@ -37,7 +38,7 @@ Out of scope: real branding, real lenders, open-banking flows, offers and market
 ## 2. Specification-driven principles
 
 1. **Contract-bound.** The UI calls nothing that is not in `openapi.yaml`. The client is generated from it, so a contract change breaks the build, not the user.
-2. **Mock first.** Pages are built against the Prism mock before the real API exists. A page is not done until it passes the same `@ui` scenarios against both.
+2. **Service first.** Pages are built against the live service with test control on, because the `@ui` scenarios arrange personas and the clock through it and the Prism mock has neither (decision brief 11 D1, DR-062). The mock serves component-test fixtures and the typed-client smoke only. A page is not done until its `@ui` scenarios pass against the service.
 3. **States are specified, not discovered.** Every data-bound component lists its loading, empty, error and populated states below. Each state has a persona or mock example that produces it.
 4. **Hooks are part of the spec.** `data-testid` values in this document are the contract between UI and harness. Renaming one is a spec change.
 5. **Traceability.** Each page section names its endpoint and its feature file, so a reviewer can walk from requirement to test without reading code.
@@ -48,6 +49,7 @@ Out of scope: real branding, real lenders, open-banking flows, offers and market
 | --- | --- | --- |
 | Framework | React with Vite and TypeScript: `react` and `react-dom` 19.3.0, `vite` 8.3.3, `@vitejs/plugin-react` 6.1.2, TypeScript 5.9.3 (aligned with `packages/api-client`), exact pins in the UI's `package.json` when it is scaffolded, taking the latest patch on that day (DR-044) | Accepted (DR-003, DR-044) |
 | Routing | Client-side router; deep links work on refresh | Proposed |
+| Hosting | The built UI is served by the service from the same origin (static files at `/`, the API under `/api/v1`); development uses the Vite dev server with a proxy to port 4000; no CORS (brief 11 D2) | Accepted |
 | Data | Generated client `packages/api-client` (`openapi-typescript` 7.13.0 types, `openapi-fetch` 0.17.0, DR-043), base URL per environment (DR-039); query cache with retry off in test mode | Accepted (client); Proposed (cache) |
 | Styling | Design tokens in CSS custom properties; light and dark themes | Proposed |
 | Charts | Hand-built SVG components, so the accessibility tree is under our control | Proposed |
@@ -272,8 +274,8 @@ Profile-page flags (`nested-button`, `decorative-alt`, `preferred-on-report`, `p
 | --- | --- | --- |
 | Type check against generated client | `tsc --noEmit` | Every commit |
 | Component tests | Vitest + Testing Library, states from section 4.3 | Phase 4 onwards |
-| `@ui` scenarios against mock | Serenity/JS + Playwright + Cucumber, Prism backend | Phase 4 |
-| `@ui` scenarios against live API | Same harness, real service | Phase 4 exit |
+| `@ui` scenarios against the live service | Serenity/JS + Playwright + Cucumber, the service with test control serving the built UI (brief 11 D1, D2) | Phase 4, each slice; exit |
+| Component fixtures | Vitest with responses taken from the contract examples; Prism stays for the typed-client smoke | Phase 4 onwards |
 | Accessibility | axe-core on every page, flags off: zero violations | Phase 4 exit |
 | Visual regression | Snapshots at 375px and 1280px, light and dark | Phase 5 |
 | Bug-flag proof | Each flag on: at least one scenario fails for the stated reason | Phase 5 |

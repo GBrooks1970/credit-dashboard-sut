@@ -2,6 +2,11 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-12: the Phase 4 plan (CDS-29)
+
+- Plan `DOCS/implementation-plans/2026-10-12_cds-29-phase-4-ui.md` (proposed) and decision brief 11 (DR-062): the `@ui` scenarios run against the live service, which serves the built UI from the same origin; a new `demoapp001-react-ui` package; a separate `ui` CI job; the harness gains a `ui` profile; spec pins with patch bumps. UI specification v13.
+- Backlog v53: CDS-29 Done; Phase 4 slices CDS-31 to CDS-36 added.
+
 ## 2026-10-12: the remaining review Notes (CDS-24)
 
 - Step glossary v11, UI specification v12 (kebab-case tile hooks; the BR-14 error copy), My Profile v8 (email sub-page hooks), contract v17 (`RuleViolation` description), API specification v24, DR-061.

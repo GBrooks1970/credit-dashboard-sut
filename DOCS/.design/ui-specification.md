@@ -1,6 +1,6 @@
 ---
-version: 14
-created: 2026-10-13T09:48Z
+version: 15
+created: 2026-10-13T10:12Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-spec
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v15:** CDS-32 (U2): section 6.2 states what the overview built settles: the changes toggle follows the pages of `GET /changes` 100 at a time until it has every change (DR-047; the CDS-18 Note on the toggle's page size); the history chart defaults to 6 months and shows one row per month, a gap included, in its table alternative; `impact-link` and `link-impact` go to the sections on the page; `tile-corrections` leads to the personal details page; the pages later slices build show a 'not built yet' page to a signed-in customer.
 **Changes in v14:** CDS-31 (U1): section 6.1 gives the sign-in error copy; the header of 6.2 is built in stages (U1 has the logo, the report link and the account button; the notifications button follows with the pages that need it).
 **Changes in v13:** Phase 4 choices (decision brief 11, DR-062): principle 2 is service first (the Prism mock has no personas); section 3 gains the hosting row; section 9 runs the `@ui` scenarios against the live service.
 **Changes in v12:** CDS-24 (CDS-18 review Notes): the detail tile hook is `detail-tile-{field}` with the field in kebab case (section 6.5); section 6.6 gives the BR-14 error copy.
@@ -146,6 +147,8 @@ One `GET /reports/{bureauId}/overview` call feeds every section except the histo
 | Accounts | `account-card-{type}`, `account-balance-{type}`, `account-util-text-{type}`, `account-util-bar-{type}`, `link-closed-accounts` | `accountTypes` | Type with no accounts is hidden; donut absent when limit null |
 | Payments | `payments-new-missed`, `payments-on-report`, `link-payment-history` | `payments` | Zero and non-zero |
 | Searches and details | `tile-hard-searches`, `tile-soft-searches`, `tile-personal-details`, `tile-corrections` | none (navigation) | Static |
+
+**Built in CDS-32:** the changes toggle fetches 100 changes a page and follows the pages until it has `changesTotal`; it shows its own loading (`changes-toggle-loading`) and error state (`changes-toggle-error`, `changes-toggle-retry`); the history chart defaults to 6 months, its table alternative `history-chart-table` has one row `history-chart-row-{month}` per month with 'No score' for a gap, and a point `history-point-{month}` exists only for a month with a score; `link-impact` and `impact-link` are in-page links (`#impact`, `#changes`); the chat drawer is a dialog (`chat-drawer`, `chat-input`, `chat-send`, `chat-reply`, `chat-disclaimer`, `chat-close`) that traps focus, closes on Escape and returns focus to `btn-chat`.
 
 Header (all pages): `nav-logo`, `nav-primary-{item}`, `btn-account` (labelled with `greetingName` from `GET /me`, PR-03, DR-036), `btn-notifications` with badge `notifications-unread`, `nav-mobile-{item}`.
 

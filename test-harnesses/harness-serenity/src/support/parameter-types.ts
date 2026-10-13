@@ -54,6 +54,8 @@ defineParameterType({
 
 defineParameterType({ name: 'year', regexp: /\d{4}/, transformer: (value: string) => Number(value) });
 defineParameterType({ name: 'count', regexp: /\d+/, transformer: (value: string) => Number(value) });
+/** Days to the next update: `1 day` or `N days` (BR-08), as a number. */
+defineParameterType({ name: 'days', regexp: /1 day|\d+ days/, transformer: (value: string) => Number.parseInt(value, 10) });
 defineParameterType({ name: 'time', regexp: /\d{2}:\d{2}:\d{2}/, transformer: (value: string) => value });
 defineParameterType({ name: 'code', regexp: /\d{6}/, transformer: (value: string) => value });
 

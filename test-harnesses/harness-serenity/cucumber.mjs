@@ -33,7 +33,7 @@ export const ui = {
     ...base,
     import: uiImport,
     format: uiFormat,
-    paths: ['../../features-shared/ui/login.feature'],
+    paths: ['../../features-shared/ui/login.feature', '../../features-shared/ui/report-overview.feature'],
 };
 
 /** Named features: positional paths are added to a profile's paths, not substituted for them, so these have none. */

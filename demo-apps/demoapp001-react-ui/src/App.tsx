@@ -4,6 +4,10 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router';
 import { Layout } from './layout/Layout.tsx';
 import { LoginPage } from './pages/LoginPage.tsx';
+import { AccountDetailPage } from './pages/AccountDetailPage.tsx';
+import { AccountListPage } from './pages/AccountListPage.tsx';
+import { ClosedAccountsPage } from './pages/ClosedAccountsPage.tsx';
+import { DetailFormPage } from './pages/DetailFormPage.tsx';
 import { DebtOverviewPage } from './pages/DebtOverviewPage.tsx';
 import { NotBuiltPage } from './pages/NotBuiltPage.tsx';
 import { PaymentHistoryPage } from './pages/PaymentHistoryPage.tsx';
@@ -31,6 +35,10 @@ export function App() {
         <Route path="/credit-health/report/:bureauId/personal-details" element={<PersonalDetailsPage />} />
         <Route path="/credit-health/debt-overview" element={<DebtOverviewPage />} />
         <Route path="/insights/updates" element={<ReportChangesPage />} />
+        <Route path="/credit-health/report/:bureauId/accounts/:type" element={<AccountListPage />} />
+        <Route path="/credit-health/report/:bureauId/account/:accountId" element={<AccountDetailPage />} />
+        <Route path="/credit-health/report/:bureauId/closed-accounts" element={<ClosedAccountsPage />} />
+        <Route path="/data-capture/:field" element={<DetailFormPage />} />
         {/* Pages that later slices build. An anonymous visitor never reaches this: RequireSession sends them to /login. */}
         <Route path="*" element={<NotBuiltPage />} />
       </Route>

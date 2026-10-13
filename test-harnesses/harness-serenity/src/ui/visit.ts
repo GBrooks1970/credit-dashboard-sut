@@ -20,6 +20,12 @@ export async function openAddress(actor: Actor, address: string, ready: string):
     );
 }
 
+/** The pound figure as a customer reads it on a detail: with pence, and a negative amount as 'in credit' (UI specification 4.2, DR-018). */
+export function poundsAndPence(amountMinor: number): string {
+    const text = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Math.abs(amountMinor) / 100);
+    return amountMinor < 0 ? `${text} in credit` : text;
+}
+
 /** The pound figure as a customer reads it on a summary: no pence (UI specification 4.2). */
 export function poundsNoPence(amountMinor: number): string {
     const text = new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(Math.abs(amountMinor) / 100);

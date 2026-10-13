@@ -29,7 +29,11 @@ export function DemoBanner() {
 }
 
 function PrimaryNav({ mobile, reportPath }: { mobile: boolean; reportPath: string }) {
-  const items: { key: string; label: string; to: string }[] = [{ key: 'report', label: 'Report', to: reportPath }];
+  const items: { key: string; label: string; to: string }[] = [
+    { key: 'report', label: 'Report', to: reportPath },
+    { key: 'debt', label: 'Debt', to: '/credit-health/debt-overview' },
+    { key: 'updates', label: 'Updates', to: '/insights/updates' },
+  ];
   return (
     <nav aria-label="Primary" className={mobile ? 'nav-mobile' : 'nav-primary'}>
       {items.map((item) => (

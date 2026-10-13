@@ -107,6 +107,15 @@ Given('{actor} has report changes dated {date} and {date}', (actor: string, firs
 
 // ---- Overrides (glossary section 3): the sample is the template, the step's values are patched in -------------------
 
+Given("{actor}'s report has {count} changes", async (actor: string, count: number) => {
+    // The sample holds 25 changes for the 20-per-page boundary; a different count needs a different sample.
+    let held = 0;
+    await bindWithOverrides(control(), actor, 'changes-twenty-five.json', (o) => {
+        held = o.bureaux[0].changes.length;
+    });
+    if (held !== count) throw new Error(`changes-twenty-five.json holds ${held} changes, not ${count}`);
+});
+
 Given("{actor}'s report changes arrive dated {date}, {date} and {date}", async (actor: string, first: string, second: string, third: string) => {
     await bindWithOverrides(control(), actor, 'br11-unsorted-changes.json', (o) => {
         const changes = o.bureaux[0].changes;

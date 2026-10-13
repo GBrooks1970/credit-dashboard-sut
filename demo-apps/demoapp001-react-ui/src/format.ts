@@ -30,6 +30,11 @@ export function formatDate(isoDate: string): string {
   return longDate.format(new Date(`${isoDate}T00:00:00Z`));
 }
 
+/** `2024-03` as `March 2024`. */
+export function formatMonth(month: string): string {
+  return new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${month}-01T00:00:00Z`));
+}
+
 /** `1 topic`, `2 topics`. */
 export function plural(count: number, one: string, many: string): string {
   return `${count} ${count === 1 ? one : many}`;

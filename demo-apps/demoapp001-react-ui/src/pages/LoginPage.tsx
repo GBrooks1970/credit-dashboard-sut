@@ -2,7 +2,7 @@
 // Login (UI specification 6.1). On success the token is kept in memory and the customer goes to their default bureau.
 // On 401 the alert `login-error` is shown and takes focus.
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { DemoBanner } from '../layout/Layout.tsx';
 import { useSession } from '../session.tsx';
 
@@ -12,6 +12,7 @@ export const UNAVAILABLE = 'Sign-in is not available right now. Try again in a m
 export function LoginPage() {
   const { signIn } = useSession();
   const navigate = useNavigate();
+  const location = useLocation();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -29,7 +30,10 @@ export function LoginPage() {
     const result = await signIn(username, password);
     setSubmitting(false);
     if (result.ok) {
-      navigate(`/credit-health/report/${result.user.defaultBureauId}`, { replace: true });
+      // Back to the address that sent the visitor here, if it is a path on this site; otherwise the default report.
+      const from = (location.state as { from?: unknown } | null)?.from;
+      const back = typeof from === 'string' && from.startsWith('/') && !from.startsWith('//') ? from : null;
+      navigate(back ?? `/credit-health/report/${result.user.defaultBureauId}`, { replace: true });
     } else {
       setError(result.reason === 'rejected' ? NOT_RECOGNISED : UNAVAILABLE);
     }

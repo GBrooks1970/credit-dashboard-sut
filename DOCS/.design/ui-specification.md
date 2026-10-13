@@ -1,6 +1,6 @@
 ---
-version: 15
-created: 2026-10-13T10:12Z
+version: 16
+created: 2026-10-13T13:58Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-spec
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v16:** CDS-33 (U3): what the five report pages built settles. Section 6.3: the year status is a text alternative beside each year button (`ph-year-status-{yyyy}`); the intro reads 'six years of history, plus the current year'. Section 6.7: report changes show 20 a page with the kind and the page in the address (`?bureauId=&sentiment=&page=`); a visitor without a session who opens an address signs in and is brought back to it; `change-card-{id}` carries `data-sentiment`; a search row carries `data-kind`; the debt overview shows summary figures without pence; the header navigation has Report, Debt and Updates.
 **Changes in v15:** CDS-32 (U2): section 6.2 states what the overview built settles: the changes toggle follows the pages of `GET /changes` 100 at a time until it has every change (DR-047; the CDS-18 Note on the toggle's page size); the history chart defaults to 6 months and shows one row per month, a gap included, in its table alternative; `impact-link` and `link-impact` go to the sections on the page; `tile-corrections` leads to the personal details page; the pages later slices build show a 'not built yet' page to a signed-in customer.
 **Changes in v14:** CDS-31 (U1): section 6.1 gives the sign-in error copy; the header of 6.2 is built in stages (U1 has the logo, the report link and the account button; the notifications button follows with the pages that need it).
 **Changes in v13:** Phase 4 choices (decision brief 11, DR-062): principle 2 is service first (the Prism mock has no personas); section 3 gains the hosting row; section 9 runs the `@ui` scenarios against the live service.

@@ -2,6 +2,12 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-13: the report pages (CDS-33, Phase 4 U3)
+
+- Payment history with the shared `PaymentHistoryWidget`, report changes (kind and page in the address, 20 a page, a pager), searches (hard and soft apart), personal details (read-only) and the debt overview; sign-in brings a visitor back to the address they asked for; header links to Debt and Updates.
+- Harness: the report page steps and `openAddress`; a `{hardOrSoft}` type; the 25-change Given; the `ui` profile has 22 scenarios (30 executions). UI specification v16, glossary v12.
+- 55 Vitest tests. Backlog v56.
+
 ## 2026-10-13: the report overview (CDS-32, Phase 4 U2)
 
 - The overview page to UI specification 6.2: score hero and comparison, summary with like and dislike (stored by the service) and a chat drawer (dialog, focus trap, Escape), the score history chart (hand-built SVG, a table alternative, gaps for months with no score), the report changes with the toggle (100 a page, following pages), impact, debt, accounts, payments and the tiles. A 'not built yet' page for links to later slices.

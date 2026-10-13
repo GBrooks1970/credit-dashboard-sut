@@ -4,26 +4,11 @@
 // has them all, and collapses back to the three newest. It is hidden when there are three changes or fewer.
 import { useState } from 'react';
 import { Link } from 'react-router';
-import type { components } from '@credit-dashboard-sut/api-client';
+import { ChangeCard, type Change } from '../../components/ChangeCard.tsx';
 import { SectionState } from '../../components/SectionState.tsx';
-import { formatDate } from '../../format.ts';
 import { useSession } from '../../session.tsx';
 
-type Change = components['schemas']['Change'];
-
 const PAGE_SIZE = 100;
-const SENTIMENT_LABEL: Record<Change['sentiment'], string> = { positive: 'Positive', neutral: 'Neutral', negative: 'Negative' };
-
-export function ChangeCard({ change }: { change: Change }) {
-  return (
-    <li data-testid={`change-card-${change.id}`} className={`change change-${change.sentiment}`}>
-      <span className="badge">{SENTIMENT_LABEL[change.sentiment]}</span> <strong>{change.title}</strong>
-      <div className="muted">
-        {formatDate(change.date)} · {change.impact} impact
-      </div>
-    </li>
-  );
-}
 
 export function ReportChanges({ bureauId, recent, total }: { bureauId: string; recent: Change[]; total: number }) {
   const { client } = useSession();

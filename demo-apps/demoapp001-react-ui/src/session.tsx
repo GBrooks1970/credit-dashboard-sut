@@ -17,6 +17,8 @@ interface Session {
   client: CreditClient;
   signIn(username: string, password: string): Promise<SignInResult>;
   signOut(): void;
+  /** Reads the customer again, so the greeting follows a change to the preferred name (PR-03). */
+  refreshUser(): Promise<void>;
 }
 
 const SessionContext = createContext<Session | null>(null);
@@ -46,9 +48,14 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  const refreshUser = useCallback(async () => {
+    const me = await client.GET('/me');
+    if (me.data) setUser(me.data);
+  }, [client]);
+
   const value = useMemo<Session>(
-    () => ({ signedIn: token !== null, user, client, signIn, signOut }),
-    [token, user, client, signIn, signOut],
+    () => ({ signedIn: token !== null, user, client, signIn, signOut, refreshUser }),
+    [token, user, client, signIn, signOut, refreshUser],
   );
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;
 }

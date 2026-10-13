@@ -237,3 +237,11 @@ These are the probes the plan requires, each expected to fail and then reverted;
 - `src/ui/steps/overview.steps.ts` defines the report overview's steps: `is viewing the report for` (a fresh sign-in; the token is in memory only, so every visit is a new sign-in), `returns to the report later` (the same), `chooses the {range} range`, `likes the report summary`, `shows all changes`, and the assertions on the score, the chart's rows, the feedback buttons' `aria-pressed`, the change cards and the next-update text. `the next bureau refresh is {days} away` sets the clock that many days before the bureau's `nextRefreshDate` from the persona fixture. A new parameter type `{days}` (`1 day`, `N days`).
 - Steps that name no user use the first user the scenario bound (the Background user), or the last where the scenario ends on another user (the Sam scenario).
 - The `ui` profile now selects `ui/login.feature` and `ui/report-overview.feature`: 8 scenarios, 12 executions after outlines expand.
+
+## 22. The report page steps (CDS-33, 2026-10-13)
+
+- `src/ui/steps/report-pages.steps.ts` defines the steps of payment history, report changes, searches, personal details and the debt overview. `src/ui/visit.ts` opens an address as a new visit: with no session the app sends the visitor to sign-in and back to the address, so the harness signs in and waits for a hook that shows the page loaded (`openAddress`); it also holds the harness's own pound formatting (`poundsNoPence`), independent of the UI's.
+- **A readiness hook must be near the top of the page.** Serenity's visibility wait did not see an element below the fold: `pager-status` after 20 change cards timed out at 5 s while the same page worked in a raw Playwright run. Pages are ready on a hook near the top (`changes-filter-all`), and a step that needs a control lower down acts on it (a click scrolls it into view).
+- **One definition serves a Given and a When.** Cucumber matches a step by its text, so `shows only positive changes` is defined once.
+- The Given `{actor}'s report has {count} changes` is a shared arrange step (the 25-change overrides sample), and `{hard or soft}` is the type `hardOrSoft`.
+- The `ui` profile now selects seven feature files: 22 scenarios, 30 executions (this slice: 14 scenarios, 18 executions).

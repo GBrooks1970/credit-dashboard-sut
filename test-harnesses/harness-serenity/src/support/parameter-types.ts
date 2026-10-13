@@ -114,3 +114,6 @@ defineParameterType({
     regexp: /all on time|on time, apart from one missed month|not reported in any month|on time in the months reported/,
     transformer: (value: string) => paymentSamples[value]!,
 });
+
+/** The kind of search (glossary section 2). */
+defineParameterType({ name: 'hardOrSoft', regexp: /hard|soft/, transformer: (value: string) => value });

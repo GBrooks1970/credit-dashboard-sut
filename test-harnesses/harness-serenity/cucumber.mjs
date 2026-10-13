@@ -33,7 +33,15 @@ export const ui = {
     ...base,
     import: uiImport,
     format: uiFormat,
-    paths: ['../../features-shared/ui/login.feature', '../../features-shared/ui/report-overview.feature'],
+    paths: [
+        '../../features-shared/ui/login.feature',
+        '../../features-shared/ui/report-overview.feature',
+        '../../features-shared/ui/payment-history.feature',
+        '../../features-shared/ui/report-changes.feature',
+        '../../features-shared/ui/searches.feature',
+        '../../features-shared/ui/personal-details.feature',
+        '../../features-shared/ui/debt.feature',
+    ],
 };
 
 /** Named features: positional paths are added to a profile's paths, not substituted for them, so these have none. */

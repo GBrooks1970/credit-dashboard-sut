@@ -1,6 +1,6 @@
 ---
-version: 25
-created: 2026-10-13T09:48Z
+version: 26
+created: 2026-10-14T09:43Z
 supersedes: v22 (2026-10-08); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: api-spec
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v26:** CDS-39 (P1): section 10 says how a flag works in the service. Test control is the only way to set one; the flags on when a request begins are held for that request (`Flags`), and a flag changes a call site, never a rule in the BusinessRules library (`Defects`). `rounding-down` is the first API flag implemented. `fixtures/bug-flags.json` lists all 30 flags of the contract with their layer, status and catchers.
 **Changes in v25:** CDS-31 (U1): section 3 gains the hosting row: the service serves a built UI from the same origin when `UI_DIRECTORY` names a folder with an `index.html` (decision brief 11 D2, DR-062). The API, its contract and every operation are unchanged.
 **Changes in v24:** CDS-24: the `RuleViolation` response description reads 'out of range or too precise (BR-14)' (contract v17, `info.version` 0.9.4); `out-of-range` covers both the range and the two-decimal limit (DR-061).
 **Changes in v23:** CDS-28: section 6.3 types the `PATCH` body per field by kind (contract v16, `info.version` 0.9.3): a wrong kind of value and an unknown field are now refused at the edge (400, as before); a number a decimal cannot hold is 422 `out-of-range` (it was 400); the range, the two allowed payment methods and whole months stay BR-14 (422); a clear is `value: null`.
@@ -307,6 +308,8 @@ These are off by default. When on, they make the API break its own contract on p
 | `currency-float` | Money sent as a float of pounds | Schema type check |
 
 UI-only flags (labels, ARIA, rendering) are listed in the UI spec.
+
+**How a flag works (CDS-39, DR-064).** Test control sets the flags (`PUT /__test/bugs`) and a reset clears them. The service holds the flags that were on when a request began for the length of that request, so the helpers that build a response can ask `Flags.Has(name)` without the request being passed to them. A flag changes a call site (`Defects`), never a rule: the BusinessRules library and its tests are the same with every flag on. `fixtures/bug-flags.json` is the registry: every flag in the contract once, its group, its layer (service or ui), its status (implemented or pending) and, for an implemented flag, the committed checks that must go red when it is on and the text of the failure. The fixture check keeps the registry and the contract in step, and `FlagTests` keeps the registry and the service in step. Implemented so far: `rounding-down` (BR-03: the percentage is cut off, 49.5% shows 49).
 
 ## 11. Verification checks
 

@@ -2,6 +2,12 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-14: the flag mechanism and the proof runner (CDS-39, Phase 5 P1)
+
+- Service: `Flags` (the flags on for a request) and `Defects` (a flag changes a call site, never a rule); `rounding-down` implemented. UI: a test build reads the flags once at start, the `/debug` panel, `plural` implemented.
+- `fixtures/bug-flags.json` lists all 30 flags; the fixture check keeps it in step with the contract. `npm run check:bug-flags` proves each implemented flag against its catchers, on and off; a step in the `ui` CI job. Harness: `setBugs`, `HARNESS_BUGS`, the control key seeded in browser storage.
+- 332 service tests (14 new), 142 Vitest tests (7 new). UI specification v22, API specification v26, backlog v65.
+
 ## 2026-10-13: the exit checks (CDS-36, Phase 4 U6)
 
 - `npm run check:ui-exit`: axe-core on 37 pages and states with the bug flags off (0 violations), and 24 layout checks at 375, 768 and 1280 px, each with normal and wider text (one navigation at a time, no sideways scroll, the demo banner). The first CI run found the profile scrolling sideways by 5px at 375px with Linux fonts (a long email address); fixed with `overflow-wrap`. A step in the `ui` CI job.

@@ -2,6 +2,8 @@
 // Routes (UI specification section 5). A page that needs a session sends an anonymous visitor to /login, which is what
 // a reload does: the token is in memory only.
 import { Navigate, Route, Routes, useLocation } from 'react-router';
+import { FlagsProvider, TEST_BUILD } from './flags.tsx';
+import { DebugPage } from './pages/DebugPage.tsx';
 import { Layout } from './layout/Layout.tsx';
 import { LoginPage } from './pages/LoginPage.tsx';
 import { AccountDetailPage } from './pages/AccountDetailPage.tsx';
@@ -29,6 +31,7 @@ function RequireSession() {
 
 export function App() {
   return (
+    <FlagsProvider>
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route element={<RequireSession />}>
@@ -42,6 +45,7 @@ export function App() {
         <Route path="/credit-health/report/:bureauId/account/:accountId" element={<AccountDetailPage />} />
         <Route path="/credit-health/report/:bureauId/closed-accounts" element={<ClosedAccountsPage />} />
         <Route path="/data-capture/:field" element={<DetailFormPage />} />
+        {TEST_BUILD && <Route path="/debug" element={<DebugPage />} />}
         <Route path="/my-account/profile" element={<ProfilePage />} />
         <Route path="/my-account/profile/email" element={<EmailPage />} />
         <Route path="/my-account/profile/mobile" element={<MobilePage />} />
@@ -49,5 +53,6 @@ export function App() {
         <Route path="*" element={<NotBuiltPage />} />
       </Route>
     </Routes>
+    </FlagsProvider>
   );
 }

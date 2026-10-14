@@ -1,6 +1,6 @@
 ---
-version: 64
-created: 2026-10-14T09:10Z
+version: 65
+created: 2026-10-14T09:43Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 64 (decision brief 13 decided, DR-064; slice tickets CDS-39 to CDS-45 added; the plan awaits approval)
+**Version:** 65 (CDS-39 Done in review: P1, the flag mechanism and the proof runner; plan approved, brief 13 confirmed)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -87,7 +87,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | --- | --- | --- | --- | --- | --- | --- |
 | `CDS-37` | Phase 5 plan: bug flags and the scenarios that catch each, visual regression, the published Serenity report, the three bug-flag catches from the CDS-18 notes (a plan first, stop point at each flag group) | UI | — | HIGH | `CDS-36` | Open |
 | `CDS-38` | Independent review of the Phase 4 UI and the Serenity/JS harness by a fresh-context agent, findings handled as CDS-24 was (decision brief 12 D1 option 2; runs after CDS-40, brief 13 D6) | UI | — | MEDIUM | `CDS-36`, `CDS-40` | Open |
-| `CDS-39` | P1 the flag mechanism and the proof runner: `Flags` in the service, the test build of the UI reads the flags, the debug panel, `bug-flags.json`, `check:bug-flags` | Tooling | — | HIGH | `CDS-37` | Open |
+| `CDS-39` | P1 the flag mechanism and the proof runner: `Flags` in the service, the test build of the UI reads the flags, the debug panel, `bug-flags.json`, `check:bug-flags` | Tooling | — | HIGH | `CDS-37` | Done 2026-10-14 |
 | `CDS-40` | P2 the seven API flags implemented and proved | Service | — | HIGH | `CDS-39` | Open |
 | `CDS-41` | P3 the eleven UI display and semantics flags, with exit-check catchers for six | UI | — | HIGH | `CDS-40`, `CDS-38` | Open |
 | `CDS-42` | P4 the twelve UI behaviour flags, with component-test catchers for three | UI | — | HIGH | `CDS-41` | Open |
@@ -264,6 +264,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 ### CDS-38: Independent review of the Phase 4 UI and the harness
 
 **OPEN (2026-10-14).** The owner chose to record the Phase 4 gate and to commission the review that Phases 3 and 4 have not had, as Phase 2 had its three passes (decision brief 12 D1 option 2, DR-063). Scope: the React UI, the `@ui` steps, the exit checks and the harness, read by a fresh-context agent against the specifications and the 41 scenarios, with findings triaged and handled as CDS-24 was. The review is the quality check after the gate, not its condition. A short plan comes first; the Phase 5 plan (CDS-37) says where it falls in the order.
+
+### CDS-39: P1, the flag mechanism and the proof runner
+
+**COMPLETE in review (2026-10-14).** `Flags` and `Defects` in the service (`rounding-down` is the first API flag); `FlagsProvider`, `useFlag` and the `/debug` panel in a test build of the UI (`plural` is the first UI flag); `fixtures/bug-flags.json` (all 30 flags) checked against the contract in `verify`; `ControlTheTestEnvironment.setBugs` and `HARNESS_BUGS`; `npm run check:bug-flags` (the proof runner), in the `ui` CI job. 332 service tests, 142 Vitest tests, 51 `@ui` executions and 59 `@api` executions green with every flag off; the two implemented flags are caught for the stated reason (3 catchers). Status is Done when merged.
 
 ### CDS-30: Publish the Kanban board
 

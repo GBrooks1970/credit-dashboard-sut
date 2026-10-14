@@ -1,8 +1,10 @@
-// version: 4 | created: 2026-10-13T11:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 5 | created: 2026-10-13T11:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Builds the service, starts it with test control on and a synthetic key, starts a second instance without test control
 // (for the scenario that needs the surface absent), runs the Cucumber profile against them, and always stops both
 // (design section 8, CDS-22). Run from test-harnesses/harness-serenity:  node scripts/run.mjs api|ui [feature ...]
 // `exit` runs the Phase 4 exit checks (src/exit/exit-checks.ts: axe-core on every page, the three layouts) instead of Cucumber.
+// `flags [flag ...]` runs the bug-flag proof (src/flags/prove-flags.ts): each implemented flag on and off against its catchers.
+// The UI the ui, exit and flags runs build is a TEST BUILD (VITE_TEST_BUILD=true: it reads the flags and has the debug panel).
 // The ui and exit runs also build the UI (demo-apps/demoapp001-react-ui) and have the service serve it (UI_DIRECTORY, brief 11 D2).
 // HARNESS_PORT (default 4600) and HARNESS_OFF_PORT (default 4601) override the ports. Anything already answering on
 // either port stops the run, because it would be tested in place of the service started here.
@@ -23,7 +25,7 @@ const controlKey = 'harness-run-key'; // synthetic: the service exists only for 
 
 const [requested = 'api', ...features] = process.argv.slice(2);
 const profile = features.length > 0 ? `select-${requested}` : requested;
-const needsUi = requested === 'ui' || requested === 'exit';
+const needsUi = requested === 'ui' || requested === 'exit' || requested === 'flags';
 const uiProject = path.resolve(harness, '..', '..', 'demo-apps', 'demoapp001-react-ui');
 
 const answers = (p) => fetch(`${baseOf(p)}/bureaux`).then(() => true, () => false);
@@ -38,7 +40,7 @@ if (needsUi) {
     // The UI is built once per run; its dependencies are installed when missing (CI installs them in its own step).
     const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
     if (!fs.existsSync(path.join(uiProject, 'node_modules'))) spawnSync(npm, ['ci', '--no-audit', '--no-fund'], { cwd: uiProject, stdio: 'inherit', shell: process.platform === 'win32' });
-    const uiBuild = spawnSync(npm, ['run', 'build'], { cwd: uiProject, stdio: 'inherit', shell: process.platform === 'win32' });
+    const uiBuild = spawnSync(npm, ['run', 'build'], { cwd: uiProject, stdio: 'inherit', shell: process.platform === 'win32', env: { ...process.env, VITE_TEST_BUILD: 'true' } });
     if (uiBuild.status !== 0) {
         console.error('harness: the UI did not build');
         process.exit(1);
@@ -107,14 +109,19 @@ try {
     fs.mkdirSync(path.join(harness, 'reports'), { recursive: true });
     const cucumber = path.join(harness, 'node_modules', '@cucumber', 'cucumber', 'bin', 'cucumber.js');
     const paths = features.map((f) => path.resolve(harness, '..', '..', 'features-shared', f.endsWith('.feature') ? f : `${f}.feature`));
-    const command = requested === 'exit' ? ['--import', 'tsx', path.join(harness, 'src', 'exit', 'exit-checks.ts')] : ['--import', 'tsx', cucumber, '--profile', profile, ...paths];
+    const command =
+        requested === 'exit'
+            ? ['--import', 'tsx', path.join(harness, 'src', 'exit', 'exit-checks.ts')]
+            : requested === 'flags'
+              ? ['--import', 'tsx', path.join(harness, 'src', 'flags', 'prove-flags.ts'), ...features]
+              : ['--import', 'tsx', cucumber, '--profile', profile, ...paths];
     const run = spawnSync(process.execPath, command, {
         cwd: harness,
         stdio: 'inherit',
         env: { ...process.env, HARNESS_BASE_URL: baseOf(port), HARNESS_UI_URL: `http://127.0.0.1:${port}`, HARNESS_OFF_BASE_URL: baseOf(offPort), HARNESS_CONTROL_KEY: controlKey },
     });
     code = run.status ?? 1;
-    console.log(`\nharness: ${requested === 'exit' ? 'exit checks' : 'Cucumber'} exit code ${code}; service logs ${main.logPath}, ${off.logPath}`);
+    console.log(`\nharness: ${requested === 'exit' ? 'exit checks' : requested === 'flags' ? 'flag proof' : 'Cucumber'} exit code ${code}; service logs ${main.logPath}, ${off.logPath}`);
 } catch (error) {
     console.error(`harness: ${error.message}`);
 } finally {

@@ -7,14 +7,26 @@ import { json, problem } from './fixtures.ts';
 
 export type Handler = (request: Request, url: URL) => Response | Promise<Response>;
 
+/**
+ * Bug flags a test wants on: the environment variable CDS_FLAGS (comma separated) is how the proof runner turns one on (CDS-39).
+ * `process` is reached through `globalThis` because this package does not depend on the Node typings.
+ */
+const flagsFromEnvironment = () =>
+  ((globalThis as { process?: { env: Record<string, string | undefined> } }).process?.env.CDS_FLAGS ?? '')
+    .split(',')
+    .map((f: string) => f.trim())
+    .filter(Boolean);
+
 /** A fake service: handlers by "METHOD /path"; anything else is a 404. Sign-in and the profile are built in. Requests are recorded. */
-export function fakeService(handlers: Record<string, Handler>) {
+export function fakeService(handlers: Record<string, Handler>, options: { flags?: string[] } = {}) {
   const seen: string[] = [];
-  const fetchMock = vi.fn(async (input: Request | string | URL) => {
-    const request = input instanceof Request ? input : new Request(String(input));
+  const flags = [...flagsFromEnvironment(), ...(options.flags ?? [])];
+  const fetchMock = vi.fn(async (input: Request | string | URL, init?: RequestInit) => {
+    const request = input instanceof Request ? input : new Request(String(input), init);
     const url = new URL(request.url, 'http://localhost');
     const path = url.pathname.replace('/api/v1', '');
     seen.push(`${request.method} ${path}${url.search}`);
+    if (path === '/__test/state') return json(200, { personas: {}, overridden: {}, flags, now: null, latency: {} });
     if (path === '/auth/login') return json(200, { token: 'tok', expiresAt: '2026-10-13T12:00:00Z' });
     if (path === '/me' && !handlers['GET /me']) return json(200, { id: 'usr_01', displayName: 'Alex Example', greetingName: 'Alex', defaultBureauId: 'bureau-a' });
     const handler = handlers[`${request.method} ${path}`];

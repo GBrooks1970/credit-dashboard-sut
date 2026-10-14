@@ -1,6 +1,6 @@
 ---
-version: 21
-created: 2026-10-14T09:10Z
+version: 22
+created: 2026-10-14T09:43Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-spec
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v22:** CDS-39 (P1): the flag mechanism is built. The control key reaches a test build through browser local storage (`cds.testControlKey`), which the harness seeds before the page loads (a browser context can seed local storage, not session storage); the app waits for the flags before it renders; the debug panel of 6.8 is the page `/debug` and exists only in a test build; `plural` is the first UI flag implemented.
 **Changes in v21:** decision brief 13 (DR-064): the bug flags are read by a test build of the UI from `GET /__test/state` once at start, with the key the harness supplies (section 3); the expected catch of `toggle-label` and `truncate-summary` is a component test; the bug-flag proof in section 9 is "at least one committed check" and is run by `npm run check:bug-flags`.
 **Changes in v20:** decision brief 12 D3 (DR-063): `list-changes` and the utilities and telecoms sub-group headings `list-group-{name}` are dropped from section 6.4. The list shows the summary, the rows and the excluded group; no scenario needed either, and each would have needed a contract change.
 **Changes in v19:** CDS-36 (U6): section 9 names the accessibility and layout checks: `npm run check:ui-exit` scans every page and every state that shows something new (an open dialog, an error) with axe-core (WCAG 2.0 to 2.2, levels A and AA), and checks the three layouts with normal and wider text.
@@ -61,7 +62,7 @@ Out of scope: real branding, real lenders, open-banking flows, offers and market
 | Data | Generated client `packages/api-client` (`openapi-typescript` 7.13.0 types, `openapi-fetch` 0.17.0, DR-043), base URL per environment (DR-039); query cache with retry off in test mode | Accepted (client); Proposed (cache) |
 | Styling | Design tokens in CSS custom properties; light and dark themes | Proposed |
 | Charts | Hand-built SVG components, so the accessibility tree is under our control | Proposed |
-| Bug flags | A test build reads `GET /__test/state` once at start with the control key the harness supplies (session storage, set before the page loads); the public build contains none of this code (brief 13 D1, DR-064) | Accepted |
+| Bug flags | A test build reads `GET /__test/state` once at start with the control key the harness supplies (browser local storage, `cds.testControlKey`, set before the page loads); the public build contains none of this code (brief 13 D1, DR-064) | Accepted |
 
 ## 4. Global conventions
 

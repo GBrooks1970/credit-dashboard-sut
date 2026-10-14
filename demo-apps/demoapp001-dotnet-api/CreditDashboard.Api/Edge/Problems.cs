@@ -1,3 +1,4 @@
+using CreditDashboard.Api.Control;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -53,6 +54,13 @@ public static class Problems
     private static async Task Write(HttpContext context, int status, string type, string title, string detail, IReadOnlyList<FieldError>? errors, int? attemptsRemaining = null)
     {
         context.Response.StatusCode = status;
+        if (Flags.Has("problem-json-missing"))
+        {
+            // The `problem-json-missing` bug flag: the error is plain text, not a problem document.
+            context.Response.ContentType = "text/plain; charset=utf-8";
+            await context.Response.WriteAsync($"{title}: {detail}", context.RequestAborted);
+            return;
+        }
         context.Response.ContentType = "application/problem+json";
         var body = new Dictionary<string, object?>
         {

@@ -129,6 +129,12 @@ public sealed class PersonaStore
         lock (_lock) return _verifiedEmails.Contains(username);
     }
 
+    /// <summary>The users test control knows (the signed-in user's own account is the only one the BR-15 rule lets them read).</summary>
+    public IReadOnlyList<string> Usernames()
+    {
+        lock (_lock) return _bindings.Keys.ToList();
+    }
+
     /// <summary>The bound persona document for this user with their overrides applied (a clone; CDS-25 reads this).</summary>
     public JsonObject Document(string username)
     {

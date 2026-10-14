@@ -58,7 +58,7 @@ public static class Accounts
             ["type"] = a["type"]!.GetValue<string>(),
             ["provider"] = a["provider"]!.GetValue<string>(),
             ["logoUrl"] = a["logoUrl"]?.GetValue<string>(),
-            ["maskedNumber"] = a["maskedNumber"]!.GetValue<string>(),
+            ["maskedNumber"] = Defects.MaskedNumber(a),
             ["balance"] = ReportData.Money(balance),
         };
         if (ReportData.Limit(a) is { } limit) summary["limit"] = ReportData.Money(limit);
@@ -72,7 +72,14 @@ public static class Accounts
     private static JsonObject? Find(PersonaStore store, string username, string accountId, DateOnly today)
     {
         var accounts = store.Document(username)["bureaux"]!.AsArray().SelectMany(b => b!["accounts"]!.AsArray().Select(a => a!.AsObject())).ToList();
-        if (!Ownership.Owns(accounts.Select(a => a["id"]!.GetValue<string>()), accountId)) return null;
+        // BR-15. With the `idor` flag an account that belongs to another customer is found as well.
+        if (!Ownership.Owns(accounts.Select(a => a["id"]!.GetValue<string>()), accountId))
+        {
+            if (!Flags.Has("idor")) return null;
+            accounts = store.Usernames().Where(u => u != username)
+                .SelectMany(u => store.Document(u)["bureaux"]!.AsArray().SelectMany(b => b!["accounts"]!.AsArray().Select(a => a!.AsObject()))).ToList();
+            if (!accounts.Any(a => a["id"]!.GetValue<string>() == accountId)) return null;
+        }
         var account = accounts.First(a => a["id"]!.GetValue<string>() == accountId);
         return Listed(account, today) ? account : null;
     }

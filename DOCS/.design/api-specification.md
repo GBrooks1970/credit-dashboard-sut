@@ -10,7 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
-**Changes in v27:** CDS-40 (P2): all seven API flags of section 10 are implemented. Each is a different call site in the service and leaves the BusinessRules library untouched; each is caught by a scenario that already existed, for a different recorded reason.
+**Changes in v27:** CDS-40 (P2): Schemathesis no longer fuzzes `PUT /__test/bugs` (section 11); a fuzzed `problem-json-missing` failed the run in CI; all seven API flags of section 10 are implemented. Each is a different call site in the service and leaves the BusinessRules library untouched; each is caught by a scenario that already existed, for a different recorded reason.
 **Changes in v26:** CDS-39 (P1): section 10 says how a flag works in the service. Test control is the only way to set one; the flags on when a request begins are held for that request (`Flags`), and a flag changes a call site, never a rule in the BusinessRules library (`Defects`). `rounding-down` is the first API flag implemented. `fixtures/bug-flags.json` lists all 30 flags of the contract with their layer, status and catchers.
 **Changes in v25:** CDS-31 (U1): section 3 gains the hosting row: the service serves a built UI from the same origin when `UI_DIRECTORY` names a folder with an `index.html` (decision brief 11 D2, DR-062). The API, its contract and every operation are unchanged.
 **Changes in v24:** CDS-24: the `RuleViolation` response description reads 'out of range or too precise (BR-14)' (contract v17, `info.version` 0.9.4); `out-of-range` covers both the range and the two-decimal limit (DR-061).
@@ -328,7 +328,7 @@ UI-only flags (labels, ARIA, rendering) are listed in the UI spec.
 | Profile rule tests | `CreditDashboard.BusinessRules.Tests`: every case in profile-rules-cases.md, tagged by PR ID; the traceability test covers the PR rules the API enforces | Phase 3 onwards (CDS-27) |
 | Rule traceability | A test reads the BR IDs from section 7 and fails if a rule has no tagged test, or a tag names no rule | Phase 3 onwards (CDS-20) |
 | Response validation | Every API scenario response checked against the contract | Phase 3 onwards |
-| Property-based | Schemathesis 4.29.4 against the running service: every operation but `logout` (it revokes the run's own token) and the latency control (delays of up to 10 s), a fixed seed (DR-056) | Every commit, as a `verify` step (CDS-23) |
+| Property-based | Schemathesis 4.29.4 against the running service: every operation but `logout` (it revokes the run's own token), the latency control (delays of up to 10 s) and the bug-flag control (it switches defects on that break the contract for every later call, DR-064), a fixed seed (DR-056) | Every commit, as a `verify` step (CDS-23) |
 | Business rules | `@api` Gherkin scenarios tagged with `BR-` IDs | Phase 3 onwards |
 | Security | `@security` scenarios: BR-15, auth expiry, test control off by default | Phase 3 onwards |
 

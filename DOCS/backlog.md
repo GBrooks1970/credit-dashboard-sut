@@ -271,7 +271,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-40: P2, the seven API flags
 
-**COMPLETE in review (2026-10-14).** `excluded-in-total`, `history-carry-forward`, `idor`, `problem-json-missing`, `mask-format` and `currency-float` implemented (`rounding-down` was P1's tracer), each at its own call site with the BusinessRules library untouched; each caught for its stated reason by a scenario that already existed. 339 service tests (7 new); `check:bug-flags` 8 of 8 implemented flags caught, 22 pending; `verify` 14 of 14. **Stop point 1 of the plan: the API half of the proof.** Next: CDS-38, the independent review, before CDS-41 (decision brief 13 D6). Status is Done when merged.
+**COMPLETE in review (2026-10-14).** `excluded-in-total`, `history-carry-forward`, `idor`, `problem-json-missing`, `mask-format` and `currency-float` implemented (`rounding-down` was P1's tracer), each at its own call site with the BusinessRules library untouched; each caught for its stated reason by a scenario that already existed. 339 service tests (7 new); `check:bug-flags` 8 of 8 implemented flags caught, 22 pending; `verify` 14 of 14. **Stop point 1 of the plan: the API half of the proof.** Next: CDS-38, the independent review, before CDS-41 (decision brief 13 D6). `tools/schemathesis-run.mjs` v2 stops fuzzing `PUT /__test/bugs` (the first CI run failed when a fuzzed `problem-json-missing` turned later errors into plain text). Status is Done when merged.
 
 ### CDS-30: Publish the Kanban board
 

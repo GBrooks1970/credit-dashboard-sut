@@ -157,4 +157,4 @@ The owner replied on 2026-10-14, in chat: "D1: option 1, D2: option 1, D3: optio
 
 ### 6.3 Corrections after decision
 
-None yet. Awaiting the owner's confirmation of the read-back in 6.1 and approval of the plan.
+None. **Confirmed 2026-10-14:** the owner confirmed the read-back in 6.1 as intended (D1 option 1, D2 option 1, D3 option 1, D4 option 2, D5 option 1, D6 option 1) and approved the plan, by replying "confirmed, list link to and approve plan, merge #72 once CI green then start P1".

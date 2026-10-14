@@ -4,15 +4,15 @@ created: 2026-10-14T08:30Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-37
-status: proposed
-approved: not yet
+status: approved
+approved: "2026-10-14, Gary Brooks, 'confirmed, list link to and approve plan, merge #72 once CI green then start P1' (decisions D1 to D6 of brief 13 answered and confirmed 2026-10-14); merge authority: per pull request, on request"
 delivered: not yet
 language: en-GB
 ---
 
 # Implementation plan: CDS-37, Phase 5, defects and evidence
 
-**History of this plan.** Presented in full to the owner on 2026-10-14 after a read-only spike, with six decisions put in decision brief 13 (awaiting the owner). Until the brief is answered and the plan approved, no flag, scenario or workflow is built. This file is the plan as written for approval.
+**History of this plan.** Presented in full to the owner on 2026-10-14 after a read-only spike, with six decisions put in decision brief 13 (awaiting the owner). The brief was answered and the plan approved on 2026-10-14; see the approval line above. This file is the plan as written for approval.
 
 **Changes in v2 (2026-10-14, after the owner's answers to brief 13; not yet approved).** D4 option 2: the three flags with no catcher (`toggle-label`, `truncate-summary`, `lost-edit`) are caught by component tests, not new scenarios, so the `@ui` count stays 41 and the specified total 73. D5 option 1: a catch is any committed automated check, listed per flag, and the README gate is reworded. The proof runner therefore runs a component-test catcher too: the fake service of the Vitest suite is given the flag (through the environment variable `CDS_FLAGS`), and the test must pass with it off and fail with it on. D1 option 1, D2 option 1, D3 option 1 and D6 option 1 are as recommended. Slice tickets CDS-39 to CDS-45 are in the backlog (v64).
 

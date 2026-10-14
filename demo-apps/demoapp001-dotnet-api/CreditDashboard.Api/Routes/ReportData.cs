@@ -24,7 +24,7 @@ internal static class ReportData
 
     public static IEnumerable<JsonObject> Accounts(JsonObject bureau) => bureau["accounts"]!.AsArray().Select(a => a!.AsObject());
 
-    public static JsonObject Money(long amountMinor) => new() { ["amountMinor"] = amountMinor, ["currency"] = "GBP" };
+    public static JsonObject Money(long amountMinor) => new() { ["amountMinor"] = Defects.Amount(amountMinor), ["currency"] = "GBP" };
 
     public static long Balance(JsonObject account) => account["balance"]!["amountMinor"]!.GetValue<long>();
 
@@ -34,7 +34,7 @@ internal static class ReportData
 
     public static AccountFacts Facts(JsonObject a) => new(
         a["id"]!.GetValue<string>(), TypeOf(a["type"]!.GetValue<string>()), IsOpen(a),
-        a["includedInTotals"]!.GetValue<bool>(), Balance(a), Limit(a));
+        Defects.IncludedInTotals(a["includedInTotals"]!.GetValue<bool>()), Balance(a), Limit(a));
 
     public static YearMonth Current(DateOnly today) => YearMonth.From(today);
 

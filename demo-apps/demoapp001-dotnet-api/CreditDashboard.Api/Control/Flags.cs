@@ -11,7 +11,10 @@ public static class Flags
     private static readonly AsyncLocal<IReadOnlySet<string>?> Active = new();
 
     /// <summary>The service-side flags that now change behaviour. The others in the contract are UI flags, or not built yet (bug-flags.json).</summary>
-    public static readonly IReadOnlySet<string> Implemented = new HashSet<string> { "rounding-down" };
+    public static readonly IReadOnlySet<string> Implemented = new HashSet<string>
+    {
+        "rounding-down", "excluded-in-total", "history-carry-forward", "idor", "problem-json-missing", "mask-format", "currency-float",
+    };
 
     public static void Begin(IReadOnlySet<string> flags) => Active.Value = flags;
 

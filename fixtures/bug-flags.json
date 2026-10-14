@@ -7,8 +7,16 @@
       "group": "A",
       "layer": "service",
       "effect": "BR-05 ignored; excluded loans added to totals",
-      "status": "pending",
-      "plannedCatcher": "`@BR-05` scenarios"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "api",
+          "feature": "api/account-totals.feature",
+          "name": "Loans without a limit stay out of the totals",
+          "failsWith": "+ 1368500"
+        }
+      ]
     },
     {
       "flag": "rounding-down",
@@ -31,40 +39,80 @@
       "group": "A",
       "layer": "service",
       "effect": "BR-02 fills gaps with the previous score",
-      "status": "pending",
-      "plannedCatcher": "`@BR-02` scenario"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "api",
+          "feature": "api/score.feature",
+          "name": "A month with no score is reported as missing, not carried forward",
+          "failsWith": "642 !== null"
+        }
+      ]
     },
     {
       "flag": "idor",
       "group": "A",
       "layer": "service",
       "effect": "BR-15 off; other users' accounts readable",
-      "status": "pending",
-      "plannedCatcher": "security access-control scenarios"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "api",
+          "feature": "security/access-control.feature",
+          "name": "Another customer's account cannot be found",
+          "failsWith": "200 !== 404"
+        }
+      ]
     },
     {
       "flag": "problem-json-missing",
       "group": "A",
       "layer": "service",
       "effect": "Errors returned as plain text",
-      "status": "pending",
-      "plannedCatcher": "the response validator"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "api",
+          "feature": "security/access-control.feature",
+          "name": "Another customer's account cannot be found",
+          "failsWith": "is not valid JSON"
+        }
+      ]
     },
     {
       "flag": "mask-format",
       "group": "A",
       "layer": "service",
       "effect": "BR-09 off; raw source mask returned",
-      "status": "pending",
-      "plannedCatcher": "masking scenarios and the schema pattern"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "api",
+          "feature": "api/masking.feature",
+          "name": "Source numbers are masked to their last four characters",
+          "failsWith": "the 200 response does not match the contract at '/maskedNumber'"
+        }
+      ]
     },
     {
       "flag": "currency-float",
       "group": "A",
       "layer": "service",
       "effect": "Money sent as a float of pounds",
-      "status": "pending",
-      "plannedCatcher": "the response validator (schema type)"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "api",
+          "feature": "api/account-totals.feature",
+          "name": "Type totals sum the open accounts of that type",
+          "failsWith": "must be integer"
+        }
+      ]
     },
     {
       "flag": "duplicate-nav",

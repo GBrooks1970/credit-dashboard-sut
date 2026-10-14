@@ -1,6 +1,6 @@
 ---
-version: 65
-created: 2026-10-14T09:43Z
+version: 66
+created: 2026-10-14T15:00Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 65 (CDS-39 Done in review: P1, the flag mechanism and the proof runner; plan approved, brief 13 confirmed)
+**Version:** 66 (CDS-40 Done in review: P2, the seven API flags; CDS-39 merged)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -88,7 +88,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-37` | Phase 5 plan: bug flags and the scenarios that catch each, visual regression, the published Serenity report, the three bug-flag catches from the CDS-18 notes (a plan first, stop point at each flag group) | UI | — | HIGH | `CDS-36` | Open |
 | `CDS-38` | Independent review of the Phase 4 UI and the Serenity/JS harness by a fresh-context agent, findings handled as CDS-24 was (decision brief 12 D1 option 2; runs after CDS-40, brief 13 D6) | UI | — | MEDIUM | `CDS-36`, `CDS-40` | Open |
 | `CDS-39` | P1 the flag mechanism and the proof runner: `Flags` in the service, the test build of the UI reads the flags, the debug panel, `bug-flags.json`, `check:bug-flags` | Tooling | — | HIGH | `CDS-37` | Done 2026-10-14 |
-| `CDS-40` | P2 the seven API flags implemented and proved | Service | — | HIGH | `CDS-39` | Open |
+| `CDS-40` | P2 the seven API flags implemented and proved | Service | — | HIGH | `CDS-39` | Done 2026-10-14 |
 | `CDS-41` | P3 the eleven UI display and semantics flags, with exit-check catchers for six | UI | — | HIGH | `CDS-40`, `CDS-38` | Open |
 | `CDS-42` | P4 the twelve UI behaviour flags, with component-test catchers for three | UI | — | HIGH | `CDS-41` | Open |
 | `CDS-43` | P5 visual regression: 32 screenshots, Linux CI baselines | Tooling | — | MEDIUM | `CDS-42` | Open |
@@ -267,7 +267,11 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-39: P1, the flag mechanism and the proof runner
 
-**COMPLETE in review (2026-10-14).** `Flags` and `Defects` in the service (`rounding-down` is the first API flag); `FlagsProvider`, `useFlag` and the `/debug` panel in a test build of the UI (`plural` is the first UI flag); `fixtures/bug-flags.json` (all 30 flags) checked against the contract in `verify`; `ControlTheTestEnvironment.setBugs` and `HARNESS_BUGS`; `npm run check:bug-flags` (the proof runner), in the `ui` CI job. 332 service tests, 142 Vitest tests, 51 `@ui` executions and 59 `@api` executions green with every flag off; the two implemented flags are caught for the stated reason (3 catchers). Status is Done when merged.
+**COMPLETE (2026-10-14; #73 `0117333`, CI run 38545013647).** `Flags` and `Defects` in the service (`rounding-down` is the first API flag); `FlagsProvider`, `useFlag` and the `/debug` panel in a test build of the UI (`plural` is the first UI flag); `fixtures/bug-flags.json` (all 30 flags) checked against the contract in `verify`; `ControlTheTestEnvironment.setBugs` and `HARNESS_BUGS`; `npm run check:bug-flags` (the proof runner), in the `ui` CI job. 332 service tests, 142 Vitest tests, 51 `@ui` executions and 59 `@api` executions green with every flag off; the two implemented flags are caught for the stated reason (3 catchers). Status is Done when merged.
+
+### CDS-40: P2, the seven API flags
+
+**COMPLETE in review (2026-10-14).** `excluded-in-total`, `history-carry-forward`, `idor`, `problem-json-missing`, `mask-format` and `currency-float` implemented (`rounding-down` was P1's tracer), each at its own call site with the BusinessRules library untouched; each caught for its stated reason by a scenario that already existed. 339 service tests (7 new); `check:bug-flags` 8 of 8 implemented flags caught, 22 pending; `verify` 14 of 14. **Stop point 1 of the plan: the API half of the proof.** Next: CDS-38, the independent review, before CDS-41 (decision brief 13 D6). `tools/schemathesis-run.mjs` v2 stops fuzzing `PUT /__test/bugs` (the first CI run failed when a fuzzed `problem-json-missing` turned later errors into plain text). Status is Done when merged.
 
 ### CDS-30: Publish the Kanban board
 

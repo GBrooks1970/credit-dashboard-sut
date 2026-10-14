@@ -2,6 +2,11 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-14: the seven API flags (CDS-40, Phase 5 P2)
+
+- `excluded-in-total`, `history-carry-forward`, `idor`, `problem-json-missing`, `mask-format` and `currency-float` are implemented in the service (with `rounding-down` from P1 that is all seven API flags); each is caught for its stated reason by an existing scenario. `check:bug-flags`: 8 of 8 implemented flags caught.
+- 339 service tests (7 new). API specification v27, backlog v66.
+
 ## 2026-10-14: the flag mechanism and the proof runner (CDS-39, Phase 5 P1)
 
 - Service: `Flags` (the flags on for a request) and `Defects` (a flag changes a call site, never a rule); `rounding-down` implemented. UI: a test build reads the flags once at start, the `/debug` panel, `plural` implemented.

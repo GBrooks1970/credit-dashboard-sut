@@ -62,7 +62,7 @@ public static class Report
         var known = r.Bureau["scoreHistory"]!.AsArray()
             .Where(p => p!["score"] is not null)
             .ToDictionary(p => YearMonth.Parse(p!["month"]!.GetValue<string>()), p => p!["score"]!.GetValue<int>());
-        var points = Scores.History(range, ReportData.Current(r.Today), known);
+        var points = Defects.ScoreHistory(Scores.History(range, ReportData.Current(r.Today), known));
         await Http.Json(context, new JsonArray(points.Select(p => (JsonNode)new JsonObject { ["month"] = p.Month.ToString(), ["score"] = p.Score }).ToArray()));
     }
 

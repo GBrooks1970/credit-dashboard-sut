@@ -6,7 +6,7 @@ import { chromium, type Browser } from 'playwright';
 
 import { ControlTheTestEnvironment } from '../abilities/ControlTheTestEnvironment.js';
 import { STAGE_MANAGER } from '../support/actors.js';
-import { resetScenario } from '../support/world.js';
+import { controlKey, resetScenario } from '../support/world.js';
 
 let browser: Browser;
 
@@ -29,11 +29,19 @@ Before(async () => {
         Cast.where((actor) =>
             actor.name === STAGE_MANAGER
                 ? actor.whoCan(ControlTheTestEnvironment.ofTheService())
-                : actor.whoCan(BrowseTheWebWithPlaywright.using(browser, { baseURL: uiUrl() })),
+                : actor.whoCan(BrowseTheWebWithPlaywright.using(browser, {
+                      baseURL: uiUrl(),
+                      // A test build of the UI reads the control key from browser storage before it starts (decision brief 13 D1).
+                      storageState: { cookies: [], origins: [{ origin: new URL(uiUrl()).origin, localStorage: [{ name: 'cds.testControlKey', value: controlKey() }] }] },
+                  })),
         ),
     );
     // Every scenario starts from reloaded fixtures and a clock that follows real time.
-    await actorCalled(STAGE_MANAGER).abilityTo(ControlTheTestEnvironment).reset();
+    const control = actorCalled(STAGE_MANAGER).abilityTo(ControlTheTestEnvironment);
+    await control.reset();
+    // A reset clears the flags, so a proof run (HARNESS_BUGS) switches its flag on again for each scenario.
+    const flags = ControlTheTestEnvironment.flagsFromEnvironment();
+    if (flags.length > 0) await control.setBugs(flags);
 });
 
 After(async () => {

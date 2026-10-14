@@ -104,3 +104,7 @@ jobs:
       - name: 'Exit checks: axe-core on every page, the three layouts'
         run: npm run test:exit
         working-directory: test-harnesses/harness-serenity
+
+      - name: 'Bug-flag proof: each implemented flag on and off against its catchers'
+        run: npm run test:flags
+        working-directory: test-harnesses/harness-serenity

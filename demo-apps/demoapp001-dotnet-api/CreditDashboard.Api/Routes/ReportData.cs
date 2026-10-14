@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json.Nodes;
+using CreditDashboard.Api.Control;
 using CreditDashboard.BusinessRules;
 
 namespace CreditDashboard.Api.Routes;
@@ -80,7 +81,7 @@ internal static class ReportData
             ["type"] = NameOf(type),
             ["balance"] = Money(totals.BalanceMinor),
             ["limit"] = hasLimit ? Money(totals.LimitMinor) : null,
-            ["utilisation"] = totals.Utilisation.Display,
+            ["utilisation"] = Defects.Utilisation(totals.BalanceMinor, totals.LimitMinor).Display,
             ["includedCount"] = counted.Count,
             ["excluded"] = new JsonArray(excluded),
         };

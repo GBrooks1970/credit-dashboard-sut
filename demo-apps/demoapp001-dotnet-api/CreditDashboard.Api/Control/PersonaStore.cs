@@ -76,6 +76,12 @@ public sealed class PersonaStore
         lock (_lock) _flags = flags.Distinct().ToList();
     }
 
+    /// <summary>The flags that are on now, as a set a request can hold (see <see cref="Flags"/>).</summary>
+    public IReadOnlySet<string> ActiveFlags()
+    {
+        lock (_lock) return _flags.ToHashSet();
+    }
+
     public void SetClock(DateTimeOffset now)
     {
         lock (_lock) _clock.Freeze(now);

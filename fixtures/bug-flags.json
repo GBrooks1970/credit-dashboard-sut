@@ -1,0 +1,268 @@
+{
+  "$comment": "Every bug flag in the contract (BugFlag), its group, where it lives, and the committed check that must go red when it is on (decision brief 13, DR-064). status 'pending' flags are not built yet and carry no catcher; 'plannedCatcher' says what the plan expects. `npm run check:bug-flags` proves each implemented flag; fixtures/schema-check.mjs keeps this file and the contract in step.",
+  "version": 1,
+  "flags": [
+    {
+      "flag": "excluded-in-total",
+      "group": "A",
+      "layer": "service",
+      "effect": "BR-05 ignored; excluded loans added to totals",
+      "status": "pending",
+      "plannedCatcher": "`@BR-05` scenarios"
+    },
+    {
+      "flag": "rounding-down",
+      "group": "A",
+      "layer": "service",
+      "effect": "BR-03 truncates instead of rounding half up",
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "api",
+          "feature": "api/account-totals.feature",
+          "name": "Utilisation rounds half up",
+          "failsWith": "49 !== 50"
+        }
+      ]
+    },
+    {
+      "flag": "history-carry-forward",
+      "group": "A",
+      "layer": "service",
+      "effect": "BR-02 fills gaps with the previous score",
+      "status": "pending",
+      "plannedCatcher": "`@BR-02` scenario"
+    },
+    {
+      "flag": "idor",
+      "group": "A",
+      "layer": "service",
+      "effect": "BR-15 off; other users' accounts readable",
+      "status": "pending",
+      "plannedCatcher": "security access-control scenarios"
+    },
+    {
+      "flag": "problem-json-missing",
+      "group": "A",
+      "layer": "service",
+      "effect": "Errors returned as plain text",
+      "status": "pending",
+      "plannedCatcher": "the response validator"
+    },
+    {
+      "flag": "mask-format",
+      "group": "A",
+      "layer": "service",
+      "effect": "BR-09 off; raw source mask returned",
+      "status": "pending",
+      "plannedCatcher": "masking scenarios and the schema pattern"
+    },
+    {
+      "flag": "currency-float",
+      "group": "A",
+      "layer": "service",
+      "effect": "Money sent as a float of pounds",
+      "status": "pending",
+      "plannedCatcher": "the response validator (schema type)"
+    },
+    {
+      "flag": "duplicate-nav",
+      "group": "B",
+      "layer": "ui",
+      "effect": "Desktop and mobile navs both rendered",
+      "status": "pending",
+      "plannedCatcher": "exit check: layouts"
+    },
+    {
+      "flag": "util-mismatch",
+      "group": "B",
+      "layer": "ui",
+      "effect": "Bar width differs from percentage text",
+      "status": "pending",
+      "plannedCatcher": "new exit check: text equals aria-valuenow"
+    },
+    {
+      "flag": "currency-format",
+      "group": "B",
+      "layer": "ui",
+      "effect": "Money shown unformatted",
+      "status": "pending",
+      "plannedCatcher": "`@ui` debt and overview scenarios"
+    },
+    {
+      "flag": "minor-units-label",
+      "group": "B",
+      "layer": "ui",
+      "effect": "Progress bar named '423600% of 510000'",
+      "status": "pending",
+      "plannedCatcher": "new exit check: a bar's name matches its value"
+    },
+    {
+      "flag": "placeholder-aria",
+      "group": "B",
+      "layer": "ui",
+      "effect": "All row bars named 'Accessible label'",
+      "status": "pending",
+      "plannedCatcher": "new exit check: no placeholder names"
+    },
+    {
+      "flag": "chart-no-values",
+      "group": "B",
+      "layer": "ui",
+      "effect": "Chart points announced without values",
+      "status": "pending",
+      "plannedCatcher": "new exit check: the table alternative carries values"
+    },
+    {
+      "flag": "button-href",
+      "group": "B",
+      "layer": "ui",
+      "effect": "Tiles rendered as buttons with href",
+      "status": "pending",
+      "plannedCatcher": "new exit check: no button with href"
+    },
+    {
+      "flag": "double-render",
+      "group": "B",
+      "layer": "ui",
+      "effect": "List rendered twice during route change",
+      "status": "pending",
+      "plannedCatcher": "`@ui` list-count scenarios"
+    },
+    {
+      "flag": "ph-a11y",
+      "group": "B",
+      "layer": "ui",
+      "effect": "Year buttons lose aria-pressed; icons lose text",
+      "status": "pending",
+      "plannedCatcher": "payment history `@ui` scenarios"
+    },
+    {
+      "flag": "nested-button",
+      "group": "B",
+      "layer": "ui",
+      "effect": "Information button rendered inside another button",
+      "status": "pending",
+      "plannedCatcher": "exit check: axe nested-interactive"
+    },
+    {
+      "flag": "decorative-alt",
+      "group": "B",
+      "layer": "ui",
+      "effect": "Header image given descriptive alt text",
+      "status": "pending",
+      "plannedCatcher": "new exit check: a decorative image has an empty alt"
+    },
+    {
+      "flag": "range-stale",
+      "group": "C",
+      "layer": "ui",
+      "effect": "Chart ignores range changes",
+      "status": "pending",
+      "plannedCatcher": "`@ui` score history range scenario"
+    },
+    {
+      "flag": "toggle-label",
+      "group": "C",
+      "layer": "ui",
+      "effect": "'See less' never flips back",
+      "status": "pending",
+      "plannedCatcher": "new component test (brief 13 D4)"
+    },
+    {
+      "flag": "like-both",
+      "group": "C",
+      "layer": "ui",
+      "effect": "Like and Dislike both pressed",
+      "status": "pending",
+      "plannedCatcher": "`@ui` summary feedback scenarios"
+    },
+    {
+      "flag": "plural",
+      "group": "C",
+      "layer": "ui",
+      "effect": "'1 topics', 'Updates in 1 days'",
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "ui",
+          "feature": "ui/report-overview.feature",
+          "name": "Next update wording",
+          "failsWith": "Received string: Updates in 1 days"
+        },
+        {
+          "kind": "component-test",
+          "file": "demo-apps/demoapp001-react-ui/src/flags.test.tsx",
+          "name": "says \"1 day\" for one day to the next update",
+          "failsWith": "Updates in 1 days"
+        }
+      ]
+    },
+    {
+      "flag": "open-redirect",
+      "group": "C",
+      "layer": "ui",
+      "effect": "redirectUrl guard removed",
+      "status": "pending",
+      "plannedCatcher": "security open-redirect scenario"
+    },
+    {
+      "flag": "truncate-summary",
+      "group": "C",
+      "layer": "ui",
+      "effect": "Summary cut mid-word with no way to expand",
+      "status": "pending",
+      "plannedCatcher": "new component test (brief 13 D4)"
+    },
+    {
+      "flag": "negative-balance",
+      "group": "C",
+      "layer": "ui",
+      "effect": "An account in credit shown as an amount owed",
+      "status": "pending",
+      "plannedCatcher": "`@BR-06` UI scenario"
+    },
+    {
+      "flag": "preferred-on-report",
+      "group": "C",
+      "layer": "ui",
+      "effect": "Preferred name leaks onto report pages",
+      "status": "pending",
+      "plannedCatcher": "`@ui` profile scenario"
+    },
+    {
+      "flag": "preferred-no-trim",
+      "group": "C",
+      "layer": "service",
+      "effect": "Leading and trailing spaces kept",
+      "status": "pending",
+      "plannedCatcher": "`@ui` and `@api` preferred-name scenarios"
+    },
+    {
+      "flag": "email-stays-verified",
+      "group": "C",
+      "layer": "service",
+      "effect": "Changing email keeps the Verified badge",
+      "status": "pending",
+      "plannedCatcher": "`@ui` and `@api` email scenarios"
+    },
+    {
+      "flag": "pii-in-title",
+      "group": "C",
+      "layer": "ui",
+      "effect": "Legal name placed in the page title",
+      "status": "pending",
+      "plannedCatcher": "profile security scenario"
+    },
+    {
+      "flag": "lost-edit",
+      "group": "C",
+      "layer": "ui",
+      "effect": "Unsaved preferred name discarded without warning",
+      "status": "pending",
+      "plannedCatcher": "new component test (brief 13 D4)"
+    }
+  ]
+}

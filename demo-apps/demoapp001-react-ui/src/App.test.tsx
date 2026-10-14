@@ -27,14 +27,17 @@ function fakeService(password = 'demo-only') {
   });
 }
 
-function renderApp(path = '/login') {
-  return render(
+/** In a test build the app waits for the flags before it renders (brief 13 D1), so the sign-in form is awaited. */
+async function renderApp(path = '/login') {
+  const view = render(
     <MemoryRouter initialEntries={[path]}>
       <SessionProvider>
         <App />
       </SessionProvider>
     </MemoryRouter>,
   );
+  await screen.findByTestId('login-username');
+  return view;
 }
 
 describe('signing in (UI specification 6.1)', () => {
@@ -45,14 +48,14 @@ describe('signing in (UI specification 6.1)', () => {
     vi.unstubAllGlobals();
   });
 
-  it('shows the demo banner and the form', () => {
-    renderApp();
+  it('shows the demo banner and the form', async () => {
+    await renderApp();
     expect(screen.getByTestId('demo-banner')).toHaveTextContent('Demo application: all data is fictional');
     expect(screen.getByTestId('login-submit')).toBeEnabled();
   });
 
   it('signing in opens the default report and greets the customer', async () => {
-    renderApp();
+    await renderApp();
     await userEvent.type(screen.getByTestId('login-username'), 'alex');
     await userEvent.type(screen.getByTestId('login-password'), 'demo-only');
     await userEvent.click(screen.getByTestId('login-submit'));
@@ -62,7 +65,7 @@ describe('signing in (UI specification 6.1)', () => {
   });
 
   it('a wrong password shows the alert, moves focus to it and stays on the sign-in page', async () => {
-    renderApp();
+    await renderApp();
     await userEvent.type(screen.getByTestId('login-username'), 'alex');
     await userEvent.type(screen.getByTestId('login-password'), 'wrong');
     await userEvent.click(screen.getByTestId('login-submit'));
@@ -74,7 +77,7 @@ describe('signing in (UI specification 6.1)', () => {
 
   it('keeps the token in memory only: nothing is written to browser storage', async () => {
     const local = vi.spyOn(Storage.prototype, 'setItem');
-    renderApp();
+    await renderApp();
     await userEvent.type(screen.getByTestId('login-username'), 'alex');
     await userEvent.type(screen.getByTestId('login-password'), 'demo-only');
     await userEvent.click(screen.getByTestId('login-submit'));
@@ -85,7 +88,7 @@ describe('signing in (UI specification 6.1)', () => {
   });
 
   it('a page that needs a session sends an anonymous visitor to the sign-in page (what a reload does)', async () => {
-    renderApp('/credit-health/report/bureau-a');
+    await renderApp('/credit-health/report/bureau-a');
     expect(await screen.findByTestId('login-submit')).toBeInTheDocument();
     expect(screen.queryByTestId('bureau-name')).not.toBeInTheDocument();
   });

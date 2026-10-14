@@ -21,7 +21,11 @@ Before(async () => {
         ),
     );
     // Design section 5: every scenario starts from reloaded fixtures and a clock that follows real time.
-    await actorCalled(STAGE_MANAGER).abilityTo(ControlTheTestEnvironment).reset();
+    const control = actorCalled(STAGE_MANAGER).abilityTo(ControlTheTestEnvironment);
+    await control.reset();
+    // A reset clears the flags, so a proof run (HARNESS_BUGS) switches its flag on again for each scenario.
+    const flags = ControlTheTestEnvironment.flagsFromEnvironment();
+    if (flags.length > 0) await control.setBugs(flags);
 });
 
 After(async () => {

@@ -46,6 +46,7 @@ if (!string.IsNullOrWhiteSpace(uiDirectory))
 }
 
 app.UseMiddleware<TestControlGate>();
+app.UseMiddleware<FlagsMiddleware>();
 app.UseMiddleware<LatencyMiddleware>();
 app.UseMiddleware<ContractValidation>();
 

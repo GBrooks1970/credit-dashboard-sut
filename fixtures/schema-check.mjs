@@ -1,8 +1,9 @@
-// version: 4 | created: 2026-10-05T20:28Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 5 | created: 2026-10-05T20:28Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Validates the persona and test-user fixtures against persona.schema.json, which references the
 // OpenAPI contract's component schemas, then runs the rule cross-checks in API specification v8, section 9.1.
 // Also validates the override samples in overrides/ against the contract's PersonaOverrides, applies each to
 // its base persona and re-runs the checks, except the two persona conventions API spec v6 section 6.5 exempts.
+// Also checks bug-flags.json against the contract's BugFlag enum and against the files its catchers name (decision brief 13).
 // Run: npm ci && npm run check   (from this folder). Exit code 0 means every check passed.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -177,6 +178,40 @@ for (const file of overrideFiles) {
   });
   summary.push(`override  ${file.replace('.json', '').padEnd(24)} on ${sample.base.padEnd(10)} accounts ${String(accountCount).padStart(2)}`);
 }
+
+// Bug flags (decision brief 13, DR-064): bug-flags.json lists every flag in the contract exactly once, says where it lives, and
+// for an implemented flag names the committed checks that must go red when it is on. The files and names must exist.
+const flagFile = JSON.parse(fs.readFileSync(path.join(here, 'bug-flags.json'), 'utf8'));
+const contractFlags = contract.components.schemas.BugFlag.enum;
+const listed = flagFile.flags.map((f) => f.flag);
+check(new Set(listed).size === listed.length, 'bug-flags.json', 'a flag is listed twice');
+for (const flag of contractFlags) check(listed.includes(flag), 'bug-flags.json', `the contract's flag '${flag}' has no entry`);
+for (const flag of listed) check(contractFlags.includes(flag), 'bug-flags.json', `'${flag}' is not a flag in the contract`);
+const repoRoot = path.join(here, '..');
+const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, (c) => '\\' + c);
+for (const entry of flagFile.flags) {
+  const where = `bug-flags.json ${entry.flag}`;
+  check(['A', 'B', 'C'].includes(entry.group), where, 'group must be A, B or C');
+  check(['service', 'ui'].includes(entry.layer), where, 'layer must be service or ui');
+  check(['implemented', 'pending'].includes(entry.status), where, 'status must be implemented or pending');
+  if (entry.status === 'pending') { check(!entry.catchers, where, 'a pending flag has no catchers yet'); continue; }
+  check(Array.isArray(entry.catchers) && entry.catchers.length > 0, where, 'an implemented flag needs at least one catcher');
+  for (const c of entry.catchers ?? []) {
+    check(typeof c.failsWith === 'string' && c.failsWith.length > 0 && c.failsWith !== 'TBD', where, 'a catcher records the failure it must produce (failsWith)');
+    if (c.kind === 'scenario') {
+      const file = path.join(repoRoot, 'features-shared', c.feature);
+      const found = fs.existsSync(file) && new RegExp(`Scenario( Outline)?: ${escapeRegExp(c.name)}\\s*$`, 'm').test(fs.readFileSync(file, 'utf8'));
+      check(found, where, `scenario '${c.name}' not found in ${c.feature}`);
+      check(['api', 'ui'].includes(c.profile), where, 'a scenario catcher names its profile (api or ui)');
+    } else if (c.kind === 'component-test') {
+      const file = path.join(repoRoot, c.file);
+      check(fs.existsSync(file) && fs.readFileSync(file, 'utf8').includes(c.name), where, `test '${c.name}' not found in ${c.file}`);
+    } else {
+      check(false, where, `unknown catcher kind '${c.kind}'`);
+    }
+  }
+}
+summary.push(`bug flags ${String(listed.length).padStart(2)} in the contract, ${flagFile.flags.filter((f) => f.status === 'implemented').length} implemented`);
 
 console.log(summary.join('\n'));
 console.log(`\n${files.length} personas, ${users.length} users, ${overrideFiles.length} override samples, ${checks} checks, ${failures.length} failures`);

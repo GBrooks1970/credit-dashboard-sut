@@ -22,6 +22,16 @@ export class ControlTheTestEnvironment extends Ability {
         scenario.state.personas.set(username, persona);
     }
 
+    /** Switches exactly these bug flags on (an empty list switches all off). The proof runner sets them through HARNESS_BUGS (CDS-39). */
+    async setBugs(flags: string[]): Promise<void> {
+        await this.expect(send('testSetBugs', { body: { flags } }), 204, 'set the bug flags');
+    }
+
+    /** The flags a proof run asks for: HARNESS_BUGS is a comma separated list, absent in every ordinary run. */
+    static flagsFromEnvironment(): string[] {
+        return (process.env.HARNESS_BUGS ?? '').split(',').map((f) => f.trim()).filter(Boolean);
+    }
+
     async setClock(now: string): Promise<void> {
         await this.expect(send('testSetClock', { body: { now } }), 204, 'set the clock');
         scenario.state.today = now.slice(0, 10);

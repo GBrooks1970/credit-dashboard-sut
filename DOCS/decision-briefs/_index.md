@@ -1,6 +1,6 @@
 ---
-version: 9
-created: 2026-10-14T07:18Z
+version: 10
+created: 2026-10-14T08:15Z
 project: credit-dashboard-sut
 type: decision-brief-index
 language: en-GB
@@ -23,4 +23,4 @@ One row per brief. Briefs are cited by number from other documents; this index r
 | 9 | [`credit-dashboard-sut_decision-brief-9_v1_20261008T0842Z.md`](credit-dashboard-sut_decision-brief-9_v1_20261008T0842Z.md) | 2026-10-08 | Serving the 29 business operations (CDS-25): structure, token lifetime, check order, and five specification gaps | CDS-25; CDS-22; CDS-23 | decided | DR-055; contract v13; API specification v19; UI specification v11; `operations-cases.md` |
 | 10 | [`credit-dashboard-sut_decision-brief-10_v1_20261010T1108Z.md`](credit-dashboard-sut_decision-brief-10_v1_20261010T1108Z.md) | 2026-10-10 | Recording the Phase 3 gate, and what closure means now | Phase 3 gate record; next work | decided | DR-058; README; backlog v46 |
 | 11 | [`credit-dashboard-sut_decision-brief-11_v1_20261012T1832Z.md`](credit-dashboard-sut_decision-brief-11_v1_20261012T1832Z.md) | 2026-10-12 | Phase 4 (the React UI): backend for the UI scenarios, how the browser reaches the API, layout, CI, harness, pins | CDS-29; CDS-31 to CDS-36 | decided | DR-062; UI specification v13; backlog v53 |
-| 12 | [`credit-dashboard-sut_decision-brief-12_v1_20261013T2243Z.md`](credit-dashboard-sut_decision-brief-12_v1_20261013T2243Z.md) | 2026-10-13 | Recording the Phase 4 gate; what comes after the UI; the two unbuilt items of UI specification 6.4 | Phase 4 gate record; Phase 5 plan | decided | DR-063; README; UI specification v20; backlog v61 (CDS-37) |
+| 12 | [`credit-dashboard-sut_decision-brief-12_v1_20261013T2243Z.md`](credit-dashboard-sut_decision-brief-12_v1_20261013T2243Z.md) | 2026-10-13 | Recording the Phase 4 gate; what comes after the UI; the two unbuilt items of UI specification 6.4 | Phase 4 gate record; Phase 5 plan | decided | DR-063 (D1 option 2: CDS-38, the independent review); README; UI specification v20; backlog v62 (CDS-37, CDS-38) |

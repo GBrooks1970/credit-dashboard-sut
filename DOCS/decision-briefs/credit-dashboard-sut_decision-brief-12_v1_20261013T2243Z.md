@@ -98,7 +98,7 @@ On 13 October 2026 the last slice of Phase 4 (CDS-36, #69) merged. As for Phases
 |---|---|---|---|
 | `DOCS/decision-register.md` | New entry | The Phase 4 gate (D1) with the exceptions listed; D2 and D3 outcomes | [x] DR-063 |
 | `README.md` | Line 17, 'SDD workflow' Phase 4 row, 'Status' | "Met" or the chosen wording, with the date; the 41 `@ui` scenarios and the exit checks | [x] |
-| `DOCS/backlog.md` | Phase 4 section; new items | Close the phase; the Phase 5 plan item if D2 is option 1 | [x] v61: CDS-37 |
+| `DOCS/backlog.md` | Phase 4 section; new items | Close the phase; the Phase 5 plan item if D2 is option 1; the review ticket if D1 is option 2 | [x] v62: CDS-37, CDS-38 |
 | `DOCS/.design/ui-specification.md` | 6.4 | Drop the two items if D3 is option 1 | [x] v20 |
 | `portfolio-prompts/registry.yml` and README row | Status label and notes | Wording follows D1 and D2 | [ ] follows this PR |
 | `portfolio-landing` card, capability matrix | Summary and counts | Wording follows D1 and D2 | [ ] follows this PR |
@@ -106,11 +106,11 @@ On 13 October 2026 the last slice of Phase 4 (CDS-36, #69) merged. As for Phases
 
 ## 7. Decision record
 
-The owner decided on 2026-10-14, by reply in chat: "D1: option 1, D2: option 1, D3: option 1". These are the recommended options. The read-back below is for the owner to confirm; section 7.3 is where a correction goes.
+The owner replied on 2026-10-14, in chat: "D1: option 1, D2: option 1, D3: option 1" (the recommended options), and later the same day changed D1 to option 2 (see 7.3). The read-back below is as corrected and confirmed.
 
 ### 7.1 Read-back
 
-1. **D1 option 1.** The Phase 4 exit gate is recorded as met on 13 October 2026 (DR-063) on the evidence of B2 to B4. The exceptions (the gate said 'mock and live' and was met on the live service only; the unread mobile badge hook; probes chosen by their author; B7, no independent review) are listed in the record. No review is commissioned.
+1. **D1 option 2** (changed from option 1 on reflection, see 7.3). The Phase 4 exit gate is recorded as met on 13 October 2026 (DR-063) on the evidence of B2 to B4, and an independent review of the UI and the harness is commissioned as a follow-up ticket (CDS-38), with findings handled as CDS-24 was. The review is the quality check afterwards, not the condition of the gate. The exceptions (the gate said 'mock and live' and was met on the live service only; the unread mobile badge hook; probes chosen by their author; B7, no independent review yet) are listed in the record.
 2. **D2 option 1.** The project continues to Phase 5 (defects and evidence), planned first, as for Phase 4. Nothing is closed with `close-project`.
 3. **D3 option 1.** `list-changes` and the utilities and telecoms sub-group headings are dropped from UI specification 6.4 (v20). No contract change is made for them.
 
@@ -118,10 +118,10 @@ The owner decided on 2026-10-14, by reply in chat: "D1: option 1, D2: option 1, 
 
 | Ref | Item | Decision | Conditions | Who | When |
 |---|---|---|---|---|---|
-| D1 | Recording the Phase 4 gate | **Option 1.** Record now (DR-063) | Exceptions B5 to B7 listed in the record | Gary Brooks | 2026-10-14 |
+| D1 | Recording the Phase 4 gate | **Option 2.** Record now (DR-063) and commission an independent review of the UI and harness (CDS-38) | Exceptions B5 to B7 listed in the record; the review is not a condition of the gate | Gary Brooks | 2026-10-14 |
 | D2 | What is built next | **Option 1.** Plan Phase 5 | A plan first, with a stop point at each flag group | Gary Brooks | 2026-10-14 |
 | D3 | The two unbuilt items | **Option 1.** Drop both from the specification | None | Gary Brooks | 2026-10-14 |
 
 ### 7.3 Corrections after decision
 
-None yet. Awaiting the owner's confirmation of the read-back in 7.1.
+**2026-10-14, the owner:** "on reflection change D1 option 1 to D1 option 2, all others confirmed". D1 is therefore option 2 (record now, and commission an independent review as a follow-up ticket, CDS-38); D2 and D3 option 1 are confirmed as read back. The first read-back said no review was commissioned; that is replaced by item 1 of 7.1.

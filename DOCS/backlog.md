@@ -1,6 +1,6 @@
 ---
-version: 61
-created: 2026-10-14T07:18Z
+version: 62
+created: 2026-10-14T08:15Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 61 (Phase 4 gate recorded, DR-063; CDS-37 the Phase 5 plan added)
+**Version:** 62 (Phase 4 gate recorded, DR-063, with an independent review commissioned; CDS-37 the Phase 5 plan and CDS-38 the review added)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -86,6 +86,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | ID | Ticket | Type | Priority | Tier | Blocked by | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | `CDS-37` | Phase 5 plan: bug flags and the scenarios that catch each, visual regression, the published Serenity report, the three bug-flag catches from the CDS-18 notes (a plan first, stop point at each flag group) | UI | — | HIGH | `CDS-36` | Open |
+| `CDS-38` | Independent review of the Phase 4 UI and the Serenity/JS harness by a fresh-context agent, findings handled as CDS-24 was (decision brief 12 D1 option 2) | UI | — | MEDIUM | `CDS-36` | Open |
 
 ## Items
 
@@ -252,6 +253,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 ### CDS-37: Phase 5 plan
 
 **OPEN (2026-10-14).** The owner chose to continue to Phase 5 (decision brief 12 D2, DR-063). A plan comes first, as for Phase 4: the bug flags and the scenario that catches each, visual regression, the published Serenity report, and the three bug-flag catches left from the CDS-18 notes, with a stop point at each flag group. Implementation does not start before the plan is approved.
+
+### CDS-38: Independent review of the Phase 4 UI and the harness
+
+**OPEN (2026-10-14).** The owner chose to record the Phase 4 gate and to commission the review that Phases 3 and 4 have not had, as Phase 2 had its three passes (decision brief 12 D1 option 2, DR-063). Scope: the React UI, the `@ui` steps, the exit checks and the harness, read by a fresh-context agent against the specifications and the 41 scenarios, with findings triaged and handled as CDS-24 was. The review is the quality check after the gate, not its condition. A short plan comes first; the Phase 5 plan (CDS-37) says where it falls in the order.
 
 ### CDS-30: Publish the Kanban board
 

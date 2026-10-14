@@ -122,7 +122,8 @@ Two probe attempts in U4 and U6 did not compile or broke the wrong thing; they w
 
 ## Recommendations / Next Steps
 
-- [ ] Record the Phase 4 gate (decision brief 12, D1 to D3) — owner, HIGH.
+- [x] Record the Phase 4 gate (decision brief 12, D1 option 2, D2 and D3 option 1; DR-063) — decided 2026-10-14.
+- [ ] An independent review of the UI and the harness (CDS-38), findings handled as CDS-24 was — MEDIUM.
 - [ ] Handover v16 and the public counts (registry, landing card, capability matrix: 41 `@ui` scenarios now run) after the gate wording is decided — HIGH.
 - [ ] A contract change for the two unbuilt items of UI specification 6.4, if wanted — owner, LOW.
 - [ ] Phase 5 plan (bug flags, visual regression, the published Serenity report, and the three bug-flag catches from the CDS-18 notes) — after the gate.

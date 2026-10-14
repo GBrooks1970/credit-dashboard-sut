@@ -1,6 +1,6 @@
 ---
-version: 62
-created: 2026-10-14T08:15Z
+version: 63
+created: 2026-10-14T08:32Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 62 (Phase 4 gate recorded, DR-063, with an independent review commissioned; CDS-37 the Phase 5 plan and CDS-38 the review added)
+**Version:** 63 (the Phase 5 plan written, status proposed, with decision brief 13 awaiting the owner)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -252,7 +252,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-37: Phase 5 plan
 
-**OPEN (2026-10-14).** The owner chose to continue to Phase 5 (decision brief 12 D2, DR-063). A plan comes first, as for Phase 4: the bug flags and the scenario that catches each, visual regression, the published Serenity report, and the three bug-flag catches left from the CDS-18 notes, with a stop point at each flag group. Implementation does not start before the plan is approved.
+**PLAN WRITTEN, PROPOSED (2026-10-14).** Plan `DOCS/implementation-plans/2026-10-14_cds-37-phase-5-defects-and-evidence.md` and decision brief 13 (D1 to D6, awaiting the owner). The spike found that none of the 30 bug flags changes any behaviour yet, so the phase implements them as well as proving them: eight slices (P0 to P7, tickets CDS-39 to CDS-45 once approved), a stop point after each flag group. Nine flags have no committed catcher today. **Original note:** the owner chose to continue to Phase 5 (decision brief 12 D2, DR-063). A plan comes first, as for Phase 4: the bug flags and the scenario that catches each, visual regression, the published Serenity report, and the three bug-flag catches left from the CDS-18 notes, with a stop point at each flag group. Implementation does not start before the plan is approved.
 
 ### CDS-38: Independent review of the Phase 4 UI and the harness
 

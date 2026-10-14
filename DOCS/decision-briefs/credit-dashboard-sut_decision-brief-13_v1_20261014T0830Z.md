@@ -7,7 +7,7 @@ brief: 13
 subject: "Phase 5 (defects and evidence): how the flags reach the UI, what counts as a catch, and three build choices"
 blocks: The Phase 5 plan (CDS-37); slices P1 to P7 (CDS-39 to CDS-45)
 approver: the project owner (Gary Brooks)
-status: awaiting-decision
+status: decided
 supersedes: none
 language: en-GB
 ---
@@ -123,14 +123,38 @@ Phase 5 is the reason the system under test exists: it can be made to break on c
 
 | File | Section | Change required | Done |
 |---|---|---|---|
-| `DOCS/decision-register.md` | New entry | The Phase 5 choices D1 to D6 | [ ] |
-| `DOCS/implementation-plans/2026-10-14_cds-37-phase-5-defects-and-evidence.md` | Decisions table; status | Owner's answers; `approved` | [ ] |
-| `README.md` | 'SDD workflow' Phase 5 row | Gate wording if D5 option 1 | [ ] |
-| `DOCS/backlog.md` | Phase 5 section | Slice tickets CDS-39 to CDS-45 | [ ] |
-| `DOCS/.design/ui-specification.md`, `api-specification.md` | Sections 3, 6.8, 8, 10 | What they say about flags (D1, D5) | [ ] |
-| `.github/workflows/pages.yml`, DR-060 | Pages | Only if D3 option 1 | [ ] |
+| `DOCS/decision-register.md` | New entry | The Phase 5 choices D1 to D6 | [x] DR-064 |
+| `DOCS/implementation-plans/2026-10-14_cds-37-phase-5-defects-and-evidence.md` | Decisions table; status | Owner's answers; `approved` | [x] answers (v2); `approved` follows the owner's word |
+| `README.md` | 'SDD workflow' Phase 5 row | Gate wording if D5 option 1 | [x] |
+| `DOCS/backlog.md` | Phase 5 section | Slice tickets CDS-39 to CDS-45 | [x] v64 |
+| `DOCS/.design/ui-specification.md`, `api-specification.md` | Sections 3, 6.8, 8, 10 | What they say about flags (D1, D5) | [x] UI specification v21 and My Profile feature spec v10; the API specification note follows in P1 |
+| `.github/workflows/pages.yml`, DR-060 | Pages | Only if D3 option 1 | [ ] follows in P6 (CDS-44) |
 | `DOCS/decision-briefs/_index.md` | Brief 13 row | Status and where the decision landed | [x] row added as awaiting-decision |
 
 ## 6. Decision record
 
-Awaiting the owner's reply.
+The owner replied on 2026-10-14, in chat: "D1: option 1, D2: option 1, D3: option 1, D4: option 2, D5: option 1, D6: option 1". Five are the recommended options; **D4 is not**: the owner chose option 2 (component-test catchers) over the recommended option 1 (three new scenarios). The read-back below is for the owner to confirm; section 6.3 is where a correction goes.
+
+### 6.1 Read-back
+
+1. **D1 option 1.** A test build of the UI reads `GET /__test/state` once at start with the control key the harness supplies (session storage, set before the page loads). The public build contains none of this code.
+2. **D2 option 1.** Screenshot baselines are made and compared in Linux CI only; a manual workflow refreshes them; diff images are an artefact on failure.
+3. **D3 option 1.** The Serenity report is published on GitHub Pages beside the Kanban board (board at `/`, report at `/report/`, from `main` only). DR-060 is amended when P6 builds it.
+4. **D4 option 2.** `toggle-label`, `truncate-summary` and `lost-edit` are caught by component tests, not new scenarios. The `@ui` count stays 41 and the specified total 73. The proof runner runs a component-test catcher with the flag given to the fake service.
+5. **D5 option 1.** A "catch" is any committed automated check listed per flag (a scenario, an exit check, a component test or a service test). The README gate for Phase 5 now reads "every flag turns at least one committed check red for the stated reason".
+6. **D6 option 1.** The independent review (CDS-38) runs after P2 (the API flags) and before P3 (the UI flags).
+
+### 6.2 Decisions
+
+| Ref | Item | Decision | Conditions | Who | When |
+|---|---|---|---|---|---|
+| D1 | How a browser learns the flags | **Option 1** | Test build only | Gary Brooks | 2026-10-14 |
+| D2 | Screenshot baselines | **Option 1** | Linux CI only | Gary Brooks | 2026-10-14 |
+| D3 | Where the report is published | **Option 1** | DR-060 amended in P6 | Gary Brooks | 2026-10-14 |
+| D4 | The three uncaught flags | **Option 2** | Component tests; no scenario change | Gary Brooks | 2026-10-14 |
+| D5 | What counts as a catch | **Option 1** | README gate reworded | Gary Brooks | 2026-10-14 |
+| D6 | When CDS-38 runs | **Option 1** | After P2, before P3 | Gary Brooks | 2026-10-14 |
+
+### 6.3 Corrections after decision
+
+None. **Confirmed 2026-10-14:** the owner confirmed the read-back in 6.1 as intended (D1 option 1, D2 option 1, D3 option 1, D4 option 2, D5 option 1, D6 option 1) and approved the plan, by replying "confirmed, list link to and approve plan, merge #72 once CI green then start P1".

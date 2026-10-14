@@ -30,4 +30,4 @@ Every implementation plan is written to a file here before implementation starts
 | [`2026-10-11_cds-30-publish-kanban-board.md`](2026-10-11_cds-30-publish-kanban-board.md) | CDS-30 Publish the Kanban board on Pages | 2026-10-11 | implemented | #59, `6079496` |
 | [`2026-10-12_cds-24-review-notes.md`](2026-10-12_cds-24-review-notes.md) | CDS-24 The remaining CDS-18 review Notes | 2026-10-12 | implemented | #61, `fdfc682` |
 | [`2026-10-12_cds-29-phase-4-ui.md`](2026-10-12_cds-29-phase-4-ui.md) | CDS-29 Phase 4 plan, the React UI | 2026-10-12 | approved | U1 (CDS-31) in review |
-| [`2026-10-14_cds-37-phase-5-defects-and-evidence.md`](2026-10-14_cds-37-phase-5-defects-and-evidence.md) | CDS-37 Phase 5 plan, defects and evidence | 2026-10-14 | proposed | not yet |
+| [`2026-10-14_cds-37-phase-5-defects-and-evidence.md`](2026-10-14_cds-37-phase-5-defects-and-evidence.md) | CDS-37 Phase 5 plan, defects and evidence | 2026-10-14 | approved | P1 (CDS-39) next |

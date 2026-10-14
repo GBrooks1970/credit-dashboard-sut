@@ -1,6 +1,6 @@
 ---
-version: 20
-created: 2026-10-14T07:18Z
+version: 21
+created: 2026-10-14T09:10Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-spec
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v21:** decision brief 13 (DR-064): the bug flags are read by a test build of the UI from `GET /__test/state` once at start, with the key the harness supplies (section 3); the expected catch of `toggle-label` and `truncate-summary` is a component test; the bug-flag proof in section 9 is "at least one committed check" and is run by `npm run check:bug-flags`.
 **Changes in v20:** decision brief 12 D3 (DR-063): `list-changes` and the utilities and telecoms sub-group headings `list-group-{name}` are dropped from section 6.4. The list shows the summary, the rows and the excluded group; no scenario needed either, and each would have needed a contract change.
 **Changes in v19:** CDS-36 (U6): section 9 names the accessibility and layout checks: `npm run check:ui-exit` scans every page and every state that shows something new (an open dialog, an error) with axe-core (WCAG 2.0 to 2.2, levels A and AA), and checks the three layouts with normal and wider text.
 **Changes in v18:** CDS-35 (U5): the header account button `btn-account` is a link to `/my-account/profile` and follows the preferred name (the session reads the customer again after a save, PR-03). The profile pages are specified in the My Profile feature spec (v9).
@@ -60,7 +61,7 @@ Out of scope: real branding, real lenders, open-banking flows, offers and market
 | Data | Generated client `packages/api-client` (`openapi-typescript` 7.13.0 types, `openapi-fetch` 0.17.0, DR-043), base URL per environment (DR-039); query cache with retry off in test mode | Accepted (client); Proposed (cache) |
 | Styling | Design tokens in CSS custom properties; light and dark themes | Proposed |
 | Charts | Hand-built SVG components, so the accessibility tree is under our control | Proposed |
-| Bug flags | Read from `GET /__test/state` at start, or from `?bugs=` locally | Proposed |
+| Bug flags | A test build reads `GET /__test/state` once at start with the control key the harness supplies (session storage, set before the page loads); the public build contains none of this code (brief 13 D1, DR-064) | Accepted |
 
 ## 4. Global conventions
 
@@ -272,14 +273,14 @@ Off by default. Each one recreates a defect seen in the source pages or a common
 | `placeholder-aria` | All row bars named 'Accessible label' | axe-core / role locator |
 | `chart-no-values` | Chart points announced without values | Accessibility tree check |
 | `range-stale` | Chart ignores range changes | Interaction scenario |
-| `toggle-label` | 'See less' never flips back | State scenario |
+| `toggle-label` | 'See less' never flips back | Component test (brief 13 D4) |
 | `like-both` | Like and Dislike both pressed | Behaviour scenario |
 | `plural` | '1 topics', 'Updates in 1 days' | Copy assertion |
 | `button-href` | Tiles rendered as buttons with `href` | Semantics lint |
 | `double-render` | List rendered twice during route change | Strict-mode locator failure |
 | `ph-a11y` | Year buttons lose `aria-pressed`; icons lose text | axe-core |
 | `open-redirect` | `redirectUrl` guard removed | Security scenario |
-| `truncate-summary` | Summary cut mid-word with no way to expand | Content assertion |
+| `truncate-summary` | Summary cut mid-word with no way to expand | Component test (brief 13 D4) |
 | `negative-balance` | An account in credit is shown as an amount owed (`£44`, no 'in credit') (DR-019) | `@BR-06` UI scenario |
 
 Profile-page flags (`nested-button`, `decorative-alt`, `preferred-on-report`, `preferred-no-trim`, `email-stays-verified`, `pii-in-title`, `lost-edit`) are listed in the My Profile UI feature spec, section 7.
@@ -295,7 +296,7 @@ Profile-page flags (`nested-button`, `decorative-alt`, `preferred-on-report`, `p
 | Accessibility | axe-core on every page, flags off: zero violations (`@axe-core/playwright`, `npm run check:ui-exit`; also in the `ui` CI job) | Phase 4 exit |
 | Layouts | 375, 768 and 1280 px: one navigation at a time (the bottom tab bar below 768 px), no sideways scroll, the demo banner shown, and axe-core at each width, with normal and wider text (`npm run check:ui-exit`) | Phase 4 exit |
 | Visual regression | Snapshots at 375px and 1280px, light and dark | Phase 5 |
-| Bug-flag proof | Each flag on: at least one scenario fails for the stated reason | Phase 5 |
+| Bug-flag proof | Each flag on: at least one committed check (scenario, exit check, component test or service test) fails for the stated reason, and passes with it off; `npm run check:bug-flags` (brief 13 D5, DR-064) | Phase 5 |
 
 ## 10. Open questions
 

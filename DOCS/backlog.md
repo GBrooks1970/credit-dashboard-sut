@@ -1,6 +1,6 @@
 ---
-version: 63
-created: 2026-10-14T08:32Z
+version: 64
+created: 2026-10-14T09:10Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 63 (the Phase 5 plan written, status proposed, with decision brief 13 awaiting the owner)
+**Version:** 64 (decision brief 13 decided, DR-064; slice tickets CDS-39 to CDS-45 added; the plan awaits approval)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -86,7 +86,14 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | ID | Ticket | Type | Priority | Tier | Blocked by | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | `CDS-37` | Phase 5 plan: bug flags and the scenarios that catch each, visual regression, the published Serenity report, the three bug-flag catches from the CDS-18 notes (a plan first, stop point at each flag group) | UI | — | HIGH | `CDS-36` | Open |
-| `CDS-38` | Independent review of the Phase 4 UI and the Serenity/JS harness by a fresh-context agent, findings handled as CDS-24 was (decision brief 12 D1 option 2) | UI | — | MEDIUM | `CDS-36` | Open |
+| `CDS-38` | Independent review of the Phase 4 UI and the Serenity/JS harness by a fresh-context agent, findings handled as CDS-24 was (decision brief 12 D1 option 2; runs after CDS-40, brief 13 D6) | UI | — | MEDIUM | `CDS-36`, `CDS-40` | Open |
+| `CDS-39` | P1 the flag mechanism and the proof runner: `Flags` in the service, the test build of the UI reads the flags, the debug panel, `bug-flags.json`, `check:bug-flags` | Tooling | — | HIGH | `CDS-37` | Open |
+| `CDS-40` | P2 the seven API flags implemented and proved | Service | — | HIGH | `CDS-39` | Open |
+| `CDS-41` | P3 the eleven UI display and semantics flags, with exit-check catchers for six | UI | — | HIGH | `CDS-40`, `CDS-38` | Open |
+| `CDS-42` | P4 the twelve UI behaviour flags, with component-test catchers for three | UI | — | HIGH | `CDS-41` | Open |
+| `CDS-43` | P5 visual regression: 32 screenshots, Linux CI baselines | Tooling | — | MEDIUM | `CDS-42` | Open |
+| `CDS-44` | P6 the published Serenity report on Pages beside the board; DR-060 amended | Tooling | — | MEDIUM | `CDS-43` | Open |
+| `CDS-45` | P7 Phase 5 exit: 30 of 30 flags caught for the stated reason in CI, the report linked, the gate brief | UI | — | HIGH | `CDS-44` | Open |
 
 ## Items
 
@@ -252,7 +259,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-37: Phase 5 plan
 
-**PLAN WRITTEN, PROPOSED (2026-10-14).** Plan `DOCS/implementation-plans/2026-10-14_cds-37-phase-5-defects-and-evidence.md` and decision brief 13 (D1 to D6, awaiting the owner). The spike found that none of the 30 bug flags changes any behaviour yet, so the phase implements them as well as proving them: eight slices (P0 to P7, tickets CDS-39 to CDS-45 once approved), a stop point after each flag group. Nine flags have no committed catcher today. **Original note:** the owner chose to continue to Phase 5 (decision brief 12 D2, DR-063). A plan comes first, as for Phase 4: the bug flags and the scenario that catches each, visual regression, the published Serenity report, and the three bug-flag catches left from the CDS-18 notes, with a stop point at each flag group. Implementation does not start before the plan is approved.
+**PLAN WRITTEN, DECISIONS RECORDED, AWAITING APPROVAL (2026-10-14; brief 13 answered, DR-064; slices CDS-39 to CDS-45).** Plan `DOCS/implementation-plans/2026-10-14_cds-37-phase-5-defects-and-evidence.md` and decision brief 13 (D1 to D6, awaiting the owner). The spike found that none of the 30 bug flags changes any behaviour yet, so the phase implements them as well as proving them: eight slices (P0 to P7, tickets CDS-39 to CDS-45 once approved), a stop point after each flag group. Nine flags have no committed catcher today. **Original note:** the owner chose to continue to Phase 5 (decision brief 12 D2, DR-063). A plan comes first, as for Phase 4: the bug flags and the scenario that catches each, visual regression, the published Serenity report, and the three bug-flag catches left from the CDS-18 notes, with a stop point at each flag group. Implementation does not start before the plan is approved.
 
 ### CDS-38: Independent review of the Phase 4 UI and the harness
 

@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 created: 2026-10-14T08:30Z
 project: credit-dashboard-sut
 type: implementation-plan
@@ -13,6 +13,8 @@ language: en-GB
 # Implementation plan: CDS-37, Phase 5, defects and evidence
 
 **History of this plan.** Presented in full to the owner on 2026-10-14 after a read-only spike, with six decisions put in decision brief 13 (awaiting the owner). Until the brief is answered and the plan approved, no flag, scenario or workflow is built. This file is the plan as written for approval.
+
+**Changes in v2 (2026-10-14, after the owner's answers to brief 13; not yet approved).** D4 option 2: the three flags with no catcher (`toggle-label`, `truncate-summary`, `lost-edit`) are caught by component tests, not new scenarios, so the `@ui` count stays 41 and the specified total 73. D5 option 1: a catch is any committed automated check, listed per flag, and the README gate is reworded. The proof runner therefore runs a component-test catcher too: the fake service of the Vitest suite is given the flag (through the environment variable `CDS_FLAGS`), and the test must pass with it off and fail with it on. D1 option 1, D2 option 1, D3 option 1 and D6 option 1 are as recommended. Slice tickets CDS-39 to CDS-45 are in the backlog (v64).
 
 **Goal.** Make the system under test do what it was built to do: break on command, and prove that the portfolio's checks notice. The README exit for Phase 5 is: *every flag turns at least one scenario red for the stated reason; the report is published* (with visual regression in the phase's deliverables). Concretely: the 30 bug flags in the contract change behaviour when test control switches them on; each flag has a named, committed check that goes red for the stated reason with the flag on and stays green with it off; screenshots are compared at two widths and two themes; and the Serenity/JS report is published.
 
@@ -46,7 +48,7 @@ Read-only; nothing in the repository was changed.
 
 Specification first. Eight pull requests (P0 to P7), each merged in order on the owner's word and its own CI run. Each slice ends with its own flags proved, its records, and a stop point: the owner may stop the phase after any slice with an honest label ("Phase 5 partly built: n of 30 flags proved").
 
-**P0, specification (this plan's pull request).** The plan; decision brief 13 (D1 to D6); the next decision record; backlog v63 with the slice tickets CDS-39 to CDS-45; the README gate wording if D5 changes it; UI specification and API specification notes for what they now say about flags (v21 and v26).
+**P0, specification (this plan's pull request).** The plan; decision brief 13 (D1 to D6); DR-064; backlog v64 with the slice tickets CDS-39 to CDS-45; the README gate wording (D5 option 1); UI specification and API specification notes for what they now say about flags (v21 and v26).
 
 **P1 (CDS-39), the mechanism and the proof runner.**
 1. `Flags` in the service: one place that answers "is this flag on for this request"; test control stays the only way to set it (DR-008); a service test that every one of the 30 names in the enum is either implemented or listed as pending, as the operations coverage test does.
@@ -62,7 +64,7 @@ Specification first. Eight pull requests (P0 to P7), each merged in order on the
 
 **P3 (CDS-41), group B, the eleven UI display and semantics flags.** Implement; add the exit-check catchers for the six that have none (a progress bar's name must match its value and may not be a placeholder; a chart's table alternative must carry values; no `button` with `href`; no interactive element inside another; a decorative image has an empty `alt`; the percentage text equals `aria-valuenow`). These live in `src/exit/exit-checks.ts` and are listed per flag in `bug-flags.json`. *Stop point 2: the display half.*
 
-**P4 (CDS-42), group C, the twelve UI behaviour flags.** Implement; add the three missing catchers (D4: scenarios `toggle-label`, `truncate-summary`, `lost-edit` in the existing feature files, with steps and glossary entries; a scenario change goes to the owner's review before merge, as CDS-24's did). The `@ui` count moves 41 to 44 and the specified total 73 to 76. *Stop point 3: all 30 flags proved.*
+**P4 (CDS-42), group C, the twelve UI behaviour flags.** Implement; add the three missing catchers as component tests (D4 option 2): the changes toggle flips back to 'See more'; a long summary can be expanded and is never cut mid-word; leaving the profile with an unsaved preferred name warns. Each is run by the proof runner with the flag supplied to the fake service (`CDS_FLAGS`), failing with it on and passing with it off. No scenario changes: the `@ui` count stays 41 and the specified total 73. *Stop point 3: all 30 flags proved.*
 
 **P5 (CDS-43), visual regression.** Screenshots of eight pages at 375 and 1280 px in light and dark (32 images) compared against baselines with a small pixel tolerance (D2): a script `src/exit/visual-checks.ts` beside the exit checks, `npm run check:visual`, baselines generated and compared in CI on Linux only, a manual workflow to refresh them, the diff images uploaded as a CI artefact on failure. The proof: a visible change (a colour, a margin) fails the check; a flag that changes the look (`util-mismatch`, `currency-format`) is caught by the snapshot as well as by its own catcher.
 
@@ -72,7 +74,7 @@ Specification first. Eight pull requests (P0 to P7), each merged in order on the
 
 ## Verification
 
-- Every slice: `npm run verify` and the `ui` job pass locally and in the pull request's own CI run, with counts and durations as measured. The existing 59 `@api` and 41 (later 44) `@ui` scenarios stay green with every flag off.
+- Every slice: `npm run verify` and the `ui` job pass locally and in the pull request's own CI run, with counts and durations as measured. The existing 59 `@api` and 41 `@ui` scenarios stay green with every flag off.
 - Probes that must fail, reverted afterwards: for the runner (above); for each new exit check, a planted defect; for each new scenario, the flag it exists for.
 - Exit: 30 of 30 flags "caught for the stated reason" in `reports/bug-flags.md`; the visual check green on Linux CI and failing on a planted visual change; the report published and reachable; the Pages site still serves the board.
 
@@ -92,12 +94,12 @@ Decision brief 13 holds the options, the arguments against and the read-back.
 
 | Decision | Options | Recommended | Owner's answer |
 |---|---|---|---|
-| D1 How the browser learns the flags | A test build reads `GET /__test/state` with the key the harness supplies; `?bugs=` only; a new keyless read endpoint; build-time flags | Test build reads state with the harness's key | pending |
-| D2 Screenshot baselines | Linux CI only; a pinned container; local and CI with a wide tolerance | Linux CI only | pending |
-| D3 Where the report is published | Pages beside the board; a CI artefact only; Pages from release tags | Pages beside the board | pending |
-| D4 The three missing catchers | Three new `@ui` scenarios; component-test catchers; drop the flags | Three new scenarios | pending |
-| D5 What counts as a catch | Any committed automated check listed per flag; Gherkin scenarios only | Any committed check, listed per flag | pending |
-| D6 When CDS-38 (the independent review) runs | After P2, before the UI flags; after Phase 5; alongside | After P2 | pending |
+| D1 How the browser learns the flags | A test build reads `GET /__test/state` with the key the harness supplies; `?bugs=` only; a new keyless read endpoint; build-time flags | Test build reads state with the harness's key | Option 1 (2026-10-14) |
+| D2 Screenshot baselines | Linux CI only; a pinned container; local and CI with a wide tolerance | Option 1 (2026-10-14) |
+| D3 Where the report is published | Pages beside the board; a CI artefact only; Pages from release tags | Option 1 (2026-10-14) |
+| D4 The three missing catchers | Three new `@ui` scenarios; component-test catchers; drop the flags | **Option 2, component-test catchers** (2026-10-14; not the recommended option) |
+| D5 What counts as a catch | Any committed automated check listed per flag; Gherkin scenarios only | Option 1 (2026-10-14) |
+| D6 When CDS-38 (the independent review) runs | After P2, before the UI flags; after Phase 5; alongside | Option 1 (2026-10-14) |
 
 ## Outcome
 

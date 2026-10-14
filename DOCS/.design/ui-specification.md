@@ -1,6 +1,6 @@
 ---
-version: 19
-created: 2026-10-13T22:18Z
+version: 20
+created: 2026-10-14T07:18Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
 type: ui-spec
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v20:** decision brief 12 D3 (DR-063): `list-changes` and the utilities and telecoms sub-group headings `list-group-{name}` are dropped from section 6.4. The list shows the summary, the rows and the excluded group; no scenario needed either, and each would have needed a contract change.
 **Changes in v19:** CDS-36 (U6): section 9 names the accessibility and layout checks: `npm run check:ui-exit` scans every page and every state that shows something new (an open dialog, an error) with axe-core (WCAG 2.0 to 2.2, levels A and AA), and checks the three layouts with normal and wider text.
 **Changes in v18:** CDS-35 (U5): the header account button `btn-account` is a link to `/my-account/profile` and follows the preferred name (the session reads the customer again after a save, PR-03). The profile pages are specified in the My Profile feature spec (v9).
 **Changes in v17:** CDS-34 (U4): what the account pages built settles. Section 6.4: the summary figures have hooks (`list-total-balance`, `list-total-limit`, `list-utilisation`) and show whole pounds like the overview card, so the two compare as text (BR-04); a row's parts are `row-balance-{id}`, `row-util-{id}` and `row-over-{id}`; `list-changes` and the utilities and telecoms sub-groups are not built (section 6.4 says why). Section 6.5: the tiles are links that carry the page to return to. Section 6.6: the five fields, their presets, the client check, and the fallback of the open-redirect guard.
@@ -177,8 +178,6 @@ The widget is one component (`PaymentHistoryWidget`) reused on account detail wi
 | Donut | progressbar | `list-donut` | Total utilisation; absent when limit null |
 | Account row | link | `account-row-{accountId}` | Logo or text fallback, provider, balance, mask, utilisation |
 | Excluded group | region | `list-excluded` | Shown only when `excluded` is non-empty; explains exclusion (BR-05) |
-| Sub-group headings | heading | `list-group-{name}` | Utilities and telecoms only |
-| Report changes | region | `list-changes` | Report-change cards `change-card-{id}` with impact badge |
 
 | Type | Summary metrics | Donut | Row utilisation |
 | --- | --- | --- | --- |
@@ -192,7 +191,7 @@ The widget is one component (`PaymentHistoryWidget`) reused on account detail wi
 **Built in U4 (CDS-34).**
 - The summary figures have hooks `list-total-balance`, `list-total-limit` and `list-utilisation`, and show whole pounds like the overview card (4.2), so the list total and the overview card compare as text (BR-04). The bar `list-donut` is a progress bar, shown when the type has a limit and the API reports a utilisation.
 - A row is a link `account-row-{accountId}` with parts `row-balance-{id}` (with pence; a negative balance reads 'in credit', DR-018), `row-util-{id}` (the percentage alone, for card, loan and credit account) and `row-over-{id}` ('Over limit' above 100%, DR-013). The part hooks do not start with `account-row-`, so a count of `account-row-*` counts accounts. A loan that does not count in the totals (BR-05) is not a row: it is listed in `list-excluded` as `excluded-row-{id}`, with the reason.
-- Not built: `list-changes`, because the changes endpoint takes no account-type filter, and the sub-group headings `list-group-{name}`, because no field tells a utility from a telecoms account. Both need a contract change and are left to the owner (backlog CDS-34).
+- Dropped (v20, brief 12 D3): `list-changes` (the changes endpoint takes no account-type filter) and the sub-group headings `list-group-{name}` (no field tells a utility from a telecoms account). Each would have needed a contract change.
 
 ### 6.5 Account detail (Release 2)
 

@@ -1,6 +1,6 @@
 ---
-version: 59
-created: 2026-10-13T22:18Z
+version: 62
+created: 2026-10-14T08:15Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 59 (CDS-36 Done in review: U6, the exit checks; CDS-35 merged)
+**Version:** 62 (Phase 4 gate recorded, DR-063, with an independent review commissioned; CDS-37 the Phase 5 plan and CDS-38 the review added)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -80,6 +80,13 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-34` | U4 accounts: lists, closed, detail, edit form, open-redirect guard (9 scenarios) | UI | — | HIGH | `CDS-33` | Done 2026-10-13 |
 | `CDS-35` | U5 profile: profile, email and mobile sub-pages (10 scenarios) | UI | — | HIGH | `CDS-34` | Done 2026-10-13 |
 | `CDS-36` | U6 exit: axe-core on every page, layouts, the full `@ui` run against the live service, the Phase 4 gate | UI | — | HIGH | `CDS-35` | Done 2026-10-13 |
+
+### Phase 5 — Defects and evidence
+
+| ID | Ticket | Type | Priority | Tier | Blocked by | Status |
+| --- | --- | --- | --- | --- | --- | --- |
+| `CDS-37` | Phase 5 plan: bug flags and the scenarios that catch each, visual regression, the published Serenity report, the three bug-flag catches from the CDS-18 notes (a plan first, stop point at each flag group) | UI | — | HIGH | `CDS-36` | Open |
+| `CDS-38` | Independent review of the Phase 4 UI and the Serenity/JS harness by a fresh-context agent, findings handled as CDS-24 was (decision brief 12 D1 option 2) | UI | — | MEDIUM | `CDS-36` | Open |
 
 ## Items
 
@@ -241,7 +248,15 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-36: U6, the exit checks
 
-**COMPLETE in review (2026-10-13).** `npm run check:ui-exit` runs axe-core (`@axe-core/playwright` 4.13.0) on 37 pages and states, and 24 layout checks (12 with this machine's text and 12 with wider text) at 375, 768 and 1280 px, against the live service; 0 problems. It runs in the `ui` CI job. The Phase 4 gate is the owner's to record (decision brief 12 follows this pull request). Status is Done when merged.
+**COMPLETE (2026-10-13; #69 `6cbda4f`, CI run 38479216316; the first run, 38477792933, failed on a real layout defect and was fixed).** `npm run check:ui-exit` runs axe-core (`@axe-core/playwright` 4.13.0) on 37 pages and states, and 24 layout checks (12 with this machine's text and 12 with wider text) at 375, 768 and 1280 px, against the live service; 0 problems. It runs in the `ui` CI job. The Phase 4 gate is the owner's to record (decision brief 12). Implementation log: `DOCS/implementation-logs/2026-10-13_cds-29-phase-4-ui-u1-to-u6.md`; plan Outcome written.
+
+### CDS-37: Phase 5 plan
+
+**OPEN (2026-10-14).** The owner chose to continue to Phase 5 (decision brief 12 D2, DR-063). A plan comes first, as for Phase 4: the bug flags and the scenario that catches each, visual regression, the published Serenity report, and the three bug-flag catches left from the CDS-18 notes, with a stop point at each flag group. Implementation does not start before the plan is approved.
+
+### CDS-38: Independent review of the Phase 4 UI and the harness
+
+**OPEN (2026-10-14).** The owner chose to record the Phase 4 gate and to commission the review that Phases 3 and 4 have not had, as Phase 2 had its three passes (decision brief 12 D1 option 2, DR-063). Scope: the React UI, the `@ui` steps, the exit checks and the harness, read by a fresh-context agent against the specifications and the 41 scenarios, with findings triaged and handled as CDS-24 was. The review is the quality check after the gate, not its condition. A short plan comes first; the Phase 5 plan (CDS-37) says where it falls in the order.
 
 ### CDS-30: Publish the Kanban board
 

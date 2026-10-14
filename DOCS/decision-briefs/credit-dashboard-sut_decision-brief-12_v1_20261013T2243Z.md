@@ -7,7 +7,7 @@ brief: 12
 subject: "Recording the Phase 4 gate, and what comes after the UI"
 blocks: Phase 4 gate record (a new DR); README status; registry, landing card and capability matrix wording; the choice of next work
 approver: the project owner (Gary Brooks)
-status: awaiting-decision
+status: decided
 supersedes: none
 language: en-GB
 ---
@@ -96,14 +96,32 @@ On 13 October 2026 the last slice of Phase 4 (CDS-36, #69) merged. As for Phases
 
 | File | Section | Change required | Done |
 |---|---|---|---|
-| `DOCS/decision-register.md` | New entry | The Phase 4 gate (D1) with the exceptions listed; D2 and D3 outcomes | [ ] |
-| `README.md` | Line 17, 'SDD workflow' Phase 4 row, 'Status' | "Met" or the chosen wording, with the date; the 41 `@ui` scenarios and the exit checks | [ ] |
-| `DOCS/backlog.md` | Phase 4 section; new items | Close the phase; the Phase 5 plan item if D2 is option 1 | [ ] |
-| `DOCS/.design/ui-specification.md` | 6.4 | Drop the two items if D3 is option 1 | [ ] |
-| `portfolio-prompts/registry.yml` and README row | Status label and notes | Wording follows D1 and D2 | [ ] |
-| `portfolio-landing` card, capability matrix | Summary and counts | Wording follows D1 and D2 | [ ] |
+| `DOCS/decision-register.md` | New entry | The Phase 4 gate (D1) with the exceptions listed; D2 and D3 outcomes | [x] DR-063 |
+| `README.md` | Line 17, 'SDD workflow' Phase 4 row, 'Status' | "Met" or the chosen wording, with the date; the 41 `@ui` scenarios and the exit checks | [x] |
+| `DOCS/backlog.md` | Phase 4 section; new items | Close the phase; the Phase 5 plan item if D2 is option 1 | [x] v61: CDS-37 |
+| `DOCS/.design/ui-specification.md` | 6.4 | Drop the two items if D3 is option 1 | [x] v20 |
+| `portfolio-prompts/registry.yml` and README row | Status label and notes | Wording follows D1 and D2 | [ ] follows this PR |
+| `portfolio-landing` card, capability matrix | Summary and counts | Wording follows D1 and D2 | [ ] follows this PR |
 | `DOCS/decision-briefs/_index.md` | Brief 12 row | Status and where the decision landed | [x] row added as awaiting-decision |
 
 ## 7. Decision record
 
-Awaiting the owner's reply.
+The owner decided on 2026-10-14, by reply in chat: "D1: option 1, D2: option 1, D3: option 1". These are the recommended options. The read-back below is for the owner to confirm; section 7.3 is where a correction goes.
+
+### 7.1 Read-back
+
+1. **D1 option 1.** The Phase 4 exit gate is recorded as met on 13 October 2026 (DR-063) on the evidence of B2 to B4. The exceptions (the gate said 'mock and live' and was met on the live service only; the unread mobile badge hook; probes chosen by their author; B7, no independent review) are listed in the record. No review is commissioned.
+2. **D2 option 1.** The project continues to Phase 5 (defects and evidence), planned first, as for Phase 4. Nothing is closed with `close-project`.
+3. **D3 option 1.** `list-changes` and the utilities and telecoms sub-group headings are dropped from UI specification 6.4 (v20). No contract change is made for them.
+
+### 7.2 Decisions
+
+| Ref | Item | Decision | Conditions | Who | When |
+|---|---|---|---|---|---|
+| D1 | Recording the Phase 4 gate | **Option 1.** Record now (DR-063) | Exceptions B5 to B7 listed in the record | Gary Brooks | 2026-10-14 |
+| D2 | What is built next | **Option 1.** Plan Phase 5 | A plan first, with a stop point at each flag group | Gary Brooks | 2026-10-14 |
+| D3 | The two unbuilt items | **Option 1.** Drop both from the specification | None | Gary Brooks | 2026-10-14 |
+
+### 7.3 Corrections after decision
+
+None yet. Awaiting the owner's confirmation of the read-back in 7.1.

@@ -44,6 +44,14 @@ export class CallAnApi extends Ability {
     }
 }
 
+function parseJson(text: string): unknown {
+    try {
+        return JSON.parse(text);
+    } catch {
+        return undefined;
+    }
+}
+
 /** One call and its contract check; used by the ability and by the test-control ability. */
 export async function send(operationId: string, options: CallOptions, token?: string): Promise<Response> {
     const contract = theContract();
@@ -62,7 +70,10 @@ export async function send(operationId: string, options: CallOptions, token?: st
     });
     const text = await http.text();
     scenario.state.bodies.push(text);
-    const body = text ? JSON.parse(text) : undefined;
-    contract.validate(operationId, http.status, body, text.length > 0);
-    return { status: http.status, body };
+    const contentType = http.headers.get('content-type');
+    const responseHeaders = Object.fromEntries([...http.headers.entries()].map(([name, value]) => [name.toLowerCase(), value]));
+    // A body is parsed only when it says it is JSON; whatever it says, the validator judges it before a step sees it.
+    const body = text && /json/i.test(contentType ?? '') ? parseJson(text) : undefined;
+    contract.validate(operationId, { status: http.status, contentType, headers: responseHeaders, body, text });
+    return { status: http.status, headers: responseHeaders, body };
 }

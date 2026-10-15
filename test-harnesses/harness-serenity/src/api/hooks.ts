@@ -5,6 +5,7 @@ import { actorCalled, Cast, configure, engage } from '@serenity-js/core';
 import { CallAnApi } from '../abilities/CallAnApi.js';
 import { ControlTheTestEnvironment } from '../abilities/ControlTheTestEnvironment.js';
 import { STAGE_MANAGER } from '../support/actors.js';
+import { afterScenario } from '../support/diagnostics.js';
 import { resetScenario } from '../support/world.js';
 
 BeforeAll(() => {
@@ -28,6 +29,6 @@ Before(async () => {
     if (flags.length > 0) await control.setBugs(flags);
 });
 
-After(async () => {
-    resetScenario();
+After(async function (testCase) {
+    await afterScenario(this, testCase);
 });

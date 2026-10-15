@@ -1,5 +1,5 @@
 ---
-version: 10
+version: 11
 created: 2026-10-04T16:50Z
 updated: 2026-10-07T13:05Z
 project: credit-dashboard-sut
@@ -164,7 +164,7 @@ Definitions an agent cannot settle on its own, because each changes what a rule,
 | **Test control** | The `/__test/*` operations that arrange state: reset, persona binding, bug flags, clock, latency. Enabled only when `TEST_CONTROL=true` and the request carries `X-Test-Control-Key` | Not part of the product; never in a production build | API spec 6.5; DR-008 |
 | **Overrides** | Test-control data supplied when binding a persona, replacing named lists for one bureau, so a scenario can arrange data no persona holds (*Decided, brief 2 D1*). Contract schema `PersonaOverrides`; accounts use `FixtureAccount` | Not a fixture; never stored | API spec section 6.5; contract `PersonaOverrides`; DR-020 |
 | **Bug flag** | A switch, off by default, that plants one known defect so a scenario can be shown to catch it. API-layer flags are in API spec section 10, UI-layer in UI spec section 8, profile flags in the profile spec section 7 | *Feature flag*: retired (section 6) | DR-008 |
-| **Debug panel** | The `/__debug` page that drives test control from the browser | Tooling, not a product page | UI spec 6.8 |
+| **Debug panel** | The `/debug` page that drives test control from the browser | Tooling, not a product page | UI spec 6.8 |
 | **Demo banner** | The banner on every page saying all data is fictional; cannot be dismissed | | UI spec 4.4 |
 | **Mock**, **Prism mock** | Prism serving the contract's examples, used to build the UI before the API exists | Not a *bug flag* | API spec section 3; UI spec section 2 |
 | **Generated client** | The typed API client generated from the contract, through which the UI makes every call | | UI spec section 2 |

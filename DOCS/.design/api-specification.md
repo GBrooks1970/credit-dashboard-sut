@@ -1,5 +1,5 @@
 ---
-version: 27
+version: 28
 created: 2026-10-14T15:00Z
 supersedes: v22 (2026-10-08); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v28:** CDS-38 (F1): the review findings that touch this specification. Contract v18 (`info.version` 0.9.5, descriptions and one example only): the payment-history example lists the years oldest first (A-15). BR-14 limits a minimum payment `percent` to two decimals, like `apr` and `interestRate` (A-16). BR-12: a month after the current month is `no-data` whatever `missedMonths` holds, so a future month is never `missed` (A-17). Section 10: `excluded-in-total` reaches the BR-07 debt total and breakdown because they use the type totals (A-11); `currency-float` is on every money amount in a response (A-09); `idor` writes are kept in the caller's own session (A-28). The stored balance history is relative to `asAt` and the controlled clock does not move it (A-29). The code changes follow in F3 and F4.
 **Changes in v27:** CDS-40 (P2): Schemathesis no longer fuzzes `PUT /__test/bugs` (section 11); a fuzzed `problem-json-missing` failed the run in CI; all seven API flags of section 10 are implemented. Each is a different call site in the service and leaves the BusinessRules library untouched; each is caught by a scenario that already existed, for a different recorded reason.
 **Changes in v26:** CDS-39 (P1): section 10 says how a flag works in the service. Test control is the only way to set one; the flags on when a request begins are held for that request (`Flags`), and a flag changes a call site, never a rule in the BusinessRules library (`Defects`). `rounding-down` is the first API flag implemented. `fixtures/bug-flags.json` lists all 30 flags of the contract with their layer, status and catchers.
 **Changes in v25:** CDS-31 (U1): section 3 gains the hosting row: the service serves a built UI from the same origin when `UI_DIRECTORY` names a folder with an `index.html` (decision brief 11 D2, DR-062). The API, its contract and every operation are unchanged.
@@ -107,7 +108,7 @@ User 1 ── 1 Persona 1 ── * Bureau report
 
 Account types: `creditcard`, `loan`, `mortgage`, `currentaccount`, `telecomsandutilities`, `lineofcredit`.
 Account status: `normal`, `arrears`, `default`, `settled`, `closed`.
-Payment status per month: `on-time`, `missed`, `no-data`. For one account, a month is `missed` if it is in the account's `missedMonths`; `no-data` if it is before the month of `openedDate`, after the month of `closedDate`, or after the current month on the controlled clock; otherwise `on-time`. Across a report, a month is `missed` if any account missed it, `on-time` if any account was on time and none missed, and otherwise `no-data`. Year statuses follow BR-12.
+Payment status per month: `on-time`, `missed`, `no-data`. For one account, a month after the current month on the controlled clock is `no-data`, whatever `missedMonths` holds, so a future month is never `missed`; otherwise it is `missed` if it is in the account's `missedMonths`, `no-data` if it is before the month of `openedDate` or after the month of `closedDate`, and `on-time` in every other case. Across a report, a month is `missed` if any account missed it, `on-time` if any account was on time and none missed, and otherwise `no-data`. Year statuses follow BR-12.
 
 ## 6. Endpoints
 
@@ -131,7 +132,7 @@ Every operation below documents 404 for an unknown bureau and 500 (the `error` p
 | GET | `/reports/{bureauId}/score/history?range=3m\|6m\|1y` | Monthly points | 200 `ScorePoint[]` | 400, 401, 404 |
 | GET | `/reports/{bureauId}/changes?tags=&sentiment=&page=` | Report changes, newest first | 200 `Page<Change>` | 400, 401, 404 |
 | GET | `/reports/{bureauId}/impact` | Topic counts per category | 200 `Impact` | 401, 404 |
-| GET | `/reports/{bureauId}/payment-history?year=` | Missed payments across all accounts | 200 `PaymentHistory` | 400, 401, 404 |
+| GET | `/reports/{bureauId}/payment-history?year=` | Missed payments across all accounts; seven years, oldest first | 200 `PaymentHistory` | 400, 401, 404 |
 | GET | `/reports/{bureauId}/searches?kind=hard\|soft` | Search records | 200 `Page<Search>` | 400, 401, 404 |
 | GET | `/reports/{bureauId}/personal-details` | Name, addresses, electoral roll (synthetic) | 200 `PersonalDetails` | 401, 404 |
 
@@ -146,7 +147,7 @@ Every operation below documents 404 for an unknown bureau and 500 (the `error` p
 | GET | `/accounts/{accountId}/payment-history?year=` | That account's statuses | 200 `PaymentHistory` | 400, 401, 404 |
 | PATCH | `/accounts/{accountId}/details` | Set one user-supplied field | 200 `AccountDetails` | 400, 401, 404, 422 |
 
-`PATCH` body: `{ "field": "interestRate", "value": 29.9 }`. Allowed fields: `apr`, `interestRate`, `promoPeriodMonths`, `minPayment`, `paymentMethod`. The contract types the value per field by kind (v16): a number or `null` for `apr`, `interestRate` and `promoPeriodMonths`; an object with exactly one of `amount` (money) or `percent`, or `null`, for `minPayment`; a string or `null` for `paymentMethod`. The wrong kind, an unknown field, an extra property and a missing `value` are 400. The ranges stay rules (BR-14, 422 `out-of-range`): 0 to 100 with up to two decimals, whole months 0 to 60, a method of `direct-debit` or `manual`. `null` clears a field.
+`PATCH` body: `{ "field": "interestRate", "value": 29.9 }`. Allowed fields: `apr`, `interestRate`, `promoPeriodMonths`, `minPayment`, `paymentMethod`. The contract types the value per field by kind (v16): a number or `null` for `apr`, `interestRate` and `promoPeriodMonths`; an object with exactly one of `amount` (money) or `percent`, or `null`, for `minPayment`; a string or `null` for `paymentMethod`. The wrong kind, an unknown field, an extra property and a missing `value` are 400. The ranges stay rules (BR-14, 422 `out-of-range`): 0 to 100 with up to two decimals for `apr`, `interestRate` and a minimum payment `percent`, whole months 0 to 60, a method of `direct-debit` or `manual`. `null` clears a field.
 
 ### 6.4 Supporting
 
@@ -230,7 +231,7 @@ The customer's own account record, behind the My Profile page. Rules PR-01 to PR
 | BR-11 | Changes default to newest first. The overview embeds the 3 newest in `recentChanges`; `changesTotal` reports the full count. |
 | BR-12 | Payment history covers the current year and the six before it. A year with any `missed` month reports `missed`; a year with only `no-data` reports `no-data`; every other year, including one mixing `on-time` and `no-data` months, reports `on-time` (DR-014). |
 | BR-13 | Closed accounts report balance 0 and are listed while today is before the close date plus six calendar years, so they drop off on the sixth anniversary. A 29 February close drops off on 28 February (DR-012). |
-| BR-14 | User-supplied details: `interestRate` and `apr` accept 0 to 100 with up to 2 decimal places; `promoPeriodMonths` 0 to 60; `minPayment` needs `amountMinor` ≥ 0 or `percent` 0 to 100. |
+| BR-14 | User-supplied details: `interestRate` and `apr` accept 0 to 100 with up to 2 decimal places; `promoPeriodMonths` 0 to 60; `minPayment` needs `amountMinor` ≥ 0 or `percent` 0 to 100 with up to 2 decimal places. |
 | BR-15 | A user may read and change only accounts in their own persona. Anything else returns 404 (not 403), so account IDs cannot be probed. |
 
 ## 8. Error catalogue
@@ -271,7 +272,7 @@ Personas live in `fixtures/personas/{persona}.json`, one file for each value of 
 
 `User.defaultBureauId` is the bound persona's first bureau. The report's personal-details `name` is the user's legal name.
 
-**Source data, not responses.** A fixture stores what the service starts from. Values the API derives are never stored: type totals (BR-04, BR-05), the overview aggregate, total debt and its trend (BR-07), year statuses (BR-12) and `nextUpdateInDays` (BR-08). Stored per account: the contract `Account`, plus `missedMonths` (the BR-12 source), `balanceHistory` (six `BalancePoint`s, oldest first; also the BR-07 trend source) and an optional `sourceMask` (the BR-09 input). Each bureau stores `nextRefreshDate` (the BR-08 input).
+**Source data, not responses.** A fixture stores what the service starts from. Values the API derives are never stored: type totals (BR-04, BR-05), the overview aggregate, total debt and its trend (BR-07), year statuses (BR-12) and `nextUpdateInDays` (BR-08). Stored per account: the contract `Account`, plus `missedMonths` (the BR-12 source), `balanceHistory` (six `BalancePoint`s, oldest first, relative to the fixture's `asAt`: the controlled clock does not move it; also the BR-07 trend source) and an optional `sourceMask` (the BR-09 input). Each bureau stores `nextRefreshDate` (the BR-08 input).
 
 **Clock.** `asAt` is the persona's reference time; every date in the file is written relative to it. All seven personas use `2026-10-03T09:00:00Z`. Moving the clock with `PUT /__test/clock` changes derived values, not stored data.
 
@@ -300,13 +301,13 @@ These are off by default. When on, they make the API break its own contract on p
 
 | Flag | Effect | Expected catch |
 | --- | --- | --- |
-| `excluded-in-total` | BR-05 ignored; excluded loans added to totals | `@BR-05` scenario |
+| `excluded-in-total` | BR-05 ignored; excluded loans are added to the type totals, and so to the BR-07 debt total and breakdown that use them | `@BR-05` scenario |
 | `rounding-down` | BR-03 truncates instead of rounding half up | `@BR-03` outline |
 | `history-carry-forward` | BR-02 fills gaps with the previous score | `@BR-02` scenario |
-| `idor` | BR-15 off; other users' accounts readable | Security scenario |
+| `idor` | BR-15 off; other users' accounts readable, and a change to one is accepted but kept only in the caller's own session | Security scenario |
 | `problem-json-missing` | Errors returned as plain text | Response validator |
 | `mask-format` | BR-09 off; raw source mask returned | Schema pattern check |
-| `currency-float` | Money sent as a float of pounds | Schema type check |
+| `currency-float` | Every money amount in a response is a float of pounds (42.36 for 4236 pence) | Schema type check |
 
 UI-only flags (labels, ARIA, rendering) are listed in the UI spec.
 

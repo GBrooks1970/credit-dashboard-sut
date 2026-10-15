@@ -1227,7 +1227,7 @@ Where the owner chose between fixing the code and changing the document, the cho
 | B-07 "something ran" not required for "failed as stated" | Accept and fix | F7 |
 | B-08 no timeouts, no SIGTERM handling | Accept and fix | F7 |
 | B-09 `Retry-After` never checked | Accept and fix | F2 |
-| B-10 every response schema is open | Accept and fix | F1 (contract), F2 |
+| B-10 every response schema is open | Accept and fix | F2a (Addendum 1 to the fix plan; first tried in F1), then F2 |
 | B-11 a Problem with a wrong `status` or a `stack` passes | Accept and fix | F2 |
 | B-12 design claims strict mode and returned headers | Make the code match, then correct the wording to what is built | F2 |
 | B-13 `After` hooks do not attach diagnostics or restore state | Accept and fix | F2 |

@@ -198,11 +198,12 @@ Input: a list of changes with dates. Output: the list newest first; the overview
 
 Input: each account's missed months, opened and closed dates, and today. Output per account and per report: a status for each month, then a status for each year in the window (the current year and the six before it).
 
-Month, one account: `missed` if in `missedMonths`; `no-data` if before the month of the opened date, after the month of the closed date, or after the current month; otherwise `on-time`. Across a report: `missed` if any account missed it; otherwise `on-time` if any was on time; otherwise `no-data`. Year: any `missed` month gives `missed`; only `no-data` months give `no-data`; every other year, including one mixing `on-time` and `no-data`, gives `on-time` (DR-014).
+Month, one account: `no-data` if after the current month, whatever `missedMonths` holds; otherwise `missed` if in `missedMonths`; `no-data` if before the month of the opened date or after the month of the closed date; otherwise `on-time`. Across a report: `missed` if any account missed it; otherwise `on-time` if any was on time; otherwise `no-data`. Year: any `missed` month gives `missed`; only `no-data` months give `no-data`; every other year, including one mixing `on-time` and `no-data`, gives `on-time` (DR-014).
 
 | Case | Input | Output |
 |---|---|---|
 | All on time | open since 2019, nothing missed | every month `on-time`; year `on-time` |
+| A missed month in the future | `missedMonths` lists a month after the current month | that month is `no-data`, never `missed`; it does not make its year `missed` |
 | One missed month | 2026-03 missed | that month `missed`; year `missed` |
 | Before the account opened | opened 2026-05 | months to 2026-04 `no-data` |
 | The opening month itself | opened 2026-05-31 | 2026-05 is `on-time` |
@@ -235,7 +236,7 @@ Input: a closed account's close date and today. Output: whether it is listed, an
 
 ## BR-14: user-supplied details
 
-Input: a field and a value. Output: valid or `OutOfRange`. `interestRate` and `apr`: 0 to 100, up to two decimal places; `promoPeriodMonths`: whole 0 to 60; `minPayment`: `amountMinor` at least 0, or `percent` 0 to 100.
+Input: a field and a value. Output: valid or `OutOfRange`. `interestRate` and `apr`: 0 to 100, up to two decimal places; `promoPeriodMonths`: whole 0 to 60; `minPayment`: `amountMinor` at least 0, or `percent` 0 to 100 with up to two decimal places.
 
 | Case | Field, value | Output |
 |---|---|---|
@@ -256,6 +257,8 @@ Input: a field and a value. Output: valid or `OutOfRange`. `interestRate` and `a
 | Minimum payment percent, ends | `percent` 0 and 100 | valid |
 | Minimum payment percent, over | `percent` 100.01 or 101 | `OutOfRange` |
 | Minimum payment percent, below | `percent` -1 | `OutOfRange` |
+| Minimum payment percent, two decimals | `percent` 5.55 | valid |
+| Minimum payment percent, three decimals | `percent` 5.555 | `OutOfRange` |
 
 ## BR-15: ownership
 

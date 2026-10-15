@@ -1814,6 +1814,9 @@ namespace CreditDashboard.Api.Contract
         [System.Text.Json.Serialization.JsonPropertyName("amount")]
         public Money Amount { get; set; }
 
+        /// <summary>
+        /// BR-14 up to two decimals (422 otherwise)
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("percent")]
         [System.ComponentModel.DataAnnotations.Range(0D, 100D)]
         public double Percent { get; set; }

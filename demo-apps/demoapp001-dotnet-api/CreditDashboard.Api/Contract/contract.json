@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Credit Dashboard SUT API",
-    "version": "0.9.4",
+    "version": "0.9.5",
     "license": {
       "name": "MIT",
       "identifier": "MIT"
@@ -833,25 +833,17 @@
         ],
         "responses": {
           "200": {
-            "description": "Seven-year summary plus missed payments for the selected year (BR-12)",
+            "description": "Seven-year summary, oldest year first, plus missed payments for the selected year (BR-12)",
             "content": {
               "application/json": {
                 "example": {
                   "years": [
                     {
-                      "year": 2026,
-                      "status": "on-time"
+                      "year": 2020,
+                      "status": "no-data"
                     },
                     {
-                      "year": 2025,
-                      "status": "on-time"
-                    },
-                    {
-                      "year": 2024,
-                      "status": "on-time"
-                    },
-                    {
-                      "year": 2023,
+                      "year": 2021,
                       "status": "on-time"
                     },
                     {
@@ -859,12 +851,20 @@
                       "status": "on-time"
                     },
                     {
-                      "year": 2021,
+                      "year": 2023,
                       "status": "on-time"
                     },
                     {
-                      "year": 2020,
-                      "status": "no-data"
+                      "year": 2024,
+                      "status": "on-time"
+                    },
+                    {
+                      "year": 2025,
+                      "status": "on-time"
+                    },
+                    {
+                      "year": 2026,
+                      "status": "on-time"
                     }
                   ],
                   "selectedYear": 2026,
@@ -3333,7 +3333,8 @@
               "percent": {
                 "type": "number",
                 "minimum": 0,
-                "maximum": 100
+                "maximum": 100,
+                "description": "BR-14 up to two decimals (422 otherwise)"
               }
             }
           },

@@ -1099,7 +1099,87 @@ Five probes went uncaught, and they point at the gaps: the exit checks do not sc
 
 ## 4. The author's verification
 
-*To be written: for every Blocker and Change finding, whether it was reproduced, with the command or probe used.*
+Written by the author (the main session) after the three reports were saved unchanged. For each Blocker and Change finding, the table says whether it was reproduced and how. The reviewers' words in sections 2 and 3 are not altered. Notes were not verified. The working tree was clean (`git status`) after every mutation, and each mutation was reverted with `git checkout`.
+
+**Result: 62 findings (14 Blocker, 48 Change). 59 reproduced, 2 reproduced in part (B-20, C-23), 1 not reproduced (C-15).** No reviewer finding was wrong in a way that changes its severity. Two corrections to the reviewers' wording are given in the table (A-10 and B-20).
+
+**Methods.** *Live:* two instances of the Release build of the service (Production with test control on; Development with it off), driven by `verify_live.py`. *Mutation:* one change in the working tree, the narrowest check that should notice, then reverted. *Reading:* the cited lines read, and where a demonstration was cheap it was run. *Fixture:* the persona files read.
+
+### 4.1 Blockers
+
+| Finding | Reproduced? | How |
+|---|---|---|
+| A-01 | yes | Live, Development: a login body with a duplicate `username` key returned 500 with a body beginning "System.ArgumentException: An item with the same key has already been added. Key: username" and the service's namespace in the trace |
+| A-02 | yes | Live, Production: the same body returned 500 with an empty body and no content type |
+| A-03 | yes | Live, test control off: `GET /api/v1//__test/reset` returned 405 with `Allow: POST`; `GET /api/v1/__test/reset` returned 404 |
+| A-04 | yes | Live: 10 bursts of 12 parallel resends; the most 202s in one burst was 2 (the rule allows one) |
+| A-05 | yes | Live: `GET /me` with `X-Correlation-Id: abc-123` returned no such header; a search of the service for "Correlation" finds nothing |
+| A-06 | yes | Live: `2026-10-03T09:00:00` and `2026-10-03T09:00` gave 204; `2026-10-03t09:00:00z` gave 400 |
+| B-01 | yes | Reading: `CallAnApi.ts:63-67` parses the body as JSON and passes the status and body to `validate`; `validate.ts:48` takes the first media type of the documented response and discards the key. No header reaches `validate`. The reviewer's probe P5 (every Problem as `text/plain`, 59 of 59 passed) was not re-run |
+| B-02 | yes | Mutation: `Defects.Amount` made a no-op and a float put into `utilisation` while `currency-float` is on; `check:bug-flags currency-float` reported "caught for the stated reason" (`failsWith` "must be integer" matched the message for `/utilisation`) |
+| B-03 | yes | Mutation: `rounding-down` made to throw (a 500) and its `failsWith` set to the scenario's title; the proof reported "caught for the stated reason". An earlier attempt did not compile (unreachable code is an error here) and was redone |
+| B-04 | yes | Reading: `report-pages.steps.ts:132-134` uses `includes(poundsNoPence(...))`; demonstration: `'£320'.includes('£32')` and `'£3000'.includes('£300')` are both true. The reviewer's browser probe P12 was not re-run |
+| B-05 | yes | Reading: `profile.steps.ts:86-87` checks `/\S+ \S+/` and a date shape; `fixtures/users.json` holds "Alex Example" and "1985-03-12", and neither is compared. P13 not re-run |
+| C-01 | yes | Run: `safeRedirect` on `/..//evil.com`, `/.//evil.com`, `/%2e%2e//evil.com`, `/./\evil.com` and `/a/../\evil.com` returned `//evil.com` each time (protocol-relative). The router refusing the navigation (P14) was not re-run in a browser |
+| C-02 | yes | Reading: `aria-valuenow={Math.min(utilisation, 100)}` and `aria-valuemax={100}` in `ReportSections.tsx:71-72`, `AccountDetailPage.tsx:83-84` and `AccountListPage.tsx:98-99`; `ReportOverviewPage.test.tsx:114` expects `'100'` for 115; UI specification section 7 says `aria-valuenow` is the real value and `aria-valuemax` is raised |
+| C-03 | yes | Test: with the first (positive) answer delayed by 400 ms and the negative filter chosen after it, the page showed the positive answer ("expected document not to contain element, found POSITIVE ANSWER"). The test was a scratch file and was deleted |
+
+### 4.2 Changes
+
+| Finding | Reproduced? | How |
+|---|---|---|
+| A-07 | yes | Reading: `Report.cs:85-91` resolves the bureau (404, then 500) before the year-window 400 |
+| A-08 | yes | Live: with `problem-json-missing` on, `PUT /__test/bugs` with an unknown flag returned 400 `text/plain` |
+| A-09 | yes | Live: with `currency-float` on, the account balance was `423.6` and every balance-history amount stayed an integer |
+| A-10 | yes, in code | Reading: `ReportData.cs:76` takes `totals.excluded[].maskedNumber` from the stored mask, not `Defects.MaskedNumber`. **Correction:** in the drilldown persona no excluded account has a `sourceMask`, so no behaviour differs with today's data; the bypass is real, its effect would need an excluded account with a source number |
+| A-11 | yes | Live: `/debt/overview` total 19827960 became 19944060 with `excluded-in-total` on |
+| A-12 | yes | Mutation: the ownership refusal removed from `Accounts.Find`; all 61 `AccountTests` still passed |
+| A-13 | yes | Reading: `TestControlTests.cs:147-151` sends five set-up calls and asserts none of them |
+| A-14 | yes | Reading: `ReportTests.cs:34` asserts the expected value against the pattern, not the code; `FixtureParityTests.cs:61` asserts a constant inside a loop. The other two (`PaymentHistoryTests.cs:80-84`, `ScoreTests.cs:62-64`) were read, not mutated |
+| A-15 | yes | Reading: `openapi.yaml:459-462` lists 2026 first; `operations-cases.md:119` says "oldest first" |
+| A-16 | yes | Reading: `AccountDetails.cs:22` has no decimal limit for `percent`; the two specification sentences differ |
+| A-17 | yes | Reading: `ReportData.cs:126` filters `m <= current`; `PaymentHistory.cs:17` returns `Missed` before it tests `month > current` |
+| A-18 | yes | Reading: `ControlledClock.cs` stores a nullable struct, read without a lock. A torn read is not observable and was not attempted |
+| A-19 | yes | Reading: the unknown-bureau test lists six suffixes and none is `score/history` or `summary/feedback`; there is no test for `X-Correlation-Id` |
+| B-06 | yes | Reading: `api/hooks.ts` calls `setBugs` only when the list is non-empty; the reviewer's P11 was not re-run |
+| B-07 | yes, by reading | `prove-flags.ts:85`: an on run is "failed as stated" when its output contains `failsWith`, whether or not `ran` is true. No probe was built (nor by the reviewer) |
+| B-08 | yes | Reading: `grep` finds no `timeout` in the proof or the runner and only `SIGINT` (and `exit`) handled |
+| B-09 | yes | Reading: no `Retry-After` in the assert steps or the validator |
+| B-10 | yes | Reading: `new Ajv2020({ strict: false, allErrors: true })` and response schemas that allow extra properties |
+| B-11 | yes | Reading: `assert.steps.ts:25-30` asserts only the HTTP status and `body.type` |
+| B-12 | yes | Reading: the design says "strict mode" and "returns `{ status, headers, body }`"; the code has `strict: false` and returns `{ status, body }` |
+| B-13 | yes | Reading: the `After` hooks only call `resetScenario()`; the design says to attach diagnostics and restore the service state |
+| B-14 | yes | Fixture: the drilldown closed card has balance 0, no limit and `includedInTotals` true, so counting it changes no total. The reviewer's mutation P2 was not re-run |
+| B-15 | yes | Fixture: every closed card has a stored balance of 0, so a service that never zeroes it cannot be told apart. P3 not re-run |
+| B-16 | yes | Reading: `assert.steps.ts:78-79` counts credit cards in the list |
+| B-17 | yes | Reading: `profile.steps.ts:108-121` reads the expected name from the page under test |
+| B-18 | yes | Reading: `secretsOf` returns the legal name, the email and the last digits only |
+| B-19 | yes | Reading: `account.steps.ts:151-153` uses `includes` |
+| B-20 | in part | Reading: `src/contract/load.ts`, `src/support/hooks.ts`, `clock.ts` and `service.ts` named in the design do not exist, and `run.mjs` always starts both instances. **Correction:** `src/fixtures/load.ts` does exist (the reviewer listed `load.ts` among the missing files; only `contract/load.ts` is missing). The claim about Cucumber's `html` formatter was not checked |
+| C-04 | yes | Reading: the scenario uses one address (`https://evil.example/steal`); the component table has no dot segment |
+| C-05 | yes | Reading: no `-over-limit` hook exists in the source; no colour bands in `styles.css` |
+| C-06 | yes | Reading: `SearchesPage.tsx` passes `testId="search-list"` to `SectionState` (which makes `search-list-{state}`); no element has `data-testid="search-list"` |
+| C-07 | yes | Reading: `ScoreSection.tsx:19-21` is `role="progressbar"` with `aria-label="Credit score"`; the specification says an `img` named "Score 720 out of 1000" |
+| C-08 | yes | Reading: the specification and glossary say `/__debug`; `App.tsx:48` routes `/debug` |
+| C-09 | yes | Mutation: `search-row-*` given a 40 rem minimum width (a 375 px break); `check:ui-exit` reported 0 problems (the layouts are checked on four pages) |
+| C-10 | yes | Mutation: the dark theme's muted colour made `#34414f`; `check:ui-exit` reported 0 problems |
+| C-11 | yes | Reading: the wider-text pass sets `body { font-size: 19px }`; the stylesheet sizes in `rem` |
+| C-12 | yes | Mutation: `aria-pressed` removed from the year buttons; `check:ui-exit` reported 0 problems (that run held the three mutations of C-09, C-10 and C-12 together: "37 axe scans and 24 layout checks; 0 problem(s)") |
+| C-13 | yes | Mutation: `TEST_BUILD` made true unless the variable is `false`; with the variable unset, `check` passed 142 of 142 tests and built, and `dist` held `cds.testControlKey` (1), `__test` (5), `/debug` (1) and `debug-flag` (1) |
+| C-14 | yes | Reading: every workflow action is a major-version tag; `verify.mjs` runs `npx --yes @redocly/cli@2.57.0` |
+| C-15 | **no** | The `AfterAll` hook has the default 30 s timeout and no handling. The intermittent exit 1 with every scenario green was not seen in my runs of the `@ui` scenarios (several, all exit 0). It is consistent with the code, not reproduced |
+| C-16 | yes | Reading: `README.md` says 58 `@api` scenarios, 135 component tests, "DR-001 to DR-050" and Serenity/JS 3.48.2; current figures are 59, 142, DR-064 and 3.49.0 |
+| C-17 | yes | Reading: the Phase 5 row reads "Planned (CDS-37, DR-064); not started" while eight flags are implemented |
+| C-18 | yes | Reading: the three specifications say "Phase 0 draft, for review"; `ui-specification.md:59` says `vite` 8.3.3 and the package pins 8.3.4 |
+| C-19 | yes | Reading: the harness design's scope paragraph says 28 scenarios and waits on Phase 4; `cucumber.mjs` says U1 "has the login feature only" |
+| C-20 | yes | Reading: `LoginPage.tsx:35` has its own guard (`startsWith('/') && !startsWith('//')`) |
+| C-21 | yes | Reading: `AccountRow.tsx` has no logo or initials |
+| C-22 | yes | Reading: `ReportChangesPage.tsx` renders the pager only in the populated branch; a page past the end is the empty state |
+| C-23 | in part | Reading: `ci.yml` has `timeout-minutes: 15` for the `ui` job. The job took about 3 minutes on the last runs, so the limit is not close today; the finding is a forecast |
+
+### 4.3 What the reviewers did not cover, as they stated
+
+Reviewer A did not run `check:schemathesis` or `check:service-contract`; B did not review `exit-checks.ts` or run `check:ui-scenarios` in full; C did not read the step glossary or most of `features-shared/` and could not check the `npm audit` figures offline. Across the three, the coverage of the harness's own validator, the Gherkin store and the generated contract is thin. These are candidates for the confirmation pass (plan D4).
 
 ## 5. The owner's sign-off
 

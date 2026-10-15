@@ -1,6 +1,6 @@
 ---
-version: 14
-created: 2026-10-14T08:32Z
+version: 15
+created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: implementation-plan-index
 language: en-GB
@@ -31,3 +31,4 @@ Every implementation plan is written to a file here before implementation starts
 | [`2026-10-12_cds-24-review-notes.md`](2026-10-12_cds-24-review-notes.md) | CDS-24 The remaining CDS-18 review Notes | 2026-10-12 | implemented | #61, `fdfc682` |
 | [`2026-10-12_cds-29-phase-4-ui.md`](2026-10-12_cds-29-phase-4-ui.md) | CDS-29 Phase 4 plan, the React UI | 2026-10-12 | approved | U1 (CDS-31) in review |
 | [`2026-10-14_cds-37-phase-5-defects-and-evidence.md`](2026-10-14_cds-37-phase-5-defects-and-evidence.md) | CDS-37 Phase 5 plan, defects and evidence | 2026-10-14 | approved | P1 (CDS-39) next |
+| [`2026-10-14_cds-38-independent-review.md`](2026-10-14_cds-38-independent-review.md) | CDS-38 Independent review of the Phase 3 service, the harness and the Phase 4 UI | 2026-10-14 | approved | reviewers not yet launched |

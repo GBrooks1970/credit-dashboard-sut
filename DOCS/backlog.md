@@ -1,6 +1,6 @@
 ---
-version: 66
-created: 2026-10-14T15:00Z
+version: 67
+created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
 language: en-GB
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 66 (CDS-40 Done in review: P2, the seven API flags; CDS-39 merged)
+**Version:** 67 (CDS-40 merged; the CDS-38 review plan written, status proposed)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -263,7 +263,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-38: Independent review of the Phase 4 UI and the harness
 
-**OPEN (2026-10-14).** The owner chose to record the Phase 4 gate and to commission the review that Phases 3 and 4 have not had, as Phase 2 had its three passes (decision brief 12 D1 option 2, DR-063). Scope: the React UI, the `@ui` steps, the exit checks and the harness, read by a fresh-context agent against the specifications and the 41 scenarios, with findings triaged and handled as CDS-24 was. The review is the quality check after the gate, not its condition. A short plan comes first; the Phase 5 plan (CDS-37) says where it falls in the order.
+**PLAN APPROVED (2026-10-15; `DOCS/implementation-plans/2026-10-14_cds-38-independent-review.md`, six choices awaiting the owner).** The owner chose to record the Phase 4 gate and to commission the review that Phases 3 and 4 have not had, as Phase 2 had its three passes (decision brief 12 D1 option 2, DR-063). Scope: the React UI, the `@ui` steps, the exit checks and the harness, read by a fresh-context agent against the specifications and the 41 scenarios, with findings triaged and handled as CDS-24 was. The review is the quality check after the gate, not its condition. A short plan comes first; the Phase 5 plan (CDS-37) says where it falls in the order.
 
 ### CDS-39: P1, the flag mechanism and the proof runner
 
@@ -271,7 +271,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-40: P2, the seven API flags
 
-**COMPLETE in review (2026-10-14).** `excluded-in-total`, `history-carry-forward`, `idor`, `problem-json-missing`, `mask-format` and `currency-float` implemented (`rounding-down` was P1's tracer), each at its own call site with the BusinessRules library untouched; each caught for its stated reason by a scenario that already existed. 339 service tests (7 new); `check:bug-flags` 8 of 8 implemented flags caught, 22 pending; `verify` 14 of 14. **Stop point 1 of the plan: the API half of the proof.** Next: CDS-38, the independent review, before CDS-41 (decision brief 13 D6). `tools/schemathesis-run.mjs` v2 stops fuzzing `PUT /__test/bugs` (the first CI run failed when a fuzzed `problem-json-missing` turned later errors into plain text). Status is Done when merged.
+**COMPLETE (2026-10-14; #74 `67ded09`, CI run 38586369033; the first run failed on a fuzzed flag and was fixed).** `excluded-in-total`, `history-carry-forward`, `idor`, `problem-json-missing`, `mask-format` and `currency-float` implemented (`rounding-down` was P1's tracer), each at its own call site with the BusinessRules library untouched; each caught for its stated reason by a scenario that already existed. 339 service tests (7 new); `check:bug-flags` 8 of 8 implemented flags caught, 22 pending; `verify` 14 of 14. **Stop point 1 of the plan: the API half of the proof.** Next: CDS-38, the independent review, before CDS-41 (decision brief 13 D6). `tools/schemathesis-run.mjs` v2 stops fuzzing `PUT /__test/bugs` (the first CI run failed when a fuzzed `problem-json-missing` turned later errors into plain text). Status is Done when merged.
 
 ### CDS-30: Publish the Kanban board
 

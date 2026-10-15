@@ -1183,4 +1183,111 @@ Reviewer A did not run `check:schemathesis` or `check:service-contract`; B did n
 
 ## 5. The owner's sign-off
 
-*To be recorded: per finding for Blockers and Changes, and one table for the Notes (plan decision D6).*
+Recorded 2026-10-15 by interview (plan decision D6), the author asking each finding in turn with a recommendation and the owner answering. Blockers and Changes were asked one by one (62 questions, in groups of four on screen); the Notes were put in one table with a recommendation per Note, and the owner replied "confirmed, write sign-off and plan the fixes" on 2026-10-15. **Result: all 14 Blockers and 47 of the 48 Changes accepted** (C-23 deferred); **17 Notes accepted, 4 deferred, 5 no action.** (The author's table put to the owner said "17 accept, 3 defer and 6 no action"; the table's own rows were 17, 4 and 5, and the owner confirmed the rows. The rows are what is recorded.) The fixes are planned in `DOCS/implementation-plans/2026-10-15_cds-38-fixes.md`; slice names F1 to F12 are from that plan.
+
+Where the owner chose between fixing the code and changing the document, the choice is in the Decision column. Where the author's question was loosely worded, it is corrected here: **A-11** is that `excluded-in-total` also changes the BR-07 debt total and breakdown (the fix aligns the flag's reach with the contract's flag text).
+
+### 5.1 Blockers
+
+| Finding | Decision | Slice |
+|---|---|---|
+| A-01 stack trace in the Development profile | Accept and fix | F3 |
+| A-02 unhandled fault gives an empty 500 | Accept and fix (one fault handler with A-01) | F3 |
+| A-03 `//__test/...` reveals test control | Accept and fix | F3 |
+| A-04 parallel resends beat the limit | Accept and fix | F4 |
+| A-05 `X-Correlation-Id` not implemented | Accept and fix as the specification says | F3 |
+| A-06 clock input not RFC 3339 | Accept and fix | F3 |
+| B-01 validator ignores content type | Accept and fix | F2 |
+| B-02 flag proof credits `currency-float` for any integer violation | Accept and fix (with B-03) | F7 |
+| B-03 flag proof credits any failure whose text is in every run | Accept and fix | F7 |
+| B-04 debt-by-type step uses `includes` | Accept and fix | F5 |
+| B-05 date of birth checked by shape | Accept and fix | F5 |
+| C-01 `safeRedirect` returns `//evil.com` for dot segments | Accept and fix | F8 |
+| C-02 over-limit bars cap `aria-valuenow` at 100 | Accept and fix: follow the specification | F9 |
+| C-03 a late response overwrites current data | Accept and fix | F8 |
+
+### 5.2 Changes
+
+| Finding | Decision | Slice |
+|---|---|---|
+| A-07 report checks bureau before year window | Accept and fix | F3 |
+| A-08 `PUT /__test/bugs` error is `text/plain` under `problem-json-missing` | Accept and fix | F3 |
+| A-09 `currency-float` reaches only some money sites | Accept and fix; code follows the contract's flag text, or the text is narrowed, decided in F1 and recorded | F1, F4 |
+| A-10 excluded list bypasses `mask-format` | Accept and fix | F4 |
+| A-11 `excluded-in-total` also changes the BR-07 total | Accept and fix: align the flag with its contract text | F1, F4 |
+| A-12 dropped ownership check survives the tests | Accept and fix | F6 |
+| A-13 reset test asserts none of its set-up | Accept and fix | F6 |
+| A-14 four rules tests cannot fail | Accept and fix | F6 |
+| A-15 contract example lists years newest first | Fix the example (oldest first stays) | F1 |
+| A-16 BR-14 two-decimal limit ambiguous | Specify two decimals at most and enforce | F1, F4 |
+| A-17 `onReport` and year status disagree after the current month | A future month is never Missed, in both | F1, F4 |
+| A-18 controlled clock read without a lock | Accept and fix | F3 |
+| A-19 coverage gaps | Accept and fix | F3 (correlation id), F6 (suffixes) |
+| B-06 off run not shown to have the flag off | Accept and fix | F7 |
+| B-07 "something ran" not required for "failed as stated" | Accept and fix | F7 |
+| B-08 no timeouts, no SIGTERM handling | Accept and fix | F7 |
+| B-09 `Retry-After` never checked | Accept and fix | F2 |
+| B-10 every response schema is open | Accept and fix | F1 (contract), F2 |
+| B-11 a Problem with a wrong `status` or a `stack` passes | Accept and fix | F2 |
+| B-12 design claims strict mode and returned headers | Make the code match, then correct the wording to what is built | F2 |
+| B-13 `After` hooks do not attach diagnostics or restore state | Accept and fix | F2 |
+| B-14 type totals cannot tell open from closed | Accept and fix | F5 |
+| B-15 "closed account reports nothing owing" cannot fail | Accept and fix | F5 |
+| B-16 "the credit card is listed" counts cards | Accept and fix | F5 |
+| B-17 legal-name steps compare the page with itself | Accept and fix | F5 |
+| B-18 PR-08 check covers three values | Accept and fix | F5 |
+| B-19 interest rate checked with `includes` | Accept and fix | F5 |
+| B-20 design describes files that do not exist (in part) | Correct the design to what is built | F1 |
+| C-04 redirect checks: one address, no dot segments | Accept and fix | F8 |
+| C-05 `UtilisationBar` missing over-limit hook and bands | Build to the specification | F9 |
+| C-06 `search-list` hook missing | Add the hook | F9 |
+| C-07 score gauge is a progressbar | Change the specification (the progressbar stays) | F1 |
+| C-08 `/__debug` against `/debug` | Change the documents to `/debug` | F1 |
+| C-09 exit checks scan fewer states and layouts | Accept and fix | F10 |
+| C-10 dark theme never checked for contrast | Accept and fix | F10 |
+| C-11 "wider text" leaves most text the same size | Accept and fix | F10 |
+| C-12 `ph-a11y` catch cannot see `aria-pressed` | Accept and fix | F10 |
+| C-13 nothing guards the public build | Accept and fix | F10 |
+| C-14 actions and one tool not pinned immutably | Accept and fix | F10 |
+| C-15 `@ui` run exits 1 with every scenario green (not reproduced) | Accept: harden and log; no claim that it is fixed | F10 |
+| C-16 README counts and versions stale | Accept and fix | F12 |
+| C-17 README Phase 5 status stale | Accept and fix | F12 |
+| C-18 specification headers and one version stale | Accept and fix | F12 |
+| C-19 scope statements stale | Accept and fix | F12 |
+| C-20 weaker redirect guard in `LoginPage` | Accept and fix: use the shared guard | F8 |
+| C-21 account rows without logo or initials | Build to the specification (initials fallback) | F9 |
+| C-22 report-changes page past the end is a dead end | Accept and fix | F8 |
+| C-23 `ui` job time limit tight (in part) | **Defer** to P5, when the visual-regression run is added | P5 (CDS-43) |
+
+### 5.3 Notes
+
+| Finding | Decision | Slice |
+|---|---|---|
+| A-20 `index.html` cacheable; missing assets return 200 | Accept: no-store, 404 under `/assets/` | F3 |
+| A-21 `_verifiedEmails` never read | Accept: one source for email status | F4 |
+| A-22 tokens never purged; large login bodies | **Defer** (loopback demo, low risk) | backlog |
+| A-23 PR-02 counts UTF-16 units | Accept: iterate runes | F4 |
+| A-24 pending flags accepted and do nothing | **Defer** to P4 (CDS-42), where those flags are built | P4 |
+| A-25 "422 changes nothing" checks `apr` for every field | Accept | F6 |
+| A-26 BR-01 not enforced at runtime | No action | none |
+| A-27 a test's name misdescribes it | Accept: rename | F6 |
+| A-28 under `idor`, writes go only to the attacker's session | Accept: one sentence in the specification | F1 |
+| A-29 balance history does not follow the clock | Accept: say it is relative to `asAt` | F1 |
+| B-21 missing body gives a TypeError | Accept | F2 |
+| B-22 suite does not prove the reset is needed | **Defer** to the confirmation pass (a random-order run) | F11 |
+| B-23 parallel runs not prevented | Accept: refuse them | F2 |
+| B-24 masking on persona rows tests the fixture | No action | none |
+| B-25 BR-03 formula duplicated | No action | none |
+| B-26 registry finds a component test by substring | Accept | F7 |
+| C-24 public build free of test control | No action (C-13 adds the guard) | none |
+| C-25 chat drawer modal but page behind reachable | Accept: make the page inert | F9 |
+| C-26 service messages shown as written | **Defer** to P4 (CDS-42) | P4 |
+| C-27 profile header image is a truncated GIF | Accept | F9 |
+| C-28 account detail header is not a region | Accept: give it a landmark | F9 |
+| C-29 harness builds into the public `dist` | Accept: build to `dist-test/` | F10 |
+| C-30 unguarded `localStorage.setItem` on the debug page | Accept | F9 |
+| C-31 no notifications button yet | No action (staged) | none |
+| C-32 history table shows raw months | Accept: use `formatMonth` | F9 |
+| C-33 attempts left shown before any wrong code | Accept: show after the first 422 | F9 |
+
+Counts: Blockers 14 accepted. Changes 47 accepted, 1 deferred (C-23). Notes 17 accepted, 4 deferred (A-22 to the backlog, A-24 and C-26 to P4, B-22 to F11), 5 no action (A-26, B-24, B-25, C-24, C-31); 26 in all.

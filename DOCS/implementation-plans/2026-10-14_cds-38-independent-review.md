@@ -12,7 +12,7 @@ language: en-GB
 
 # Implementation plan: CDS-38, independent review of the Phase 3 service, the harness and the Phase 4 UI
 
-**History of this plan.** Requested by the owner on 2026-10-14 after P2 merged (#74 `67ded09`), as decision brief 12 D1 option 2 and brief 13 D6 option 1 require: the review runs after the API flags and before the UI flags. This file is the plan as written for approval. Six choices are put to the owner in the table at the end; until they are answered and the plan approved, no reviewer runs.
+**History of this plan.** Requested by the owner on 2026-10-14 after P2 merged (#74 `67ded09`), as decision brief 12 D1 option 2 and brief 13 D6 option 1 require: the review runs after the API flags and before the UI flags. This file is the plan as written for approval. Six choices were put to the owner in the table at the end and answered by interview on 2026-10-15 (all as recommended); until the owner approves the plan, no reviewer runs.
 
 **Goal.** Give the code the independent look that Phase 2 had and Phases 3 and 4 did not (DR-058 and DR-063 record the absence as an exception). A reviewer with fresh context, who did not write any of it and is not told what the author concluded, reads the service, the harness, the UI, the exit checks and the flag proof against the specifications, and says where the code, the checks that test it and the documents disagree. Findings are verified, signed off and fixed before the 23 UI flags (P3 to P4) are built into the UI.
 
@@ -90,12 +90,12 @@ Fixing anything the reviewers find that the owner defers (it goes to the backlog
 
 | Decision | Options | Recommended | Owner's answer |
 |---|---|---|---|
-| D1 What the reviewers are told | Blind: only the prompt and the repository, none of the author's conclusions or recorded exceptions; told: given the recorded exceptions and asked to test them | Blind | pending |
-| D2 Shape | Three reviewers in parallel, one per area (service; harness and proof; UI, CI and documents); one reviewer for everything; two (code; harness and documents) | Three in parallel | pending |
-| D3 What a reviewer may run | Read-only, nothing executed (as CDS-18); may run the existing checks and its own mutation probes in a copy outside the repository; may run anything, including in the repository | Run in a copy outside the repository | pending |
-| D4 Passes | One review; a review and one confirmation pass on the fixes; a review and as many passes as it takes | Review plus one confirmation pass | pending |
-| D5 What is fixed before P3 | Blockers only; Blockers and Changes; everything | Blockers and Changes | pending |
-| D6 Sign-off | Per finding for Blockers and Changes, Notes in one table; every finding one by one; the author decides, the owner reviews a summary | Per finding for Blockers and Changes | pending |
+| D1 What the reviewers are told | Blind: only the prompt and the repository, none of the author's conclusions or recorded exceptions; told: given the recorded exceptions and asked to test them | Blind (2026-10-15) |
+| D2 Shape | Three reviewers in parallel, one per area (service; harness and proof; UI, CI and documents); one reviewer for everything; two (code; harness and documents) | Three in parallel (2026-10-15) |
+| D3 What a reviewer may run | Read-only, nothing executed (as CDS-18); may run the existing checks and its own mutation probes in a copy outside the repository; may run anything, including in the repository | Run in a copy outside the repository (2026-10-15) |
+| D4 Passes | One review; a review and one confirmation pass on the fixes; a review and as many passes as it takes | Review plus one confirmation pass (2026-10-15) |
+| D5 What is fixed before P3 | Blockers only; Blockers and Changes; everything | Blockers and Changes (2026-10-15) |
+| D6 Sign-off | Per finding for Blockers and Changes, Notes in one table; every finding one by one; the author decides, the owner reviews a summary | Per finding for Blockers and Changes (2026-10-15) |
 
 ## Outcome
 

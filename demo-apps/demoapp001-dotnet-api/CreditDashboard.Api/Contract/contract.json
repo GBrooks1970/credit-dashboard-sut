@@ -2,13 +2,13 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Credit Dashboard SUT API",
-    "version": "0.9.5",
+    "version": "0.9.6",
     "license": {
       "name": "MIT",
       "identifier": "MIT"
     },
     "summary": "Fictional credit-report service used as a system under test. All data is synthetic.",
-    "description": "Phase 0 draft contract. Business rule IDs (BR-xx) refer to the API specification;\nprofile rule IDs (PR-xx) refer to the My Profile UI feature spec.\nTest-control paths are tagged `test-control` and exist only when TEST_CONTROL=true.\nLint ruleset: `redocly.yaml` at the repository root.\n"
+    "description": "Phase 0 draft contract. Business rule IDs (BR-xx) refer to the API specification;\nprofile rule IDs (PR-xx) refer to the My Profile UI feature spec.\nTest-control paths are tagged `test-control` and exist only when TEST_CONTROL=true.\nA response object is closed: a property its schema does not list is a defect (`additionalProperties: false`).\nThe exception is Problem, which stays open because RFC 9457 allows extension members; a stack trace is never one of them.\nLint ruleset: `redocly.yaml` at the repository root.\n"
   },
   "servers": [
     {
@@ -1731,6 +1731,7 @@
                     "reply",
                     "disclaimer"
                   ],
+                  "additionalProperties": false,
                   "properties": {
                     "reply": {
                       "type": "string"
@@ -2087,6 +2088,7 @@
                 },
                 "schema": {
                   "type": "object",
+                  "additionalProperties": false,
                   "properties": {
                     "personas": {
                       "type": "object",
@@ -2483,6 +2485,7 @@
     "schemas": {
       "Money": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "amountMinor",
           "currency"
@@ -2625,6 +2628,7 @@
       },
       "Profile": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "legalName",
           "dateOfBirth",
@@ -2684,6 +2688,7 @@
                   "postcode",
                   "previousCount"
                 ],
+                "additionalProperties": false,
                 "properties": {
                   "line1": {
                     "type": "string"
@@ -2710,6 +2715,7 @@
                 "required": [
                   "status"
                 ],
+                "additionalProperties": false,
                 "properties": {
                   "status": {
                     "$ref": "#/components/schemas/EmploymentStatus"
@@ -2724,6 +2730,7 @@
           "finances": {
             "description": "Whether finance details are held; never the figures (PR-07)",
             "type": "object",
+            "additionalProperties": false,
             "required": [
               "added"
             ],
@@ -2737,6 +2744,7 @@
       },
       "EmailContact": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "address",
           "status"
@@ -2767,6 +2775,7 @@
       },
       "VerificationSent": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "sentAt",
           "nextResendAt"
@@ -2785,6 +2794,7 @@
       },
       "MobileContact": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "lastDigits",
           "status"
@@ -2815,31 +2825,34 @@
         }
       },
       "MobileChallenge": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/MobileContact"
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "lastDigits",
+          "status",
+          "expiresAt",
+          "attemptsRemaining"
+        ],
+        "properties": {
+          "lastDigits": {
+            "type": "string",
+            "pattern": "^[0-9]{3}$"
           },
-          {
-            "type": "object",
-            "required": [
-              "expiresAt",
-              "attemptsRemaining"
-            ],
-            "properties": {
-              "expiresAt": {
-                "type": "string",
-                "format": "date-time",
-                "description": "Issue time plus 10 minutes (PR-10)"
-              },
-              "attemptsRemaining": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 3,
-                "description": "PR-11"
-              }
-            }
+          "status": {
+            "$ref": "#/components/schemas/VerificationStatus"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Issue time plus 10 minutes (PR-10)"
+          },
+          "attemptsRemaining": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 3,
+            "description": "PR-11"
           }
-        ]
+        }
       },
       "MobileVerification": {
         "type": "object",
@@ -2872,6 +2885,7 @@
       },
       "PreferredName": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "preferredName"
         ],
@@ -2905,6 +2919,7 @@
       },
       "LoginResponse": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "token",
           "expiresAt"
@@ -2921,6 +2936,7 @@
       },
       "User": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "id",
           "displayName",
@@ -2947,6 +2963,7 @@
       },
       "Bureau": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "id",
           "name",
@@ -2968,6 +2985,7 @@
       },
       "Score": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "current",
           "max",
@@ -2998,6 +3016,7 @@
       },
       "ScorePoint": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "month",
           "score"
@@ -3019,6 +3038,7 @@
       },
       "Change": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "id",
           "title",
@@ -3051,28 +3071,38 @@
         }
       },
       "ChangePage": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/PageMeta"
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "page",
+          "pageSize",
+          "total",
+          "items"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1
           },
-          {
-            "type": "object",
-            "required": [
-              "items"
-            ],
-            "properties": {
-              "items": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Change"
-                }
-              }
+          "pageSize": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Change"
             }
           }
-        ]
+        }
       },
       "Impact": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "actionNeeded",
           "monitor",
@@ -3095,6 +3125,7 @@
       },
       "Summary": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "text",
           "feedback"
@@ -3115,6 +3146,7 @@
       },
       "ReportOverview": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "bureau",
           "score",
@@ -3162,6 +3194,7 @@
           "payments": {
             "description": "onReport is the number of (account, month) pairs with status missed in the BR-12 window across the bureau's accounts; newMissed is those in the three months ending at the current month (decision brief 9 D4).",
             "type": "object",
+            "additionalProperties": false,
             "required": [
               "newMissed",
               "onReport"
@@ -3181,6 +3214,7 @@
       },
       "AccountSummary": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "id",
           "type",
@@ -3236,6 +3270,7 @@
       },
       "AccountTotals": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "type",
           "balance",
@@ -3270,6 +3305,7 @@
             "type": "array",
             "items": {
               "type": "object",
+              "additionalProperties": false,
               "required": [
                 "id",
                 "provider",
@@ -3296,6 +3332,7 @@
       },
       "AccountDetails": {
         "type": "object",
+        "additionalProperties": false,
         "properties": {
           "apr": {
             "type": [
@@ -3326,6 +3363,7 @@
               "object",
               "null"
             ],
+            "additionalProperties": false,
             "properties": {
               "amount": {
                 "$ref": "#/components/schemas/Money"
@@ -3352,58 +3390,100 @@
         }
       },
       "Account": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/AccountSummary"
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "provider",
+          "maskedNumber",
+          "balance",
+          "includedInTotals",
+          "status",
+          "openedDate",
+          "updateFrequency",
+          "lastUpdated",
+          "details",
+          "closed"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
           },
-          {
-            "type": "object",
-            "required": [
-              "openedDate",
-              "updateFrequency",
-              "lastUpdated",
-              "details",
-              "closed"
+          "type": {
+            "$ref": "#/components/schemas/AccountType"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "logoUrl": {
+            "type": [
+              "string",
+              "null"
             ],
-            "properties": {
-              "openedDate": {
-                "type": "string",
-                "format": "date"
+            "format": "uri"
+          },
+          "maskedNumber": {
+            "$ref": "#/components/schemas/MaskedNumber"
+          },
+          "balance": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "limit": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Money"
               },
-              "closedDate": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "format": "date"
-              },
-              "updateFrequency": {
-                "type": "string",
-                "enum": [
-                  "monthly",
-                  "quarterly"
-                ]
-              },
-              "lastUpdated": {
-                "type": "string",
-                "format": "date"
-              },
-              "utilisationRaw": {
-                "type": [
-                  "integer",
-                  "null"
-                ],
-                "description": "Unfloored value (BR-06)"
-              },
-              "details": {
-                "$ref": "#/components/schemas/AccountDetails"
-              },
-              "closed": {
-                "type": "boolean"
+              {
+                "type": "null"
               }
-            }
+            ]
+          },
+          "utilisation": {
+            "$ref": "#/components/schemas/Utilisation"
+          },
+          "includedInTotals": {
+            "type": "boolean"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AccountStatus"
+          },
+          "openedDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "closedDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "updateFrequency": {
+            "type": "string",
+            "enum": [
+              "monthly",
+              "quarterly"
+            ]
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date"
+          },
+          "utilisationRaw": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Unfloored value (BR-06)"
+          },
+          "details": {
+            "$ref": "#/components/schemas/AccountDetails"
+          },
+          "closed": {
+            "type": "boolean"
           }
-        ]
+        }
       },
       "DetailUpdate": {
         "description": "One user-supplied detail, typed per field by kind (v16). The kind is checked at the edge (400); the range, the two allowed payment methods and whole months stay business rules (BR-14, 422). A null clears the field; a missing value is a 400.",
@@ -3558,6 +3638,7 @@
       },
       "BalancePoint": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "month",
           "balance"
@@ -3584,42 +3665,124 @@
       },
       "FixtureAccount": {
         "description": "An account as source data (API spec section 9.1): the contract Account plus the inputs the service derives from. Used by persona fixtures and by test-control overrides (DR-020).",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Account"
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "type",
+          "provider",
+          "maskedNumber",
+          "balance",
+          "includedInTotals",
+          "status",
+          "openedDate",
+          "updateFrequency",
+          "lastUpdated",
+          "details",
+          "closed",
+          "missedMonths",
+          "balanceHistory"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
           },
-          {
-            "type": "object",
-            "required": [
-              "missedMonths",
-              "balanceHistory"
+          "type": {
+            "$ref": "#/components/schemas/AccountType"
+          },
+          "provider": {
+            "type": "string"
+          },
+          "logoUrl": {
+            "type": [
+              "string",
+              "null"
             ],
-            "properties": {
-              "sourceMask": {
-                "type": "string",
-                "minLength": 1,
-                "description": "BR-09 input as the source supplies it"
+            "format": "uri"
+          },
+          "maskedNumber": {
+            "$ref": "#/components/schemas/MaskedNumber"
+          },
+          "balance": {
+            "$ref": "#/components/schemas/Money"
+          },
+          "limit": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Money"
               },
-              "missedMonths": {
-                "description": "BR-12 source",
-                "type": "array",
-                "uniqueItems": true,
-                "items": {
-                  "type": "string",
-                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
-                }
-              },
-              "balanceHistory": {
-                "description": "Oldest first; also the BR-07 trend source",
-                "type": "array",
-                "maxItems": 6,
-                "items": {
-                  "$ref": "#/components/schemas/BalancePoint"
-                }
+              {
+                "type": "null"
               }
+            ]
+          },
+          "utilisation": {
+            "$ref": "#/components/schemas/Utilisation"
+          },
+          "includedInTotals": {
+            "type": "boolean"
+          },
+          "status": {
+            "$ref": "#/components/schemas/AccountStatus"
+          },
+          "openedDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "closedDate": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date"
+          },
+          "updateFrequency": {
+            "type": "string",
+            "enum": [
+              "monthly",
+              "quarterly"
+            ]
+          },
+          "lastUpdated": {
+            "type": "string",
+            "format": "date"
+          },
+          "utilisationRaw": {
+            "type": [
+              "integer",
+              "null"
+            ],
+            "description": "Unfloored value (BR-06)"
+          },
+          "details": {
+            "$ref": "#/components/schemas/AccountDetails"
+          },
+          "closed": {
+            "type": "boolean"
+          },
+          "sourceMask": {
+            "type": "string",
+            "minLength": 1,
+            "description": "BR-09 input as the source supplies it"
+          },
+          "missedMonths": {
+            "description": "BR-12 source",
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+            }
+          },
+          "balanceHistory": {
+            "description": "Oldest first; also the BR-07 trend source",
+            "type": "array",
+            "maxItems": 6,
+            "items": {
+              "$ref": "#/components/schemas/BalancePoint"
             }
           }
-        ]
+        }
       },
       "PersonaOverrides": {
         "description": "Test-control data for one binding (DR-020). Each list named for a bureau replaces that list; lists not named are kept from the persona.",
@@ -3668,6 +3831,7 @@
       },
       "PaymentHistory": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "years",
           "selectedYear",
@@ -3680,6 +3844,7 @@
             "maxItems": 7,
             "items": {
               "type": "object",
+              "additionalProperties": false,
               "required": [
                 "year",
                 "status"
@@ -3701,6 +3866,7 @@
             "type": "array",
             "items": {
               "type": "object",
+              "additionalProperties": false,
               "required": [
                 "accountId",
                 "provider",
@@ -3724,6 +3890,7 @@
       },
       "Search": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "id",
           "kind",
@@ -3754,28 +3921,38 @@
         }
       },
       "SearchPage": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/PageMeta"
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "page",
+          "pageSize",
+          "total",
+          "items"
+        ],
+        "properties": {
+          "page": {
+            "type": "integer",
+            "minimum": 1
           },
-          {
-            "type": "object",
-            "required": [
-              "items"
-            ],
-            "properties": {
-              "items": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Search"
-                }
-              }
+          "pageSize": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Search"
             }
           }
-        ]
+        }
       },
       "PersonalDetails": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "name",
           "addresses",
@@ -3789,6 +3966,7 @@
             "type": "array",
             "items": {
               "type": "object",
+              "additionalProperties": false,
               "required": [
                 "line1",
                 "postcode",
@@ -3817,6 +3995,7 @@
       },
       "DebtOverview": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "total",
           "trend",
@@ -3831,6 +4010,7 @@
             "description": "The total split by account type (BR-07, DR-046): for each type, the sum of positive balances of open accounts with includedInTotals true. One entry per type whose sum is above zero, in AccountType enum order; current accounts never appear. The entries sum to total.",
             "items": {
               "type": "object",
+              "additionalProperties": false,
               "required": [
                 "type",
                 "amount"
@@ -3858,6 +4038,7 @@
       },
       "Notification": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "id",
           "title",
@@ -3881,53 +4062,14 @@
         }
       },
       "NotificationPage": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/PageMeta"
-          },
-          {
-            "type": "object",
-            "required": [
-              "items",
-              "unread"
-            ],
-            "properties": {
-              "items": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/Notification"
-                }
-              },
-              "unread": {
-                "type": "integer",
-                "minimum": 0
-              }
-            }
-          }
-        ]
-      },
-      "Feedback": {
         "type": "object",
-        "required": [
-          "value"
-        ],
-        "properties": {
-          "value": {
-            "type": "string",
-            "enum": [
-              "like",
-              "dislike",
-              "none"
-            ]
-          }
-        }
-      },
-      "PageMeta": {
-        "type": "object",
+        "additionalProperties": false,
         "required": [
           "page",
           "pageSize",
-          "total"
+          "total",
+          "items",
+          "unread"
         ],
         "properties": {
           "page": {
@@ -3941,6 +4083,33 @@
           "total": {
             "type": "integer",
             "minimum": 0
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Notification"
+            }
+          },
+          "unread": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "Feedback": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "value"
+        ],
+        "properties": {
+          "value": {
+            "type": "string",
+            "enum": [
+              "like",
+              "dislike",
+              "none"
+            ]
           }
         }
       },

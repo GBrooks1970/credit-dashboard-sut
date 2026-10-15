@@ -4,8 +4,8 @@ created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-38
-status: proposed
-approved: not yet
+status: approved
+approved: "2026-10-15, Gary Brooks, 'confirmed, approve plan, merge #75 once CI green' (choices D1 to D6 answered by interview 2026-10-15); merge authority: per pull request, on request"
 delivered: not yet
 language: en-GB
 ---

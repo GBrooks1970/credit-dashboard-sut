@@ -263,7 +263,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-38: Independent review of the Phase 4 UI and the harness
 
-**PLAN WRITTEN, PROPOSED (2026-10-14; `DOCS/implementation-plans/2026-10-14_cds-38-independent-review.md`, six choices awaiting the owner).** The owner chose to record the Phase 4 gate and to commission the review that Phases 3 and 4 have not had, as Phase 2 had its three passes (decision brief 12 D1 option 2, DR-063). Scope: the React UI, the `@ui` steps, the exit checks and the harness, read by a fresh-context agent against the specifications and the 41 scenarios, with findings triaged and handled as CDS-24 was. The review is the quality check after the gate, not its condition. A short plan comes first; the Phase 5 plan (CDS-37) says where it falls in the order.
+**PLAN APPROVED (2026-10-15; `DOCS/implementation-plans/2026-10-14_cds-38-independent-review.md`, six choices awaiting the owner).** The owner chose to record the Phase 4 gate and to commission the review that Phases 3 and 4 have not had, as Phase 2 had its three passes (decision brief 12 D1 option 2, DR-063). Scope: the React UI, the `@ui` steps, the exit checks and the harness, read by a fresh-context agent against the specifications and the 41 scenarios, with findings triaged and handled as CDS-24 was. The review is the quality check after the gate, not its condition. A short plan comes first; the Phase 5 plan (CDS-37) says where it falls in the order.
 
 ### CDS-39: P1, the flag mechanism and the proof runner
 

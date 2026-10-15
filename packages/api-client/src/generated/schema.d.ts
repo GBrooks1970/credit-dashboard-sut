@@ -725,7 +725,9 @@ export interface components {
             /** @description Checked against PR-06 by the service (422) */
             number: string;
         };
-        MobileChallenge: components["schemas"]["MobileContact"] & {
+        MobileChallenge: {
+            lastDigits: string;
+            status: components["schemas"]["VerificationStatus"];
             /**
              * Format: date-time
              * @description Issue time plus 10 minutes (PR-10)
@@ -787,7 +789,10 @@ export interface components {
             /** Format: date */
             date: string;
         };
-        ChangePage: components["schemas"]["PageMeta"] & {
+        ChangePage: {
+            page: number;
+            pageSize: number;
+            total: number;
             items: components["schemas"]["Change"][];
         };
         Impact: {
@@ -853,7 +858,18 @@ export interface components {
             /** @enum {string|null} */
             paymentMethod?: "direct-debit" | "manual" | null;
         };
-        Account: components["schemas"]["AccountSummary"] & {
+        Account: {
+            id: string;
+            type: components["schemas"]["AccountType"];
+            provider: string;
+            /** Format: uri */
+            logoUrl?: string | null;
+            maskedNumber: components["schemas"]["MaskedNumber"];
+            balance: components["schemas"]["Money"];
+            limit?: components["schemas"]["Money"] | null;
+            utilisation?: components["schemas"]["Utilisation"];
+            includedInTotals: boolean;
+            status: components["schemas"]["AccountStatus"];
             /** Format: date */
             openedDate: string;
             /** Format: date */
@@ -928,7 +944,30 @@ export interface components {
             limit?: components["schemas"]["Money"] | null;
         };
         /** @description An account as source data (API spec section 9.1): the contract Account plus the inputs the service derives from. Used by persona fixtures and by test-control overrides (DR-020). */
-        FixtureAccount: components["schemas"]["Account"] & {
+        FixtureAccount: {
+            id: string;
+            type: components["schemas"]["AccountType"];
+            provider: string;
+            /** Format: uri */
+            logoUrl?: string | null;
+            maskedNumber: components["schemas"]["MaskedNumber"];
+            balance: components["schemas"]["Money"];
+            limit?: components["schemas"]["Money"] | null;
+            utilisation?: components["schemas"]["Utilisation"];
+            includedInTotals: boolean;
+            status: components["schemas"]["AccountStatus"];
+            /** Format: date */
+            openedDate: string;
+            /** Format: date */
+            closedDate?: string | null;
+            /** @enum {string} */
+            updateFrequency: "monthly" | "quarterly";
+            /** Format: date */
+            lastUpdated: string;
+            /** @description Unfloored value (BR-06) */
+            utilisationRaw?: number | null;
+            details: components["schemas"]["AccountDetails"];
+            closed: boolean;
             /** @description BR-09 input as the source supplies it */
             sourceMask?: string;
             /** @description BR-12 source */
@@ -966,7 +1005,10 @@ export interface components {
             /** Format: date */
             date: string;
         };
-        SearchPage: components["schemas"]["PageMeta"] & {
+        SearchPage: {
+            page: number;
+            pageSize: number;
+            total: number;
             items: components["schemas"]["Search"][];
         };
         PersonalDetails: {
@@ -999,18 +1041,16 @@ export interface components {
             /** Format: date-time */
             createdAt: string;
         };
-        NotificationPage: components["schemas"]["PageMeta"] & {
+        NotificationPage: {
+            page: number;
+            pageSize: number;
+            total: number;
             items: components["schemas"]["Notification"][];
             unread: number;
         };
         Feedback: {
             /** @enum {string} */
             value: "like" | "dislike" | "none";
-        };
-        PageMeta: {
-            page: number;
-            pageSize: number;
-            total: number;
         };
         Problem: {
             /**

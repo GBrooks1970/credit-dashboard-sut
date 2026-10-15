@@ -9,7 +9,7 @@
 openapi: 3.1.0
 info:
   title: Credit Dashboard SUT API
-  version: 0.9.5
+  version: 0.9.6
   license:
     name: MIT
     identifier: MIT
@@ -18,6 +18,8 @@ info:
     Phase 0 draft contract. Business rule IDs (BR-xx) refer to the API specification;
     profile rule IDs (PR-xx) refer to the My Profile UI feature spec.
     Test-control paths are tagged `test-control` and exist only when TEST_CONTROL=true.
+    A response object is closed: a property its schema does not list is a defect (`additionalProperties: false`).
+    The exception is Problem, which stays open because RFC 9457 allows extension members; a stack trace is never one of them.
     Lint ruleset: `redocly.yaml` at the repository root.
 servers:
   - url: http://localhost:4000/api/v1
@@ -917,6 +919,7 @@ paths:
               schema:
                 type: object
                 required: [reply, disclaimer]
+                additionalProperties: false
                 properties:
                   reply: { type: string }
                   disclaimer: { type: string }
@@ -1085,6 +1088,7 @@ paths:
                 latency: {}
               schema:
                 type: object
+                additionalProperties: false
                 properties:
                   personas: { type: object, additionalProperties: { $ref: '#/components/schemas/Persona' } }
                   overridden:
@@ -1290,6 +1294,7 @@ components:
   schemas:
     Money:
       type: object
+      additionalProperties: false
       required: [amountMinor, currency]
       properties:
         amountMinor: { type: integer, description: Minor units (pence). Negative means a credit balance. }
@@ -1356,6 +1361,7 @@ components:
       pattern: "^[\\p{L}'-]([\\p{L}' -]*[\\p{L}'-])?$"
     Profile:
       type: object
+      additionalProperties: false
       required: [legalName, dateOfBirth, memberSince, preferredName, email, mobile, address, employment, finances]
       properties:
         legalName: { type: string, description: Read-only in the app (PR-01) }
@@ -1374,6 +1380,7 @@ components:
           oneOf:
             - type: object
               required: [line1, postcode, previousCount]
+              additionalProperties: false
               properties:
                 line1: { type: string }
                 postcode: { type: string }
@@ -1384,17 +1391,20 @@ components:
           oneOf:
             - type: object
               required: [status]
+              additionalProperties: false
               properties:
                 status: { $ref: '#/components/schemas/EmploymentStatus' }
             - { type: 'null' }
         finances:
           description: Whether finance details are held; never the figures (PR-07)
           type: object
+          additionalProperties: false
           required: [added]
           properties:
             added: { type: boolean }
     EmailContact:
       type: object
+      additionalProperties: false
       required: [address, status]
       properties:
         address: { type: string, format: email }
@@ -1407,12 +1417,14 @@ components:
         address: { type: string, format: email, maxLength: 254 }
     VerificationSent:
       type: object
+      additionalProperties: false
       required: [sentAt, nextResendAt]
       properties:
         sentAt: { type: string, format: date-time }
         nextResendAt: { type: string, format: date-time, description: sentAt plus 60 seconds (PR-09) }
     MobileContact:
       type: object
+      additionalProperties: false
       required: [lastDigits, status]
       properties:
         lastDigits: { type: string, pattern: '^[0-9]{3}$' }
@@ -1424,13 +1436,14 @@ components:
       properties:
         number: { type: string, minLength: 1, maxLength: 20, description: Checked against PR-06 by the service (422) }
     MobileChallenge:
-      allOf:
-        - { $ref: '#/components/schemas/MobileContact' }
-        - type: object
-          required: [expiresAt, attemptsRemaining]
-          properties:
-            expiresAt: { type: string, format: date-time, description: Issue time plus 10 minutes (PR-10) }
-            attemptsRemaining: { type: integer, minimum: 0, maximum: 3, description: PR-11 }
+      type: object
+      additionalProperties: false
+      required: [lastDigits, status, expiresAt, attemptsRemaining]
+      properties:
+        lastDigits: { type: string, pattern: '^[0-9]{3}$' }
+        status: { $ref: '#/components/schemas/VerificationStatus' }
+        expiresAt: { type: string, format: date-time, description: Issue time plus 10 minutes (PR-10) }
+        attemptsRemaining: { type: integer, minimum: 0, maximum: 3, description: PR-11 }
     MobileVerification:
       type: object
       additionalProperties: false
@@ -1447,6 +1460,7 @@ components:
           maxLength: 100
     PreferredName:
       type: object
+      additionalProperties: false
       required: [preferredName]
       properties:
         preferredName:
@@ -1458,10 +1472,12 @@ components:
       properties: { username: { type: string }, password: { type: string } }
     LoginResponse:
       type: object
+      additionalProperties: false
       required: [token, expiresAt]
       properties: { token: { type: string }, expiresAt: { type: string, format: date-time } }
     User:
       type: object
+      additionalProperties: false
       required: [id, displayName, greetingName, defaultBureauId]
       properties:
         id: { type: string }
@@ -1475,6 +1491,7 @@ components:
         defaultBureauId: { type: string }
     Bureau:
       type: object
+      additionalProperties: false
       required: [id, name, nextUpdateInDays]
       properties:
         id: { type: string }
@@ -1482,6 +1499,7 @@ components:
         nextUpdateInDays: { type: integer, minimum: 0, description: BR-08 }
     Score:
       type: object
+      additionalProperties: false
       required: [current, max, nationalAverage, localAverage]
       properties:
         current: { type: integer, minimum: 0, maximum: 1000 }
@@ -1490,12 +1508,14 @@ components:
         localAverage: { type: integer, minimum: 0, maximum: 1000 }
     ScorePoint:
       type: object
+      additionalProperties: false
       required: [month, score]
       properties:
         month: { type: string, pattern: '^\d{4}-\d{2}$' }
         score: { type: [integer, 'null'], minimum: 0, maximum: 1000 }
     Change:
       type: object
+      additionalProperties: false
       required: [id, title, sentiment, impact, date]
       properties:
         id: { type: string }
@@ -1504,13 +1524,17 @@ components:
         impact: { type: string, enum: [low, medium, high] }
         date: { type: string, format: date }
     ChangePage:
-      allOf:
-        - { $ref: '#/components/schemas/PageMeta' }
-        - type: object
-          required: [items]
-          properties: { items: { type: array, items: { $ref: '#/components/schemas/Change' } } }
+      type: object
+      additionalProperties: false
+      required: [page, pageSize, total, items]
+      properties:
+        page: { type: integer, minimum: 1 }
+        pageSize: { type: integer, minimum: 1 }
+        total: { type: integer, minimum: 0 }
+        items: { type: array, items: { $ref: '#/components/schemas/Change' } }
     Impact:
       type: object
+      additionalProperties: false
       required: [actionNeeded, monitor, doingWell]
       properties:
         actionNeeded: { type: integer, minimum: 0 }
@@ -1518,12 +1542,14 @@ components:
         doingWell: { type: integer, minimum: 0 }
     Summary:
       type: object
+      additionalProperties: false
       required: [text, feedback]
       properties:
         text: { type: string }
         feedback: { type: string, enum: [like, dislike, none] }
     ReportOverview:
       type: object
+      additionalProperties: false
       required: [bureau, score, summary, recentChanges, changesTotal, impact, debt, accountTypes, payments]
       properties:
         bureau: { $ref: '#/components/schemas/Bureau' }
@@ -1539,12 +1565,14 @@ components:
             onReport is the number of (account, month) pairs with status missed in the BR-12 window across the bureau's
             accounts; newMissed is those in the three months ending at the current month (decision brief 9 D4).
           type: object
+          additionalProperties: false
           required: [newMissed, onReport]
           properties:
             newMissed: { type: integer, minimum: 0 }
             onReport: { type: integer, minimum: 0 }
     AccountSummary:
       type: object
+      additionalProperties: false
       required: [id, type, provider, maskedNumber, balance, includedInTotals, status]
       properties:
         id: { type: string }
@@ -1559,6 +1587,7 @@ components:
         status: { $ref: '#/components/schemas/AccountStatus' }
     AccountTotals:
       type: object
+      additionalProperties: false
       required: [type, balance, includedCount, excluded]
       properties:
         type: { $ref: '#/components/schemas/AccountType' }
@@ -1570,6 +1599,7 @@ components:
           type: array
           items:
             type: object
+            additionalProperties: false
             required: [id, provider, maskedNumber, balance]
             properties:
               id: { type: string }
@@ -1578,29 +1608,40 @@ components:
               balance: { $ref: '#/components/schemas/Money' }
     AccountDetails:
       type: object
+      additionalProperties: false
       properties:
         apr: { type: [number, 'null'], minimum: 0, maximum: 100 }
         interestRate: { type: [number, 'null'], minimum: 0, maximum: 100 }
         promoPeriodMonths: { type: [integer, 'null'], minimum: 0, maximum: 60 }
         minPayment:
           type: [object, 'null']
+          additionalProperties: false
           properties:
             amount: { $ref: '#/components/schemas/Money' }
             percent: { type: number, minimum: 0, maximum: 100, description: BR-14 up to two decimals (422 otherwise) }
         paymentMethod: { type: [string, 'null'], enum: [direct-debit, manual, null] }
     Account:
-      allOf:
-        - { $ref: '#/components/schemas/AccountSummary' }
-        - type: object
-          required: [openedDate, updateFrequency, lastUpdated, details, closed]
-          properties:
-            openedDate: { type: string, format: date }
-            closedDate: { type: [string, 'null'], format: date }
-            updateFrequency: { type: string, enum: [monthly, quarterly] }
-            lastUpdated: { type: string, format: date }
-            utilisationRaw: { type: [integer, 'null'], description: Unfloored value (BR-06) }
-            details: { $ref: '#/components/schemas/AccountDetails' }
-            closed: { type: boolean }
+      type: object
+      additionalProperties: false
+      required: [id, type, provider, maskedNumber, balance, includedInTotals, status, openedDate, updateFrequency, lastUpdated, details, closed]
+      properties:
+        id: { type: string }
+        type: { $ref: '#/components/schemas/AccountType' }
+        provider: { type: string }
+        logoUrl: { type: [string, 'null'], format: uri }
+        maskedNumber: { $ref: '#/components/schemas/MaskedNumber' }
+        balance: { $ref: '#/components/schemas/Money' }
+        limit: { oneOf: [ { $ref: '#/components/schemas/Money' }, { type: 'null' } ] }
+        utilisation: { $ref: '#/components/schemas/Utilisation' }
+        includedInTotals: { type: boolean }
+        status: { $ref: '#/components/schemas/AccountStatus' }
+        openedDate: { type: string, format: date }
+        closedDate: { type: [string, 'null'], format: date }
+        updateFrequency: { type: string, enum: [monthly, quarterly] }
+        lastUpdated: { type: string, format: date }
+        utilisationRaw: { type: [integer, 'null'], description: Unfloored value (BR-06) }
+        details: { $ref: '#/components/schemas/AccountDetails' }
+        closed: { type: boolean }
     DetailUpdate:
       description: >-
         One user-supplied detail, typed per field by kind (v16). The kind is checked at the edge (400); the range,
@@ -1653,6 +1694,7 @@ components:
         value: { type: [string, 'null'], description: 'direct-debit or manual (422 otherwise)', examples: [direct-debit, manual] }
     BalancePoint:
       type: object
+      additionalProperties: false
       required: [month, balance]
       properties:
         month: { type: string, pattern: '^\d{4}-\d{2}$' }
@@ -1662,22 +1704,38 @@ components:
       description: >-
         An account as source data (API spec section 9.1): the contract Account plus the inputs the service derives
         from. Used by persona fixtures and by test-control overrides (DR-020).
-      allOf:
-        - { $ref: '#/components/schemas/Account' }
-        - type: object
-          required: [missedMonths, balanceHistory]
-          properties:
-            sourceMask: { type: string, minLength: 1, description: BR-09 input as the source supplies it }
-            missedMonths:
-              description: BR-12 source
-              type: array
-              uniqueItems: true
-              items: { type: string, pattern: '^\d{4}-(0[1-9]|1[0-2])$' }
-            balanceHistory:
-              description: Oldest first; also the BR-07 trend source
-              type: array
-              maxItems: 6
-              items: { $ref: '#/components/schemas/BalancePoint' }
+      type: object
+      additionalProperties: false
+      required: [id, type, provider, maskedNumber, balance, includedInTotals, status, openedDate, updateFrequency, lastUpdated, details, closed, missedMonths, balanceHistory]
+      properties:
+        id: { type: string }
+        type: { $ref: '#/components/schemas/AccountType' }
+        provider: { type: string }
+        logoUrl: { type: [string, 'null'], format: uri }
+        maskedNumber: { $ref: '#/components/schemas/MaskedNumber' }
+        balance: { $ref: '#/components/schemas/Money' }
+        limit: { oneOf: [ { $ref: '#/components/schemas/Money' }, { type: 'null' } ] }
+        utilisation: { $ref: '#/components/schemas/Utilisation' }
+        includedInTotals: { type: boolean }
+        status: { $ref: '#/components/schemas/AccountStatus' }
+        openedDate: { type: string, format: date }
+        closedDate: { type: [string, 'null'], format: date }
+        updateFrequency: { type: string, enum: [monthly, quarterly] }
+        lastUpdated: { type: string, format: date }
+        utilisationRaw: { type: [integer, 'null'], description: Unfloored value (BR-06) }
+        details: { $ref: '#/components/schemas/AccountDetails' }
+        closed: { type: boolean }
+        sourceMask: { type: string, minLength: 1, description: BR-09 input as the source supplies it }
+        missedMonths:
+          description: BR-12 source
+          type: array
+          uniqueItems: true
+          items: { type: string, pattern: '^\d{4}-(0[1-9]|1[0-2])$' }
+        balanceHistory:
+          description: Oldest first; also the BR-07 trend source
+          type: array
+          maxItems: 6
+          items: { $ref: '#/components/schemas/BalancePoint' }
     PersonaOverrides:
       description: >-
         Test-control data for one binding (DR-020). Each list named for a bureau replaces that list; lists not
@@ -1701,6 +1759,7 @@ components:
               searches: { type: array, items: { $ref: '#/components/schemas/Search' } }
     PaymentHistory:
       type: object
+      additionalProperties: false
       required: [years, selectedYear, missed]
       properties:
         years:
@@ -1709,6 +1768,7 @@ components:
           maxItems: 7
           items:
             type: object
+            additionalProperties: false
             required: [year, status]
             properties:
               year: { type: integer }
@@ -1718,6 +1778,7 @@ components:
           type: array
           items:
             type: object
+            additionalProperties: false
             required: [accountId, provider, month]
             properties:
               accountId: { type: string }
@@ -1725,6 +1786,7 @@ components:
               month: { type: string, pattern: '^\d{4}-\d{2}$' }
     Search:
       type: object
+      additionalProperties: false
       required: [id, kind, organisation, date]
       properties:
         id: { type: string }
@@ -1733,13 +1795,17 @@ components:
         purpose: { type: string }
         date: { type: string, format: date }
     SearchPage:
-      allOf:
-        - { $ref: '#/components/schemas/PageMeta' }
-        - type: object
-          required: [items]
-          properties: { items: { type: array, items: { $ref: '#/components/schemas/Search' } } }
+      type: object
+      additionalProperties: false
+      required: [page, pageSize, total, items]
+      properties:
+        page: { type: integer, minimum: 1 }
+        pageSize: { type: integer, minimum: 1 }
+        total: { type: integer, minimum: 0 }
+        items: { type: array, items: { $ref: '#/components/schemas/Search' } }
     PersonalDetails:
       type: object
+      additionalProperties: false
       required: [name, addresses, electoralRoll]
       properties:
         name: { type: string }
@@ -1747,6 +1813,7 @@ components:
           type: array
           items:
             type: object
+            additionalProperties: false
             required: [line1, postcode, current]
             properties:
               line1: { type: string }
@@ -1756,6 +1823,7 @@ components:
         electoralRoll: { type: boolean }
     DebtOverview:
       type: object
+      additionalProperties: false
       required: [total, trend, byType]
       properties:
         total: { $ref: '#/components/schemas/Money' }
@@ -1767,6 +1835,7 @@ components:
             order; current accounts never appear. The entries sum to total.
           items:
             type: object
+            additionalProperties: false
             required: [type, amount]
             properties:
               type: { $ref: '#/components/schemas/AccountType' }
@@ -1779,6 +1848,7 @@ components:
             1% either way; if the earlier total was zero, steady when now zero, otherwise up (DR-011).
     Notification:
       type: object
+      additionalProperties: false
       required: [id, title, read, createdAt]
       properties:
         id: { type: string }
@@ -1786,24 +1856,20 @@ components:
         read: { type: boolean }
         createdAt: { type: string, format: date-time }
     NotificationPage:
-      allOf:
-        - { $ref: '#/components/schemas/PageMeta' }
-        - type: object
-          required: [items, unread]
-          properties:
-            items: { type: array, items: { $ref: '#/components/schemas/Notification' } }
-            unread: { type: integer, minimum: 0 }
-    Feedback:
       type: object
-      required: [value]
-      properties: { value: { type: string, enum: [like, dislike, none] } }
-    PageMeta:
-      type: object
-      required: [page, pageSize, total]
+      additionalProperties: false
+      required: [page, pageSize, total, items, unread]
       properties:
         page: { type: integer, minimum: 1 }
         pageSize: { type: integer, minimum: 1 }
         total: { type: integer, minimum: 0 }
+        items: { type: array, items: { $ref: '#/components/schemas/Notification' } }
+        unread: { type: integer, minimum: 0 }
+    Feedback:
+      type: object
+      additionalProperties: false
+      required: [value]
+      properties: { value: { type: string, enum: [like, dislike, none] } }
     Problem:
       type: object
       required: [type, title, status]

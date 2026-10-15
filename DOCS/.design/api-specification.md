@@ -1,5 +1,5 @@
 ---
-version: 28
+version: 29
 created: 2026-10-14T15:00Z
 supersedes: v22 (2026-10-08); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v29:** CDS-38 (F2a, B-10): contract v19 (`info.version` 0.9.6). Every response object is closed (`additionalProperties: false`): a property its schema does not list is a defect, so a leaked field fails the validator, Schemathesis and the harness. `Problem` stays open (RFC 9457 extension members). The six `allOf` schemas (`MobileChallenge`, `ChangePage`, `SearchPage`, `NotificationPage`, `Account`, `FixtureAccount`) are flat objects with the same names, and `PageMeta` is gone (its three fields are in the page types), because a closed base rejects what its siblings add. `LoginRequest` and `PreferredNameUpdate` stay open.
 **Changes in v28:** CDS-38 (F1): the review findings that touch this specification. Contract v18 (`info.version` 0.9.5, descriptions and one example only): the payment-history example lists the years oldest first (A-15). BR-14 limits a minimum payment `percent` to two decimals, like `apr` and `interestRate` (A-16). BR-12: a month after the current month is `no-data` whatever `missedMonths` holds, so a future month is never `missed` (A-17). Section 10: `excluded-in-total` reaches the BR-07 debt total and breakdown because they use the type totals (A-11); `currency-float` is on every money amount in a response (A-09); `idor` writes are kept in the caller's own session (A-28). The stored balance history is relative to `asAt` and the controlled clock does not move it (A-29). The code changes follow in F3 and F4.
 **Changes in v27:** CDS-40 (P2): Schemathesis no longer fuzzes `PUT /__test/bugs` (section 11); a fuzzed `problem-json-missing` failed the run in CI; all seven API flags of section 10 are implemented. Each is a different call site in the service and leaves the BusinessRules library untouched; each is caught by a scenario that already existed, for a different recorded reason.
 **Changes in v26:** CDS-39 (P1): section 10 says how a flag works in the service. Test control is the only way to set one; the flags on when a request begins are held for that request (`Flags`), and a flag changes a call site, never a rule in the BusinessRules library (`Defects`). `rounding-down` is the first API flag implemented. `fixtures/bug-flags.json` lists all 30 flags of the contract with their layer, status and catchers.

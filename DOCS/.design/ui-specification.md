@@ -1,5 +1,5 @@
 ---
-version: 22
+version: 23
 created: 2026-10-14T09:43Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v23:** CDS-38 (F1): the debug panel is at `/debug` (it was written `/__debug`), is present only in a test build and only for a signed-in customer, and 6.8 lists its hooks (C-08). The score gauge is a `progressbar` named 'Credit score' with the score as its value and 0 to the maximum as its range, not an `img` (C-07).
 **Changes in v22:** CDS-39 (P1): the flag mechanism is built. The control key reaches a test build through browser local storage (`cds.testControlKey`), which the harness seeds before the page loads (a browser context can seed local storage, not session storage); the app waits for the flags before it renders; the debug panel of 6.8 is the page `/debug` and exists only in a test build; `plural` is the first UI flag implemented.
 **Changes in v21:** decision brief 13 (DR-064): the bug flags are read by a test build of the UI from `GET /__test/state` once at start, with the key the harness supplies (section 3); the expected catch of `toggle-label` and `truncate-summary` is a component test; the bug-flag proof in section 9 is "at least one committed check" and is run by `npm run check:bug-flags`.
 **Changes in v20:** decision brief 12 D3 (DR-063): `list-changes` and the utilities and telecoms sub-group headings `list-group-{name}` are dropped from section 6.4. The list shows the summary, the rows and the excluded group; no scenario needed either, and each would have needed a contract change.
@@ -123,7 +124,7 @@ WCAG 2.2 AA. With all bug flags off, an axe-core scan of every page returns zero
 | My profile | `/my-account/profile` | 3 | `GET /me/profile`, `PATCH /me/profile/preferred-name` | `ui/profile.feature` |
 | Email | `/my-account/profile/email` | 3 | `PUT /me/profile/email`, `POST /me/profile/email/verification` | `ui/profile.feature` |
 | Mobile | `/my-account/profile/mobile` | 3 | `PUT /me/profile/mobile`, `POST /me/profile/mobile/verification` | `ui/profile.feature` |
-| Debug panel | `/__debug` | 2 | `/__test/*` | none (tooling) |
+| Debug panel | `/debug` | 2 | `/__test/*` | none (tooling) |
 
 ## 6. Page specifications
 
@@ -234,7 +235,7 @@ These pages reuse the list patterns above. Closed accounts (`closed-title`) grou
 
 ### 6.8 Debug panel (tooling)
 
-Visible only when test control is enabled, so never in the public demo build (DR-037). Lists every bug flag as a checkbox `debug-flag-{flag}`, a persona selector `debug-persona`, a clock input `debug-clock` and `debug-reset`. It calls the `/__test/*` endpoints; it never changes UI state directly.
+Present only in a test build (`VITE_TEST_BUILD`) and only for a signed-in customer, so never in the public demo build (DR-037); whether its calls succeed is decided by the service's test-control gate. Lists every bug flag as a checkbox `debug-flag-{flag}`, a persona selector `debug-persona`, a clock input `debug-clock` and `debug-reset`, with a key field `debug-key`, a user field `debug-username`, `debug-bind`, `debug-set-clock` and a status line `debug-status`. It calls the `/__test/*` endpoints; it never changes UI state directly.
 
 ### 6.9 My profile (Release 3)
 
@@ -247,7 +248,7 @@ Release 3 adds the email and mobile sub-pages (DR-022), specified in that spec's
 | Component | Props (key) | Used on | Notes |
 | --- | --- | --- | --- |
 | `DemoBanner` | none | All | Always on |
-| `ScoreGauge` | `score`, `max` | Overview | SVG arc; `role="img"` with name 'Score 720 out of 1000' |
+| `ScoreGauge` | `score`, `max` | Overview | A bar; `role="progressbar"` named 'Credit score' with `aria-valuenow` the score, `aria-valuemin` 0 and `aria-valuemax` the maximum |
 | `BenchmarkBar` | `label`, `value`, `max` | Overview | progressbar |
 | `LineChart` | `points[]`, `range` | Overview | Gaps for null; table alternative |
 | `BarChart` | `points[]`, `referenceLine` | Account detail | Limit line; table alternative |

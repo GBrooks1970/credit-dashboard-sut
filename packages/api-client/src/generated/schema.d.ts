@@ -847,6 +847,7 @@ export interface components {
             promoPeriodMonths?: number | null;
             minPayment?: {
                 amount?: components["schemas"]["Money"];
+                /** @description BR-14 up to two decimals (422 otherwise) */
                 percent?: number;
             } | null;
             /** @enum {string|null} */
@@ -1918,7 +1919,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Seven-year summary plus missed payments for the selected year (BR-12) */
+            /** @description Seven-year summary, oldest year first, plus missed payments for the selected year (BR-12) */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -1928,19 +1929,11 @@ export interface operations {
                      * @example {
                      *       "years": [
                      *         {
-                     *           "year": 2026,
-                     *           "status": "on-time"
+                     *           "year": 2020,
+                     *           "status": "no-data"
                      *         },
                      *         {
-                     *           "year": 2025,
-                     *           "status": "on-time"
-                     *         },
-                     *         {
-                     *           "year": 2024,
-                     *           "status": "on-time"
-                     *         },
-                     *         {
-                     *           "year": 2023,
+                     *           "year": 2021,
                      *           "status": "on-time"
                      *         },
                      *         {
@@ -1948,12 +1941,20 @@ export interface operations {
                      *           "status": "on-time"
                      *         },
                      *         {
-                     *           "year": 2021,
+                     *           "year": 2023,
                      *           "status": "on-time"
                      *         },
                      *         {
-                     *           "year": 2020,
-                     *           "status": "no-data"
+                     *           "year": 2024,
+                     *           "status": "on-time"
+                     *         },
+                     *         {
+                     *           "year": 2025,
+                     *           "status": "on-time"
+                     *         },
+                     *         {
+                     *           "year": 2026,
+                     *           "status": "on-time"
                      *         }
                      *       ],
                      *       "selectedYear": 2026,

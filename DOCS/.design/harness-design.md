@@ -25,11 +25,15 @@ test-harnesses/harness-serenity/
   package.json  package-lock.json  tsconfig.json  cucumber.mjs
   src/
     abilities/     CallAnApi.ts  ControlTheTestEnvironment.ts
-    contract/      load.ts (reads DOCS/.architecture/openapi.yaml)  validate.ts (Ajv by operation and status)
-    fixtures/      load.ts (reads fixtures/personas, fixtures/overrides, fixtures/users.json)
-    support/       parameter-types.ts  world.ts  hooks.ts  clock.ts  service.ts
+    contract/      validate.ts (reads DOCS/.architecture/openapi.yaml; Ajv by operation and status)
+    fixtures/      load.ts (reads fixtures/personas, fixtures/overrides, fixtures/users.json)  arrange.ts
+    support/       actors.ts  common-hooks.ts  parameter-types.ts  world.ts
+    api/           hooks.ts (the api profile's Before and After)
+    ui/            hooks.ts  visit.ts  steps/ (the ui profile)
     steps/         arrange.steps.ts  act.steps.ts  assert.steps.ts
-  scripts/run.mjs  (builds and starts the service, runs Cucumber, stops the service)
+    exit/          exit-checks.ts (axe scans and layout checks)
+    flags/         prove-flags.ts (the bug-flag proof)
+  scripts/run.mjs  (modes api, ui, exit and flags: builds and starts the service, and for the ui modes the UI build, runs the profile or check, stops what it started)
   reports/  (git-ignored)
 ```
 
@@ -160,7 +164,7 @@ Every pattern used by the 12 files has one definition, in the file named below. 
 
 ## 11. Reports and diagnostics
 
-Cucumber's `message` and `html` formatters write to `reports/`; the console shows the progress formatter, and the failure's attachments (section 5, After) are in the HTML report. No second stdout formatter (the lesson recorded in the reference project: one only). The run ends with one line: scenarios passed, failed, skipped, steps, duration, and the service log path.
+Cucumber's `message` formatter writes `reports/api.ndjson` and `reports/ui.ndjson`, and the console shows Serenity's reporter; there is no HTML report yet (the Serenity report is P6, CDS-44). The failure's diagnostics (section 5, After) are specified here and are added to the After hooks in CDS-38 slice F2. No second stdout formatter (the lesson recorded in the reference project: one only). The run ends with one line: scenarios passed, failed, skipped, steps, duration, and the service log path.
 
 ## 12. Verification of the harness itself
 
@@ -189,7 +193,7 @@ These are the probes the plan requires, each expected to fail and then reverted;
 
 ## 15. Settled in H1 (2026-10-10)
 
-- **Actors:** Serenity/JS `Cast` and `actorCalled` are used (the Stage Manager holds `ControlTheTestEnvironment`; Alex and Sam hold `CallAnApi`); it cost a dozen lines in `src/support/hooks.ts`, so the Screenplay model stays.
+- **Actors:** Serenity/JS `Cast` and `actorCalled` are used (the Stage Manager holds `ControlTheTestEnvironment`; Alex and Sam hold `CallAnApi`); it cost a dozen lines in the profile's hooks (`src/api/hooks.ts`, `src/support/common-hooks.ts`), so the Screenplay model stays.
 - **Pins:** Serenity/JS 3.48.2 (3.48.1 was the plan's figure; 3.48.2 is the current release, same line), Cucumber 13.3.0, tsx 4.23.15, TypeScript 6.0.3 (7.0.2 is published but was not tried), Ajv 8.20.0, yaml 2.9.1, console reporter 3.48.2. The exact versions are in `package-lock.json`.
 - **Executions:** the `api` profile selects 58 scenarios after outlines expand (31 scenarios and outlines in 12 files).
 - **Running one feature:** `node scripts/run.mjs api api/score`; Cucumber adds positional paths to a profile's paths, so a named run uses the `select` profile, which has none.

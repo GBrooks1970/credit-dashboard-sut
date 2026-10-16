@@ -1,4 +1,4 @@
-// version: 7 | created: 2026-10-13T11:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 8 | created: 2026-10-13T11:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Builds the service, starts it with test control on and a synthetic key, starts a second instance without test control
 // (for the scenario that needs the surface absent), runs the Cucumber profile against them, and always stops both
 // (design section 8, CDS-22). Run from test-harnesses/harness-serenity:  node scripts/run.mjs api|ui [feature ...]
@@ -40,7 +40,8 @@ if (needsUi) {
     // The UI is built once per run; its dependencies are installed when missing (CI installs them in its own step).
     const npm = process.platform === 'win32' ? 'npm.cmd' : 'npm';
     if (!fs.existsSync(path.join(uiProject, 'node_modules'))) spawnSync(npm, ['ci', '--no-audit', '--no-fund'], { cwd: uiProject, stdio: 'inherit', shell: process.platform === 'win32' });
-    const uiBuild = spawnSync(npm, ['run', 'build'], { cwd: uiProject, stdio: 'inherit', shell: process.platform === 'win32', env: { ...process.env, VITE_TEST_BUILD: 'true' } });
+    // The test build goes to dist-test/, never to dist/ (the public build's folder, which the guard checks): CDS-38 C-29.
+    const uiBuild = spawnSync(npm, ['run', 'build:test'], { cwd: uiProject, stdio: 'inherit', shell: process.platform === 'win32', env: { ...process.env, VITE_TEST_BUILD: 'true' } });
     if (uiBuild.status !== 0) {
         console.error('harness: the UI did not build');
         process.exit(1);
@@ -56,7 +57,7 @@ if (build.status !== 0 || !fs.existsSync(dll)) {
 // The logs go to files, not pipes: nothing drains a pipe while Cucumber runs (lesson from CDS-23).
 const instances = [];
 function start(label, listenPort, testControl, uiDirectory) {
-    const logPath = path.join(os.tmpdir(), `harness-service-${listenPort}.log`);
+    const logPath = path.join(os.tmpdir(), `harness-service-${listenPort}-${process.pid}.log`);
     const logFd = fs.openSync(logPath, 'w');
     const env = {
         ...process.env,
@@ -115,7 +116,7 @@ if (requested === 'api' && features.length === 0) {
 
 let code = 1;
 try {
-    const main = start('main', port, true, needsUi ? path.join(uiProject, 'dist') : undefined);
+    const main = start('main', port, true, needsUi ? path.join(uiProject, 'dist-test') : undefined);
     const off = start('no-test-control', offPort, false);
     await ready(main);
     await ready(off);
@@ -135,6 +136,22 @@ try {
         env: { ...process.env, HARNESS_BASE_URL: baseOf(port), HARNESS_UI_URL: `http://127.0.0.1:${port}`, HARNESS_OFF_BASE_URL: baseOf(offPort), HARNESS_CONTROL_KEY: controlKey },
     });
     code = run.status ?? 1;
+    if (code !== 0 && (requested === 'api' || requested === 'ui')) {
+        // Every scenario can pass and the run still fail, because of a hook (CDS-38 C-15): say which, from the message report.
+        const report = path.join(harness, 'reports', `${requested}.ndjson`);
+        if (fs.existsSync(report)) {
+            for (const line of fs.readFileSync(report, 'utf8').split('
+')) {
+                if (!line.includes('testRunHookFinished')) continue;
+                try {
+                    const finished = JSON.parse(line).testRunHookFinished?.result;
+                    if (finished && finished.status !== 'PASSED') console.error(`harness: a run hook ${String(finished.status).toLowerCase()}: ${finished.message ?? '(no message)'}`);
+                } catch {
+                    // not a JSON line
+                }
+            }
+        }
+    }
     console.log(`\nharness: ${requested === 'exit' ? 'exit checks' : requested === 'flags' ? 'flag proof' : 'Cucumber'} exit code ${code}; service logs ${main.logPath}, ${off.logPath}`);
 } catch (error) {
     console.error(`harness: ${error.message}`);

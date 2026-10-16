@@ -15,7 +15,7 @@ const steps = [
   { name: 'install fixtures', cwd: 'fixtures', cmd: 'npm ci --no-audit --no-fund', setup: true },
   { name: 'install api-client', cwd: 'packages/api-client', cmd: 'npm ci --no-audit --no-fund', setup: true },
   { name: 'install harness', cwd: 'test-harnesses/harness-serenity', cmd: 'npm ci --no-audit --no-fund', setup: true },
-  { name: 'contract lint', cwd: '.', cmd: 'npx --yes @redocly/cli@2.57.0 lint' },
+  { name: 'contract lint', cwd: '.', cmd: 'npx redocly lint' },
   { name: 'fixture check', cwd: 'fixtures', cmd: 'npm run check' },
   { name: 'Gherkin parse and rule coverage', cwd: '.', cmd: `${python} tools/check-gherkin.py` },
   { name: 'mock smoke', cwd: '.', cmd: 'node tools/mock-smoke.mjs' },

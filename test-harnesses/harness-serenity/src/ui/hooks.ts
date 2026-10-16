@@ -20,8 +20,14 @@ BeforeAll(async () => {
     browser = await chromium.launch({ headless: true, executablePath: process.env.HARNESS_BROWSER_PATH || undefined });
 });
 
-AfterAll(async () => {
-    await browser?.close();
+// A browser that will not close must fail with its reason on the console, not leave an exit code with every scenario green (CDS-38 C-15).
+AfterAll({ timeout: 60_000 }, async () => {
+    if (!browser) return;
+    const closed = await Promise.race([browser.close().then(() => true), new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 30_000))]);
+    if (!closed) {
+        console.error('harness: the browser did not close within 30 s');
+        throw new Error('The browser did not close within 30 s');
+    }
 });
 
 Before(async () => {

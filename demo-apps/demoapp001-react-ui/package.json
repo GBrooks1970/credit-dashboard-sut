@@ -10,7 +10,8 @@
     "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "check": "tsc --noEmit && vitest run && vite build"
+    "build:test": "tsc --noEmit && vite build --outDir dist-test --emptyOutDir",
+    "check": "tsc --noEmit && vitest run && node --test scripts/public-build-guard.test.mjs && vite build && node scripts/public-build-guard.mjs"
   },
   "dependencies": {
     "@credit-dashboard-sut/api-client": "file:../../packages/api-client",

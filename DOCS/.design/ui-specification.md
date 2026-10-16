@@ -1,5 +1,5 @@
 ---
-version: 26
+version: 27
 created: 2026-10-14T09:43Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v27:** CDS-38 (F10): the exit checks (section 9) are as wide as section 9 says. `npm run check:ui-exit` scans every page and every state that shows something new (an open dialog, a section error with its Retry, an empty list, a form error or a saved message, the debug page, the pages not built yet) with axe-core in the light and in the dark theme (60 targets and the two sign-in states, 124 scans), and checks every page that is not a state of another page in the three layouts with this machine's text and with the root text doubled (282 checks). "Wider text" means `html { font-size: 200% }`, so `rem` sizes follow (WCAG 1.4.4). The public build is checked after `vite build`: `npm run check` in the UI package fails if `dist/` holds any of `cds.testControlKey`, `__test`, `x-test-control-key`, `debug-flag` or `Debug panel`. The harness builds its test build into `dist-test/`, never `dist/`. The catch stated for `ph-a11y` is narrowed to what axe can see: axe has no rule for a missing `aria-pressed`, so the year buttons' `aria-pressed` is caught by the component tests, and axe catches the icons that lose their text. The widened checks found, and this change fixed, a dark-theme error colour that failed contrast (`#dc-error`), account cards that did not shrink to a phone with doubled text, and two hidden chart tables that widened the page.
 **Changes in v26:** CDS-38 (F9): what the review found the UI built differently from this specification, now built as written, with the few places where the specification follows the build. One `UtilisationBar` serves the overview, the lists and the account page: `aria-valuenow` is the real value, `aria-valuemax` is raised above 100, the fill stops at full, the colour band is on the fill and in `data-band` (below 30 `low`, 30 to 75 `mid`, above 75 `high`), and the badge `{testid}-over-limit` reads `Over limit`; the text beside the bar carries the figure only (C-02, C-05). An account row shows the provider's initials as its logo fallback (`row-initials-{id}`, decorative); real logos are not loaded, because the data's `logoUrl` is a placeholder (C-21). The searches list is `search-list` (C-06). The account detail header is a region named `Account summary` (C-28). While the chat drawer is open, everything outside it is `inert` (C-25). The history chart's table words its months (`June 2026`) as the balance chart's does (C-32).
 **Changes in v25:** CDS-38 (F8): the open-redirect guard judges the address the URL parser resolves, not the text it was given: dot segments (`/..//host`), a backslash and a tab are resolved first, and the result must start with a single `/` followed by a character that is neither `/` nor `\`; the sign-in redirect-back uses the same guard (C-01, C-20). A response that arrives after a newer request, or after the page was left, is ignored in every fetching page and widget, so the page always shows the answer to the last thing the customer asked for (C-03). A report-changes page past the end of a list that has changes is a page, not an empty list: it says `There are no changes on this page.` (`changes-past-end`), offers `Go to the last page` (`changes-last-page`) and keeps the pager; "No changes match." is only for a list with nothing in it (C-22).
 **Changes in v24:** CDS-38 (F5, B-04, B-19): two value hooks so a step can compare a figure exactly: `debt-type-{type}-amount` inside each debt row, and `detail-tile-{field}-value` inside each details tile. The row and tile text is unchanged.
@@ -283,7 +284,7 @@ Off by default. Each one recreates a defect seen in the source pages or a common
 | `plural` | '1 topics', 'Updates in 1 days' | Copy assertion |
 | `button-href` | Tiles rendered as buttons with `href` | Semantics lint |
 | `double-render` | List rendered twice during route change | Strict-mode locator failure |
-| `ph-a11y` | Year buttons lose `aria-pressed`; icons lose text | axe-core |
+| `ph-a11y` | Year buttons lose `aria-pressed`; icons lose text | Component test (`aria-pressed` on the year buttons; axe has no rule for it); axe-core (the icons' text) |
 | `open-redirect` | `redirectUrl` guard removed | Security scenario |
 | `truncate-summary` | Summary cut mid-word with no way to expand | Component test (brief 13 D4) |
 | `negative-balance` | An account in credit is shown as an amount owed (`£44`, no 'in credit') (DR-019) | `@BR-06` UI scenario |
@@ -298,8 +299,8 @@ Profile-page flags (`nested-button`, `decorative-alt`, `preferred-on-report`, `p
 | Component tests | Vitest + Testing Library, states from section 4.3 | Phase 4 onwards |
 | `@ui` scenarios against the live service | Serenity/JS + Playwright + Cucumber, the service with test control serving the built UI (brief 11 D1, D2) | Phase 4, each slice; exit |
 | Component fixtures | Vitest with responses taken from the contract examples; Prism stays for the typed-client smoke | Phase 4 onwards |
-| Accessibility | axe-core on every page, flags off: zero violations (`@axe-core/playwright`, `npm run check:ui-exit`; also in the `ui` CI job) | Phase 4 exit |
-| Layouts | 375, 768 and 1280 px: one navigation at a time (the bottom tab bar below 768 px), no sideways scroll, the demo banner shown, and axe-core at each width, with normal and wider text (`npm run check:ui-exit`) | Phase 4 exit |
+| Accessibility | axe-core on every page and every state that shows something new, in the light and the dark theme, flags off: zero violations (`@axe-core/playwright`, `npm run check:ui-exit`; also in the `ui` CI job) | Phase 4 exit |
+| Layouts | 375, 768 and 1280 px: one navigation at a time (the bottom tab bar below 768 px), no sideways scroll, the demo banner shown, and axe-core at each width, with normal text and with the root text doubled (`npm run check:ui-exit`) | Phase 4 exit |
 | Visual regression | Snapshots at 375px and 1280px, light and dark | Phase 5 |
 | Bug-flag proof | Each flag on: at least one committed check (scenario, exit check, component test or service test) fails for the stated reason, and passes with it off; `npm run check:bug-flags` (brief 13 D5, DR-064) | Phase 5 |
 

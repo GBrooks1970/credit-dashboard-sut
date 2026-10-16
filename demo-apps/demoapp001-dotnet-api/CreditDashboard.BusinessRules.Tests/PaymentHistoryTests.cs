@@ -88,8 +88,11 @@ public class PaymentHistoryTests
     [Test, Category("BR-12")]
     public void A_missed_month_outside_the_window_is_not_in_any_window_year()
     {
-        var a = Account("2015-01-01", null, "2018-05");
-        var statuses = PaymentHistory.Window(new DateOnly(2026, 10, 3)).Select(y => PaymentHistory.YearStatus([a], y, Now));
-        Assert.That(statuses, Does.Not.Contain(PaymentStatus.Missed));
+        // A 2020 month (inside the window) beside the 2018 one (outside it): the window must show 2020 and not 2018 (CDS-38 A-14).
+        var a = Account("2015-01-01", null, "2018-05", "2020-03");
+        var window = PaymentHistory.Window(new DateOnly(2026, 10, 3));
+        var statuses = window.ToDictionary(y => y, y => PaymentHistory.YearStatus([a], y, Now));
+        Assert.That(statuses.Where(s => s.Value == PaymentStatus.Missed).Select(s => s.Key), Is.EqualTo(new[] { 2020 }));
+        Assert.That(window, Does.Not.Contain(2018));
     }
 }

@@ -71,6 +71,22 @@ public class ReportTests
         Assert.That(body!["type"]!.GetValue<string>(), Is.EqualTo("/problems/not-found"));
     }
 
+    [Test]
+    public async Task An_unknown_bureau_is_a_404_for_the_score_history_too()
+    {
+        var (status, body) = await Get("getScoreHistory", "/reports/bureau-zzz/score/history?range=6m");
+        Assert.That(status, Is.EqualTo(HttpStatusCode.NotFound));
+        Assert.That(body!["type"]!.GetValue<string>(), Is.EqualTo("/problems/not-found"));
+    }
+
+    [Test]
+    public async Task An_unknown_bureau_is_a_404_for_the_summary_feedback_too()
+    {
+        var (status, body) = await Get("setSummaryFeedback", "/reports/bureau-zzz/summary/feedback", method: HttpMethod.Put, json: """{"value":"like"}""");
+        Assert.That(status, Is.EqualTo(HttpStatusCode.NotFound));
+        Assert.That(body!["type"]!.GetValue<string>(), Is.EqualTo("/problems/not-found"));
+    }
+
     // getScoreHistory
 
     [TestCase("3m", 3)]

@@ -33,3 +33,4 @@ Every implementation plan is written to a file here before implementation starts
 | [`2026-10-14_cds-37-phase-5-defects-and-evidence.md`](2026-10-14_cds-37-phase-5-defects-and-evidence.md) | CDS-37 Phase 5 plan, defects and evidence | 2026-10-14 | approved | P1 (CDS-39) next |
 | [`2026-10-14_cds-38-independent-review.md`](2026-10-14_cds-38-independent-review.md) | CDS-38 Independent review of the Phase 3 service, the harness and the Phase 4 UI | 2026-10-14 | approved | reviewers not yet launched |
 | [`2026-10-15_cds-38-fixes.md`](2026-10-15_cds-38-fixes.md) | CDS-38 Fixes for the signed-off review findings | 2026-10-15 | approved | F1 next |
+| [`2026-10-16_cds-38-confirmation-pass.md`](2026-10-16_cds-38-confirmation-pass.md) | CDS-38 F11 The confirmation pass | 2026-10-16 | approved | reviewers launching |

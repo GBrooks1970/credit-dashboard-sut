@@ -34,3 +34,4 @@ Every implementation plan is written to a file here before implementation starts
 | [`2026-10-14_cds-38-independent-review.md`](2026-10-14_cds-38-independent-review.md) | CDS-38 Independent review of the Phase 3 service, the harness and the Phase 4 UI | 2026-10-14 | approved | reviewers not yet launched |
 | [`2026-10-15_cds-38-fixes.md`](2026-10-15_cds-38-fixes.md) | CDS-38 Fixes for the signed-off review findings | 2026-10-15 | approved | F1 next |
 | [`2026-10-16_cds-38-confirmation-pass.md`](2026-10-16_cds-38-confirmation-pass.md) | CDS-38 F11 The confirmation pass | 2026-10-16 | approved | reviewers launching |
+| [`2026-10-16_cds-38-confirmation-fixes.md`](2026-10-16_cds-38-confirmation-fixes.md) | CDS-38 F11a to F11f Fixes from the confirmation pass | 2026-10-16 | proposed | awaiting owner approval and decisions D1 to D5 |

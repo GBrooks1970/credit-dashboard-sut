@@ -1,4 +1,4 @@
-// version: 5 | created: 2026-10-13T11:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 6 | created: 2026-10-13T11:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Builds the service, starts it with test control on and a synthetic key, starts a second instance without test control
 // (for the scenario that needs the surface absent), runs the Cucumber profile against them, and always stops both
 // (design section 8, CDS-22). Run from test-harnesses/harness-serenity:  node scripts/run.mjs api|ui [feature ...]
@@ -97,6 +97,15 @@ async function ready(instance) {
         await new Promise((r) => setTimeout(r, 500));
     }
     throw new Error(`the ${instance.label} service did not answer within 60 s; log: ${instance.logPath}`);
+}
+
+// The harness's own unit tests (the contract validator, the parallel guard) run before anything is started (CDS-38 F2).
+if (requested === 'api' && features.length === 0) {
+    const unit = spawnSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['run', 'test:unit', '--silent'], { cwd: harness, stdio: 'inherit', shell: process.platform === 'win32' });
+    if (unit.status !== 0) {
+        console.error('harness: the harness unit tests failed');
+        process.exit(1);
+    }
 }
 
 let code = 1;

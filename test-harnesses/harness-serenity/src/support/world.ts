@@ -2,6 +2,8 @@ import type { Contract } from '../contract/validate.js';
 
 export interface Response {
     status: number;
+    /** Response headers, names in lower case. */
+    headers: Record<string, string>;
     body: any;
 }
 

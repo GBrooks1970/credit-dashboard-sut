@@ -9,6 +9,22 @@ const contractPath = fileURLToPath(new URL('../../../../DOCS/.architecture/opena
 
 type Json = Record<string, any>;
 
+/** One HTTP response as the validator needs it: what came back, not what the caller made of it (B-01, B-09, B-12). */
+export interface ResponseToCheck {
+    status: number;
+    /** The Content-Type header, or null when there is none. */
+    contentType: string | null;
+    /** Response headers, names in lower case. */
+    headers: Record<string, string>;
+    /** The parsed JSON body, or undefined when there is none or it is not JSON. */
+    body: unknown;
+    /** The body exactly as received. */
+    text: string;
+}
+
+/** Fields a Problem must never carry: a stack trace is a defect, not an extension member (B-11). */
+const FORBIDDEN_PROBLEM_FIELDS = ['stack', 'stackTrace', 'trace', 'exception'];
+
 export interface Operation {
     operationId: string;
     method: string;
@@ -50,9 +66,18 @@ export class Contract {
                 }
             }
         }
-        this.ajv = new Ajv2020({ strict: false, allErrors: true });
+        // Strict mode (B-12): an unknown keyword or a mistyped schema is an error here, not a schema that silently allows anything.
+        // The OpenAPI document is the root the schemas are reached through, so its own top-level keywords, and the one
+        // OpenAPI annotation the schemas use ('example'), are declared; any other unknown keyword is an error.
+        this.ajv = new Ajv2020({ strict: true, allowUnionTypes: true, allErrors: true });
+        this.ajv.addVocabulary(['openapi', 'info', 'servers', 'security', 'tags', 'paths', 'components', 'example']);
         addFormats.default(this.ajv);
         this.ajv.addSchema(this.doc, 'contract', true);
+        // Compile every documented response now, so a schema strict mode refuses fails when the contract is loaded and
+        // not only when a scenario first reaches it.
+        for (const key of Object.keys(this.doc.components['x-responses'])) {
+            this.validators.set(key, this.ajv.compile({ $ref: `contract#/components/x-responses/${key}` }));
+        }
     }
 
     operation(operationId: string): Operation {
@@ -61,18 +86,45 @@ export class Contract {
         return op;
     }
 
-    /** Throws, naming the operation, status and first failing path, if the body does not match the contract. */
-    validate(operationId: string, status: number, body: unknown, hasBody: boolean): void {
+    /**
+     * Throws, naming the operation and the cause, if the response is not one the contract allows: an undocumented status,
+     * a content type the response does not document, a documented header that is missing or wrong, a body that is not JSON
+     * when it says it is, a Problem whose status disagrees or that carries a stack trace, or a body that does not match its
+     * schema (a closed schema also refuses an extra property).
+     */
+    validate(operationId: string, response: ResponseToCheck): void {
+        const { status, body, text } = response;
         const op = this.operation(operationId);
         const key = `${operationId}_${status}`;
-        const documented = Object.keys(this.doc.paths[op.path][op.method.toLowerCase()].responses);
+        const responses = this.doc.paths[op.path][op.method.toLowerCase()].responses as Json;
+        const documented = Object.keys(responses);
         if (!documented.includes(String(status))) {
             throw new Error(`${operationId}: status ${status} is not documented in the contract (documented: ${documented.join(', ')})`);
         }
-        if (!this.doc.components['x-responses'][key]) {
+        const resolved = this.resolveResponse(responses[String(status)]);
+        const hasBody = text.length > 0;
+        const mediaTypes = Object.keys(resolved?.content ?? {});
+        if (mediaTypes.length === 0) {
             if (hasBody) throw new Error(`${operationId}: status ${status} documents no body, but one was returned`);
-            return;
+        } else {
+            const actual = response.contentType?.split(';')[0]?.trim().toLowerCase() ?? null;
+            if (!actual || !mediaTypes.includes(actual)) {
+                throw new Error(`${operationId}: the ${status} response has content type '${actual ?? 'none'}', and the contract documents ${mediaTypes.map((m) => `'${m}'`).join(' or ')}`);
+            }
+            if (hasBody && body === undefined) {
+                throw new Error(`${operationId}: the ${status} response says it is ${actual} but its body is not JSON: ${text.slice(0, 120)}`);
+            }
         }
+        this.checkHeaders(operationId, status, resolved, response.headers);
+        if (response.contentType?.toLowerCase().startsWith('application/problem+json') && body && typeof body === 'object') {
+            const problem = body as Json;
+            if (problem.status !== status) {
+                throw new Error(`${operationId}: the problem's status ${problem.status} does not agree with the HTTP status ${status}`);
+            }
+            const leaked = FORBIDDEN_PROBLEM_FIELDS.filter((name) => name in problem);
+            if (leaked.length > 0) throw new Error(`${operationId}: the ${status} problem carries ${leaked.join(', ')}, which must never leave the service`);
+        }
+        if (!this.doc.components['x-responses'][key]) return;
         let validator = this.validators.get(key);
         if (!validator) {
             validator = this.ajv.compile({ $ref: `contract#/components/x-responses/${key}` });
@@ -82,8 +134,26 @@ export class Contract {
             const first = validator.errors![0]!;
             throw new Error(
                 `${operationId}: the ${status} response does not match the contract at '${first.instancePath || '/'}': ${first.message} ` +
-                    `(${validator.errors!.length} error${validator.errors!.length === 1 ? '' : 's'}); body: ${JSON.stringify(body).slice(0, 300)}`,
+                    `(${validator.errors!.length} error${validator.errors!.length === 1 ? '' : 's'}); body: ${String(JSON.stringify(body)).slice(0, 300)}`,
             );
+        }
+    }
+
+    /** A header the contract documents on a response must be present and match its schema, unless the contract says it is not required. */
+    private checkHeaders(operationId: string, status: number, resolved: Json | undefined, actual: Record<string, string>): void {
+        for (const [name, header] of Object.entries<Json>(resolved?.headers ?? {})) {
+            const value = actual[name.toLowerCase()];
+            if (value === undefined) {
+                if (header.required === false) continue;
+                throw new Error(`${operationId}: the ${status} response has no ${name} header, which the contract documents`);
+            }
+            const schema = header.schema as Json | undefined;
+            if (!schema) continue;
+            const typed = schema.type === 'integer' || schema.type === 'number' ? Number(value) : value;
+            const wholeNumber = schema.type !== 'integer' || /^[0-9]+$/.test(value);
+            if (!wholeNumber || !this.ajv.compile(schema)(typed)) {
+                throw new Error(`${operationId}: the ${status} response's ${name} header '${value}' does not match the contract (${JSON.stringify(schema)})`);
+            }
         }
     }
 

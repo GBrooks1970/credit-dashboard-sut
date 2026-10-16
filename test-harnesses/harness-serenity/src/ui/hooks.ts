@@ -6,6 +6,7 @@ import { chromium, type Browser } from 'playwright';
 
 import { ControlTheTestEnvironment } from '../abilities/ControlTheTestEnvironment.js';
 import { STAGE_MANAGER } from '../support/actors.js';
+import { afterScenario } from '../support/diagnostics.js';
 import { controlKey, resetScenario } from '../support/world.js';
 
 let browser: Browser;
@@ -44,6 +45,6 @@ Before(async () => {
     if (flags.length > 0) await control.setBugs(flags);
 });
 
-After(async () => {
-    resetScenario();
+After(async function (testCase) {
+    await afterScenario(this, testCase);
 });

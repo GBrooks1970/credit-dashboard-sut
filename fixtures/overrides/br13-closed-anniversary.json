@@ -13,18 +13,21 @@
             "logoUrl": null,
             "maskedNumber": "*0004",
             "balance": {
-              "amountMinor": 0,
+              "amountMinor": 4500,
               "currency": "GBP"
             },
-            "limit": null,
-            "utilisation": null,
+            "limit": {
+              "amountMinor": 100000,
+              "currency": "GBP"
+            },
+            "utilisation": 5,
             "includedInTotals": true,
             "status": "closed",
             "openedDate": "2015-02-01",
             "closedDate": "2020-10-03",
             "updateFrequency": "monthly",
             "lastUpdated": "2026-09-30",
-            "utilisationRaw": null,
+            "utilisationRaw": 5,
             "details": {
               "apr": null,
               "interestRate": null,

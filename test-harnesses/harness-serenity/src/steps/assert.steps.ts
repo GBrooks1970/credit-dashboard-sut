@@ -75,12 +75,23 @@ Then('the unfloored utilisation is {percent}', (percent: number) => assert.equal
 Then('the account number is shown as {string}', (masked: string) => assert.equal(body().maskedNumber, masked));
 
 // 'The credit card' and 'its balance' read the credit card in the list the last When returned.
+// The Given that arranged the card stored its id as 'that account' (design section 6): the step looks for that card, not for any credit card (B-16).
 const listedCreditCards = () => body().filter((a: { type: string }) => a.type === 'creditcard');
-Then('the credit card is {listedOrNot}', (shown: boolean) => assert.equal(listedCreditCards().length, shown ? 1 : 0));
+const thatCard = () => {
+    const id = scenario.state.thatAccount;
+    assert.ok(id, "No credit card was arranged: a 'has a credit card' step must come first");
+    return id;
+};
+Then('the credit card is {listedOrNot}', (shown: boolean) => {
+    const id = thatCard();
+    const listed = listedCreditCards().some((a: { id: string }) => a.id === id);
+    assert.equal(listed, shown, `${id} is ${listed ? '' : 'not '}in the list, which holds ${JSON.stringify(listedCreditCards().map((a: { id: string }) => a.id))}`);
+});
 Then('its balance is {money}', (amount: number) => {
-    const cards = listedCreditCards();
-    assert.equal(cards.length, 1, `Expected one credit card in the list, found ${cards.length}`);
-    assert.equal(minor(cards[0].balance), amount);
+    const id = thatCard();
+    const card = listedCreditCards().find((a: { id: string }) => a.id === id);
+    assert.ok(card, `${id} is not in the list`);
+    assert.equal(minor(card.balance), amount);
 });
 
 Then('the account is not found', () => {

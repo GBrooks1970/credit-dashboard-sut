@@ -1,5 +1,5 @@
 ---
-version: 23
+version: 24
 created: 2026-10-14T09:43Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v24:** CDS-38 (F5, B-04, B-19): two value hooks so a step can compare a figure exactly: `debt-type-{type}-amount` inside each debt row, and `detail-tile-{field}-value` inside each details tile. The row and tile text is unchanged.
 **Changes in v23:** CDS-38 (F1): the debug panel is at `/debug` (it was written `/__debug`), is present only in a test build and only for a signed-in customer, and 6.8 lists its hooks (C-08). The score gauge is a `progressbar` named 'Credit score' with the score as its value and 0 to the maximum as its range, not an `img` (C-07).
 **Changes in v22:** CDS-39 (P1): the flag mechanism is built. The control key reaches a test build through browser local storage (`cds.testControlKey`), which the harness seeds before the page loads (a browser context can seed local storage, not session storage); the app waits for the flags before it renders; the debug panel of 6.8 is the page `/debug` and exists only in a test build; `plural` is the first UI flag implemented.
 **Changes in v21:** decision brief 13 (DR-064): the bug flags are read by a test build of the UI from `GET /__test/state` once at start, with the key the harness supplies (section 3); the expected catch of `toggle-label` and `truncate-summary` is a component test; the bug-flag proof in section 9 is "at least one committed check" and is run by `npm run check:bug-flags`.
@@ -231,7 +232,7 @@ Sections not shown for a type are not rendered at all, rather than rendered empt
 
 ### 6.7 Closed accounts, report changes, searches, personal details, debt (Releases 2 to 3)
 
-These pages reuse the list patterns above. Closed accounts (`closed-title`) groups rows under `closed-group-{type}` with no summary. Report changes adds filter chips `changes-filter-{sentiment}` and pagination `pager-prev`, `pager-next`, `pager-status`; filters are reflected in the URL. Searches lists `search-row-{id}` inside `search-list` (empty state `search-list-empty`). Personal details is read-only in v1: the name `pd-name` (the user's legal name), the current address `pd-address-current`, previous addresses `pd-address-previous-{n}` (newest first, from 1), and the electoral roll status `pd-electoral-roll`. Debt overview shows `debt-total`, `debt-trend` and a per-type breakdown `debt-type-{type}`, one row per `byType` entry of `GET /debt/overview` (BR-07, DR-046).
+These pages reuse the list patterns above. The debt overview rows are `debt-type-{type}`, each with its amount in `debt-type-{type}-amount`; each details tile holds its value in `detail-tile-{field}-value`. Closed accounts (`closed-title`) groups rows under `closed-group-{type}` with no summary. Report changes adds filter chips `changes-filter-{sentiment}` and pagination `pager-prev`, `pager-next`, `pager-status`; filters are reflected in the URL. Searches lists `search-row-{id}` inside `search-list` (empty state `search-list-empty`). Personal details is read-only in v1: the name `pd-name` (the user's legal name), the current address `pd-address-current`, previous addresses `pd-address-previous-{n}` (newest first, from 1), and the electoral roll status `pd-electoral-roll`. Debt overview shows `debt-total`, `debt-trend` and a per-type breakdown `debt-type-{type}`, one row per `byType` entry of `GET /debt/overview` (BR-07, DR-046).
 
 ### 6.8 Debug panel (tooling)
 

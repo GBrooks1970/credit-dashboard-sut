@@ -100,7 +100,7 @@ function AccountBody({ account, bureauId, detailAddress }: { account: Account; b
             const target = `/data-capture/${tile.field}?accountId=${account.id}&redirectUrl=${encodeURIComponent(detailAddress)}`;
             return (
               <Link key={tile.field} to={target} data-testid={`detail-tile-${tile.hook}`}>
-                {tile.label}: {value ?? 'Not recorded'}
+                {tile.label}: <span data-testid={`detail-tile-${tile.hook}-value`}>{value ?? 'Not recorded'}</span>
               </Link>
             );
           })}

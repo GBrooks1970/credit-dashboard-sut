@@ -174,6 +174,9 @@ describe('account detail (UI specification 6.5)', () => {
     expect(screen.getByTestId('detail-updated')).toHaveTextContent('Updated 30 September 2026');
     expect(screen.getByTestId('detail-promo')).toBeInTheDocument();
     expect(screen.getByTestId('detail-tile-apr')).toHaveTextContent('24.9%');
+    // The value has its own hook, so a step can compare it exactly (CDS-38 B-19).
+    expect(screen.getByTestId('detail-tile-apr-value').textContent).toBe('24.9%');
+    expect(screen.getByTestId('detail-tile-interest-rate-value').textContent).toBe('Not recorded');
     expect(screen.getByTestId('detail-tile-interest-rate')).toHaveTextContent('Not recorded');
     expect(screen.getByTestId('detail-tile-promo-period-months')).toBeInTheDocument();
     expect(screen.getByTestId('detail-tile-min-payment')).toBeInTheDocument();

@@ -55,6 +55,9 @@ public class AccountTests
     {
         var (_, body) = await Call("listAccounts", A + "/accounts?status=closed");
         Assert.That(Ids(body), Is.EqualTo(new[] { "acc_ddcl01" }));
+        var stored = System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(ServiceHost.RepoFile("fixtures", "personas", "drilldown.json")))!["bureaux"]![0]!["accounts"]!
+            .AsArray().Single(a => a!["id"]!.GetValue<string>() == "acc_ddcl01")!["balance"]!["amountMinor"]!.GetValue<long>();
+        Assert.That(stored, Is.Not.Zero, "the fixture holds a balance on the closed card, so the test can tell a zeroing service from one that is not");
         Assert.That(body![0]!["balance"]!["amountMinor"]!.GetValue<long>(), Is.Zero);
     }
 

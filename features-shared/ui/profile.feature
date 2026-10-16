@@ -72,5 +72,5 @@ Feature: My profile
   # PR-08 covers URLs, page titles and client-side logs. Logs are left to component tests (decision brief 4 D6).
   @PR-08 @security
   Scenario: Profile details stay out of the page title and address
-    Then the page title contains none of Alex's legal name, email address or mobile digits
-    And the page address contains none of them either
+    Then the page title contains none of Alex's profile data
+    And the page address contains none of it either

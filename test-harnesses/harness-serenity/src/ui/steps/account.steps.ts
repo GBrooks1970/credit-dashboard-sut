@@ -149,7 +149,7 @@ Then('its balance is {money}', (money: number) => {
 });
 
 Then('the credit card shows an interest rate of {percent}', (percent: number) =>
-    firstActor().attemptsTo(Wait.until(Text.of(byTestId('detail-tile-interest-rate')), includes(`${percent}%`))),
+    firstActor().attemptsTo(Wait.until(Text.of(byTestId('detail-tile-interest-rate-value')), equals(`${percent}%`))),
 );
 
 Then('{actor} is told the rate must be between 0% and 100%', (name: string) =>

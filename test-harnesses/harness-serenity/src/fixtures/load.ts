@@ -7,6 +7,15 @@ export interface TestUser {
     username: string;
     password: string;
     email: string;
+    legalName: string;
+    /** ISO date, YYYY-MM-DD. */
+    dateOfBirth: string;
+}
+
+/** A date as the UI shows it: 12 March 1985. */
+export function longDate(iso: string): string {
+    const [y, m, d] = iso.split('-').map(Number) as [number, number, number];
+    return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 }
 
 export function testUser(username: string): TestUser {

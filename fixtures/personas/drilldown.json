@@ -1023,18 +1023,21 @@
           "logoUrl": "https://logos.scoreharbour.example/lender-y.svg",
           "maskedNumber": "*2207",
           "balance": {
-            "amountMinor": 0,
+            "amountMinor": 12300,
             "currency": "GBP"
           },
-          "limit": null,
-          "utilisation": null,
+          "limit": {
+            "amountMinor": 250000,
+            "currency": "GBP"
+          },
+          "utilisation": 5,
           "includedInTotals": true,
           "status": "closed",
           "openedDate": "2017-03-03",
           "closedDate": "2023-01-31",
           "updateFrequency": "monthly",
           "lastUpdated": "2026-09-30",
-          "utilisationRaw": null,
+          "utilisationRaw": 5,
           "details": {
             "apr": null,
             "interestRate": null,

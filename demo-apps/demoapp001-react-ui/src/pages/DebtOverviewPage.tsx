@@ -27,7 +27,7 @@ export function DebtOverviewPage() {
             <ul>
               {data.byType.map((entry) => (
                 <li key={entry.type} data-testid={`debt-type-${entry.type}`}>
-                  {ACCOUNT_TYPE_LABEL[entry.type]}: {formatMoney(entry.amount.amountMinor, { pence: false })}
+                  {ACCOUNT_TYPE_LABEL[entry.type]}: <span data-testid={`debt-type-${entry.type}-amount`}>{formatMoney(entry.amount.amountMinor, { pence: false })}</span>
                 </li>
               ))}
             </ul>

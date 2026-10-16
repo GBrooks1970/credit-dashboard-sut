@@ -1,5 +1,5 @@
 ---
-version: 31
+version: 32
 created: 2026-10-14T15:00Z
 supersedes: v22 (2026-10-08); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v32:** CDS-38 (F5, B-15): a closed account's stored balance is source data and may be non-zero; the service reports 0 whatever is stored (BR-13). Before, a fixture or an override with a closed balance was refused (422), so no scenario could tell a service that zeroes the balance from one that does not. The override check no longer refuses it; the fixture check allows it. A closed account also carries a limit in the `drilldown` persona and in the BR-13 sample, so that counting a closed account in the open-account totals (BR-04) changes a figure (B-14).
 **Changes in v31:** CDS-38 (F4): the rules and flags the review found wrong, now as the specification says. BR-14 `percent` has at most two decimals (A-16); BR-12 a future month is never `missed` (A-17); PR-02 counts code points, not UTF-16 units (A-23). The resend limit is checked and recorded in one step per user, so requests that arrive together cannot all pass the 60 seconds (A-04, PR-09). The email status lives in the session only; test control and the profile read the same value (A-21). `currency-float` is applied where a response is written, to every money object in it (A-09); `mask-format` also reaches the excluded list of the type totals (A-10); `excluded-in-total` reaches the type totals and the debt total and breakdown, pinned by a test (A-11).
 **Changes in v30:** CDS-38 (F3): the service meets what section 3 and section 8 already said. `X-Correlation-Id` is on every response, including the hosted UI and errors; a supplied value is echoed only if it is 1 to 128 letters, digits, dots, underscores or hyphens, otherwise a new GUID replaces it (A-05). An unhandled fault is the 500 Problem with a fixed detail and no trace, in every environment (A-01, A-02), and a body that names a property twice is a 400 (A-02). The test-control gate treats repeated slashes and any letter case as the same path, so a test-control path is the same 404 however it is spelt when test control is off (A-03). `PUT /__test/clock` takes an RFC 3339 date-time only, with offset and seconds, either case of `T` and `Z` (A-06). The year window of the payment-history operations is part of the request's own values and is checked before the target and the persona (A-07). A test-control error is never plain text under `problem-json-missing` (A-08). The hosted `index.html` is `no-store` on every path, a `HEAD` is answered like a `GET`, and a missing file under `/assets/` is a 404 Problem (A-20).
 **Changes in v29:** CDS-38 (F2a, B-10): contract v19 (`info.version` 0.9.6). Every response object is closed (`additionalProperties: false`): a property its schema does not list is a defect, so a leaked field fails the validator, Schemathesis and the harness. `Problem` stays open (RFC 9457 extension members). The six `allOf` schemas (`MobileChallenge`, `ChangePage`, `SearchPage`, `NotificationPage`, `Account`, `FixtureAccount`) are flat objects with the same names, and `PageMeta` is gone (its three fields are in the page types), because a closed base rejects what its siblings add. `LoginRequest` and `PreferredNameUpdate` stay open.
@@ -187,7 +188,7 @@ Every operation documents a `404` (`TestControlDisabled` in the contract): test 
 **Overrides (DR-020; contract schema `PersonaOverrides`).** A scenario arranges data no persona holds by binding with `overrides`: for each named bureau, the lists it supplies (`accounts`, `changes`, `searches`) replace that bureau's lists for this user; lists not named are kept. Accounts use the contract's `FixtureAccount`, the fixture format of section 9.1. `POST /__test/reset`, or binding again without `overrides`, clears them; `GET /__test/state` reports which users have overrides in force.
 
 - A body that fails the schema is a `400`; an unknown bureau ID is a `404`. The overrides rules are the business rules of section 7, applied by the same library (CDS-20).
-- Overrides that break a rule a stored value must obey are a `422`: utilisation against balance and limit (BR-03, BR-06), a loan without a limit counted in totals (BR-05), a mask against its source (BR-09), a closed account with a balance (BR-13), missed months outside the seven-year window (BR-12), or an account ID used elsewhere (BR-15).
+- Overrides that break a rule a stored value must obey are a `422`: utilisation against balance and limit (BR-03, BR-06), a loan without a limit counted in totals (BR-05), a mask against its source (BR-09), missed months outside the seven-year window (BR-12), or an account ID used elsewhere (BR-15).
 - Two persona conventions do **not** apply, because scenarios arrange exactly these states: changes need not be stored newest first (the service sorts them, BR-11), and a closed account may sit outside the six-year window (the service does not list it, BR-13).
 - Derived values (section 9.1) are recomputed from the overridden source data, never supplied.
 
@@ -293,7 +294,7 @@ Personas live in `fixtures/personas/{persona}.json`, one file for each value of 
 | `maskedNumber` equals the mask of `sourceMask`, where present | BR-09 |
 | Changes are newest first (personas only) | BR-11 |
 | `missedMonths` fall inside the seven-year window and after the opened date | BR-12 |
-| Closed accounts have balance 0, a close date and status `closed`; personas only: inside the six-year window | BR-13 |
+| Closed accounts have a close date and status `closed`; the stored balance may be non-zero, because the service reports 0 (BR-13); personas only: inside the six-year window | BR-13 |
 | `nextRefreshDate` is not before `asAt` | BR-08 |
 | Every user composed with every persona gives a valid `User`, `Profile` and `PersonalDetails` | Section 9.1 |
 | Emails use `example.com`; mobile digits sit inside `07700 900000` to `07700 900999` | DR-010 |

@@ -36,7 +36,7 @@ const ERROR = '[data-testid$="-error"]';
 const EMPTY = '[data-testid$="-empty"]';
 const editAddress = (field: string) => `/data-capture/${field}?accountId=${card}&redirectUrl=${encodeURIComponent(`${R}/account/${card}`)}`;
 
-const targets: Target[] = [
+const allTargets: Target[] = [
     { name: 'overview', address: R, ready: 'score-value' },
     { name: 'overview, chat open', address: R, ready: 'score-value', act: async (page) => { await page.getByTestId('btn-chat').click(); await page.getByTestId('chat-drawer').waitFor(); } },
     { name: 'overview, every change shown', address: R, ready: 'score-value', act: async (page) => { await page.getByTestId('changes-toggle').click(); await page.getByTestId('changes-toggle').waitFor(); } },
@@ -130,6 +130,10 @@ const targets: Target[] = [
     { name: 'a page not built yet: employment', address: '/my-account/profile/employment', ready: 'page-not-built' },
     { name: 'a page not built yet: finances', address: '/my-account/profile/finances', ready: 'page-not-built' },
 ];
+
+// CDS_EXIT_ONLY=text runs only the targets whose name holds the text: for looking at one page while fixing it. The standing run is whole.
+const only = process.env.CDS_EXIT_ONLY;
+const targets = only ? allTargets.filter((t) => t.name.includes(only)) : allTargets;
 
 async function control(path: string, method: string, body?: unknown) {
     const response = await fetch(`${api}${path}`, {

@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useLatest } from '../../useLatest.ts';
 import type { components } from '@credit-dashboard-sut/api-client';
 import { SectionState, type SectionStateName } from '../../components/SectionState.tsx';
+import { formatMonth } from '../../format.ts';
 import { useSession } from '../../session.tsx';
 
 type Point = components['schemas']['ScorePoint'];
@@ -109,7 +110,7 @@ export function HistoryChart({ bureauId, max }: { bureauId: string; max: number 
           <tbody>
             {points.map((point) => (
               <tr key={point.month} data-testid={`history-chart-row-${point.month}`}>
-                <th scope="row">{point.month}</th>
+                <th scope="row">{formatMonth(point.month)}</th>
                 <td>{point.score === null ? 'No score' : point.score}</td>
               </tr>
             ))}

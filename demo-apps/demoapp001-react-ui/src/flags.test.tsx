@@ -90,3 +90,25 @@ describe('the debug panel (UI specification 6.8)', () => {
     await waitFor(() => expect(seen).toEqual(['persona {"persona":"drilldown"}', 'clock {"now":"2026-10-03T09:00:00Z"}', 'reset']));
   });
 });
+
+describe('the debug panel with storage blocked (CDS-38 C-30)', () => {
+  it('typing the control key does not throw', async () => {
+    fakeService({});
+    const setItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('blocked', 'SecurityError');
+    });
+    // An error thrown in an event handler is reported to the window by React; none must be.
+    const uncaught: unknown[] = [];
+    const listener = (event: ErrorEvent) => {
+      event.preventDefault();
+      uncaught.push(event.error);
+    };
+    window.addEventListener('error', listener);
+    await openSignedIn('/debug');
+    await userEvent.type(await screen.findByTestId('debug-key'), 'k');
+    window.removeEventListener('error', listener);
+    expect(screen.getByTestId('debug-key')).toHaveValue('k');
+    expect(uncaught).toEqual([]);
+    setItem.mockRestore();
+  });
+});

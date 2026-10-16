@@ -1,5 +1,5 @@
 ---
-version: 10
+version: 11
 created: 2026-10-14T09:10Z
 supersedes: v6 (2026-10-07T13:09Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -11,6 +11,7 @@ language: en-GB
 
 **Status:** Phase 0 draft, for review
 **Parent:** [UI specification](ui-specification.md) (conventions in its section 4 apply here unchanged)
+**Changes in v11:** CDS-38 (F9, C-33): the attempts left (`mobile-attempts`) appear with the first wrong code (the 422 `code-wrong`), not when the code step opens; the header image is a whole 1 by 1 GIF (C-27).
 **Changes in v10:** decision brief 13 D4 (DR-064): the expected catch of `lost-edit` is a component test.
 **Changes in v9:** CDS-35 (U5): what the profile pages built settles. The identity header is a region `profile-identity`, so a test can show nothing in it takes input; the name information button reads 'Why can I not change my name?'; the preferred name's status line `profile-preferred-status` carries the error text as well as 'Saved', and is empty until a result is in; the preferred name is checked on the client against PR-02 and a refused name is not sent; the mobile sub-page shows `mobile-attempts` ('2 attempts left'); the email form is `noValidate`, so the service's message and not the browser's bubble is shown at `email-error`; the header account button is now a link to the profile.
 **Changes in v8:** section 4.2 specifies the email sub-page: its hooks (CDS-24; CDS-18 review Note, pass 3 F-12).
@@ -112,7 +113,7 @@ Each sub-page has Save and Cancel, returns to the profile on save, and shows the
 | Code | textbox, labelled, numeric | `mobile-code-input` | Six digits (PR-10) |
 | Code hint | text | `mobile-code-hint` | States that the demo code is always 123456 (DR-025) |
 | Submit code | button | `mobile-code-submit` | `POST /me/profile/mobile/verification`; on 200 returns to the profile, whose tile badge `profile-mobile-badge` shows Verified |
-| Code error | text, `aria-describedby` | `mobile-code-error` | From 422 `code-wrong` (with the attempts left, `mobile-attempts`) or `code-invalid` (asks for the number to be added again) |
+| Code error | text, `aria-describedby` | `mobile-code-error` | From 422 `code-wrong` (with the attempts left, `mobile-attempts`, which is absent until the first wrong code) or `code-invalid` (asks for the number to be added again) |
 | Cancel | button | `mobile-cancel` | Returns to the profile; a number already saved stays Unverified |
 
 ### 4.2 Email sub-page (Release 3)

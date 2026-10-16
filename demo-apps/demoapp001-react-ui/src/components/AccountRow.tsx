@@ -6,6 +6,15 @@ import { Link } from 'react-router';
 import type { components } from '@credit-dashboard-sut/api-client';
 import { formatMoney, formatPercent } from '../format.ts';
 
+/** The provider's initials for the logo fallback: the first letter of its first two words (`Lender X` is `LX`). */
+export const initialsOf = (provider: string) =>
+  provider
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word.charAt(0).toUpperCase())
+    .join('');
+
 export type AccountSummary = components['schemas']['AccountSummary'];
 
 export function AccountRow({ bureauId, account, showUtilisation }: { bureauId: string; account: AccountSummary; showUtilisation: boolean }) {
@@ -13,6 +22,9 @@ export function AccountRow({ bureauId, account, showUtilisation }: { bureauId: s
   return (
     <li>
       <Link to={`/credit-health/report/${bureauId}/account/${account.id}`} data-testid={`account-row-${account.id}`} className="account-row">
+        <span className="initials" aria-hidden="true" data-testid={`row-initials-${account.id}`}>
+          {initialsOf(account.provider)}
+        </span>
         <span className="row-provider">{account.provider}</span>
         <span className="muted">{account.maskedNumber}</span>
         <span data-testid={`row-balance-${account.id}`}>{formatMoney(account.balance.amountMinor, { pence: true })}</span>

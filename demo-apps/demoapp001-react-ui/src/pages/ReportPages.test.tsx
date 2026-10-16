@@ -314,3 +314,16 @@ describe('a report-changes page past the end (CDS-38 C-22)', () => {
     expect(screen.queryByTestId('changes-past-end')).not.toBeInTheDocument();
   });
 });
+
+describe('the searches list has its own hook (CDS-38 C-06)', () => {
+  it('search-list holds the rows', async () => {
+    fakeService({
+      'GET /reports/bureau-a/searches': () =>
+        json(200, { page: 1, pageSize: 20, total: 1, items: [{ id: 's1', kind: 'hard', organisation: 'Lender X', purpose: 'Credit card', date: '2026-09-01' }] }),
+    });
+    await openSignedIn('/credit-health/report/bureau-a/searches/hard');
+    const list = await screen.findByTestId('search-list');
+    expect(list.tagName).toBe('UL');
+    expect(within(list).getByTestId('search-row-s1')).toBeInTheDocument();
+  });
+});

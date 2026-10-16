@@ -50,7 +50,9 @@ function renderOverview() {
   );
 }
 
-const history = (scores: (number | null)[]) => scores.map((score, i) => ({ month: `2026-${String(i + 5).padStart(2, '0')}`, score }));
+// Months from 2026-05 on, rolling into the next year: twelve points must still be twelve real months (the table shows them as words).
+const history = (scores: (number | null)[]) =>
+  scores.map((score, i) => ({ month: `${2026 + Math.floor((i + 4) / 12)}-${String(((i + 4) % 12) + 1).padStart(2, '0')}`, score }));
 
 const baseHandlers = (overview: Overview = overviewFixture): Record<string, Handler> => ({
   'GET /reports/bureau-a/overview': () => json(200, overview),
@@ -106,12 +108,24 @@ describe('the score, the comparison and the sections (UI specification 6.2)', ()
     expect(screen.queryByTestId('account-util-bar-loan')).not.toBeInTheDocument();
   });
 
-  it('over the limit says so (DR-013) and the bar stops at the full width', async () => {
+  it('over the limit says so (DR-013): the real figure, a raised maximum, a full fill and the badge (CDS-38 C-02, C-05)', async () => {
     const over: Overview = { ...overviewFixture, accountTypes: [{ type: 'creditcard', balance: money(115000), limit: money(100000), utilisation: 115, includedCount: 1, excluded: [] }] };
     fakeService(baseHandlers(over));
     renderOverview();
-    expect(await screen.findByTestId('account-util-text-creditcard')).toHaveTextContent('115% used · Over limit');
-    expect(screen.getByTestId('account-util-bar-creditcard')).toHaveAttribute('aria-valuenow', '100');
+    expect(await screen.findByTestId('account-util-text-creditcard')).toHaveTextContent('115% used');
+    const bar = screen.getByTestId('account-util-bar-creditcard');
+    expect(bar).toHaveAttribute('aria-valuenow', '115');
+    expect(bar).toHaveAttribute('aria-valuemax', '115');
+    expect(bar.firstElementChild).toHaveStyle({ width: '100%' });
+    expect(screen.getByTestId('account-util-bar-creditcard-over-limit')).toHaveTextContent('Over limit');
+  });
+
+  it('within the limit there is no badge and the maximum stays 100', async () => {
+    fakeService(baseHandlers());
+    renderOverview();
+    const bar = await screen.findByTestId('account-util-bar-creditcard');
+    expect(bar).toHaveAttribute('aria-valuemax', '100');
+    expect(screen.queryByTestId('account-util-bar-creditcard-over-limit')).not.toBeInTheDocument();
   });
 
   it('one failed overview call is one error state with one Retry that loads the page', async () => {
@@ -302,5 +316,29 @@ describe('a history range chosen after a slow one wins (CDS-38 C-03)', () => {
     await new Promise((r) => setTimeout(r, 600));
     expect(within(screen.getByTestId('history-chart-table')).getAllByRole('row')).toHaveLength(4);
     expect(screen.getByTestId('range-3m')).toHaveAttribute('aria-pressed', 'true');
+  });
+});
+
+describe('the page behind the chat drawer (CDS-38 C-25)', () => {
+  it('is inert while the drawer is open and reachable again when it closes', async () => {
+    fakeService(baseHandlers());
+    renderOverview();
+    await userEvent.click(await screen.findByTestId('btn-chat'));
+    const dialog = screen.getByRole('dialog');
+    const reachable = (element: Element) => !element.closest('[inert]');
+    expect(reachable(dialog)).toBe(true);
+    expect(reachable(screen.getByTestId('score-value'))).toBe(false);
+    expect(reachable(screen.getByTestId('btn-chat'))).toBe(false);
+    await userEvent.keyboard('{Escape}');
+    expect(reachable(screen.getByTestId('score-value'))).toBe(true);
+    expect(document.querySelectorAll('[inert]')).toHaveLength(0);
+  });
+});
+
+describe('the history table words the months (CDS-38 C-32)', () => {
+  it('shows June 2026, not 2026-06', async () => {
+    fakeService(baseHandlers());
+    renderOverview();
+    expect(await screen.findByTestId('history-chart-row-2026-06')).toHaveTextContent('June 2026');
   });
 });

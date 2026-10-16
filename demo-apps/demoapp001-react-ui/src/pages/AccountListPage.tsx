@@ -5,6 +5,7 @@
 import { Link, useParams } from 'react-router';
 import { AccountRow } from '../components/AccountRow.tsx';
 import { SectionState } from '../components/SectionState.tsx';
+import { UtilisationBar } from '../components/UtilisationBar.tsx';
 import { ACCOUNT_TYPE_LABEL, type AccountType } from '../accountTypes.ts';
 import { formatMoney, formatPercent } from '../format.ts';
 import { useSession } from '../session.tsx';
@@ -90,17 +91,7 @@ export function AccountListPage() {
               {metrics.donut && totals.limit && utilisation !== null && utilisation !== undefined && (
                 <>
                   <p data-testid="list-utilisation">{formatPercent(utilisation)} used</p>
-                  <div
-                    data-testid="list-donut"
-                    role="progressbar"
-                    aria-label={`${label} utilisation`}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    aria-valuenow={Math.min(utilisation, 100)}
-                    className="bar"
-                  >
-                    <div className="bar-fill" style={{ width: `${Math.min(utilisation, 100)}%` }} />
-                  </div>
+                  <UtilisationBar testId="list-donut" label={`${label} utilisation`} percent={utilisation} />
                 </>
               )}
             </div>

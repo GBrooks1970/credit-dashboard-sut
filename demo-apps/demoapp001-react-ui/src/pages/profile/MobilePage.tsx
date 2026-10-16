@@ -33,7 +33,7 @@ export function MobilePage() {
       const { data: challenge, error: problem } = await client.PUT('/me/profile/mobile', { body: { number } });
       if (challenge) {
         setPending(true);
-        setAttempts(challenge.attemptsRemaining);
+        setAttempts(null); // attempts left are shown from the first wrong code, not before (CDS-38 C-33, PR-11)
         setCode('');
         setCodeError(null);
       } else {

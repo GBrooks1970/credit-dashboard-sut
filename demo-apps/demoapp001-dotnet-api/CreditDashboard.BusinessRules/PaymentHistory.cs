@@ -9,15 +9,16 @@ public sealed record PaymentAccount(DateOnly OpenedDate, DateOnly? ClosedDate, I
 public static class PaymentHistory
 {
     /// <summary>
-    /// One account's month: missed if in its missed months; no-data if before the month of the opened date, after the
-    /// month of the closed date, or after the current month on the controlled clock; otherwise on-time.
+    /// One account's month: no-data if after the current month on the controlled clock, whatever its missed months hold
+    /// (a future month is never missed, CDS-38 A-17); otherwise missed if in its missed months; no-data if before the month
+    /// of the opened date or after the month of the closed date; otherwise on-time.
     /// </summary>
     public static PaymentStatus AccountMonth(PaymentAccount account, YearMonth month, YearMonth current)
     {
+        if (month > current) return PaymentStatus.NoData;
         if (account.MissedMonths.Contains(month)) return PaymentStatus.Missed;
         if (month < YearMonth.From(account.OpenedDate)) return PaymentStatus.NoData;
         if (account.ClosedDate is { } closed && month > YearMonth.From(closed)) return PaymentStatus.NoData;
-        if (month > current) return PaymentStatus.NoData;
         return PaymentStatus.OnTime;
     }
 

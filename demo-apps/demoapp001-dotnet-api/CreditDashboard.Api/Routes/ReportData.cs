@@ -24,7 +24,7 @@ internal static class ReportData
 
     public static IEnumerable<JsonObject> Accounts(JsonObject bureau) => bureau["accounts"]!.AsArray().Select(a => a!.AsObject());
 
-    public static JsonObject Money(long amountMinor) => new() { ["amountMinor"] = Defects.Amount(amountMinor), ["currency"] = "GBP" };
+    public static JsonObject Money(long amountMinor) => new() { ["amountMinor"] = amountMinor, ["currency"] = "GBP" };
 
     public static long Balance(JsonObject account) => account["balance"]!["amountMinor"]!.GetValue<long>();
 
@@ -73,7 +73,7 @@ internal static class ReportData
             {
                 ["id"] = a["id"]!.GetValue<string>(),
                 ["provider"] = a["provider"]!.GetValue<string>(),
-                ["maskedNumber"] = a["maskedNumber"]!.GetValue<string>(),
+                ["maskedNumber"] = Defects.MaskedNumber(a),
                 ["balance"] = Money(Balance(a)),
             }).ToArray();
         return new JsonObject

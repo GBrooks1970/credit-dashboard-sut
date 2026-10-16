@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace CreditDashboard.BusinessRules.Profile;
 
 public enum PreferredNameOutcome { Cleared, Saved, Rejected }
@@ -18,7 +20,8 @@ public static class PreferredName
     {
         var trimmed = submitted?.Trim() ?? string.Empty;
         if (trimmed.Length == 0) return new(PreferredNameOutcome.Cleared, null);
-        if (trimmed.Length > MaxLength || !trimmed.All(c => char.IsLetter(c) || c is ' ' or '-' or '\''))
+        // Characters are code points (runes), as in the contract's pattern and maxLength: a letter outside the Basic Multilingual Plane is one letter, not two (CDS-38 A-23).
+        if (trimmed.EnumerateRunes().Count() > MaxLength || !trimmed.EnumerateRunes().All(r => Rune.IsLetter(r) || r.Value is ' ' or '-' or '\''))
             return new(PreferredNameOutcome.Rejected, null);
         return new(PreferredNameOutcome.Saved, trimmed);
     }

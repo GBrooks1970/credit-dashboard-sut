@@ -109,6 +109,9 @@ public class ReportTests
     [TestCase(DetailField.MinPaymentPercent, 100.01, false)]
     [TestCase(DetailField.MinPaymentPercent, 101, false)]
     [TestCase(DetailField.MinPaymentPercent, -1, false)]
+    [TestCase(DetailField.MinPaymentPercent, 5.55, true)]
+    [TestCase(DetailField.MinPaymentPercent, 5.555, false)]
+    [TestCase(DetailField.MinPaymentPercent, 99.999, false)]
     [Category("BR-14")]
     public void A_user_supplied_detail_must_be_in_range(DetailField field, double value, bool valid) =>
         Assert.That(AccountDetails.Validate(field, (decimal)value), Is.EqualTo(valid ? DetailOutcome.Valid : DetailOutcome.OutOfRange));

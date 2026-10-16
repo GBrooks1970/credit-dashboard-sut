@@ -33,7 +33,31 @@ public static class Defects
     public static string MaskedNumber(JsonObject account) =>
         Flags.Has("mask-format") && account["sourceMask"] is { } source ? source.GetValue<string>() : account["maskedNumber"]!.GetValue<string>();
 
-    /// <summary>DR-004. With <c>currency-float</c> money leaves the service as a float of pounds (4236 pence as 42.36) instead of integer minor units.</summary>
-    public static JsonNode Amount(long amountMinor) =>
-        Flags.Has("currency-float") ? JsonValue.Create(amountMinor / 100.0) : JsonValue.Create(amountMinor);
+    /// <summary>
+    /// DR-004. With <c>currency-float</c> every money amount in a response (an object with <c>amountMinor</c> and <c>currency</c>) leaves
+    /// the service as a float of pounds (4236 pence as 42.36) instead of integer minor units. It is applied once, where a response is
+    /// written, so no amount can be missed (CDS-38 A-09); the body is copied first, because some bodies share stored data.
+    /// </summary>
+    public static JsonNode MoneyForResponse(JsonNode body)
+    {
+        if (!Flags.Has("currency-float")) return body;
+        var copy = body.DeepClone();
+        Floatify(copy);
+        return copy;
+    }
+
+    private static void Floatify(JsonNode? node)
+    {
+        switch (node)
+        {
+            case JsonObject obj:
+                if (obj["amountMinor"] is JsonValue amount && obj.ContainsKey("currency") && amount.TryGetValue<long>(out var minor))
+                    obj["amountMinor"] = JsonValue.Create(minor / 100.0);
+                foreach (var (_, child) in obj.ToList()) Floatify(child);
+                break;
+            case JsonArray array:
+                foreach (var child in array) Floatify(child);
+                break;
+        }
+    }
 }

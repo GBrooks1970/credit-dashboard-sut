@@ -23,7 +23,7 @@ language: en-GB
 
 ## PR-02: preferred name
 
-Input: the submitted value. Output: `Cleared`, `Saved(value)` or `Rejected` (422 `preferred-name`). The value is trimmed first. Present means 1 to 30 characters of letters, spaces, hyphens and apostrophes. An empty string or null clears it. (A value over 100 characters, or not a string, is a 400 at the edge and never reaches the rule.)
+Input: the submitted value. Output: `Cleared`, `Saved(value)` or `Rejected` (422 `preferred-name`). The value is trimmed first. Present means 1 to 30 characters of letters, spaces, hyphens and apostrophes; a character is a code point, so a letter outside the Basic Multilingual Plane counts once. An empty string or null clears it. (A value over 100 characters, or not a string, is a 400 at the edge and never reaches the rule.)
 
 | Case | Input | Output |
 |---|---|---|
@@ -35,6 +35,7 @@ Input: the submitted value. Output: `Cleared`, `Saved(value)` or `Rejected` (422
 | One character | `S` | `Saved("S")` |
 | Thirty characters | thirty letters | `Saved` |
 | Thirty-one characters | thirty-one letters | `Rejected` |
+| Letters outside the Basic Multilingual Plane | thirty such letters (60 UTF-16 units); thirty-one | `Saved`; `Rejected` |
 | Thirty after trimming | thirty letters with spaces either side | `Saved` (the length is after trimming) |
 | Hyphen | `Anne-Marie` | `Saved` |
 | Apostrophe | `O'Neil` | `Saved` |

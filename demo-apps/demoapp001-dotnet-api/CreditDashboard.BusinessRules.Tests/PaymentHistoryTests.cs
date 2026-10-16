@@ -21,6 +21,15 @@ public class PaymentHistoryTests
     }
 
     [Test, Category("BR-12")]
+    public void A_missed_month_in_the_future_is_no_data_and_does_not_make_its_year_missed()
+    {
+        var a = Account("2019-04-15", null, "2026-12");
+        Assert.That(Month(a, "2026-12"), Is.EqualTo(PaymentStatus.NoData));
+        Assert.That(PaymentHistory.YearStatus([a], 2026, Now), Is.EqualTo(PaymentStatus.OnTime));
+        Assert.That(Month(Account("2019-04-15", null, "2026-10"), "2026-10"), Is.EqualTo(PaymentStatus.Missed), "the current month can still be missed");
+    }
+
+    [Test, Category("BR-12")]
     public void A_missed_month_makes_that_month_and_its_year_missed()
     {
         var a = Account("2019-04-15", null, "2026-03");

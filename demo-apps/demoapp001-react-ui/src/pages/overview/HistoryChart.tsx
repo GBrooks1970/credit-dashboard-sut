@@ -99,7 +99,8 @@ export function HistoryChart({ bureauId, max }: { bureauId: string; max: number 
             </text>
           ))}
         </svg>
-        <table data-testid="history-chart-table" className="visually-hidden">
+        <div className="visually-hidden">
+        <table data-testid="history-chart-table">
           <caption>Score by month</caption>
           <thead>
             <tr>
@@ -116,6 +117,7 @@ export function HistoryChart({ bureauId, max }: { bureauId: string; max: number 
             ))}
           </tbody>
         </table>
+        </div>
       </SectionState>
     </section>
   );

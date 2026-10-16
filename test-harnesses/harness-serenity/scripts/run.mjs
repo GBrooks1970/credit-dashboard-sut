@@ -140,8 +140,7 @@ try {
         // Every scenario can pass and the run still fail, because of a hook (CDS-38 C-15): say which, from the message report.
         const report = path.join(harness, 'reports', `${requested}.ndjson`);
         if (fs.existsSync(report)) {
-            for (const line of fs.readFileSync(report, 'utf8').split('
-')) {
+            for (const line of fs.readFileSync(report, 'utf8').split(/\r?\n/)) {
                 if (!line.includes('testRunHookFinished')) continue;
                 try {
                     const finished = JSON.parse(line).testRunHookFinished?.result;

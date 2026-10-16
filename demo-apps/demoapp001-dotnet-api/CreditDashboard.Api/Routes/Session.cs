@@ -27,7 +27,7 @@ internal static class Http
     {
         context.Response.StatusCode = StatusCodes.Status200OK;
         context.Response.ContentType = "application/json";
-        await context.Response.WriteAsync(body.ToJsonString(), context.RequestAborted);
+        await context.Response.WriteAsync(Defects.MoneyForResponse(body).ToJsonString(), context.RequestAborted);
     }
 }
 

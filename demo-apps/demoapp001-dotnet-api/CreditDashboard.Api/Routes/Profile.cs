@@ -89,19 +89,33 @@ public static partial class ProfileOperations
             return;
         }
         var username = Http.Username(context);
-        var current = CurrentEmail(store, username, store.Document(username)["profile"]!.AsObject());
-        var result = Email.Change(current.Address, current.Status, submitted);
-        // A link is sent only when the address changed (PR-04): that instant starts the 60 seconds before the next resend (PR-09).
-        if (result.Changed) store.Session(username).SetEmail(result.Address, result.Status, result.LinkSent ? clock.UtcNow : null);
+        var session = store.Session(username);
+        EmailChangeResult result;
+        lock (session.EmailLock)
+        {
+            var current = CurrentEmail(store, username, store.Document(username)["profile"]!.AsObject());
+            result = Email.Change(current.Address, current.Status, submitted);
+            // A link is sent only when the address changed (PR-04): that instant starts the 60 seconds before the next resend (PR-09).
+            if (result.Changed) session.SetEmail(result.Address, result.Status, result.LinkSent ? clock.UtcNow : null);
+        }
         await Http.Json(context, new JsonObject { ["address"] = result.Address, ["status"] = Name(result.Status) });
     }
 
     private static async Task ResendEmailVerification(HttpContext context, PersonaStore store, IControlledClock clock)
     {
         var username = Http.Username(context);
-        var current = CurrentEmail(store, username, store.Document(username)["profile"]!.AsObject());
-        var now = clock.UtcNow;
-        var result = Email.Resend(current.Status, current.LinkSentAt, now);
+        var session = store.Session(username);
+        DateTimeOffset now;
+        ResendResult result;
+        // Check and record in one step: without the lock, requests that arrive together all see the old time of the last link
+        // and all pass the 60-second rule (CDS-38 A-04).
+        lock (session.EmailLock)
+        {
+            var current = CurrentEmail(store, username, store.Document(username)["profile"]!.AsObject());
+            now = clock.UtcNow;
+            result = Email.Resend(current.Status, current.LinkSentAt, now);
+            if (result.Outcome == ResendOutcome.Sent) session.SetLinkSent(now);
+        }
         switch (result.Outcome)
         {
             case ResendOutcome.AlreadyVerified:
@@ -111,7 +125,6 @@ public static partial class ProfileOperations
                 await Problems.RateLimited(context, result.RetryAfterSeconds!.Value);
                 return;
         }
-        store.Session(username).SetLinkSent(now);
         context.Response.StatusCode = StatusCodes.Status202Accepted;
         context.Response.ContentType = "application/json";
         await context.Response.WriteAsync(new JsonObject

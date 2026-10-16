@@ -32,7 +32,6 @@ public sealed class PersonaStore
     private Dictionary<string, (string Persona, JsonObject? Overrides)> _bindings = [];
     private List<string> _flags = [];
     private LatencySetting _latency = LatencySetting.None;
-    private HashSet<string> _verifiedEmails = [];
     private Dictionary<string, UserSession> _sessions = [];
 
     public PersonaStore(FixtureSet fixtures, ControlledClock clock)
@@ -56,7 +55,6 @@ public sealed class PersonaStore
             _bindings = Fixtures.Users.ToDictionary(u => u.Username, u => (u.DefaultPersona, (JsonObject?)null));
             _flags = [];
             _latency = LatencySetting.None;
-            _verifiedEmails = [];
             _sessions = [];
             _clock.Release();
         }
@@ -94,8 +92,8 @@ public sealed class PersonaStore
 
     public void MarkEmailVerified(string username)
     {
-        lock (_lock) _verifiedEmails.Add(username);
-        Session(username).MarkEmailVerified(); // the newest change wins: a later email change makes it unverified again
+        // The session is the one place the email status lives: a later email change makes it unverified again (CDS-38 A-21).
+        Session(username).MarkEmailVerified();
     }
 
     /// <summary>This user session state (created on first use).</summary>
@@ -124,10 +122,8 @@ public sealed class PersonaStore
         return Fixtures.Personas[persona]["behaviour"]?["failReportEndpoints"]?.GetValue<bool>() ?? false;
     }
 
-    public bool IsEmailMarkedVerified(string username)
-    {
-        lock (_lock) return _verifiedEmails.Contains(username);
-    }
+    /// <summary>True while this user's session holds a verified email (marked by test control or verified since).</summary>
+    public bool IsEmailMarkedVerified(string username) => Session(username).EmailMarkedVerified;
 
     /// <summary>The users test control knows (the signed-in user's own account is the only one the BR-15 rule lets them read).</summary>
     public IReadOnlyList<string> Usernames()

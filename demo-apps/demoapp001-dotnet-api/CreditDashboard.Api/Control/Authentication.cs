@@ -126,6 +126,14 @@ public sealed class UserSession
         lock (_lock) { _emailAddress = address; _emailStatus = status; _linkSentAt = linkSentAt; }
     }
 
+    /// <summary>Held for the read, decision and write of one email change or resend, so two requests cannot both pass the 60-second check (CDS-38 A-04).</summary>
+    public object EmailLock { get; } = new();
+
+    public bool EmailMarkedVerified
+    {
+        get { lock (_lock) return _emailStatus == EmailStatus.Verified; }
+    }
+
     /// <summary>Test control marks the email verified without the link (PR-04).</summary>
     public void MarkEmailVerified()
     {

@@ -38,6 +38,16 @@ public class ProfileTests
     public void A_name_that_breaks_the_rule_is_rejected(string submitted) =>
         Assert.That(PreferredName.Validate(submitted).Outcome, Is.EqualTo(PreferredNameOutcome.Rejected));
 
+    // A letter outside the Basic Multilingual Plane is one letter and one character (A-23): the contract's pattern is \p{L} and its maxLength counts code points.
+    [Test, Category("PR-02")]
+    public void Letters_outside_the_basic_multilingual_plane_are_letters_and_count_once()
+    {
+        var thirty = string.Concat(Enumerable.Repeat("𐐀", 30)); // DESERET CAPITAL LETTER LONG I, 30 characters in 60 UTF-16 units
+        Assert.That(PreferredName.Validate(thirty), Is.EqualTo(new PreferredNameResult(PreferredNameOutcome.Saved, thirty)));
+        Assert.That(PreferredName.Validate(thirty + "𐐀").Outcome, Is.EqualTo(PreferredNameOutcome.Rejected), "31 characters");
+        Assert.That(PreferredName.Validate("Sam 😀").Outcome, Is.EqualTo(PreferredNameOutcome.Rejected), "an emoji is not a letter");
+    }
+
     // PR-03
 
     [TestCase("Sam", "Samuel Example", "Sam")]

@@ -32,7 +32,7 @@ function Searches({ bureauId, kind }: { bureauId: string; kind: 'hard' | 'soft' 
       <SectionState testId="search-list" state={state} onRetry={() => void reload()} emptyMessage={`There are no ${kind} searches on your report.`} errorMessage="The searches could not be loaded.">
         {data && (
           <>
-            <ul>
+            <ul data-testid="search-list">
               {data.items.map((search) => (
                 <li key={search.id} data-testid={`search-row-${search.id}`} data-kind={search.kind}>
                   <strong>{search.organisation}</strong>

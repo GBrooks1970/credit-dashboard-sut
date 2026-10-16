@@ -281,7 +281,8 @@ describe('mobile sub-page (My Profile UI feature spec 4.1)', () => {
     await addNumber();
     expect(await screen.findByTestId('mobile-code-input')).toBeInTheDocument();
     expect(screen.getByTestId('mobile-code-hint')).toHaveTextContent('123456');
-    expect(screen.getByTestId('mobile-attempts')).toHaveTextContent('3 attempts left');
+    // The attempts left appear with the first wrong code, not before it (PR-11, CDS-38 C-33).
+    expect(screen.queryByTestId('mobile-attempts')).not.toBeInTheDocument();
     expect(bodies).toEqual([{ number: '07700 900456' }]);
   });
 
@@ -355,5 +356,16 @@ describe('mobile sub-page (My Profile UI feature spec 4.1)', () => {
     await openSignedIn('/my-account/profile/mobile');
     await userEvent.click(await screen.findByTestId('mobile-cancel'));
     expect(await screen.findByTestId('profile-legal-name')).toBeInTheDocument();
+  });
+});
+
+describe('the profile header image (CDS-38 C-27)', () => {
+  it('is a whole GIF, ending in its trailer byte', async () => {
+    fakeService({ 'GET /me/profile': () => json(200, profile()) });
+    await openSignedIn('/my-account/profile');
+    const src = (await screen.findByTestId('profile-header-image')).getAttribute('src')!;
+    const bytes = Uint8Array.from(atob(src.split(',')[1]!), (c) => c.charCodeAt(0));
+    expect(String.fromCharCode(...bytes.slice(0, 3))).toBe('GIF');
+    expect(bytes[bytes.length - 1]).toBe(0x3b); // the GIF trailer: a truncated file lacks it
   });
 });

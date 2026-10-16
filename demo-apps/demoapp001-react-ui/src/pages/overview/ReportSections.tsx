@@ -4,6 +4,7 @@
 import { Link } from 'react-router';
 import type { components } from '@credit-dashboard-sut/api-client';
 import { ACCOUNT_TYPE_LABEL } from '../../accountTypes.ts';
+import { UtilisationBar } from '../../components/UtilisationBar.tsx';
 import { formatMoney, formatPercent, plural } from '../../format.ts';
 
 type Overview = components['schemas']['ReportOverview'];
@@ -60,20 +61,8 @@ export function AccountsSection({ bureauId, accountTypes }: { bureauId: string; 
               {/* No limit means no utilisation, and no bar (UI specification 6.2: the donut is absent when the limit is null). */}
               {utilisation !== null && utilisation !== undefined && totals.limit && (
                 <>
-                  <p data-testid={`account-util-text-${type}`}>
-                    {formatPercent(utilisation)} used{utilisation > 100 ? ' · Over limit' : ''}
-                  </p>
-                  <div
-                    data-testid={`account-util-bar-${type}`}
-                    role="progressbar"
-                    aria-label={`${ACCOUNT_TYPE_LABEL[type]} utilisation`}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    aria-valuenow={Math.min(utilisation, 100)}
-                    className="bar"
-                  >
-                    <div className="bar-fill" style={{ width: `${Math.min(utilisation, 100)}%` }} />
-                  </div>
+                  <p data-testid={`account-util-text-${type}`}>{formatPercent(utilisation)} used</p>
+                  <UtilisationBar testId={`account-util-bar-${type}`} label={`${ACCOUNT_TYPE_LABEL[type]} utilisation`} percent={utilisation} />
                 </>
               )}
             </article>

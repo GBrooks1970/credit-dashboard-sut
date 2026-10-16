@@ -49,7 +49,11 @@ export function DebugPage() {
           autoComplete="off"
           onChange={(event) => {
             setKey(event.target.value);
-            window.localStorage.setItem(KEY_STORAGE, event.target.value);
+            try {
+              window.localStorage.setItem(KEY_STORAGE, event.target.value);
+            } catch {
+              // Storage can be blocked; the key still works for this visit (CDS-38 C-30).
+            }
           }}
         />
       </label>

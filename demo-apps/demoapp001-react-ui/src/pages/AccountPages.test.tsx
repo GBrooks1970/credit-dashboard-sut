@@ -422,3 +422,39 @@ describe('detail edit form (UI specification 6.6, BR-14)', () => {
     expect(await screen.findByTestId('dc-prompt')).toHaveTextContent('We cannot change that detail');
   });
 });
+
+describe('account rows and the detail header (CDS-38 C-21, C-28, C-02)', () => {
+  it('every row has the provider initials as its logo fallback', async () => {
+    fakeService({
+      'GET /reports/bureau-a/accounts': () => json(200, [row('acc_a', 'Lender X', 42360, 510000, 8), row('acc_b', 'Harbour', 100, 100000, 0)]),
+      'GET /reports/bureau-a/accounts/totals': () => json(200, { type: 'creditcard', balance: money(42460), limit: money(610000), utilisation: 7, includedCount: 2, excluded: [] }),
+    });
+    await openSignedIn('/credit-health/report/bureau-a/accounts/creditcard');
+    expect(await screen.findByTestId('row-initials-acc_a')).toHaveTextContent('LX');
+    expect(screen.getByTestId('row-initials-acc_b')).toHaveTextContent('H');
+    expect(screen.getByTestId('row-initials-acc_a')).toHaveAttribute('aria-hidden', 'true');
+  });
+
+  it('the list bar over the limit has its badge and the real value', async () => {
+    fakeService({
+      'GET /reports/bureau-a/accounts': () => json(200, [row('acc_c', 'Northgate Finance', 115000, 100000, 115)]),
+      'GET /reports/bureau-a/accounts/totals': () => json(200, { type: 'creditcard', balance: money(115000), limit: money(100000), utilisation: 115, includedCount: 1, excluded: [] }),
+    });
+    await openSignedIn('/credit-health/report/bureau-a/accounts/creditcard');
+    expect(await screen.findByTestId('list-donut-over-limit')).toHaveTextContent('Over limit');
+    expect(screen.getByTestId('list-donut')).toHaveAttribute('aria-valuenow', '115');
+  });
+
+  it('the detail header is a named region, and its bar over the limit has the real value and the badge', async () => {
+    fakeService({
+      'GET /accounts/acc_cc': () => json(200, account({ balance: money(115000), limit: money(100000), utilisation: 115, utilisationRaw: 115 })),
+      'GET /accounts/acc_cc/balance-history': () => json(200, []),
+      'GET /accounts/acc_cc/payment-history': () => json(200, { years: [], selectedYear: 2026, missed: [] }),
+    });
+    await openSignedIn('/credit-health/report/bureau-a/account/acc_cc');
+    const header = await screen.findByTestId('detail-header');
+    expect(header).toBe(screen.getByRole('region', { name: 'Account summary' }));
+    expect(screen.getByTestId('detail-balance-bar')).toHaveAttribute('aria-valuenow', '115');
+    expect(screen.getByTestId('detail-balance-bar-over-limit')).toHaveTextContent('Over limit');
+  });
+});

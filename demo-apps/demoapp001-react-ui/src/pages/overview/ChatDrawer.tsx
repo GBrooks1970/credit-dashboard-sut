@@ -21,6 +21,22 @@ export function ChatDrawer({ open, onClose }: Props) {
     if (open) input.current?.focus();
   }, [open]);
 
+  // `aria-modal` is only a hint; a screen reader's virtual cursor can still leave the dialog. While the drawer is open every
+  // element outside it is made inert, level by level up to the body, and put back when it closes (CDS-38 C-25).
+  useEffect(() => {
+    if (!open || !panel.current) return;
+    const made: Element[] = [];
+    for (let node: Element = panel.current; node.parentElement && node !== document.body; node = node.parentElement) {
+      for (const sibling of Array.from(node.parentElement.children)) {
+        if (sibling !== node && !sibling.hasAttribute('inert')) {
+          sibling.setAttribute('inert', '');
+          made.push(sibling);
+        }
+      }
+    }
+    return () => made.forEach((element) => element.removeAttribute('inert'));
+  }, [open]);
+
   if (!open) return null;
 
   async function send(event: FormEvent) {

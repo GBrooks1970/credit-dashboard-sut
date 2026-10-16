@@ -6,6 +6,7 @@ import type { components } from '@credit-dashboard-sut/api-client';
 import { BalanceChart } from '../components/BalanceChart.tsx';
 import { PaymentHistoryWidget } from '../components/PaymentHistoryWidget.tsx';
 import { SectionState } from '../components/SectionState.tsx';
+import { UtilisationBar } from '../components/UtilisationBar.tsx';
 import { formatDate, formatMoney, formatPercent } from '../format.ts';
 import { useSession } from '../session.tsx';
 import { useResource } from '../useResource.ts';
@@ -50,14 +51,14 @@ function AccountBody({ account, bureauId, detailAddress }: { account: Account; b
   const utilisation = account.utilisation;
   return (
     <>
-      <header data-testid="detail-header" className="card">
+      <section aria-label="Account summary" data-testid="detail-header" className="card">
         <p>
           <Link to={`/credit-health/report/${bureauId}`}>Back to your report</Link>
         </p>
         <h1>
           {account.provider} <span className="muted">{account.maskedNumber}</span>
         </h1>
-      </header>
+      </section>
 
       {HAS_PROMO.has(account.type) && !account.closed && (
         <section data-testid="detail-promo" aria-label="Link your account" className="card">
@@ -73,19 +74,9 @@ function AccountBody({ account, bureauId, detailAddress }: { account: Account; b
         {account.limit && utilisation !== null && utilisation !== undefined && (
           <>
             <p>
-              {formatPercent(utilisation)} of your {formatMoney(account.limit.amountMinor, { pence: true })} limit{utilisation > 100 ? ' · Over limit' : ''}
+              {formatPercent(utilisation)} of your {formatMoney(account.limit.amountMinor, { pence: true })} limit
             </p>
-            <div
-              data-testid="detail-balance-bar"
-              role="progressbar"
-              aria-label="Balance against limit"
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={Math.min(utilisation, 100)}
-              className="bar"
-            >
-              <div className="bar-fill" style={{ width: `${Math.min(utilisation, 100)}%` }} />
-            </div>
+            <UtilisationBar testId="detail-balance-bar" label="Balance against limit" percent={utilisation} />
           </>
         )}
         <p className="muted" data-testid="detail-updated">

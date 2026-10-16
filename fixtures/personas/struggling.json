@@ -558,18 +558,21 @@
           "logoUrl": "https://logos.scoreharbour.example/harbour-bank.svg",
           "maskedNumber": "*0918",
           "balance": {
-            "amountMinor": 0,
+            "amountMinor": 7800,
             "currency": "GBP"
           },
-          "limit": null,
-          "utilisation": null,
+          "limit": {
+            "amountMinor": 150000,
+            "currency": "GBP"
+          },
+          "utilisation": 5,
           "includedInTotals": true,
           "status": "closed",
           "openedDate": "2018-06-01",
           "closedDate": "2022-05-31",
           "updateFrequency": "monthly",
           "lastUpdated": "2026-09-30",
-          "utilisationRaw": null,
+          "utilisationRaw": 5,
           "details": {
             "apr": null,
             "interestRate": null,

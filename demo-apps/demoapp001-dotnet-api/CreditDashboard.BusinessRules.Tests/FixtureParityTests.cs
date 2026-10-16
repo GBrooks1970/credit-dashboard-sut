@@ -64,14 +64,18 @@ public class FixtureParityTests
     }
 
     [Test, Category("BR-13")]
-    public void A_closed_account_is_stored_with_balance_zero()
+    public void A_closed_account_may_hold_a_stored_balance_because_the_rule_reports_zero()
     {
+        var holdingABalance = 0;
         foreach (var (persona, account) in Accounts())
         {
             if (!account.GetProperty("closed").GetBoolean()) continue;
-            Assert.That(account.GetProperty("balance").GetProperty("amountMinor").GetInt64(),
-                Is.EqualTo(ClosedAccounts.ReportedBalanceMinor(account.GetProperty("balance").GetProperty("amountMinor").GetInt64())), Label(persona, account));
+            var stored = account.GetProperty("balance").GetProperty("amountMinor").GetInt64();
+            Assert.That(ClosedAccounts.ReportedBalanceMinor(stored), Is.Zero, Label(persona, account));
+            if (stored != 0) holdingABalance++;
         }
+        // BR-13 is only tested end to end if a fixture closed account holds a balance the service must not report (CDS-38 B-15).
+        Assert.That(holdingABalance, Is.GreaterThan(0), "no closed fixture account holds a stored balance, so a service that never zeroes it could not be told apart");
     }
 
     [Test, Category("BR-11")]

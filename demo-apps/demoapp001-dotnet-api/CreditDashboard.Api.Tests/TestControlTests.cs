@@ -295,10 +295,19 @@ public class TestControlTests
     }
 
     [Test]
-    public async Task BR_13_a_closed_account_with_a_balance_is_a_422()
+    public async Task BR_13_a_closed_account_with_a_stored_balance_is_accepted_and_reported_as_zero()
     {
         var sample = Sample("br13-closed-anniversary");
-        Account(sample)["balance"]!["amountMinor"] = 100;
+        Assert.That(Account(sample)["balance"]!["amountMinor"]!.GetValue<long>(), Is.Not.Zero, "the sample holds a stored balance");
+        var response = await Send(HttpMethod.Put, "/users/alex/persona", BindBody(sample));
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NoContent), await response.Content.ReadAsStringAsync());
+    }
+
+    [Test]
+    public async Task BR_13_a_closed_account_must_still_have_status_closed_and_a_close_date()
+    {
+        var sample = Sample("br13-closed-anniversary");
+        Account(sample)["status"] = "normal";
         Assert.That(await Refused(sample), Does.Contain("BR-13"));
     }
 

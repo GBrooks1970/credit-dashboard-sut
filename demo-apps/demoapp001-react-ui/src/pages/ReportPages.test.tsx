@@ -225,6 +225,9 @@ describe('debt overview (UI specification 6.7, BR-07, DR-046)', () => {
     expect(await screen.findByTestId('debt-total')).toHaveTextContent('£198,280');
     expect(screen.getByTestId('debt-trend')).toHaveTextContent('Down');
     expect(screen.getByTestId('debt-type-creditcard')).toHaveTextContent('Credit cards: £424');
+    // The amount has its own hook, so a step can compare it exactly and not as part of the row (CDS-38 B-04).
+    expect(screen.getByTestId('debt-type-creditcard-amount').textContent).toBe('£424');
+    expect(screen.getByTestId('debt-type-telecomsandutilities-amount').textContent).toBe('£32');
     expect(screen.getByTestId('debt-type-mortgage')).toHaveTextContent('Mortgages: £185,000');
     expect(screen.getByTestId('debt-type-telecomsandutilities')).toHaveTextContent('Utilities and telecoms: £32');
     expect(screen.getByTestId('debt-type-lineofcredit')).toHaveTextContent('Credit accounts: £300');

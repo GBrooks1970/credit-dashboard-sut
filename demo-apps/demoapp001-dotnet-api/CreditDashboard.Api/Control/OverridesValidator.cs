@@ -66,7 +66,6 @@ public static class OverridesValidator
 
         if (a["closed"]!.GetValue<bool>())
         {
-            if (balance != ClosedAccounts.ReportedBalanceMinor(balance)) problems.Add($"{id} is closed but its balance is not 0 (BR-13).");
             if (a["status"]!.GetValue<string>() != "closed" || a["closedDate"] is null)
                 problems.Add($"{id} is closed and needs status closed and a close date (BR-13).");
         }

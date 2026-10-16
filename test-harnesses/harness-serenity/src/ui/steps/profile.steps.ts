@@ -3,7 +3,7 @@ import { Ensure, equals, includes, isFalse, isTrue, matches, not } from '@sereni
 import { actorCalled, Wait } from '@serenity-js/core';
 import { By, Click, Enter, isVisible, Page, PageElements, Text, Value } from '@serenity-js/web';
 
-import { personaFile, testUser } from '../../fixtures/load.js';
+import { longDate, personaFile, testUser } from '../../fixtures/load.js';
 import { scenario } from '../../support/world.js';
 import { openAddress } from '../visit.js';
 import { byTestId } from './login.steps.js';
@@ -81,12 +81,14 @@ When('{actor} enters the code {code}', (name: string, code: string) =>
 
 // ---- Assert ----------------------------------------------------------------------------------------------------
 
-Then('{actor} sees their legal name and date of birth', (name: string) =>
-    actorCalled(name).attemptsTo(
-        Ensure.that(Text.of(byTestId('profile-legal-name')), matches(/\S+ \S+/)),
-        Ensure.that(Text.of(byTestId('profile-dob')), matches(/^\d{1,2} [A-Z][a-z]+ \d{4}$/)),
-    ),
-);
+// The expected values are the test user's, from fixtures/users.json, never read back from the page under test (B-05, B-17).
+Then('{actor} sees their legal name and date of birth', (name: string) => {
+    const user = testUser(name.toLowerCase());
+    return actorCalled(name).attemptsTo(
+        Ensure.that(Text.of(byTestId('profile-legal-name')), equals(user.legalName)),
+        Ensure.that(Text.of(byTestId('profile-dob')), equals(longDate(user.dateOfBirth))),
+    );
+});
 
 Then('neither can be edited', () =>
     lastActor().attemptsTo(
@@ -109,16 +111,14 @@ Then('the app greets {actor} as {string}', (name: string, greeting: string) =>
 
 Then('the app greets {actor} by their legal first name', async (name: string) => {
     const actor = actorCalled(name);
-    const legal = await actor.answer(Text.of(byTestId('profile-legal-name')));
-    await actor.attemptsTo(Wait.until(Text.of(byTestId('btn-account')), equals(legal.split(' ')[0]!)));
+    await actor.attemptsTo(Wait.until(Text.of(byTestId('btn-account')), equals(testUser(name.toLowerCase()).legalName.split(' ')[0]!)));
 });
 
 // A new visit to the report's personal details page: the preferred name never reaches the report (PR-03).
 Then("the credit report still shows {actor}'s legal name", async (name: string) => {
     const actor = actorCalled(name);
-    const legal = await actor.answer(Text.of(byTestId('profile-legal-name')));
     await openAddress(actor, '/credit-health/report/bureau-a/personal-details', 'pd-name');
-    await actor.attemptsTo(Ensure.that(Text.of(byTestId('pd-name')), equals(legal)));
+    await actor.attemptsTo(Ensure.that(Text.of(byTestId('pd-name')), equals(testUser(name.toLowerCase()).legalName)));
 });
 
 Then('the preferred name is {nameOutcome}', (outcome: string) => {
@@ -142,22 +142,38 @@ Then('no amounts are shown on the profile', () =>
     lastActor().attemptsTo(Ensure.that(Text.of(PageElements.located(By.css('main')).first()), not(includes('£')))),
 );
 
-// PR-08: what the customer is called, how to reach them and part of their number stay out of the title and the address.
-async function secretsOf(name: string): Promise<string[]> {
-    const actor = actorCalled(name);
-    const legal = await actor.answer(Text.of(byTestId('profile-legal-name')));
-    const digits = profileOf(name).mobile?.lastDigits;
-    return [legal, testUser(name.toLowerCase()).email, ...(digits ? [digits] : [])];
+// PR-08: profile data never appears in the page title or the address. 'Profile data' is every personal value the fixtures hold for the
+// user: the legal name and its first name, the preferred name, the date of birth (as shown and as ISO), the email address, the postcode
+// and the last digits of the mobile number. The values come from the fixtures, not from the page (B-18).
+function secretsOf(name: string): string[] {
+    const user = testUser(name.toLowerCase());
+    const profile = profileOf(name);
+    const values = [
+        user.legalName,
+        user.legalName.split(' ')[0],
+        profile.preferredName,
+        longDate(user.dateOfBirth),
+        user.dateOfBirth,
+        user.email,
+        profile.address?.postcode,
+        profile.mobile?.lastDigits,
+    ];
+    return [...new Set(values.filter((v): v is string => typeof v === 'string' && v.length > 0))];
 }
 
-Then("the page title contains none of {actor}'s legal name, email address or mobile digits", async (name: string) => {
-    const secrets = await secretsOf(name);
+Then("the page title contains none of {actor}'s profile data", async (name: string) => {
+    const secrets = secretsOf(name);
     await actorCalled(name).attemptsTo(...secrets.map((secret) => Ensure.that(Page.current().title(), not(includes(secret)))));
 });
 
-Then('the page address contains none of them either', async () => {
+Then('the page address contains none of it either', async () => {
     const actor = lastActor();
-    const secrets = await secretsOf(actor.name);
-    await actor.attemptsTo(...secrets.flatMap((secret) => [secret, encodeURIComponent(secret)]).map((secret) => Ensure.that(Page.current().url().pathname, not(includes(secret)))));
-    await actor.attemptsTo(...secrets.flatMap((secret) => [secret, encodeURIComponent(secret)]).map((secret) => Ensure.that(Page.current().url().search, not(includes(secret)))));
+    const spellings = secretsOf(actor.name).flatMap((secret) => [secret, encodeURIComponent(secret)]);
+    const url = Page.current().url();
+    // The path, the query and the fragment: all three travel in the address bar and in the history.
+    await actor.attemptsTo(
+        ...spellings.map((secret) => Ensure.that(url.pathname, not(includes(secret)))),
+        ...spellings.map((secret) => Ensure.that(url.search, not(includes(secret)))),
+        ...spellings.map((secret) => Ensure.that(url.hash, not(includes(secret)))),
+    );
 });

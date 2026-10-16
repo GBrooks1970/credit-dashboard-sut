@@ -130,6 +130,6 @@ Then('the total debt is {money}', (amountMinor: number) =>
 Then('the debt trend is {trend}', (trend: keyof typeof TREND) => firstActor().attemptsTo(Ensure.that(Text.of(byTestId('debt-trend')), equals(TREND[trend]))));
 
 Then('the debt on {accountType} is {money}', (type: string, amountMinor: number) =>
-    firstActor().attemptsTo(Ensure.that(Text.of(byTestId(`debt-type-${type}`)), includes(poundsNoPence(amountMinor)))),
+    firstActor().attemptsTo(Ensure.that(Text.of(byTestId(`debt-type-${type}-amount`)), equals(poundsNoPence(amountMinor)))),
 );
 

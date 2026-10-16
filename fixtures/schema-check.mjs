@@ -88,7 +88,6 @@ function checkPersonaRules(p, where, { personaOnly, ownerOf }) {
         check(m >= monthOf(a.openedDate), aw, `BR-12: missed month ${m} is before the account opened`);
       }
       if (a.closed) {
-        check(bal === 0, aw, 'BR-13: closed account balance is not 0');
         check(a.status === 'closed' && a.closedDate, aw, 'BR-13: closed account needs status closed and a close date');
         if (personaOnly) check(asAtDate < sixYearsAfter(a.closedDate), aw, 'BR-13: closed more than six years before asAt, so it would not be listed');
       }

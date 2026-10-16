@@ -40,9 +40,9 @@ Before(async () => {
     // Every scenario starts from reloaded fixtures and a clock that follows real time.
     const control = actorCalled(STAGE_MANAGER).abilityTo(ControlTheTestEnvironment);
     await control.reset();
-    // A reset clears the flags, so a proof run (HARNESS_BUGS) switches its flag on again for each scenario.
-    const flags = ControlTheTestEnvironment.flagsFromEnvironment();
-    if (flags.length > 0) await control.setBugs(flags);
+    // A reset clears the flags, so a proof run (HARNESS_BUGS) switches its flag on again for each scenario; a run with none sets
+    // none, and either way the service is asked what is in force (CDS-38 B-06).
+    await control.arrangeFlags();
 });
 
 After(async function (testCase) {

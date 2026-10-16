@@ -1,4 +1,4 @@
-// version: 6 | created: 2026-10-13T11:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 7 | created: 2026-10-13T11:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Builds the service, starts it with test control on and a synthetic key, starts a second instance without test control
 // (for the scenario that needs the surface absent), runs the Cucumber profile against them, and always stops both
 // (design section 8, CDS-22). Run from test-harnesses/harness-serenity:  node scripts/run.mjs api|ui [feature ...]
@@ -85,9 +85,14 @@ const stop = () => {
     for (const i of instances) if (!i.exited) i.child.kill();
 };
 process.on('exit', stop);
+// A cancelled CI job sends SIGTERM: stop both services then too, or the next run finds the ports taken (CDS-38 B-08).
 process.on('SIGINT', () => {
     stop();
     process.exit(130);
+});
+process.on('SIGTERM', () => {
+    stop();
+    process.exit(143);
 });
 
 async function ready(instance) {

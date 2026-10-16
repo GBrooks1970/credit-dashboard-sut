@@ -144,13 +144,23 @@ public class TestControlTests
     [Test]
     public async Task A_reset_clears_every_part_of_the_state()
     {
-        await Send(HttpMethod.Put, "/users/alex/persona", """{"persona":"drilldown"}""");
-        await Send(HttpMethod.Put, "/bugs", """{"flags":["idor"]}""");
-        await Send(HttpMethod.Put, "/clock", """{"now":"2026-10-03T09:00:00Z"}""");
-        await Send(HttpMethod.Put, "/latency", """{"fixedMs":10}""");
-        await Send(HttpMethod.Post, "/verify-email", """{"username":"alex"}""");
+        // Every set-up call must have worked, or the test would pass without having set anything to clear (CDS-38 A-13).
+        async Task Arranged(Task<HttpResponseMessage> call, string what) =>
+            Assert.That((await call).StatusCode, Is.EqualTo(HttpStatusCode.NoContent), what);
+        await Arranged(Send(HttpMethod.Put, "/users/alex/persona", """{"persona":"drilldown"}"""), "bind a persona");
+        await Arranged(Send(HttpMethod.Put, "/bugs", """{"flags":["idor"]}"""), "set a flag");
+        await Arranged(Send(HttpMethod.Put, "/clock", """{"now":"2026-10-03T09:00:00Z"}"""), "freeze the clock");
+        await Arranged(Send(HttpMethod.Put, "/latency", """{"fixedMs":10}"""), "set the latency");
+        await Arranged(Send(HttpMethod.Post, "/verify-email", """{"username":"alex"}"""), "mark the email verified");
+        // A session edit (a preferred name) is state too: the reset must clear it.
+        var token = await SignIn("alex");
+        var edit = new HttpRequestMessage(HttpMethod.Patch, "/api/v1/me/profile/preferred-name") { Content = new StringContent("""{"preferredName":"Zed"}""", Encoding.UTF8, "application/json") };
+        edit.Headers.Authorization = new("Bearer", token);
+        Assert.That((await _client.SendAsync(edit)).StatusCode, Is.EqualTo(HttpStatusCode.OK), "edit the preferred name");
+        Assert.That(await PreferredName(token), Is.EqualTo("Zed"));
 
         Assert.That((await Send(HttpMethod.Post, "/reset")).StatusCode, Is.EqualTo(HttpStatusCode.NoContent));
+        Assert.That(await PreferredName(await SignIn("alex")), Is.Not.EqualTo("Zed"), "the session edit is gone");
 
         var state = await State();
         Assert.That(state["personas"]!["alex"]!.GetValue<string>(), Is.EqualTo("excellent"));
@@ -158,6 +168,22 @@ public class TestControlTests
         Assert.That(state["now"], Is.Null);
         Assert.That(state["latency"]!.AsObject(), Is.Empty);
         Assert.That(_factory.Services.GetRequiredService<PersonaStore>().IsEmailMarkedVerified("alex"), Is.False);
+    }
+
+    private async Task<string> SignIn(string username)
+    {
+        var response = await _client.PostAsync("/api/v1/auth/login", new StringContent($$"""{"username":"{{username}}","password":"demo-only"}""", Encoding.UTF8, "application/json"));
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        return JsonNode.Parse(await response.Content.ReadAsStringAsync())!["token"]!.GetValue<string>();
+    }
+
+    private async Task<string?> PreferredName(string token)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, "/api/v1/me/profile");
+        request.Headers.Authorization = new("Bearer", token);
+        var response = await _client.SendAsync(request);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        return JsonNode.Parse(await response.Content.ReadAsStringAsync())!["preferredName"]?.GetValue<string>();
     }
 
     // Bind a persona

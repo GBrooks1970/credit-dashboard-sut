@@ -121,7 +121,7 @@ public class EdgeValidationTests
     }
 
     [Test]
-    public async Task The_allowed_methods_of_a_path_with_several_are_all_listed()
+    public async Task The_allowed_method_of_a_path_with_one_method_is_listed()
     {
         // /accounts/{accountId}/details has only PATCH; /me/profile/email has PUT; each lists its own.
         var response = await Send(HttpMethod.Get, "/api/v1/accounts/acc_ddcc01/details");

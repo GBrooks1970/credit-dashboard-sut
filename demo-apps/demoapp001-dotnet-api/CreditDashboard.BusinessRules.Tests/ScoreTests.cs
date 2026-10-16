@@ -61,7 +61,8 @@ public class ScoreTests
     [Test, Category("BR-02")]
     public void A_gap_at_the_oldest_end_is_null_and_nothing_is_carried_forward()
     {
-        var known = AllKnown("2026-09", "2026-10");
+        // A score exists before the range (2026-07), so carrying one forward into 2026-08 would show (CDS-38 A-14).
+        var known = AllKnown("2026-09", "2026-10").Concat(AllKnown("2026-07", "2026-07")).ToDictionary(p => p.Key, p => p.Value);
         Assert.That(Scores.History(ScoreRange.ThreeMonths, new(2026, 10), known)[0].Score, Is.Null);
     }
 

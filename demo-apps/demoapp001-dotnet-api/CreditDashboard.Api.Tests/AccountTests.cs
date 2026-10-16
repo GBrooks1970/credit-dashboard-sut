@@ -20,6 +20,9 @@ public class AccountTests
         _service = new ServiceHost();
         await _service.Freeze("2026-10-03T09:00:00Z");
         await _service.Bind("alex", "drilldown");
+        // Sam holds the persona that owns acc_exln02. Without an owner, "not alex's" and "nobody's" look the same, and a dropped
+        // ownership check (BR-15) would still answer 404 (CDS-38 A-12).
+        await _service.Bind("sam", "excellent");
     }
 
     [TearDown]
@@ -250,10 +253,12 @@ public class AccountTests
     [TestCase("""{"field":"minPayment","value":{"amount":{"amountMinor":99999999999999999999999999999999,"currency":"GBP"}}}""", TestName = "An amount a decimal cannot hold is out of range")]
     public async Task A_value_out_of_range_is_a_422_and_changes_nothing(string json)
     {
+        var before = (await Details())!.ToJsonString();
         var (status, body) = await Patch(json);
         Assert.That(status, Is.EqualTo(HttpStatusCode.UnprocessableEntity));
         Assert.That(body!["type"]!.GetValue<string>(), Is.EqualTo("/problems/rule-violation/out-of-range"));
-        Assert.That((await Details())!["apr"]!.GetValue<double>(), Is.EqualTo(24.9), "the stored details are unchanged");
+        // Every detail, including the one that was edited, is as it was (CDS-38 A-25: the old check read only apr).
+        Assert.That((await Details())!.ToJsonString(), Is.EqualTo(before), "the stored details are unchanged");
     }
 
     [TestCase("""{"field":"apr","value":0}""")]

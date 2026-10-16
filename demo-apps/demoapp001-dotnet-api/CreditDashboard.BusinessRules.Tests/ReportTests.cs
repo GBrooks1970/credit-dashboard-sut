@@ -31,7 +31,8 @@ public class ReportTests
     public void A_mask_is_a_star_and_the_last_four_letters_or_digits(string source, string expected)
     {
         Assert.That(Masking.Mask(source), Is.EqualTo(expected));
-        Assert.That(expected, Does.Match(@"^\*[A-Z0-9]{4}$"));
+        // The contract's pattern is a property of what the code returns, not of the expected value in the table (CDS-38 A-14).
+        Assert.That(Masking.Mask(source), Does.Match(@"^\*[A-Z0-9]{4}$"));
     }
 
     [TestCase(FeedbackValue.None, "like", FeedbackValue.Like)]

@@ -58,8 +58,8 @@ public class FixtureParityTests
         {
             var type = account.GetProperty("type").GetString();
             if (type != "loan" || Limit(account) is not null) continue;
-            Assert.That(Totals.IsIncludedInTotals(AccountType.Loan, null), Is.False);
-            Assert.That(account.GetProperty("includedInTotals").GetBoolean(), Is.False, Label(persona, account));
+            // The stored flag is what the rule says for this account (it was a constant assertion repeated in the loop, CDS-38 A-14).
+            Assert.That(account.GetProperty("includedInTotals").GetBoolean(), Is.EqualTo(Totals.IsIncludedInTotals(AccountType.Loan, null)), Label(persona, account));
         }
     }
 

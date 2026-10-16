@@ -33,7 +33,7 @@ public sealed record ContractOperation(
             if (template.StartsWith('{') && template.EndsWith('}'))
             {
                 if (pathSegments[i].Length == 0) return null;
-                values[template[1..^1]] = Uri.UnescapeDataString(pathSegments[i]);
+                values[template[1..^1]] = pathSegments[i]; // already decoded once by the server: decoding again made the edge and the handler see different text (R2-A-15)
             }
             else if (!string.Equals(template, pathSegments[i], StringComparison.Ordinal))
             {

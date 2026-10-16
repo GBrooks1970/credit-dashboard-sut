@@ -87,6 +87,12 @@ public static class TestControl
             await Problems.Validation(context, [new FieldError("now", "must be an RFC 3339 date-time")]);
             return;
         }
+        // The extremes parse but break the service afterwards (a token that expires after year 9999, a window before year 1): R2-A-11.
+        if (now.UtcDateTime.Year is < 1990 or > 2100)
+        {
+            await Problems.Validation(context, [new FieldError("now", "must be between the years 1990 and 2100")]);
+            return;
+        }
         store.SetClock(now);
         await NoContent(context);
     }
@@ -94,10 +100,26 @@ public static class TestControl
     private static async Task SetLatency(HttpContext context, PersonaStore store)
     {
         var body = await Body(context);
-        int? Read(string name) => body[name]?.GetValue<int>();
-        var (fixedMs, minMs, maxMs) = (Read("fixedMs"), Read("minMs"), Read("maxMs"));
-
         var errors = new List<FieldError>();
+        // A whole number written plainly. The schema also admits 1e3, which is the same number, but reading it as an int faults; a
+        // keyed tool has no need of the exponent form, so it is refused with a 400 (CDS-38 R2-A-02, decision D4).
+        int? Read(string name)
+        {
+            if (body[name] is not { } node) return null;
+            if (!System.Text.RegularExpressions.Regex.IsMatch(node.ToJsonString(), "^-?[0-9]+$") || !int.TryParse(node.ToJsonString(), NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var whole))
+            {
+                errors.Add(new(name, "must be a whole number of milliseconds, written without a decimal point or an exponent"));
+                return null;
+            }
+            return whole;
+        }
+        var (fixedMs, minMs, maxMs) = (Read("fixedMs"), Read("minMs"), Read("maxMs"));
+        if (errors.Count > 0)
+        {
+            await Problems.Validation(context, errors);
+            return;
+        }
+
         if (fixedMs is not null && (minMs is not null || maxMs is not null))
             errors.Add(new("fixedMs", "give either fixedMs or minMs and maxMs, not both"));
         else if ((minMs is null) != (maxMs is null))

@@ -78,7 +78,7 @@
           "profile": "api",
           "feature": "security/access-control.feature",
           "name": "Another customer's account cannot be found",
-          "failsWith": "is not valid JSON"
+          "failsWith": "has content type 'text/plain'"
         }
       ]
     },

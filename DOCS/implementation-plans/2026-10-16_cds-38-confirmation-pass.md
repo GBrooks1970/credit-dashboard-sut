@@ -4,15 +4,15 @@ created: 2026-10-16T16:20Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-38
-status: proposed
-approved: not yet
+status: approved
+approved: "2026-10-16, Gary Brooks, 'all as recommended, approved, merge #92 once CI green, then launch reviewers' (D1 to D6 as recommended); merge authority: per pull request, on request"
 delivered: not yet
 language: en-GB
 ---
 
 # Implementation plan: CDS-38 F11, the confirmation pass
 
-**History of this plan.** The CDS-38 plan (step 7, decision D4) asks for "one fresh reviewer, scoped to the fixes and to anything they could have broken, as CDS-18 needed", and the fix plan (F11) adds the areas the first review covered thinly and the random-order run deferred as B-22. F1 to F10 are merged (#78 to #90, main `b866447`). This is the plan for F11, written for approval before any reviewer runs (DR-041). The owner's choices are in the table at the end; the model was left open on purpose, to be asked before launch (fix plan D2).
+**History of this plan.** The CDS-38 plan (step 7, decision D4) asks for "one fresh reviewer, scoped to the fixes and to anything they could have broken, as CDS-18 needed", and the fix plan (F11) adds the areas the first review covered thinly and the random-order run deferred as B-22. F1 to F10 are merged (#78 to #90, main `b866447`). This is the plan for F11, written for approval before any reviewer runs (DR-041); the owner approved it on 2026-10-16. The owner's choices are in the table at the end; the model was left open on purpose, to be asked before launch (fix plan D2).
 
 **Goal.** Find out whether the fixes are real and whether they broke anything, with eyes that did not write them. The first review found 62 things to fix; the fixes changed 115 files (+4 718, -1 070 lines). CDS-18 is the precedent: every round of fixes produced new findings, and the author who wrote the fixes is the worst judge of them. A fresh reviewer reads the fixes and the code around them, and says where a fix is missing, partial, or has a new fault of its own.
 
@@ -74,12 +74,12 @@ Fixing anything the owner defers; reviewing code not yet written; reopening the 
 
 | Decision | Options | Recommended | Owner's answer |
 |---|---|---|---|
-| D1 Shape | Three reviewers in parallel, one per area as before; one reviewer for everything; two (code; harness and documents) | Three in parallel: the fixes are 115 files and 2 100 lines of code, and the first review needed three | |
-| D2 Model | Sonnet 5.5 (a different model from the first review's Opus 5.5, cheaper); Fable 5.1; Opus 5.5 again | Sonnet 5.5: a different model is the point of a second look. Say if you want Fable 5.1 for A, B or C | |
-| D3 What the reviewers are told | Blind again (only the prompt); fix-aware: the list of fixed findings with the slice and pull request, but not the author's verification; fully told, including the author's verification | Fix-aware: a confirmation pass has to check named fixes | |
-| D4 Thin areas | Include them (the validator, the Gherkin store, the generated contract, the Schemathesis and contract-drift checks, `exit-checks.ts`, the full `@ui` run); leave them out | Include them: nobody but the author has read them | |
-| D5 Rounds | One pass, then fixes, then the author re-checks; a second fresh reviewer if a Blocker is found; as many rounds as it takes | One pass; the author re-checks with a mutation, and a Blocker is reported to you before anything further | |
-| D6 Random-order run (B-22) | By the author in this pass; leave it to a reviewer; drop it | By the author in this pass, with the seed recorded | |
+| D1 Shape | Three reviewers in parallel, one per area as before; one reviewer for everything; two (code; harness and documents) | Three in parallel: the fixes are 115 files and 2 100 lines of code, and the first review needed three |  Three in parallel (2026-10-16) |
+| D2 Model | Sonnet 5.5 (a different model from the first review's Opus 5.5, cheaper); Fable 5.1; Opus 5.5 again | Sonnet 5.5: a different model is the point of a second look. Say if you want Fable 5.1 for A, B or C |  Sonnet 5.5 (2026-10-16) |
+| D3 What the reviewers are told | Blind again (only the prompt); fix-aware: the list of fixed findings with the slice and pull request, but not the author's verification; fully told, including the author's verification | Fix-aware: a confirmation pass has to check named fixes |  Fix-aware (2026-10-16) |
+| D4 Thin areas | Include them (the validator, the Gherkin store, the generated contract, the Schemathesis and contract-drift checks, `exit-checks.ts`, the full `@ui` run); leave them out | Include them: nobody but the author has read them |  Include them (2026-10-16) |
+| D5 Rounds | One pass, then fixes, then the author re-checks; a second fresh reviewer if a Blocker is found; as many rounds as it takes | One pass; the author re-checks with a mutation, and a Blocker is reported to you before anything further |  One pass, the author re-checks by mutation (2026-10-16) |
+| D6 Random-order run (B-22) | By the author in this pass; leave it to a reviewer; drop it | By the author in this pass, with the seed recorded |  By the author, seed recorded (2026-10-16) |
 
 ## Outcome
 

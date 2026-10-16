@@ -97,9 +97,18 @@ describe('the debug panel with storage blocked (CDS-38 C-30)', () => {
     const setItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
       throw new DOMException('blocked', 'SecurityError');
     });
+    // An error thrown in an event handler is reported to the window by React; none must be.
+    const uncaught: unknown[] = [];
+    const listener = (event: ErrorEvent) => {
+      event.preventDefault();
+      uncaught.push(event.error);
+    };
+    window.addEventListener('error', listener);
     await openSignedIn('/debug');
     await userEvent.type(await screen.findByTestId('debug-key'), 'k');
+    window.removeEventListener('error', listener);
     expect(screen.getByTestId('debug-key')).toHaveValue('k');
+    expect(uncaught).toEqual([]);
     setItem.mockRestore();
   });
 });

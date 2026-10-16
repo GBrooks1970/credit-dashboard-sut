@@ -1,5 +1,5 @@
 ---
-version: 25
+version: 26
 created: 2026-10-14T09:43Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v26:** CDS-38 (F9): what the review found the UI built differently from this specification, now built as written, with the few places where the specification follows the build. One `UtilisationBar` serves the overview, the lists and the account page: `aria-valuenow` is the real value, `aria-valuemax` is raised above 100, the fill stops at full, the colour band is on the fill and in `data-band` (below 30 `low`, 30 to 75 `mid`, above 75 `high`), and the badge `{testid}-over-limit` reads `Over limit`; the text beside the bar carries the figure only (C-02, C-05). An account row shows the provider's initials as its logo fallback (`row-initials-{id}`, decorative); real logos are not loaded, because the data's `logoUrl` is a placeholder (C-21). The searches list is `search-list` (C-06). The account detail header is a region named `Account summary` (C-28). While the chat drawer is open, everything outside it is `inert` (C-25). The history chart's table words its months (`June 2026`) as the balance chart's does (C-32).
 **Changes in v25:** CDS-38 (F8): the open-redirect guard judges the address the URL parser resolves, not the text it was given: dot segments (`/..//host`), a backslash and a tab are resolved first, and the result must start with a single `/` followed by a character that is neither `/` nor `\`; the sign-in redirect-back uses the same guard (C-01, C-20). A response that arrives after a newer request, or after the page was left, is ignored in every fetching page and widget, so the page always shows the answer to the last thing the customer asked for (C-03). A report-changes page past the end of a list that has changes is a page, not an empty list: it says `There are no changes on this page.` (`changes-past-end`), offers `Go to the last page` (`changes-last-page`) and keeps the pager; "No changes match." is only for a list with nothing in it (C-22).
 **Changes in v24:** CDS-38 (F5, B-04, B-19): two value hooks so a step can compare a figure exactly: `debt-type-{type}-amount` inside each debt row, and `detail-tile-{field}-value` inside each details tile. The row and tile text is unchanged.
 **Changes in v23:** CDS-38 (F1): the debug panel is at `/debug` (it was written `/__debug`), is present only in a test build and only for a signed-in customer, and 6.8 lists its hooks (C-08). The score gauge is a `progressbar` named 'Credit score' with the score as its value and 0 to the maximum as its range, not an `img` (C-07).
@@ -181,7 +182,7 @@ The widget is one component (`PaymentHistoryWidget`) reused on account detail wi
 | Title and notice | heading, text | `list-title`, `list-notice` | Title from type |
 | Summary card | region | `list-summary` | Metrics vary by type (table below) |
 | Donut | progressbar | `list-donut` | Total utilisation; absent when limit null |
-| Account row | link | `account-row-{accountId}` | Logo or text fallback, provider, balance, mask, utilisation |
+| Account row | link | `account-row-{accountId}` | Initials fallback `row-initials-{accountId}` (decorative; no logo is loaded), provider, balance, mask, utilisation |
 | Excluded group | region | `list-excluded` | Shown only when `excluded` is non-empty; explains exclusion (BR-05) |
 
 | Type | Summary metrics | Donut | Row utilisation |
@@ -202,7 +203,7 @@ The widget is one component (`PaymentHistoryWidget`) reused on account detail wi
 
 | Element | Role | data-testid | Shown for |
 | --- | --- | --- | --- |
-| Header | region | `detail-header` | All |
+| Header | region, named 'Account summary' | `detail-header` | All |
 | Promo (mock link-your-account) | region | `detail-promo` | Credit cards, current accounts |
 | Balance card | region | `detail-balance`, `detail-balance-bar`, `detail-updated` | All |
 | Details tiles | link (not button) | `detail-tile-{field}`, the field in kebab case: `detail-tile-apr`, `detail-tile-interest-rate`, `detail-tile-promo-period-months`, `detail-tile-min-payment`, `detail-tile-payment-method` | Credit cards, credit accounts |

@@ -242,3 +242,75 @@ describe('debt overview (UI specification 6.7, BR-07, DR-046)', () => {
     expect(await screen.findByTestId('debt-total')).toBeInTheDocument();
   });
 });
+
+describe('late answers do not replace the current page (CDS-38 C-03)', () => {
+  const kinds = ['neutral', 'positive', 'neutral', 'positive', 'neutral'] as const;
+  const five = kinds.map((sentiment, i) => ({ ...change(i + 1, `2026-09-${20 - i}`), sentiment }));
+  const later = <T,>(ms: number, value: T) => new Promise<T>((resolve) => setTimeout(() => resolve(value), ms));
+
+  it('Positive then Neutral, with the Positive answer slow: the page shows Neutral', async () => {
+    fakeService({
+      'GET /reports/bureau-a/changes': (_r, url) => {
+        const sentiment = url.searchParams.get('sentiment');
+        const items = sentiment ? five.filter((c) => c.sentiment === sentiment) : five;
+        const reply = json(200, { page: 1, pageSize: 20, total: items.length, items });
+        return sentiment === 'positive' ? later(400, reply) : reply;
+      },
+    });
+    await openSignedIn('/insights/updates?bureauId=bureau-a');
+    await screen.findByTestId('change-card-chg_1');
+    await userEvent.click(screen.getByTestId('changes-filter-positive'));
+    await userEvent.click(screen.getByTestId('changes-filter-neutral'));
+    await waitFor(() => expect(screen.getAllByTestId(/^change-card-/)).toHaveLength(3));
+    await new Promise((r) => setTimeout(r, 600)); // long enough for the slow Positive answer to arrive
+    expect(screen.getByTestId('changes-filter-neutral')).toHaveAttribute('aria-pressed', 'true');
+    for (const card of screen.getAllByTestId(/^change-card-/)) expect(card).toHaveAttribute('data-sentiment', 'neutral');
+  });
+
+  it('a year chosen after a slow one wins', async () => {
+    const years = [2020, 2021, 2022, 2023, 2024, 2025, 2026].map((year) => ({ year, status: 'on-time' }));
+    fakeService({
+      'GET /reports/bureau-a/payment-history': (_r, url) => {
+        const year = Number(url.searchParams.get('year') ?? 2026);
+        const missed = year === 2024 ? [{ accountId: 'acc_stln01', provider: 'Lender Y', month: '2024-02' }] : [];
+        const reply = json(200, { years, selectedYear: year, missed });
+        return year === 2024 ? later(400, reply) : reply;
+      },
+    });
+    await openSignedIn('/credit-health/report/bureau-a/payment-history');
+    await userEvent.click(await screen.findByTestId('ph-year-2024'));
+    await userEvent.click(screen.getByTestId('ph-year-2023'));
+    await waitFor(() => expect(screen.getByTestId('ph-result')).toHaveTextContent('There were no missed payments in 2023.'));
+    await new Promise((r) => setTimeout(r, 600));
+    expect(screen.getByTestId('ph-result')).toHaveTextContent('There were no missed payments in 2023.');
+    expect(screen.getByTestId('ph-year-2023')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.queryByTestId('ph-missed-acc_stln01-2024-02')).not.toBeInTheDocument();
+  });
+});
+
+describe('a report-changes page past the end (CDS-38 C-22)', () => {
+  it('says so, keeps the pager and lets the customer go back', async () => {
+    const all = Array.from({ length: 25 }, (_, i) => change(i + 1));
+    fakeService({
+      'GET /reports/bureau-a/changes': (_r, url) => {
+        const page = Number(url.searchParams.get('page') ?? 1);
+        return json(200, { page, pageSize: 20, total: 25, items: all.slice((page - 1) * 20, page * 20) });
+      },
+    });
+    await openSignedIn('/insights/updates?bureauId=bureau-a&page=9');
+    expect(await screen.findByTestId('changes-past-end')).toHaveTextContent('There are no changes on this page.');
+    expect(screen.getByTestId('pager-status')).toHaveTextContent('Page 9 of 2');
+    expect(screen.queryByText('No changes match.')).not.toBeInTheDocument();
+    await userEvent.click(screen.getByTestId('changes-last-page'));
+    await screen.findByTestId('change-card-chg_21');
+    expect(screen.getByTestId('pager-status')).toHaveTextContent('Page 2 of 2');
+    expect(screen.queryByTestId('changes-past-end')).not.toBeInTheDocument();
+  });
+
+  it('a filter that matches nothing still says No changes match', async () => {
+    fakeService({ 'GET /reports/bureau-a/changes': () => json(200, { page: 1, pageSize: 20, total: 0, items: [] }) });
+    await openSignedIn('/insights/updates?bureauId=bureau-a&sentiment=negative');
+    expect(await screen.findByText('No changes match.')).toBeInTheDocument();
+    expect(screen.queryByTestId('changes-past-end')).not.toBeInTheDocument();
+  });
+});

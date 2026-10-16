@@ -36,7 +36,8 @@ export function ReportChangesPage() {
       return data;
     },
     [client, bureauId, sentiment, page],
-    (result) => result.items.length === 0,
+    // Empty only when nothing matches at all: a page past the end of a list that has changes is a page, with its pager (CDS-38 C-22).
+    (result) => result.total === 0,
   );
 
   function update(next: { sentiment?: Sentiment; page?: number }) {
@@ -66,11 +67,20 @@ export function ReportChangesPage() {
       <SectionState testId="changes-list" state={state} onRetry={() => void reload()} emptyMessage="No changes match." errorMessage="The changes could not be loaded.">
         {data && (
           <>
-            <ul className="change-list">
-              {data.items.map((change) => (
-                <ChangeCard key={change.id} change={change} />
-              ))}
-            </ul>
+            {data.items.length === 0 ? (
+              <p data-testid="changes-past-end">
+                There are no changes on this page.{' '}
+                <button type="button" data-testid="changes-last-page" onClick={() => update({ sentiment, page: Math.max(1, Math.ceil(data.total / PAGE_SIZE)) })}>
+                  Go to the last page
+                </button>
+              </p>
+            ) : (
+              <ul className="change-list">
+                {data.items.map((change) => (
+                  <ChangeCard key={change.id} change={change} />
+                ))}
+              </ul>
+            )}
             <Pager page={page} pageSize={PAGE_SIZE} total={data.total} onPage={(next) => update({ sentiment, page: next })} />
           </>
         )}

@@ -3,6 +3,7 @@
 // choice, its own loading and error states, and a visually hidden table with one row per month (4.5). A month with no
 // score is a gap in the line and a row that says so (BR-02); it is never carried forward.
 import { useCallback, useEffect, useState } from 'react';
+import { useLatest } from '../../useLatest.ts';
 import type { components } from '@credit-dashboard-sut/api-client';
 import { SectionState, type SectionStateName } from '../../components/SectionState.tsx';
 import { useSession } from '../../session.tsx';
@@ -34,11 +35,14 @@ export function HistoryChart({ bureauId, max }: { bureauId: string; max: number 
   const [range, setRange] = useState<Range>('6m');
   const [state, setState] = useState<SectionStateName>('loading');
   const [points, setPoints] = useState<Point[]>([]);
+  const begin = useLatest();
 
   const load = useCallback(async () => {
+    const current = begin();
     setState('loading');
     try {
       const { data } = await client.GET('/reports/{bureauId}/score/history', { params: { path: { bureauId }, query: { range } } });
+      if (!current()) return; // stale: another range was chosen, or the page was left (CDS-38 C-03)
       if (data) {
         setPoints(data);
         setState(data.length === 0 ? 'empty' : 'populated');
@@ -46,9 +50,9 @@ export function HistoryChart({ bureauId, max }: { bureauId: string; max: number 
         setState('error');
       }
     } catch {
-      setState('error');
+      if (current()) setState('error');
     }
-  }, [client, bureauId, range]);
+  }, [client, bureauId, range, begin]);
 
   useEffect(() => {
     void load();

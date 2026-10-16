@@ -3,6 +3,7 @@
 // detail page (CDS-34). Seven year buttons, the current year chosen first (BR-12); each year has one status; the result is a
 // polite live region with the missed payments of the chosen year, or a message saying there were none.
 import { useCallback, useEffect, useState } from 'react';
+import { useLatest } from '../useLatest.ts';
 import type { components } from '@credit-dashboard-sut/api-client';
 import { SectionState, type SectionStateName } from './SectionState.tsx';
 import { formatMonth } from '../format.ts';
@@ -20,14 +21,17 @@ export function PaymentHistoryWidget({ bureauId, accountId }: { bureauId: string
   const [state, setState] = useState<SectionStateName>('loading');
   const [history, setHistory] = useState<History | null>(null);
   const [busy, setBusy] = useState(false);
+  const begin = useLatest();
 
   const load = useCallback(async () => {
+    const current = begin();
     setBusy(true);
     try {
       const query = year === undefined ? {} : { year };
       const { data } = accountId
         ? await client.GET('/accounts/{accountId}/payment-history', { params: { path: { accountId }, query } })
         : await client.GET('/reports/{bureauId}/payment-history', { params: { path: { bureauId }, query } });
+      if (!current()) return; // stale: a newer year was chosen, or the page was left (CDS-38 C-03)
       if (data) {
         setHistory(data);
         setState('populated');
@@ -35,11 +39,11 @@ export function PaymentHistoryWidget({ bureauId, accountId }: { bureauId: string
         setState('error');
       }
     } catch {
-      setState('error');
+      if (current()) setState('error');
     } finally {
-      setBusy(false);
+      if (current()) setBusy(false);
     }
-  }, [client, bureauId, accountId, year]);
+  }, [client, bureauId, accountId, year, begin]);
 
   useEffect(() => {
     void load();

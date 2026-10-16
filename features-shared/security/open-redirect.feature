@@ -1,4 +1,4 @@
-# version: 2 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 3 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
 # Moved unchanged from ui/account-details-form.feature v2 at CDS-09 (README 'Where Phase 0 files land').
 @security @ui
 Feature: Return links stay on this site
@@ -8,7 +8,17 @@ Feature: Return links stay on this site
   Background:
     Given Alex holds the "drilldown" persona
 
-  Scenario: The return link cannot leave the site
-    When Alex opens the interest rate form with a return address on another site
+  # One address per way the guard has been found wanting (CDS-38 C-04): another origin, a protocol-relative address, and dot
+  # segments that collapse to one. Backslash forms are covered by the component table (a backslash is an escape in a Gherkin table).
+  Scenario Outline: The return link cannot leave the site
+    When Alex opens the interest rate form with the return address "<address>"
     And Alex cancels the form
     Then Alex is back on the credit card's own page
+
+    Examples:
+      | address                    |
+      | https://evil.example/steal |
+      | //evil.example/steal       |
+      | /..//evil.example/steal    |
+      | /.//evil.example/steal     |
+      | javascript:alert(1)        |

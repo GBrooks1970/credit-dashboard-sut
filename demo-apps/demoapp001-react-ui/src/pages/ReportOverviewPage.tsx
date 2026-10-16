@@ -2,6 +2,7 @@
 // Report overview (UI specification 6.2). One GET /reports/{bureauId}/overview feeds every section except the history
 // chart and the full changes list behind the toggle. If that call fails, the page shows one error state with one Retry.
 import { useCallback, useEffect, useState } from 'react';
+import { useLatest } from '../useLatest.ts';
 import { useParams } from 'react-router';
 import type { components } from '@credit-dashboard-sut/api-client';
 import { SectionState, type SectionStateName } from '../components/SectionState.tsx';
@@ -19,11 +20,14 @@ export function ReportOverviewPage() {
   const { client } = useSession();
   const [state, setState] = useState<SectionStateName>('loading');
   const [overview, setOverview] = useState<Overview | null>(null);
+  const begin = useLatest();
 
   const load = useCallback(async () => {
+    const current = begin();
     setState('loading');
     try {
       const { data } = await client.GET('/reports/{bureauId}/overview', { params: { path: { bureauId } } });
+      if (!current()) return; // stale: another bureau was chosen, or the page was left (CDS-38 C-03)
       if (data) {
         setOverview(data);
         setState('populated');
@@ -31,9 +35,9 @@ export function ReportOverviewPage() {
         setState('error');
       }
     } catch {
-      setState('error');
+      if (current()) setState('error');
     }
-  }, [client, bureauId]);
+  }, [client, bureauId, begin]);
 
   useEffect(() => {
     void load();

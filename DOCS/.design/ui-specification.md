@@ -1,5 +1,5 @@
 ---
-version: 24
+version: 25
 created: 2026-10-14T09:43Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v25:** CDS-38 (F8): the open-redirect guard judges the address the URL parser resolves, not the text it was given: dot segments (`/..//host`), a backslash and a tab are resolved first, and the result must start with a single `/` followed by a character that is neither `/` nor `\`; the sign-in redirect-back uses the same guard (C-01, C-20). A response that arrives after a newer request, or after the page was left, is ignored in every fetching page and widget, so the page always shows the answer to the last thing the customer asked for (C-03). A report-changes page past the end of a list that has changes is a page, not an empty list: it says `There are no changes on this page.` (`changes-past-end`), offers `Go to the last page` (`changes-last-page`) and keeps the pager; "No changes match." is only for a list with nothing in it (C-22).
 **Changes in v24:** CDS-38 (F5, B-04, B-19): two value hooks so a step can compare a figure exactly: `debt-type-{type}-amount` inside each debt row, and `detail-tile-{field}-value` inside each details tile. The row and tile text is unchanged.
 **Changes in v23:** CDS-38 (F1): the debug panel is at `/debug` (it was written `/__debug`), is present only in a test build and only for a signed-in customer, and 6.8 lists its hooks (C-08). The score gauge is a `progressbar` named 'Credit score' with the score as its value and 0 to the maximum as its range, not an `img` (C-07).
 **Changes in v22:** CDS-39 (P1): the flag mechanism is built. The control key reaches a test build through browser local storage (`cds.testControlKey`), which the harness seeds before the page loads (a browser context can seed local storage, not session storage); the app waits for the flags before it renders; the debug panel of 6.8 is the page `/debug` and exists only in a test build; `plural` is the first UI flag implemented.
@@ -228,7 +229,7 @@ Sections not shown for a type are not rendered at all, rather than rendered empt
 
 `redirectUrl` must be a same-origin path starting with `/`. Anything else falls back to the account detail page (open-redirect guard).
 
-**Built in U4 (CDS-34).** Five fields: `apr` and `interestRate` (presets 9.9, 19.9, 24.9 and 34.9), `promoPeriodMonths` (0, 6, 12 and 24), `minPayment` (a percentage: 1, 2, 3 and 5) and `paymentMethod` (direct debit or manual, with no Other). The current value is pre-selected: a preset if it is one, otherwise Other holding the value. The client check mirrors BR-14 (a rate or percentage from 0 to 100 with up to two decimals; whole months from 0 to 60), and a refused value is never sent. The service's own message (a 422 `detail`) is shown as it comes. The open-redirect guard follows a return address only if it is a path that starts with a single `/` (not `//`, not `/\`) and stays on this site once resolved; otherwise the form returns to the account page, built from the signed-in customer's default bureau.
+**Built in U4 (CDS-34).** Five fields: `apr` and `interestRate` (presets 9.9, 19.9, 24.9 and 34.9), `promoPeriodMonths` (0, 6, 12 and 24), `minPayment` (a percentage: 1, 2, 3 and 5) and `paymentMethod` (direct debit or manual, with no Other). The current value is pre-selected: a preset if it is one, otherwise Other holding the value. The client check mirrors BR-14 (a rate or percentage from 0 to 100 with up to two decimals; whole months from 0 to 60), and a refused value is never sent. The service's own message (a 422 `detail`) is shown as it comes. The open-redirect guard follows a return address only if it is a path that starts with a single `/` and stays on this site once resolved (dot segments removed, a backslash read as a slash): the resolved path must again start with a single `/` followed by a character that is neither `/` nor `\`, so `//host`, `/\host`, `/..//host` and `/./\host` all fall back; otherwise the form returns to the account page, built from the signed-in customer's default bureau.
 
 ### 6.7 Closed accounts, report changes, searches, personal details, debt (Releases 2 to 3)
 

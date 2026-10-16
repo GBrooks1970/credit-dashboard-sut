@@ -83,10 +83,9 @@ When('{actor} tries to record an interest rate of {percent}', async (name: strin
     await actorCalled(name).attemptsTo(Wait.until(byTestId('dc-error'), isVisible()));
 });
 
-When('{actor} opens the interest rate form with a return address on another site', (name: string) => {
+When('{actor} opens the interest rate form with the return address {string}', (name: string, address: string) => {
     const card = cardWithNoRate(name);
-    const foreign = encodeURIComponent('https://evil.example/steal');
-    return openAddress(actorCalled(name), `/data-capture/interestRate?accountId=${card.id}&redirectUrl=${foreign}`, 'dc-prompt');
+    return openAddress(actorCalled(name), `/data-capture/interestRate?accountId=${card.id}&redirectUrl=${encodeURIComponent(address)}`, 'dc-prompt');
 });
 
 When('{actor} cancels the form', (name: string) => actorCalled(name).attemptsTo(Click.on(byTestId('dc-cancel'))));

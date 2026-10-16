@@ -239,6 +239,8 @@ describe('safeRedirect (UI specification 6.6, the open-redirect guard)', () => {
   it.each([
     ['/credit-health/report/bureau-a/account/acc_cc?x=1', '/credit-health/report/bureau-a/account/acc_cc?x=1'],
     ['/insights/updates#top', '/insights/updates#top'],
+    ['/a/../b?x=1#top', '/b?x=1#top'],
+    ['/ok//path', '/ok//path'],
   ])('follows a path on this site: %s', (target, expected) => {
     expect(safeRedirect(target, fallback)).toBe(expected);
   });
@@ -249,6 +251,15 @@ describe('safeRedirect (UI specification 6.6, the open-redirect guard)', () => {
     ['//evil.example'],
     ['/\\evil.example'],
     ['/\t/evil.example'],
+    // Dot segments and backslashes that resolve to a protocol-relative address (CDS-38 C-01).
+    ['/..//evil.example'],
+    ['/.//evil.example'],
+    ['/%2e%2e//evil.example'],
+    ['/./\\evil.example'],
+    ['/a/../\\evil.example'],
+    ['/a/..//evil.example'],
+    ['/\\/evil.example'],
+    ['/a/%2e%2e/%2e%2e//evil.example'],
     ['javascript:alert(1)'],
     ['evil.example'],
     [''],

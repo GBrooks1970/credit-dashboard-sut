@@ -110,7 +110,7 @@
           "profile": "api",
           "feature": "api/account-totals.feature",
           "name": "Type totals sum the open accounts of that type",
-          "failsWith": "must be integer"
+          "failsWith": "at '/balance/amountMinor': must be integer"
         }
       ]
     },

@@ -27,6 +27,20 @@ export class ControlTheTestEnvironment extends Ability {
         await this.expect(send('testSetBugs', { body: { flags } }), 204, 'set the bug flags');
     }
 
+    /**
+     * Puts the bug flags to exactly what this run asks for (HARNESS_BUGS, none in an ordinary run) and checks the service agrees.
+     * An empty list is set too: a run with the flags off is shown to have them off, and does not rely on the reset alone (B-06).
+     */
+    async arrangeFlags(): Promise<void> {
+        const wanted = ControlTheTestEnvironment.flagsFromEnvironment();
+        await this.setBugs(wanted);
+        const state = await send('testGetState', {});
+        const held = [...((state.body as { flags?: string[] }).flags ?? [])].sort();
+        if (JSON.stringify(held) !== JSON.stringify([...wanted].sort())) {
+            throw new Error(`Test control: the flags in force are [${held.join(', ')}], this run asked for [${wanted.join(', ')}]`);
+        }
+    }
+
     /** The flags a proof run asks for: HARNESS_BUGS is a comma separated list, absent in every ordinary run. */
     static flagsFromEnvironment(): string[] {
         return (process.env.HARNESS_BUGS ?? '').split(',').map((f) => f.trim()).filter(Boolean);

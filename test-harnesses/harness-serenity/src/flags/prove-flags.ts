@@ -1,4 +1,4 @@
-// version: 1 | created: 2026-10-14T10:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 2 | created: 2026-10-14T10:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // The bug-flag proof (CDS-39, decision brief 13, DR-064). For every flag that fixtures/bug-flags.json marks implemented, run each
 // of its committed catchers twice: with the flag OFF it must pass, and with the flag ON it must fail, and the failure must
 // contain the text the registry records for it (`failsWith`). A flag is "caught" when at least one catcher fails for the stated
@@ -8,6 +8,8 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { judgeOff, judgeOn, verdictOf, type Outcome, type RunResult, type Verdict } from './verdict.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const harness = path.resolve(here, '..', '..');
@@ -31,8 +33,8 @@ interface Entry {
     catchers?: Catcher[];
 }
 
-type Outcome = 'passed' | 'failed-as-stated' | 'failed-for-another-reason';
-type Verdict = 'caught' | 'not-caught' | 'caught-for-another-reason' | 'false-alarm' | 'pending';
+// One catcher run may take this long (CDS_PROOF_TIMEOUT_MS); a hung run is reported as a timeout, not waited for (CDS-38 B-08).
+const TIMEOUT_MS = Number(process.env.CDS_PROOF_TIMEOUT_MS || 240_000);
 
 const registry = JSON.parse(fs.readFileSync(path.join(repo, 'fixtures', 'bug-flags.json'), 'utf8')) as { flags: Entry[] };
 const known = new Set(registry.flags.map((f) => f.flag));
@@ -42,23 +44,24 @@ const stripAnsi = (text: string) => text.replace(/\u001b\[[0-9;]*m/g, '');
 const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /** Runs one catcher with exactly these flags on (none: all off). */
-function run(catcher: Catcher, flags: string[]): { passed: boolean; output: string } {
+function run(catcher: Catcher, flags: string[]): RunResult {
     const env = { ...process.env, HARNESS_BUGS: flags.join(','), CDS_FLAGS: flags.join(',') };
     if (catcher.kind === 'scenario') {
         const cucumber = path.join(harness, 'node_modules', '@cucumber', 'cucumber', 'bin', 'cucumber.js');
         const feature = path.join(repo, 'features-shared', catcher.feature!);
-        const result = spawnSync(process.execPath, ['--import', 'tsx', cucumber, '--profile', `select-${catcher.profile}`, feature, '--name', `^${escapeRegExp(catcher.name)}$`], { cwd: harness, env, encoding: 'utf8' });
+        const result = spawnSync(process.execPath, ['--import', 'tsx', cucumber, '--profile', `select-${catcher.profile}`, feature, '--name', `^${escapeRegExp(catcher.name)}$`], { cwd: harness, env, encoding: 'utf8', timeout: TIMEOUT_MS, killSignal: 'SIGKILL' });
         const output = stripAnsi(`${result.stdout}\n${result.stderr}`);
         // A catcher whose name matches no scenario runs nothing and exits 0: that is not a pass.
         const ran = /Scenarios:\s+[1-9]/.test(output);
-        return { passed: result.status === 0 && ran, output: ran ? output : `${output}\n(no scenario ran: check the catcher's name)` };
+        return { passed: result.status === 0, ran, timedOut: (result.error as NodeJS.ErrnoException | undefined)?.code === 'ETIMEDOUT', output: ran ? output : `${output}\n(no scenario ran: check the catcher's name)` };
     }
     const vitest = path.join(uiProject, 'node_modules', 'vitest', 'vitest.mjs');
-    const result = spawnSync(process.execPath, [vitest, 'run', path.join(repo, catcher.file!), '-t', catcher.name], { cwd: uiProject, env, encoding: 'utf8' });
+    // Vitest reads -t as a pattern, so the name is escaped to match literally (B-26).
+    const result = spawnSync(process.execPath, [vitest, 'run', path.join(repo, catcher.file!), '-t', escapeRegExp(catcher.name)], { cwd: uiProject, env, encoding: 'utf8', timeout: TIMEOUT_MS, killSignal: 'SIGKILL' });
     const output = stripAnsi(`${result.stdout}\n${result.stderr}`);
     // Likewise a test name that matches nothing: Vitest skips every test and exits 0.
     const ran = /Tests\s+.*\b[1-9]\d* (passed|failed)/.test(output);
-    return { passed: result.status === 0 && ran, output: ran ? output : `${output}\n(no test ran: check the catcher's name)` };
+    return { passed: result.status === 0, ran, timedOut: (result.error as NodeJS.ErrnoException | undefined)?.code === 'ETIMEDOUT', output: ran ? output : `${output}\n(no test ran: check the catcher's name)` };
 }
 
 async function resetService() {
@@ -67,6 +70,8 @@ async function resetService() {
 }
 
 const rows: { flag: string; group: string; layer: string; verdict: Verdict; catchers: { name: string; kind: string; off: Outcome; on: Outcome }[] }[] = [];
+const describeOn = (on: Outcome) => ({ passed: 'PASSES', 'failed-as-stated': 'fails as stated', 'failed-for-another-reason': 'fails, but not as stated', 'did-not-run': 'DID NOT RUN', 'timed-out': 'TIMED OUT' })[on];
+const describeOff = (off: Outcome) => (off === 'passed' ? 'passes' : off === 'failed-for-another-reason' ? 'FAILS (or prints the failure text)' : off === 'did-not-run' ? 'DID NOT RUN' : 'TIMED OUT');
 
 for (const entry of registry.flags) {
     if (wanted.length > 0 && !wanted.includes(entry.flag)) continue;
@@ -78,19 +83,11 @@ for (const entry of registry.flags) {
     for (const catcher of entry.catchers ?? []) {
         const off = run(catcher, []);
         const on = run(catcher, [entry.flag]);
-        results.push({
-            name: catcher.name,
-            kind: catcher.kind,
-            off: off.passed ? 'passed' : 'failed-for-another-reason',
-            on: on.passed ? 'passed' : on.output.includes(catcher.failsWith) ? 'failed-as-stated' : 'failed-for-another-reason',
-        });
-        console.log(`  ${entry.flag.padEnd(24)} ${catcher.kind.padEnd(15)} off: ${off.passed ? 'passes' : 'FAILS'}  on: ${on.passed ? 'PASSES' : on.output.includes(catcher.failsWith) ? 'fails as stated' : 'fails, but not as stated'}  ${catcher.name}`);
+        const outcome = { name: catcher.name, kind: catcher.kind, off: judgeOff(off, catcher.failsWith), on: judgeOn(on, catcher.failsWith) };
+        results.push(outcome);
+        console.log(`  ${entry.flag.padEnd(24)} ${catcher.kind.padEnd(15)} off: ${describeOff(outcome.off)}  on: ${describeOn(outcome.on)}  ${catcher.name}`);
     }
-    let verdict: Verdict;
-    if (results.some((r) => r.off !== 'passed')) verdict = 'false-alarm';
-    else if (results.some((r) => r.on === 'failed-as-stated')) verdict = 'caught';
-    else if (results.some((r) => r.on === 'failed-for-another-reason')) verdict = 'caught-for-another-reason';
-    else verdict = 'not-caught';
+    const verdict = verdictOf(results);
     rows.push({ flag: entry.flag, group: entry.group, layer: entry.layer, verdict, catchers: results });
     await resetService();
 }

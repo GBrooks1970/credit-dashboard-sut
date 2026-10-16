@@ -199,12 +199,17 @@ for (const entry of flagFile.flags) {
     check(typeof c.failsWith === 'string' && c.failsWith.length > 0 && c.failsWith !== 'TBD', where, 'a catcher records the failure it must produce (failsWith)');
     if (c.kind === 'scenario') {
       const file = path.join(repoRoot, 'features-shared', c.feature);
-      const found = fs.existsSync(file) && new RegExp(`Scenario( Outline)?: ${escapeRegExp(c.name)}\\s*$`, 'm').test(fs.readFileSync(file, 'utf8'));
+      const text = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+      const found = new RegExp(`Scenario( Outline)?: ${escapeRegExp(c.name)}\\s*$`, 'm').test(text);
       check(found, where, `scenario '${c.name}' not found in ${c.feature}`);
       check(['api', 'ui'].includes(c.profile), where, 'a scenario catcher names its profile (api or ui)');
+      // A failure text the feature file itself holds is printed by every run, defect or not, so it proves nothing (CDS-38 B-03).
+      check(!text.includes(c.failsWith), where, `failsWith '${c.failsWith}' occurs in ${c.feature}, so a run prints it with no defect`);
     } else if (c.kind === 'component-test') {
       const file = path.join(repoRoot, c.file);
-      check(fs.existsSync(file) && fs.readFileSync(file, 'utf8').includes(c.name), where, `test '${c.name}' not found in ${c.file}`);
+      // The test is declared with exactly this name (it/test, any modifier), not merely mentioned in a comment (B-26).
+      const declared = fs.existsSync(file) && new RegExp(`\\b(it|test)(\\.\\w+)*\\(\\s*(['"\x60])${escapeRegExp(c.name)}\\3`).test(fs.readFileSync(file, 'utf8'));
+      check(declared, where, `test '${c.name}' is not declared with it(...) or test(...) in ${c.file}`);
     } else {
       check(false, where, `unknown catcher kind '${c.kind}'`);
     }

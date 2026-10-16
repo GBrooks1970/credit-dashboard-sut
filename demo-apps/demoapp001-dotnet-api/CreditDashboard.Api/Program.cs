@@ -21,6 +21,10 @@ builder.Services.AddSingleton(sp => AuthOptions.From(sp.GetRequiredService<IConf
 builder.Services.AddSingleton<TokenStore>();
 
 var app = builder.Build();
+// First in the pipeline, so they cover the UI branch below as well: every response carries X-Correlation-Id (A-05) and no
+// unhandled fault reaches the caller as anything but a 500 Problem (A-01, A-02).
+app.UseMiddleware<CorrelationIdMiddleware>();
+app.UseMiddleware<FaultHandler>();
 _ = app.Services.GetRequiredService<TestControlOptions>(); // TEST_CONTROL=true without a key stops the service here
 _ = app.Services.GetRequiredService<AuthOptions>(); // so does a TOKEN_LIFETIME_MINUTES outside 1 to 1440
 // UI_DIRECTORY (optional): a folder holding the built UI. Paths outside the API base path are then served from it, with
@@ -34,10 +38,20 @@ if (!string.IsNullOrWhiteSpace(uiDirectory))
     var apiBase = app.Services.GetRequiredService<ContractModel>().BasePath;
     app.MapWhen(context => !context.Request.Path.StartsWithSegments(apiBase), ui =>
     {
-        ui.UseStaticFiles(new StaticFileOptions { FileProvider = new PhysicalFileProvider(uiRoot) });
+        ui.UseStaticFiles(new StaticFileOptions
+        {
+            FileProvider = new PhysicalFileProvider(uiRoot),
+            // index.html is never cached, whichever way it is reached (A-20).
+            OnPrepareResponse = response =>
+            {
+                if (string.Equals(response.File.Name, "index.html", StringComparison.OrdinalIgnoreCase)) response.Context.Response.Headers.CacheControl = "no-store";
+            },
+        });
         ui.Run(async context =>
         {
-            if (!HttpMethods.IsGet(context.Request.Method)) { await Problems.NotFound(context, "No operation matches this request."); return; }
+            if (!HttpMethods.IsGet(context.Request.Method) && !HttpMethods.IsHead(context.Request.Method)) { await Problems.NotFound(context, "No operation matches this request."); return; }
+            // A file that is not there is a 404, not the page: a broken asset reference must not look like success (A-20).
+            if (context.Request.Path.StartsWithSegments("/assets")) { await Problems.NotFound(context, "No such file."); return; }
             context.Response.ContentType = "text/html; charset=utf-8";
             context.Response.Headers.CacheControl = "no-store";
             await context.Response.SendFileAsync(Path.Combine(uiRoot, "index.html"));

@@ -86,6 +86,12 @@ public sealed class ContractValidation(RequestDelegate next, ContractModel contr
             {
                 if (operation.BodyRequired) errors.Add(new("body", "is required"));
             }
+            else if (DuplicatePropertyName(text) is { } duplicate)
+            {
+                // JSON allows it, but the handlers read the body into objects that cannot hold two members of one name, and a
+                // repeated name is a way to say two things at once. It is a bad body, never a fault (CDS-38 A-02).
+                errors.Add(new("body", $"names the property '{duplicate}' more than once"));
+            }
             else
             {
                 try
@@ -93,8 +99,9 @@ public sealed class ContractValidation(RequestDelegate next, ContractModel contr
                     using var doc = JsonDocument.Parse(text);
                     errors.AddRange(Evaluate(operation.BodySchema, doc.RootElement, null));
                 }
-                catch (JsonException)
+                catch (Exception fault) when (fault is JsonException or ArgumentException)
                 {
+                    // ArgumentException: the schema evaluator refuses an object that names a property twice.
                     errors.Add(new("body", "is not valid JSON"));
                 }
             }
@@ -113,6 +120,32 @@ public sealed class ContractValidation(RequestDelegate next, ContractModel contr
             await Task.Delay(persona, context.RequestAborted);
 
         await next(context);
+    }
+
+    /// <summary>The first property name an object in the text uses twice, or null (also null for text that is not JSON: the parser reports that).</summary>
+    private static string? DuplicatePropertyName(string text)
+    {
+        try
+        {
+            var reader = new Utf8JsonReader(System.Text.Encoding.UTF8.GetBytes(text));
+            var names = new Stack<HashSet<string>>();
+            while (reader.Read())
+            {
+                switch (reader.TokenType)
+                {
+                    case JsonTokenType.StartObject: names.Push(new HashSet<string>(StringComparer.Ordinal)); break;
+                    case JsonTokenType.EndObject: names.Pop(); break;
+                    case JsonTokenType.PropertyName:
+                        var name = reader.GetString()!;
+                        if (!names.Peek().Add(name)) return name;
+                        break;
+                }
+            }
+        }
+        catch (JsonException)
+        {
+        }
+        return null;
     }
 
     private static IEnumerable<FieldError> Evaluate(JsonSchema schema, JsonElement value, string? field)

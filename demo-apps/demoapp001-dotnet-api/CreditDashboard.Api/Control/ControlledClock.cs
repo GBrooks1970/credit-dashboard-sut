@@ -14,13 +14,17 @@ public interface IControlledClock
 
 public sealed class ControlledClock(TimeProvider real) : IControlledClock
 {
-    private DateTimeOffset? _frozen;
+    // A reference, not a nullable struct: a nullable DateTimeOffset is read in two parts (its flag and its value), so a
+    // reader racing a write could see a frozen flag with the old value. A reference is read and replaced whole (CDS-38 A-18).
+    private sealed record Instant(DateTimeOffset Value);
 
-    public DateTimeOffset UtcNow => _frozen ?? real.GetUtcNow();
+    private volatile Instant? _frozen;
 
-    public DateTimeOffset? Frozen => _frozen;
+    public DateTimeOffset UtcNow => _frozen?.Value ?? real.GetUtcNow();
 
-    public void Freeze(DateTimeOffset now) => _frozen = now.ToUniversalTime();
+    public DateTimeOffset? Frozen => _frozen?.Value;
+
+    public void Freeze(DateTimeOffset now) => _frozen = new Instant(now.ToUniversalTime());
 
     public void Release() => _frozen = null;
 }

@@ -13,8 +13,27 @@ public sealed class TestControlGate(RequestDelegate next, TestControlOptions opt
 {
     public const string KeyHeader = "X-Test-Control-Key";
 
-    public static bool IsTestControlPath(string path, string basePath) =>
-        path.StartsWith(basePath + "/__test/", StringComparison.Ordinal);
+    /// <summary>
+    /// True for the test-control paths however they are spelt: repeated slashes (<c>/api/v1//__test/reset</c>) and any case reach
+    /// the same endpoint in the router, so they must reach the same gate (CDS-38 A-03).
+    /// </summary>
+    public static bool IsTestControlPath(string path, string basePath)
+    {
+        var normal = Collapse(path);
+        var root = Collapse(basePath) + "/__test";
+        return normal.StartsWith(root + "/", StringComparison.OrdinalIgnoreCase) || normal.Equals(root, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>True if the path, however spelt, has a <c>__test</c> segment: used to keep test-control errors out of the bug flags (A-08).</summary>
+    public static bool HasTestControlSegment(string path) => (Collapse(path) + "/").Contains("/__test/", StringComparison.OrdinalIgnoreCase);
+
+    private static string Collapse(string path)
+    {
+        var builder = new System.Text.StringBuilder(path.Length);
+        foreach (var c in path)
+            if (c != '/' || builder.Length == 0 || builder[^1] != '/') builder.Append(c);
+        return builder.ToString();
+    }
 
     public async Task InvokeAsync(HttpContext context)
     {

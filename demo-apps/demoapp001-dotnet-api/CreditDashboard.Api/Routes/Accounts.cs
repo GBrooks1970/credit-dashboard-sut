@@ -132,14 +132,16 @@ public static class Accounts
 
     private static async Task AccountPaymentHistory(HttpContext context, PersonaStore store, IControlledClock clock, string accountId)
     {
-        if (await Owned(context, store, clock, accountId) is not { } r) return;
-        var window = Rules.PaymentHistory.Window(r.Today);
-        var year = int.TryParse(context.Request.Query["year"], NumberStyles.None, CultureInfo.InvariantCulture, out var y) ? y : r.Today.Year;
+        // The request's own values (400) are checked before the target and its owner (404), as in API specification section 8.
+        var today = DateOnly.FromDateTime(clock.UtcNow.UtcDateTime);
+        var window = Rules.PaymentHistory.Window(today);
+        var year = int.TryParse(context.Request.Query["year"], NumberStyles.None, CultureInfo.InvariantCulture, out var y) ? y : today.Year;
         if (!window.Contains(year))
         {
             await Problems.Validation(context, [new FieldError("year", $"must be within the seven-year window, {window[0]} to {window[^1]}")]);
             return;
         }
+        if (await Owned(context, store, clock, accountId) is not { } r) return;
         var current = ReportData.Current(r.Today);
         var account = new[] { ReportData.PaymentAccountOf(r.Account) };
         await Http.Json(context, new JsonObject

@@ -4,15 +4,15 @@ created: 2026-10-16T22:01Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-38
-status: proposed
-approved: not yet
+status: approved
+approved: "2026-10-17, Gary Brooks, 'all as recommended, approved, merge #93 once CI green, then start F11a' (D1 to D5 as recommended); merge authority: per pull request, on request"
 delivered: not yet
 language: en-GB
 ---
 
 # Implementation plan: CDS-38 F11a to F11f, the fixes from the confirmation pass
 
-**History of this plan.** The confirmation pass (F11) ran on 2026-10-16 at `20ecebc`: three Sonnet 5.5 reviewers checked 57 earlier fixes (41 Fixed, 16 Partly fixed, none Not fixed) and reported 12 new Blockers, 27 Changes and 16 Notes. The author reproduced every Blocker and Change (the record, `.review/2026-10-16_cds-38-confirmation-pass.md`, section 4) and the owner signed them off by interview (section 5): all 12 Blockers and 27 Changes accepted, 11 Notes accepted, 3 deferred, 2 no action. The fix plan (F11) says accepted findings are fixed in small pull requests, specification first, with an addendum for any fix that is more than a correction. This is that plan, written for approval before any code changes (DR-041).
+**History of this plan.** The confirmation pass (F11) ran on 2026-10-16 at `20ecebc`: three Sonnet 5.5 reviewers checked 57 earlier fixes (41 Fixed, 16 Partly fixed, none Not fixed) and reported 12 new Blockers, 27 Changes and 16 Notes. The author reproduced every Blocker and Change (the record, `.review/2026-10-16_cds-38-confirmation-pass.md`, section 4) and the owner signed them off by interview (section 5): all 12 Blockers and 27 Changes accepted, 11 Notes accepted, 3 deferred, 2 no action. The fix plan (F11) says accepted findings are fixed in small pull requests, specification first, with an addendum for any fix that is more than a correction. This is that plan, written for approval before any code changes (DR-041); the owner approved it on 2026-10-17.
 
 **Goal.** Put right what the confirmation pass found, in six slices, so that no Blocker and no Change remains open before the records (F12) and the UI flags (P3). Every fix is shown to fail without it, as in F1 to F10.
 
@@ -86,11 +86,11 @@ The three deferred Notes (R2-B-13, 17, 19); the two no-action Notes; the earlier
 
 | Decision | Options | Recommended | Owner's answer |
 |---|---|---|---|
-| D1 Order | a, b, c, d, e, f as written (service, harness, UI); UI first; Blockers of all areas first | As written: the service fixes come first so that the harness guards in d are judged against the corrected service | |
-| D2 The harness type check (R2-B-10) | Inside the `api` mode before the services start (keeps 14 steps); a 15th `verify` step; a CI step in the `ui` job | Inside the `api` mode | |
-| D3 Date formats on overrides (R2-A-03) | Check them in the overrides check only; enable format assertion for every `date` and `date-time` at the edge | The overrides check only: format assertion at the edge would refuse request bodies elsewhere that the contract does not treat as errors today | |
-| D4 Test-control numbers (R2-A-02) | Refuse any exponent form with a 400; accept whole values written with an exponent | Refuse (a keyed tool does not need one) | |
-| D5 Signals and limits (R2-B-08) | Asynchronous child with forwarded signals and a limit for every mode; keep `spawnSync` and add only the limits | Asynchronous child: it is the only way a handler can run | |
+| D1 Order | a, b, c, d, e, f as written (service, harness, UI); UI first; Blockers of all areas first | As written: the service fixes come first so that the harness guards in d are judged against the corrected service |  As written (2026-10-17) |
+| D2 The harness type check (R2-B-10) | Inside the `api` mode before the services start (keeps 14 steps); a 15th `verify` step; a CI step in the `ui` job | Inside the `api` mode |  Inside the `api` mode (2026-10-17) |
+| D3 Date formats on overrides (R2-A-03) | Check them in the overrides check only; enable format assertion for every `date` and `date-time` at the edge | The overrides check only: format assertion at the edge would refuse request bodies elsewhere that the contract does not treat as errors today |  The overrides check only (2026-10-17) |
+| D4 Test-control numbers (R2-A-02) | Refuse any exponent form with a 400; accept whole values written with an exponent | Refuse (a keyed tool does not need one) |  Refuse (2026-10-17) |
+| D5 Signals and limits (R2-B-08) | Asynchronous child with forwarded signals and a limit for every mode; keep `spawnSync` and add only the limits | Asynchronous child: it is the only way a handler can run |  Asynchronous child (2026-10-17) |
 
 ## Outcome
 

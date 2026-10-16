@@ -283,3 +283,24 @@ describe('the chat drawer', () => {
     expect(screen.getByTestId('chat-input')).toHaveFocus();
   });
 });
+
+describe('a history range chosen after a slow one wins (CDS-38 C-03)', () => {
+  it('shows three months after 1 year (slow) then 3 months', async () => {
+    fakeService({
+      ...baseHandlers(),
+      'GET /reports/bureau-a/score/history': (_r, url) => {
+        const range = url.searchParams.get('range');
+        const reply = json(200, history(range === '3m' ? [700, 710, 720] : range === '1y' ? Array(12).fill(700) : [700, null, 710, 720, 715, 720]));
+        return range === '1y' ? new Promise<Response>((resolve) => setTimeout(() => resolve(reply), 400)) : reply;
+      },
+    });
+    renderOverview();
+    await screen.findByTestId('history-chart');
+    await userEvent.click(screen.getByTestId('range-1y'));
+    await userEvent.click(screen.getByTestId('range-3m'));
+    await waitFor(() => expect(within(screen.getByTestId('history-chart-table')).getAllByRole('row')).toHaveLength(4));
+    await new Promise((r) => setTimeout(r, 600));
+    expect(within(screen.getByTestId('history-chart-table')).getAllByRole('row')).toHaveLength(4);
+    expect(screen.getByTestId('range-3m')).toHaveAttribute('aria-pressed', 'true');
+  });
+});

@@ -158,7 +158,7 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 | `{actor} moves to the next page` | Pager | `ui/report-changes` |
 | `{actor} opens the {accountType} list` | Account-type list | `ui/account-drilldown` |
 | `{actor} opens a loan account` | Account detail | `ui/account-drilldown` |
-| `{actor} opens the interest rate form with a return address on another site` | Edit form with a foreign `redirectUrl` | `security/open-redirect` |
+| `{actor} opens the interest rate form with the return address {string}` | Edit form with that `redirectUrl` (a hostile address in each example) | `security/open-redirect` |
 | `{actor} records an interest rate of {percent}` / `tries to record an interest rate of {percent}` | Edit form | `ui/account-details-form` |
 | `{actor} cancels the form` | Edit form | `security/open-redirect` |
 | `{actor} chooses {year}` | Payment history year buttons | `ui/payment-history` |

@@ -1,5 +1,5 @@
 ---
-version: 29
+version: 30
 created: 2026-10-14T15:00Z
 supersedes: v22 (2026-10-08); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -10,6 +10,7 @@ language: en-GB
 # Credit Dashboard SUT: API Specification
 
 **Status:** Phase 0 draft, for review
+**Changes in v30:** CDS-38 (F3): the service meets what section 3 and section 8 already said. `X-Correlation-Id` is on every response, including the hosted UI and errors; a supplied value is echoed only if it is 1 to 128 letters, digits, dots, underscores or hyphens, otherwise a new GUID replaces it (A-05). An unhandled fault is the 500 Problem with a fixed detail and no trace, in every environment (A-01, A-02), and a body that names a property twice is a 400 (A-02). The test-control gate treats repeated slashes and any letter case as the same path, so a test-control path is the same 404 however it is spelt when test control is off (A-03). `PUT /__test/clock` takes an RFC 3339 date-time only, with offset and seconds, either case of `T` and `Z` (A-06). The year window of the payment-history operations is part of the request's own values and is checked before the target and the persona (A-07). A test-control error is never plain text under `problem-json-missing` (A-08). The hosted `index.html` is `no-store` on every path, a `HEAD` is answered like a `GET`, and a missing file under `/assets/` is a 404 Problem (A-20).
 **Changes in v29:** CDS-38 (F2a, B-10): contract v19 (`info.version` 0.9.6). Every response object is closed (`additionalProperties: false`): a property its schema does not list is a defect, so a leaked field fails the validator, Schemathesis and the harness. `Problem` stays open (RFC 9457 extension members). The six `allOf` schemas (`MobileChallenge`, `ChangePage`, `SearchPage`, `NotificationPage`, `Account`, `FixtureAccount`) are flat objects with the same names, and `PageMeta` is gone (its three fields are in the page types), because a closed base rejects what its siblings add. `LoginRequest` and `PreferredNameUpdate` stay open.
 **Changes in v28:** CDS-38 (F1): the review findings that touch this specification. Contract v18 (`info.version` 0.9.5, descriptions and one example only): the payment-history example lists the years oldest first (A-15). BR-14 limits a minimum payment `percent` to two decimals, like `apr` and `interestRate` (A-16). BR-12: a month after the current month is `no-data` whatever `missedMonths` holds, so a future month is never `missed` (A-17). Section 10: `excluded-in-total` reaches the BR-07 debt total and breakdown because they use the type totals (A-11); `currency-float` is on every money amount in a response (A-09); `idor` writes are kept in the caller's own session (A-28). The stored balance history is relative to `asAt` and the controlled clock does not move it (A-29). The code changes follow in F3 and F4.
 **Changes in v27:** CDS-40 (P2): Schemathesis no longer fuzzes `PUT /__test/bugs` (section 11); a fuzzed `problem-json-missing` failed the run in CI; all seven API flags of section 10 are implemented. Each is a different call site in the service and leaves the BusinessRules library untouched; each is caught by a scenario that already existed, for a different recorded reason.
@@ -237,7 +238,7 @@ The customer's own account record, behind the My Profile page. Rules PR-01 to PR
 
 ## 8. Error catalogue
 
-The checks run in this order (DR-055): the route is matched (404 if no contract path fits; 405 with an `Allow` header if the path fits but not the method); authentication (401); the shape of the path, query and body (400); the target and its owner (404); the persona behaviours (500 for the `error` persona on report operations); the rules (422).
+The checks run in this order (DR-055): the route is matched (404 if no contract path fits; 405 with an `Allow` header if the path fits but not the method); authentication (401); the request's own values: the shape of the path, query and body, and the year window of the payment-history operations (400); the target and its owner (404); the persona behaviours (500 for the `error` persona on report operations); the rules (422).
 
 | Status | `type` suffix | When |
 | --- | --- | --- |

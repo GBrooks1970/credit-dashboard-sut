@@ -82,7 +82,7 @@ public static class TestControl
     {
         var body = await Body(context);
         var text = body["now"]!.GetValue<string>();
-        if (!DateTimeOffset.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var now) || !text.Contains('T'))
+        if (!Rfc3339.TryParse(text, out var now))
         {
             await Problems.Validation(context, [new FieldError("now", "must be an RFC 3339 date-time")]);
             return;

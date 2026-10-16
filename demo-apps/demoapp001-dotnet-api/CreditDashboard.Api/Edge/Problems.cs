@@ -54,7 +54,8 @@ public static class Problems
     private static async Task Write(HttpContext context, int status, string type, string title, string detail, IReadOnlyList<FieldError>? errors, int? attemptsRemaining = null)
     {
         context.Response.StatusCode = status;
-        if (Flags.Has("problem-json-missing"))
+        // A test-control error is never plain text: the flag breaks the product's errors, not the tool that sets it (A-08).
+        if (Flags.Has("problem-json-missing") && !TestControlGate.HasTestControlSegment(context.Request.Path.Value ?? "/"))
         {
             // The `problem-json-missing` bug flag: the error is plain text, not a problem document.
             context.Response.ContentType = "text/plain; charset=utf-8";

@@ -156,7 +156,7 @@ const LAYOUT_FACTS = `(() => {
         // The elements that reach past the right edge, widest reach first: what to fix when the page scrolls sideways.
         wide: [...document.querySelectorAll('body *')]
             .map((e) => ({ e, right: Math.round(e.getBoundingClientRect().right) }))
-            .filter((x) => x.right > document.documentElement.clientWidth)
+            .filter((x) => x.right > document.documentElement.clientWidth && !x.e.closest('.visually-hidden'))
             .sort((a, b) => b.right - a.right)
             .slice(0, 3)
             .map((x) => x.e.tagName.toLowerCase() + (x.e.getAttribute('data-testid') ? '[' + x.e.getAttribute('data-testid') + ']' : '') + (x.e.className ? '.' + String(x.e.className).split(' ')[0] : '') + ' to ' + x.right + 'px'),

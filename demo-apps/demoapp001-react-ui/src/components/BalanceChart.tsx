@@ -41,7 +41,9 @@ export function BalanceChart({ accountId }: { accountId: string }) {
             );
           })}
         </svg>
-        <table data-testid="detail-balance-chart-table" className="visually-hidden">
+        {/* The hiding is on a wrapper: `overflow` does not clip the cells of a table, which then widened the page (CDS-38 C-11). */}
+        <div className="visually-hidden">
+        <table data-testid="detail-balance-chart-table">
           <caption>Balance by month</caption>
           <thead>
             <tr>
@@ -58,6 +60,7 @@ export function BalanceChart({ accountId }: { accountId: string }) {
             ))}
           </tbody>
         </table>
+        </div>
       </SectionState>
     </section>
   );

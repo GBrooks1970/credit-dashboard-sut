@@ -25,6 +25,7 @@
     "check:kanban": "generate-kanban --check --project credit-dashboard-sut --dialect auth-table --backlog DOCS/backlog.md"
   },
   "devDependencies": {
+    "@redocly/cli": "2.57.0",
     "@stoplight/prism-cli": "5.16.0",
     "ajv": "8.20.0",
     "ajv-formats": "3.0.1",

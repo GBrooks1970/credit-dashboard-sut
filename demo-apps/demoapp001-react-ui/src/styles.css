@@ -12,6 +12,7 @@
   --color-danger-bg: #fde8e8;
   --color-danger-text: #7a1212;
   --color-border: #c9d3dc;
+  --color-error: #b3261e;
   --color-band-low: #1a7f4b;
   --color-band-mid: #b36b00;
   --color-band-high: #b3261e;
@@ -33,6 +34,7 @@
     --color-danger-bg: #4a1818;
     --color-danger-text: #ffd7d7;
     --color-border: #34414f;
+    --color-error: #ff7b72;
     --color-band-low: #4cc38a;
     --color-band-mid: #f0a63a;
     --color-band-high: #ff7b72;
@@ -61,6 +63,7 @@ body {
 
 .app-header {
   display: flex;
+  flex-wrap: wrap; /* with doubled text the name goes under the logo instead of off the screen (CDS-38 C-11) */
   align-items: center;
   gap: var(--space);
   padding: 0.75rem var(--space);
@@ -144,7 +147,7 @@ button:disabled { opacity: 0.6; cursor: progress; }
 .change-positive { border-left-color: #2e7d4f; }
 .change-negative { border-left-color: #b3261e; }
 .badge { font-size: 0.8rem; border: 1px solid var(--color-border); border-radius: 999px; padding: 0 0.5rem; }
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); gap: var(--space); margin-bottom: 0.75rem; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); gap: var(--space); margin-bottom: 0.75rem; }
 .account-card { border: 1px solid var(--color-border); border-radius: var(--radius); padding: 0.75rem; }
 .account-card h3 { margin: 0 0 0.25rem; }
 .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr)); gap: var(--space); margin-bottom: 5rem; }
@@ -157,7 +160,7 @@ button:disabled { opacity: 0.6; cursor: progress; }
 .account-row .row-provider { font-weight: 600; }
 .option { display: block; margin: 0.25rem 0; }
 fieldset { border: 1px solid var(--color-border); border-radius: var(--radius); }
-#dc-error { color: #b3261e; }
+#dc-error { color: var(--color-error); }
 /* A long unbroken value (an email address) wraps rather than widening the page: it scrolled sideways at 375px with wider fonts. */
 main { overflow-wrap: anywhere; }
 .tiles > * { min-width: 0; }

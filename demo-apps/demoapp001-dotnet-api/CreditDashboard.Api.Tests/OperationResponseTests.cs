@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text.Json.Nodes;
 using NUnit.Framework;
 
 namespace CreditDashboard.Api.Tests;
@@ -71,6 +72,52 @@ public class OperationResponseTests
             Assert.That(response.StatusCode, Is.EqualTo(status), $"{operationId}: {await response.Content.ReadAsStringAsync()}");
             await service.Checked(operationId, response);
         }
+    }
+
+
+    /// <summary>
+    /// CDS-38 R2-A-14: the same read operations for every persona that serves reports, with the account operations for every account the persona
+    /// lists, open and closed. The sweep above uses one persona, so a pass-through block in another persona's fixture would not have shown.
+    /// The closed contract makes a leaked property a failure.
+    /// </summary>
+    [TestCase("excellent")]
+    [TestCase("struggling")]
+    [TestCase("thin-file")]
+    [TestCase("boundary")]
+    [TestCase("drilldown")]
+    public async Task Every_read_operation_validates_against_the_contract_for_each_persona(string persona)
+    {
+        using var service = new ServiceHost();
+        await service.Freeze("2026-10-03T09:00:00Z");
+        await service.Bind("alex", persona);
+        var token = await service.Token();
+        var checkedCount = 0;
+
+        async Task Read(string operationId, string path)
+        {
+            var response = await service.Send(HttpMethod.Get, path, token: token);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK), $"{persona} {operationId} {path}: {await response.Content.ReadAsStringAsync()}");
+            await service.Checked(operationId, response);
+            checkedCount++;
+        }
+
+        foreach (var (operationId, method, path, _, _) in Samples.Where(s => s.Method == HttpMethod.Get && !s.Path.StartsWith("/__test") && !s.Path.StartsWith("/accounts/")))
+            await Read(operationId, path);
+
+        var accountIds = new List<string>();
+        foreach (var status in new[] { "open", "closed" })
+        {
+            var list = JsonNode.Parse(await (await service.Send(HttpMethod.Get, $"/reports/bureau-a/accounts?status={status}", token: token)).Content.ReadAsStringAsync())!.AsArray();
+            accountIds.AddRange(list.Select(a => a!["id"]!.GetValue<string>()));
+        }
+        foreach (var id in accountIds)
+        {
+            await Read("getAccount", $"/accounts/{id}");
+            await Read("getBalanceHistory", $"/accounts/{id}/balance-history");
+            await Read("getAccountPaymentHistory", $"/accounts/{id}/payment-history");
+        }
+        // A thin-file customer has no accounts to read; every other persona must reach the account operations.
+        if (persona != "thin-file") Assert.That(checkedCount, Is.GreaterThan(Samples.Count(s => s.Method == HttpMethod.Get && !s.Path.StartsWith("/__test") && !s.Path.StartsWith("/accounts/"))), $"{persona}: the account operations were not reached");
     }
 
     [Test]

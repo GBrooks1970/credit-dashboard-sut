@@ -47,9 +47,17 @@ include-name = "PUT /__test/clock"
 [operations.checks.positive_data_acceptance]
 expected-statuses = [200, 201, 202, 204, 400, 401, 403, 404, 409, 422, 429, "5xx"]
 
+# The latency control takes fixedMs, or minMs with maxMs; the schema lists all three as optional members, so the generator can send
+# fixedMs together with a range, a lone minMs, or a range the wrong way round, which the service refuses with the documented 400.
+[[operations]]
+include-name = "PUT /__test/latency"
+[operations.checks.positive_data_acceptance]
+expected-statuses = [200, 201, 202, 204, 400, 401, 403, 404, 409, 422, 429, "5xx"]
+
 # The contract names a preferred name with the pattern \p{L}, which Schemathesis's Python validator reads as ASCII letters only, so
 # it reports a response such as "µ" (a letter, accepted by PR-02) as a schema violation. The operation's responses are checked
-# against the contract in the service tests, which use a validator that understands \p{L}.
+# against the contract by tools/schemathesis_hooks.py instead (schema with the \p{L} pattern removed, so types, required members and
+# closed objects are still enforced here), and the pattern itself by the service tests, which use a validator that understands \p{L}.
 [[operations]]
 include-name = "PATCH /me/profile/preferred-name"
 [operations.checks.response_schema_conformance]

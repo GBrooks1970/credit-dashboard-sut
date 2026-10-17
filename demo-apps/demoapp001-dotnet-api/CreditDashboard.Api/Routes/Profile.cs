@@ -161,11 +161,17 @@ public static partial class ProfileOperations
         var username = Http.Username(context);
         var session = store.Session(username);
         var code = (await Http.Body(context))["code"]!.GetValue<string>();
-        var held = session.Mobile;
-        var result = CreditDashboard.BusinessRules.Profile.Mobile.Check(held?.Challenge, code, clock.UtcNow);
-
-        if (held is not null && result.Challenge is not null)
-            session.Mobile = held with { Challenge = result.Challenge, Verified = held.Verified || result.Outcome == CodeOutcome.Verified };
+        MobileState? held;
+        var result = default(CodeResult);
+        // Read, check and write in one step: without the lock, requests that arrive together all read the old attempt count and
+        // each gets its own tries at the code (CDS-38 R2-A-04). Nothing is awaited inside.
+        lock (session.MobileLock)
+        {
+            held = session.Mobile;
+            result = CreditDashboard.BusinessRules.Profile.Mobile.Check(held?.Challenge, code, clock.UtcNow);
+            if (held is not null && result.Challenge is not null)
+                session.Mobile = held with { Challenge = result.Challenge, Verified = held.Verified || result.Outcome == CodeOutcome.Verified };
+        }
 
         switch (result.Outcome)
         {

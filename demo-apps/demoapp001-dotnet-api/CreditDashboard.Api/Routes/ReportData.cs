@@ -103,10 +103,12 @@ internal static class ReportData
         a["missedMonths"]!.AsArray().Select(m => YearMonth.Parse(m!.GetValue<string>())).ToHashSet());
 
     /// <summary>The missed account-months of a year as the payment-history list needs them, ordered by month then account ID.</summary>
-    public static JsonArray MissedIn(IEnumerable<JsonObject> accounts, int year) =>
+    public static JsonArray MissedIn(IEnumerable<JsonObject> accounts, int year, YearMonth current) =>
         new(accounts
             .SelectMany(a => a["missedMonths"]!.AsArray().Select(m => m!.GetValue<string>())
                 .Where(m => m.StartsWith($"{year:D4}-", StringComparison.Ordinal))
+                // A month after the current one is never missed, whatever missedMonths holds (BR-12, CDS-38 R2-A-07).
+                .Where(m => YearMonth.Parse(m).CompareTo(current) <= 0)
                 .Select(m => (Month: m, Id: a["id"]!.GetValue<string>(), Provider: a["provider"]!.GetValue<string>())))
             .OrderBy(x => x.Month, StringComparer.Ordinal).ThenBy(x => x.Id, StringComparer.Ordinal)
             .Select(x => (JsonNode)new JsonObject { ["accountId"] = x.Id, ["provider"] = x.Provider, ["month"] = x.Month }).ToArray());

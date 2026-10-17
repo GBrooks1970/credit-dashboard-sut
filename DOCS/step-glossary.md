@@ -1,5 +1,5 @@
 ---
-version: 13
+version: 14
 created: 2026-10-13T22:02Z
 project: credit-dashboard-sut
 type: step-glossary
@@ -181,7 +181,7 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 | Next update | `{actor} is told the report updates in {days}` | `ui/report-overview` |
 | Report changes | `{count} changes are listed`; `every change listed is positive`; `only positive changes are listed`; `the changes are dated {date}, {date} and {date}, in that order` / `the changes are dated {date} and {date}, in that order`; `there is no next page`; `the {count} newest changes are included`; `the change count reads {count}` | `api/report-changes`, `ui/report-changes`, `ui/report-overview` |
 | Totals and utilisation | `the total balance is {money}`; `the total limit is {money}`; `the total utilisation is {percent}`; `no utilisation is reported`; `the total remaining is {money}`; `the loan of {money} is listed as excluded`; `the list total matches the overview total`; `{actor} sees which loans are excluded from the loan totals`; `the utilisation is {percent}`; `the unfloored utilisation is {percent}`; `the {provider} card shows a utilisation of {percent}`; `the {provider} card shows a balance of {money} in credit`; `the {provider} card is marked as over its limit` | `api/account-totals`, `api/credit-balances`, `ui/account-drilldown` |
-| Balances and accounts | `the balance is {money}`; `its balance is {money}`; `the credit card is listed` / `is {listed or not listed}`; `the account is not found` (API: 404 `/problems/not-found`); `the closed {accountType} group lists {count} account` (or `accounts`); `{actor} sees the balance, payment history and account information`; `{actor} does not see interest rate or promotional period details` | `api/closed-accounts`, `api/credit-balances`, `security/access-control`, `ui/account-drilldown` |
+| Balances and accounts | `the balance is {money}`; `its balance is {money}`; `its utilisation is {percent}` (API, the credit card in the list: BR-13 with BR-03); `the credit card is listed` / `is {listed or not listed}`; `the account is not found` (API: 404 `/problems/not-found`); `the closed {accountType} group lists {count} account` (or `accounts`); `{actor} sees the balance, payment history and account information`; `{actor} does not see interest rate or promotional period details` | `api/closed-accounts`, `api/credit-balances`, `security/access-control`, `ui/account-drilldown` |
 | Masking | `the account number is shown as {string}`; `no response contains {string}` | `api/masking` |
 | Debt | `the total debt is {money}`; `the debt trend is {trend}`; `the debt on {accountType} is {money}` | `api/debt`, `ui/debt` |
 | Payment history | `the years {year} to {year} are covered`; `{year} is marked {yearStatus}`; `seven years are offered, from {year} to {year}`; `{year} is chosen`; `{actor} sees {count} missed payments, all on the {provider} loan`; `{actor} is told there were no missed payments in {year}` | `api/payment-history`, `ui/payment-history` |

@@ -48,10 +48,14 @@ public static class Accounts
     private static bool Listed(JsonObject account, DateOnly today) =>
         ReportData.IsOpen(account) || ClosedAccounts.IsListed(DateOnly.Parse(account["closedDate"]!.GetValue<string>(), CultureInfo.InvariantCulture), today);
 
+    /// <summary>The balance the response reports, and the one utilisation follows: 0 for a closed account (BR-13, BR-03; CDS-38 R2-A-08).</summary>
+    private static long ReportedBalance(JsonObject a) =>
+        ReportData.IsOpen(a) ? ReportData.Balance(a) : ClosedAccounts.ReportedBalanceMinor(ReportData.Balance(a));
+
     private static JsonObject Summary(JsonObject a)
     {
-        var balance = ReportData.IsOpen(a) ? ReportData.Balance(a) : ClosedAccounts.ReportedBalanceMinor(ReportData.Balance(a));
-        var utilisation = Defects.Utilisation(ReportData.Balance(a), ReportData.Limit(a));
+        var balance = ReportedBalance(a);
+        var utilisation = Defects.Utilisation(balance, ReportData.Limit(a));
         var summary = new JsonObject
         {
             ["id"] = a["id"]!.GetValue<string>(),
@@ -118,7 +122,7 @@ public static class Accounts
         account["closedDate"] = r.Account["closedDate"]?.GetValue<string>();
         account["updateFrequency"] = r.Account["updateFrequency"]!.GetValue<string>();
         account["lastUpdated"] = r.Account["lastUpdated"]!.GetValue<string>();
-        account["utilisationRaw"] = Defects.Utilisation(ReportData.Balance(r.Account), ReportData.Limit(r.Account)).Raw;
+        account["utilisationRaw"] = Defects.Utilisation(ReportedBalance(r.Account), ReportData.Limit(r.Account)).Raw;
         account["details"] = store.Session(Http.Username(context)).DetailsOf(accountId, r.Account["details"]!.AsObject());
         account["closed"] = !ReportData.IsOpen(r.Account);
         await Http.Json(context, account);
@@ -148,7 +152,7 @@ public static class Accounts
         {
             ["years"] = new JsonArray(window.Select(w => (JsonNode)new JsonObject { ["year"] = w, ["status"] = Report.Status(Rules.PaymentHistory.YearStatus(account, w, current)) }).ToArray()),
             ["selectedYear"] = year,
-            ["missed"] = ReportData.MissedIn([r.Account], year),
+            ["missed"] = ReportData.MissedIn([r.Account], year, current),
         });
     }
 

@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 created: 2026-10-09T11:20Z
 project: credit-dashboard-sut
 type: design
@@ -60,7 +60,7 @@ The glossary rows say which operation each act calls; `operationId`s are the con
 
 ### 3.2 `ControlTheTestEnvironment`
 
-One method per test-control operation: `reset()`, `bind(username, persona, overrides?)`, `setClock(instant)`, `setBugs(flags)`, `verifyEmail(username)`, `state()`. It carries the `X-Test-Control-Key` header and validates responses exactly as `CallAnApi` does. The key is a synthetic value the runner invents for the run (`harness-run-key`) and passes to the service and to the harness through the environment; it is never read from, or written to, a file.
+One method for each test-control operation the scenarios use: `reset()`, `bind(username, persona, overrides?)`, `setClock(instant)`, `setBugs(flags)`, and `arrangeFlags()`, which sets the flags a run asks for and reads `GET /__test/state` back. The email-verification and latency operations have no method because no scenario calls them. It carries the `X-Test-Control-Key` header and validates responses exactly as `CallAnApi` does. The key is a synthetic value the runner invents for the run (`harness-run-key`) and passes to the service and to the harness through the environment; it is never read from, or written to, a file.
 
 ## 4. Contract validation (DR-042)
 
@@ -77,7 +77,7 @@ Every response, from either ability, is validated before any step sees it. A res
 2. **Given** steps (arrange), in file order. Background steps run first. Each is one of: bind a persona, bind with overrides, set the clock, check the fixture, record an event (an email change, a mobile number), or start the second service (section 8).
 3. **When** (act): one API call, made as the named actor. The response is stored on the world as `last`, with the status and the validated body.
 4. **Then** (assert): reads `last` (and, for the few steps that compare with an earlier response, `previous`). A Then never makes a call. `And` steps keep the keyword of the step they follow.
-5. **After** (hook): on failure, attach the request, the response and the service log tail to the report; always restore the default service state (`reset()`).
+5. **After** (hook): on failure, attach the arrangement (today, personas, the flags in force), the last response (status, headers, body; recorded before the validator judges it) and, in a UI scenario, the address and title of the page; always restore the default service state (`reset()`). The service log tail is not attached; the service's own log file is named in the run's last line.
 
 Scenarios run one at a time against one service (Cucumber `parallel: 1`): test control is global state, so parallel scenarios would share a clock and personas.
 
@@ -103,7 +103,7 @@ A token is valid until `expiresAt`, and `expiresAt` is `login time + 60 minutes`
 
 1. An actor has no token until the first step that needs one (an act, or an event Given). Sign-in is lazy: `POST /auth/login` with the actor's username and the synthetic password from `fixtures/users.json`, at whatever the clock then says.
 2. **Any clock change drops every actor's cached token**, as does a persona bind for that actor. The next call signs in again. Steps never hold a token across a clock change.
-3. The one exception is `{actor}'s token has expired`: it keeps its (now expired) token and marks the actor `keepToken`, so the act uses it and receives 401. `keepToken` is cleared by the next clock change or bind.
+3. The one exception is `{actor}'s token has expired`: it keeps its (now expired) token, which stays in the scenario's token cache, so the act uses it and receives 401. The next clock change or bind clears the cache.
 4. A step with `at {time}` moves the clock to a time on the date already set, so a scenario that sets a date, makes an event and then asks again within the hour never meets an expiry by accident. If a scenario moves the clock by more than the token lifetime between steps, the rule in (2) makes it work without the scenario saying so.
 
 A probe in H1 (ignoring rule 2) must fail the expired-token scenario's neighbours for the stated reason, as the plan requires.
@@ -137,7 +137,7 @@ Defined once in `src/support/parameter-types.ts` from glossary section 2, each w
 
 ## 10. Where each pattern lands
 
-Every pattern used by the 12 files has one definition, in the file named below. A coverage check in H3 matches each step line of the 12 files against the definitions and fails on a line with none, a line with two (ambiguous), and a definition no line uses.
+Every pattern used by the 12 files has one definition, in the file named below. Cucumber's strict mode fails a step line with no definition and a line with two (ambiguous). There is no check for a definition that no line uses: `cucumber --dry-run` lists such definitions (two in the API profile, one of which the UI profile uses, and the UI profile's own), and they are left until someone removes them.
 
 **Arrange** (`arrange.steps.ts`): all patterns of glossary section 3 that the 12 files use. `Used in` for the UI-only rows (`has signed in`, `is viewing…`, `has noted…`, `shows only positive changes`, `has added their finances`, `preferred name is`, `report has {count} changes`, `next bureau refresh is`) is not built.
 
@@ -176,7 +176,7 @@ These are the probes the plan requires, each expected to fail and then reverted;
 | A required key removed from a service response | Contract validation fails, naming the operation and path, before any assertion |
 | Rule 2 of section 7 ignored (token kept across a clock change) | A scenario that moves the clock after a sign-in fails with 401 |
 | A Given whose data is not in the persona | The fixture check fails loudly, naming the persona |
-| A step line with no definition, and one with two | The coverage check fails |
+| A step line with no definition, and one with two | Cucumber's strict mode fails the run (an unused definition is not checked) |
 | An overrides patch that does not reach the response | The scenario's assertion fails and the H2 probe catches it |
 
 ## 13. Changes to other documents
@@ -313,7 +313,7 @@ Review findings B-01, B-09 to B-13, B-21 and B-23, fixed in the harness. The ser
 Review findings B-04, B-05, B-14 to B-19. Each change was shown to turn a scenario red by a mutation, then reverted.
 
 - **Exact comparisons.** The debt-by-type step and the interest-rate step compare a value hook (`debt-type-{type}-amount`, `detail-tile-{field}-value`, UI specification v24) with `equals`; before, `includes` let `£320` pass for `£32` and `129.9%` for `29.9%` (B-04, B-19).
-- **Expected values come from the fixtures, not from the page.** `fixtures/users.json` now supplies the legal name and date of birth for the profile steps and the personal-details step (B-05, B-17); the PR-08 check covers every personal value the fixtures hold (legal name and first name, preferred name, date of birth as shown and as ISO, email, postcode, last mobile digits) in the title, the path, the query and the fragment (B-18). The step sentences say "profile data" (step glossary).
+- **Expected values come from the fixtures, not from the page.** `fixtures/users.json` now supplies the legal name and date of birth for the profile steps and the personal-details step (B-05, B-17); the PR-08 check covers the personal values the profile page shows (legal name and first name, preferred name, date of birth and member-since date as shown and as ISO, email, first line of the address, postcode, employment status, last mobile digits) in the title, the path, the query and the fragment (B-18, R2-B-05). Words such as an email's status are left out, because a title may use them. The step sentences say "profile data" (step glossary).
 - **`the credit card is listed` looks for the arranged card** (`thatAccount`), not for any credit card (B-16). Read, not mutated: the scenarios cannot put a second closed card in the list.
 - **A closed account's stored balance may be non-zero** (API specification v32), so BR-13's "reports 0" can fail: `acc_ddcl01` (drilldown), `acc_stcl01` (struggling) and the `br13-closed-anniversary` sample each hold a balance and a limit. The override check no longer refuses a closed balance and the fixture check allows it. Mutations: the service reporting the stored balance turns the closed-accounts scenario red (B-15); the service counting closed accounts in the open-account totals turns two account-totals and debt scenarios red (B-14).
 
@@ -324,7 +324,7 @@ Review findings B-02, B-03, B-06, B-07, B-08 and B-26. How the proof judges a ru
 - **A catch is for the stated reason only.** `failsWith` is specific to the flag: `currency-float` records `at '/balance/amountMinor': must be integer`, so a float put into `utilisation` is "caught for another reason" (B-02).
 - **The text must not appear without the defect.** The run with the flag off must pass, must have run, and must not print `failsWith`; if it does the flag is a false alarm. The registry check also refuses a `failsWith` that the catcher's feature file holds, because every run prints it (B-03).
 - **"Something ran" counts both ways.** An on run that ran nothing, or crashed before running, is `did-not-run`, never a catch, even if its output happens to hold the text (B-07).
-- **The flags in force are asserted, not assumed.** Every scenario's `Before` sets the flags (an empty list too) and reads `GET /__test/state` to check the service holds exactly what the run asked for (B-06).
+- **The flags in force are asserted, not assumed.** Every scenario's `Before` sets the flags (an empty list too) and reads `GET /__test/state` to check the service holds exactly what the run asked for (B-06), and that the reset left the clock following real time, no latency, no overrides and each test user on the default persona (R2-B-07).
 - **A hung run is a verdict.** Each catcher run has a time limit (240 s, `CDS_PROOF_TIMEOUT_MS`); a stop is `timed-out` and the flag is not credited. `run.mjs` handles SIGTERM like SIGINT and stops both services (B-08; the signal path is not exercised on Windows).
 - **A component test is found by its declaration.** The registry check wants `it(`/`test(` with exactly that name (a comment or an expected string does not count), and the proof escapes the name for Vitest's `-t` pattern (B-26).
 

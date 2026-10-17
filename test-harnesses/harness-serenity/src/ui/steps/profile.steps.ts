@@ -142,9 +142,11 @@ Then('no amounts are shown on the profile', () =>
     lastActor().attemptsTo(Ensure.that(Text.of(PageElements.located(By.css('main')).first()), not(includes('£')))),
 );
 
-// PR-08: profile data never appears in the page title or the address. 'Profile data' is every personal value the fixtures hold for the
-// user: the legal name and its first name, the preferred name, the date of birth (as shown and as ISO), the email address, the postcode
-// and the last digits of the mobile number. The values come from the fixtures, not from the page (B-18).
+// PR-08: profile data never appears in the page title or the address. The values checked are those the profile page shows as personal:
+// the legal name and its first name, the preferred name, the date of birth and the member-since date (as shown and as ISO), the email
+// address, the first line of the address and its postcode, the employment status and the last digits of the mobile number. Words such
+// as an email's status ('verified') are left out because a title may use them. The values come from the fixtures, not from the page
+// (B-18, R2-B-05).
 function secretsOf(name: string): string[] {
     const user = testUser(name.toLowerCase());
     const profile = profileOf(name);
@@ -155,7 +157,11 @@ function secretsOf(name: string): string[] {
         longDate(user.dateOfBirth),
         user.dateOfBirth,
         user.email,
+        profile.address?.line1,
         profile.address?.postcode,
+        profile.employment?.status,
+        profile.memberSince ? longDate(profile.memberSince) : undefined,
+        profile.memberSince,
         profile.mobile?.lastDigits,
     ];
     return [...new Set(values.filter((v): v is string => typeof v === 'string' && v.length > 0))];

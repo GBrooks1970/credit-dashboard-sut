@@ -164,6 +164,10 @@ Then('no interest rate is recorded', () =>
     ),
 );
 
+Then('{actor} is on the page {string}', (name: string, path: string) =>
+    actorCalled(name).attemptsTo(Wait.until(Page.current().url().pathname, equals(path))),
+);
+
 Then("{actor} is back on the credit card's own page", (name: string) => {
     const path = `/credit-health/report/${BUREAU}/account/${cardWithNoRate(name).id}`;
     return actorCalled(name).attemptsTo(

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { refuseParallelRun } from './parallel.js';
+import { refuseParallelRun } from '../support/parallel.js';
 
 describe('the parallel-run guard (B-23)', () => {
     it('lets a serial run through', () => {

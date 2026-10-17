@@ -74,6 +74,9 @@ export async function send(operationId: string, options: CallOptions, token?: st
     const responseHeaders = Object.fromEntries([...http.headers.entries()].map(([name, value]) => [name.toLowerCase(), value]));
     // A body is parsed only when it says it is JSON; whatever it says, the validator judges it before a step sees it.
     const body = text && /json/i.test(contentType ?? '') ? parseJson(text) : undefined;
+    const received = { status: http.status, headers: responseHeaders, body };
+    // Recorded before it is judged, so the attachment of a failed scenario holds the response the validator refused (R2-B-14).
+    scenario.state.last = received;
     contract.validate(operationId, { status: http.status, contentType, headers: responseHeaders, body, text });
-    return { status: http.status, headers: responseHeaders, body };
+    return received;
 }

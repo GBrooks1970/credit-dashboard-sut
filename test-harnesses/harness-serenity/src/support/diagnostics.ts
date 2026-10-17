@@ -26,8 +26,17 @@ export function diagnostics(): string {
  * fixtures, real time and no flags, so the next scenario (and anything run after the suite) starts from a known state and
  * a failed restore is a failure, not a silent leak. The scenario's own state is dropped last.
  */
-export async function afterScenario(world: { attach: (data: string, mediaType: string) => unknown }, testCase: ITestCaseHookParameter): Promise<void> {
-    if (testCase.result?.status === Status.FAILED) await world.attach(diagnostics(), 'text/plain');
+export async function afterScenario(
+    world: { attach: (data: string, mediaType: string) => unknown },
+    testCase: ITestCaseHookParameter,
+    /** The UI profile adds where the browser was (R2-B-14); the API profile has no page. */
+    describePage?: () => Promise<string>,
+): Promise<void> {
+    if (testCase.result?.status === Status.FAILED) {
+        const page = describePage ? await describePage().catch((error: Error) => `page: (unavailable: ${error.message})`) : '';
+        await world.attach(page ? `${diagnostics()}
+${page}` : diagnostics(), 'text/plain');
+    }
     try {
         // A scenario may have pointed the actors at the instance without test control; the restore goes to the main one.
         scenario.state.baseUrl = process.env.HARNESS_BASE_URL ?? '';

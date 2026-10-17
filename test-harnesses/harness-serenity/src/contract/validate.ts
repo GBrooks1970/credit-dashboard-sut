@@ -80,6 +80,37 @@ export class Contract {
         }
     }
 
+    /**
+     * Where a response schema allows a property it does not list: every object schema reachable from a documented response that is
+     * not `additionalProperties: false`, named by its component (`Problem`) or by the path inside the schema that holds it
+     * (`Problem.errors[]`). A unit test pins the answer, so reopening one schema, as a refactor might, is a failure (R2-B-02).
+     */
+    openResponseSchemas(): string[] {
+        const open = new Set<string>();
+        const seen = new Set<string>();
+        const walk = (schema: Json | undefined, where: string): void => {
+            if (!schema || typeof schema !== 'object') return;
+            if (typeof schema.$ref === 'string') {
+                const name = String(schema.$ref).split('/').pop()!;
+                if (seen.has(name)) return;
+                seen.add(name);
+                walk(this.doc.components.schemas[name], name);
+                return;
+            }
+            for (const key of ['allOf', 'oneOf', 'anyOf']) {
+                (schema[key] as Json[] | undefined)?.forEach((part, i) => walk(part, `${where}.${key}[${i}]`));
+            }
+            if (schema.type === 'array' || schema.items) walk(schema.items, `${where}[]`);
+            if (schema.type === 'object' || schema.properties) {
+                if (schema.additionalProperties !== false) open.add(where);
+                for (const [name, child] of Object.entries<Json>(schema.properties ?? {})) walk(child, `${where}.${name}`);
+                if (schema.additionalProperties && typeof schema.additionalProperties === 'object') walk(schema.additionalProperties, `${where}.*`);
+            }
+        };
+        for (const [key, schema] of Object.entries<Json>(this.doc.components['x-responses'])) walk(schema, key);
+        return [...open].sort();
+    }
+
     operation(operationId: string): Operation {
         const op = this.operations.get(operationId);
         if (!op) throw new Error(`The contract has no operation '${operationId}'`);

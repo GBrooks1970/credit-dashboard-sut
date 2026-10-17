@@ -1,4 +1,4 @@
-import { formatDate, formatMoney, formatPercent, plural } from './format.ts';
+import { formatDate, formatMoney, formatMonth, formatPercent, plural } from './format.ts';
 
 describe('formatMoney (UI specification 4.2)', () => {
   it('shows no pence on summary figures', () => {
@@ -29,5 +29,16 @@ describe('the other formats', () => {
     expect(plural(1, 'topic', 'topics')).toBe('1 topic');
     expect(plural(2, 'topic', 'topics')).toBe('2 topics');
     expect(plural(0, 'day', 'days')).toBe('0 days');
+  });
+});
+
+describe('formatMonth (CDS-38 R2-C-05)', () => {
+  it('words a month', () => {
+    expect(formatMonth('2024-03')).toBe('March 2024');
+  });
+  it('shows a month that is not one as it was sent, instead of throwing', () => {
+    // The contract's pattern admits both.
+    expect(formatMonth('2026-13')).toBe('2026-13');
+    expect(formatMonth('2026-00')).toBe('2026-00');
   });
 });

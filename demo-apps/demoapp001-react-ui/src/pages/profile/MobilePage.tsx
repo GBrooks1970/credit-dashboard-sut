@@ -36,6 +36,8 @@ export function MobilePage() {
         setAttempts(null); // attempts left are shown from the first wrong code, not before (CDS-38 C-33, PR-11)
         setCode('');
         setCodeError(null);
+        // The page held the number read when it opened; the code step shows the one just saved (CDS-38 R2-C-11).
+        void reload();
       } else {
         setNumberError(problemText(problem, 'The mobile number could not be saved.'));
       }

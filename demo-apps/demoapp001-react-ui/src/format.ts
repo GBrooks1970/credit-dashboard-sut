@@ -33,7 +33,11 @@ export function formatDate(isoDate: string): string {
 
 /** `2024-03` as `March 2024`. */
 export function formatMonth(month: string): string {
-  return new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${month}-01T00:00:00Z`));
+  const date = new Date(`${month}-01T00:00:00Z`);
+  // The contract's pattern admits 2026-13 and 2026-00, which are not months; format() throws on them and blanked the whole page
+  // (CDS-38 R2-C-05). The raw text is shown instead, as the history chart already does.
+  if (Number.isNaN(date.getTime())) return month;
+  return new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' }).format(date);
 }
 
 /** `1 topic`, `2 topics`. */

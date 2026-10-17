@@ -335,6 +335,83 @@ describe('the page behind the chat drawer (CDS-38 C-25)', () => {
   });
 });
 
+describe('focus after the chat drawer closes (CDS-38 R2-C-01)', () => {
+  // A browser refuses to focus an element inside an inert subtree and jsdom does not, which is how the first fix passed its test and
+  // still left focus on the page body in Chromium. The stub makes jsdom refuse as a browser does.
+  function refuseFocusInsideInert() {
+    const real = HTMLElement.prototype.focus;
+    vi.spyOn(HTMLElement.prototype, 'focus').mockImplementation(function (this: HTMLElement, options?: FocusOptions) {
+      if (this.closest('[inert]')) return;
+      real.call(this, options);
+    });
+  }
+  afterEach(() => vi.restoreAllMocks());
+
+  it('returns focus to the chat button after Escape', async () => {
+    fakeService(baseHandlers());
+    refuseFocusInsideInert();
+    renderOverview();
+    const button = await screen.findByTestId('btn-chat');
+    await userEvent.click(button);
+    await userEvent.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(button).toHaveFocus();
+  });
+
+  it('returns focus to the chat button after Close', async () => {
+    fakeService(baseHandlers());
+    refuseFocusInsideInert();
+    renderOverview();
+    const button = await screen.findByTestId('btn-chat');
+    await userEvent.click(button);
+    await userEvent.click(screen.getByTestId('chat-close'));
+    expect(button).toHaveFocus();
+  });
+});
+
+describe('late answers do not replace the current feedback or chat answer (CDS-38 R2-C-02)', () => {
+  const later = <T,>(ms: number, value: T) => new Promise<T>((resolve) => setTimeout(() => resolve(value), ms));
+
+  it('Helpful (slow) then Not helpful: the page shows Not helpful', async () => {
+    fakeService({
+      ...baseHandlers(),
+      'PUT /reports/bureau-a/summary/feedback': async (request) => {
+        const { value } = (await request.json()) as { value: string };
+        const reply = json(200, { value });
+        return value === 'like' ? later(400, reply) : reply;
+      },
+    });
+    renderOverview();
+    await userEvent.click(await screen.findByTestId('btn-like'));
+    await userEvent.click(screen.getByTestId('btn-dislike'));
+    await waitFor(() => expect(screen.getByTestId('btn-dislike')).toHaveAttribute('aria-pressed', 'true'));
+    await new Promise((r) => setTimeout(r, 600));
+    expect(screen.getByTestId('btn-dislike')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByTestId('btn-like')).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('a slow answer to the first question does not replace the answer to the second', async () => {
+    fakeService({
+      ...baseHandlers(),
+      'POST /assistant/messages': async (request) => {
+        const { message } = (await request.json()) as { message: string };
+        const reply = json(200, { reply: `Answer to ${message}`, disclaimer: 'Demo assistant with canned replies.' });
+        return message === 'first' ? later(400, reply) : reply;
+      },
+    });
+    renderOverview();
+    await userEvent.click(await screen.findByTestId('btn-chat'));
+    await userEvent.type(screen.getByTestId('chat-input'), 'first');
+    await userEvent.click(screen.getByTestId('chat-send'));
+    await userEvent.clear(screen.getByTestId('chat-input'));
+    await userEvent.type(screen.getByTestId('chat-input'), 'second');
+    await userEvent.click(screen.getByTestId('chat-send'));
+    expect(await screen.findByTestId('chat-reply')).toHaveTextContent('Answer to second');
+    await new Promise((r) => setTimeout(r, 600));
+    expect(screen.getByTestId('chat-reply')).toHaveTextContent('Answer to second');
+  });
+});
+
 describe('the history table words the months (CDS-38 C-32)', () => {
   it('shows June 2026, not 2026-06', async () => {
     fakeService(baseHandlers());

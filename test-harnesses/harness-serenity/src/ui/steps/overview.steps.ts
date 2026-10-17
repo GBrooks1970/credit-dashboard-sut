@@ -1,7 +1,7 @@
 import { Given, Then, When } from '@cucumber/cucumber';
 import { Ensure, equals } from '@serenity-js/assertions';
 import { actorCalled, Wait } from '@serenity-js/core';
-import { Attribute, By, Click, Enter, isVisible, Navigate, PageElements, Text } from '@serenity-js/web';
+import { Attribute, By, Click, Enter, isVisible, Key, Navigate, Page, PageElements, Press, Text } from '@serenity-js/web';
 
 import { ControlTheTestEnvironment } from '../../abilities/ControlTheTestEnvironment.js';
 import { personaFile, testUser } from '../../fixtures/load.js';
@@ -66,6 +66,27 @@ When('{actor} likes the report summary', (name: string) =>
 When('{actor} returns to the report later', (name: string) => visitTheReport(name));
 
 When('{actor} shows all changes', (name: string) => actorCalled(name).attemptsTo(Click.on(byTestId('changes-toggle'))));
+
+When('{actor} opens the chat drawer', (name: string) =>
+    actorCalled(name).attemptsTo(Click.on(byTestId('btn-chat')), Wait.until(byTestId('chat-drawer'), isVisible())),
+);
+
+// The drawer closes by Escape or by its Close button (UI specification section 7); either returns focus to the button that opened it.
+When('{actor} closes the chat drawer with {closer}', (name: string, closer: string) =>
+    actorCalled(name).attemptsTo(closer === 'Escape' ? Press.the(Key.Escape) : Click.on(byTestId('chat-close'))),
+);
+
+// Focus is read from the page itself: a browser refuses focus on an inert element, which a component test cannot show (CDS-38 R2-C-01).
+Then('the focus is on the chat button', async () => {
+    const actor = lastActor();
+    const page = await actor.answer(Page.current());
+    let focused = '(nothing)';
+    for (let i = 0; i < 20 && focused !== 'btn-chat'; i++) {
+        focused = await page.executeScript<string, []>("return document.activeElement?.getAttribute('data-testid') ?? document.activeElement?.tagName ?? '(nothing)'");
+        if (focused !== 'btn-chat') await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    if (focused !== 'btn-chat') throw new Error(`The focus is on '${focused}', not on the chat button`);
+});
 
 // ---- Assert ----------------------------------------------------------------------------------------------------
 

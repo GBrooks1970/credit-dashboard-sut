@@ -1,7 +1,9 @@
 // version: 1 | created: 2026-10-13T10:45Z | project: credit-dashboard-sut | type: source | language: en-GB
 // Routes (UI specification section 5). A page that needs a session sends an anonymous visitor to /login, which is what
 // a reload does: the token is in memory only.
+import type { ReactNode } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router';
+import { ErrorBoundary } from './components/ErrorBoundary.tsx';
 import { FlagsProvider, TEST_BUILD } from './flags.tsx';
 import { DebugPage } from './pages/DebugPage.tsx';
 import { Layout } from './layout/Layout.tsx';
@@ -29,9 +31,15 @@ function RequireSession() {
   return signedIn ? <Layout /> : <Navigate to="/login" replace state={{ from: location.pathname + location.search }} />;
 }
 
+/** A page that throws is caught here; the key resets it when the customer moves to another page (CDS-38 R2-C-05). */
+function Guarded({ children }: { children: ReactNode }) {
+  return <ErrorBoundary key={useLocation().pathname}>{children}</ErrorBoundary>;
+}
+
 export function App() {
   return (
     <FlagsProvider>
+    <Guarded>
     <Routes>
       <Route path="/login" element={<LoginPage />} />
       <Route element={<RequireSession />}>
@@ -53,6 +61,7 @@ export function App() {
         <Route path="*" element={<NotBuiltPage />} />
       </Route>
     </Routes>
+    </Guarded>
     </FlagsProvider>
   );
 }

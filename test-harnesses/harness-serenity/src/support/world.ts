@@ -11,8 +11,6 @@ export interface Response {
 export class ScenarioState {
     /** Cached token per actor; dropped on any clock change or persona bind (design section 7). */
     readonly tokens = new Map<string, string>();
-    /** Actors whose (expired) token is kept on purpose. */
-    readonly keepToken = new Set<string>();
     /** The persona each actor is bound to, and the date the clock was last frozen on (YYYY-MM-DD). */
     readonly personas = new Map<string, string>();
     today?: string;

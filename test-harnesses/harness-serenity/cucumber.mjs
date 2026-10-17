@@ -25,10 +25,7 @@ export const api = {
 
 export default api;
 
-/**
- * The @ui scenarios (CDS-29 plan). The list grows with each slice: U1 has the login feature only, and U2 to U5 add
- * theirs. The other UI files are specified and reviewed but not yet implemented, so they are not selected.
- */
+/** The @ui scenarios (CDS-29 plan): every UI feature file and the open-redirect file, which is @security @ui. */
 export const ui = {
     ...base,
     import: uiImport,

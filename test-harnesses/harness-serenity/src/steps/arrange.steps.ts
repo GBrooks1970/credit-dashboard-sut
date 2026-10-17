@@ -178,7 +178,6 @@ Given("{actor}'s token has expired", async (actor: string) => {
     const expiresAt = new Date(state.expiresAt.get(name)!).getTime() + 1000;
     await control().setClock(new Date(expiresAt).toISOString().replace('.000Z', 'Z'));
     state.tokens.set(name, token);
-    state.keepToken.add(name);
 });
 
 // Environment (glossary section 3): the runner started a second instance with no test control and no key (design section 8).

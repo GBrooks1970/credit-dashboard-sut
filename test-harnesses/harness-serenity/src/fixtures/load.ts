@@ -10,6 +10,8 @@ export interface TestUser {
     legalName: string;
     /** ISO date, YYYY-MM-DD. */
     dateOfBirth: string;
+    /** The persona the user holds after a reset. */
+    defaultPersona: string;
 }
 
 /** A date as the UI shows it: 12 March 1985. */
@@ -18,8 +20,10 @@ export function longDate(iso: string): string {
     return new Date(Date.UTC(y, m - 1, d)).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 }
 
+export const testUsers = (): TestUser[] => JSON.parse(readFileSync(`${root}users.json`, 'utf8')).users as TestUser[];
+
 export function testUser(username: string): TestUser {
-    const users = JSON.parse(readFileSync(`${root}users.json`, 'utf8')).users as TestUser[];
+    const users = testUsers();
     const user = users.find((u) => u.username === username);
     if (!user) throw new Error(`fixtures/users.json has no test user '${username}'`);
     return user;

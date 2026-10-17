@@ -2,12 +2,13 @@ import { After, AfterAll, Before, BeforeAll } from '@cucumber/cucumber';
 import { ConsoleReporter } from '@serenity-js/console-reporter';
 import { actorCalled, Cast, configure, engage } from '@serenity-js/core';
 import { BrowseTheWebWithPlaywright } from '@serenity-js/playwright';
+import { Page } from '@serenity-js/web';
 import { chromium, type Browser } from 'playwright';
 
 import { ControlTheTestEnvironment } from '../abilities/ControlTheTestEnvironment.js';
 import { STAGE_MANAGER } from '../support/actors.js';
 import { afterScenario } from '../support/diagnostics.js';
-import { controlKey, resetScenario } from '../support/world.js';
+import { controlKey, resetScenario, scenario } from '../support/world.js';
 
 let browser: Browser;
 
@@ -52,5 +53,11 @@ Before(async () => {
 });
 
 After(async function (testCase) {
-    await afterScenario(this, testCase);
+    await afterScenario(this, testCase, async () => {
+        const names = [...scenario.state.personas.keys()];
+        if (names.length === 0) return 'page: (no actor opened a page)';
+        const actor = actorCalled(names.at(-1)!.replace(/^./, (c) => c.toUpperCase()));
+        return `page: ${(await actor.answer(Page.current().url())).href}
+page title: ${await actor.answer(Page.current().title())}`;
+    });
 });

@@ -89,6 +89,8 @@ function checkPersonaRules(p, where, { personaOnly, ownerOf }) {
       }
       if (a.closed) {
         check(a.status === 'closed' && a.closedDate, aw, 'BR-13: closed account needs status closed and a close date');
+        // The BR-13 scenarios need a stored balance to see it reported as 0, and the BR-04 scenarios a limit to see it left out of the totals; with either at 0 a service that gets it wrong passes (CDS-38 R2-B-04).
+        check(a.balance.amountMinor !== 0 && lim !== null && lim !== 0, aw, 'BR-13/BR-04: a closed account needs a non-zero stored balance and a non-zero limit');
         if (personaOnly) check(asAtDate < sixYearsAfter(a.closedDate), aw, 'BR-13: closed more than six years before asAt, so it would not be listed');
       }
       const histMonths = a.balanceHistory.map((h) => h.month);
@@ -188,6 +190,7 @@ for (const flag of contractFlags) check(listed.includes(flag), 'bug-flags.json',
 for (const flag of listed) check(contractFlags.includes(flag), 'bug-flags.json', `'${flag}' is not a flag in the contract`);
 const repoRoot = path.join(here, '..');
 const escapeRegExp = (text) => text.replace(/[.*+?^${}()|[\]\\]/g, (c) => '\\' + c);
+const seenFailsWith = new Map();
 for (const entry of flagFile.flags) {
   const where = `bug-flags.json ${entry.flag}`;
   check(['A', 'B', 'C'].includes(entry.group), where, 'group must be A, B or C');
@@ -197,6 +200,13 @@ for (const entry of flagFile.flags) {
   check(Array.isArray(entry.catchers) && entry.catchers.length > 0, where, 'an implemented flag needs at least one catcher');
   for (const c of entry.catchers ?? []) {
     check(typeof c.failsWith === 'string' && c.failsWith.length > 0 && c.failsWith !== 'TBD', where, 'a catcher records the failure it must produce (failsWith)');
+    if (typeof c.failsWith === 'string') {
+      // Specific to the flag (CDS-38 R2-B-03): no other catcher records the same text, and the text holds a location or a value
+      // (a quote, a path or a digit), so a message any other defect could also produce, such as 'must be integer', is refused.
+      check(!seenFailsWith.has(c.failsWith), where, `failsWith '${c.failsWith}' is also recorded for ${seenFailsWith.get(c.failsWith)}, so it does not tell the two flags apart`);
+      seenFailsWith.set(c.failsWith, entry.flag);
+      check(/['"/\d]/.test(c.failsWith), where, `failsWith '${c.failsWith}' names no location or value (a quote, a path or a digit), so another defect could produce it`);
+    }
     if (c.kind === 'scenario') {
       const file = path.join(repoRoot, 'features-shared', c.feature);
       const text = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';

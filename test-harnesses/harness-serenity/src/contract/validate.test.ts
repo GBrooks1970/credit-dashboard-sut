@@ -58,6 +58,17 @@ describe('the contract validator', () => {
         assert.throws(() => contract.validate('listAccounts', response(200, [account])), /additional properties/);
     });
 
+    it('closes every response schema but the ones on the allow list (B-10, R2-B-02)', () => {
+        // Problem carries RFC 9457 extension members; the three in the test-control state are maps keyed by names the service chooses.
+        assert.deepEqual(contract.openResponseSchemas(), [
+            'Problem',
+            'Problem.errors[]',
+            'testGetState_200.latency',
+            'testGetState_200.overridden',
+            'testGetState_200.personas',
+        ]);
+    });
+
     it('refuses a 429 with no Retry-After, a zero one and a non-integer one (B-09)', () => {
         const body = problem(429, { type: '/problems/rate-limited' });
         assert.throws(() => contract.validate('resendEmailVerification', problemResponse(429, body)), /Retry-After/);
@@ -75,6 +86,7 @@ describe('the contract validator', () => {
     });
 
     it('refuses a JSON content type whose body is not JSON', () => {
-        assert.throws(() => contract.validate('getAccount', problemResponse(404, {}, { text: 'Not found', body: undefined })), /not JSON|does not match/);
+        // Only 'not JSON' will do (R2-B-01): with a looser pattern the schema check refuses the missing body and the test passes with this check off.
+        assert.throws(() => contract.validate('getAccount', problemResponse(404, {}, { text: 'Not found', body: undefined })), /body is not JSON: Not found/);
     });
 });

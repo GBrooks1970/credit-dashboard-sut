@@ -172,7 +172,7 @@ public class FaultAndEdgeTests
         var token = await host.Token();
         var unknownBureau = await host.Send(HttpMethod.Get, "/reports/bureau-zzz/payment-history?year=2018", token: token);
         Assert.That(unknownBureau.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest), await unknownBureau.Content.ReadAsStringAsync());
-        var unknownAccount = await host.Send(HttpMethod.Get, "/accounts/acc_nope/payment-history?year=2018", token: token);
+        var unknownAccount = await host.Send(HttpMethod.Get, "/accounts/acc_nope00/payment-history?year=2018", token: token);
         Assert.That(unknownAccount.StatusCode, Is.EqualTo(HttpStatusCode.BadRequest), await unknownAccount.Content.ReadAsStringAsync());
 
         await host.Bind("alex", "error");

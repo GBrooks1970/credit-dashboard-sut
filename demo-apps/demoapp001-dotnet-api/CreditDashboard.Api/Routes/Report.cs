@@ -102,7 +102,7 @@ public static class Report
                 ["status"] = Status(Rules.PaymentHistory.YearStatus(accounts, w, current)),
             }).ToArray()),
             ["selectedYear"] = year,
-            ["missed"] = ReportData.MissedIn(ReportData.Accounts(r.Bureau), year),
+            ["missed"] = ReportData.MissedIn(ReportData.Accounts(r.Bureau), year, current),
         });
     }
 

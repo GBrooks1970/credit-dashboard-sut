@@ -129,6 +129,9 @@ public sealed class UserSession
     /// <summary>Held for the read, decision and write of one email change or resend, so two requests cannot both pass the 60-second check (CDS-38 A-04).</summary>
     public object EmailLock { get; } = new();
 
+    /// <summary>Held over the read, check and write of a mobile code, so requests that arrive together share the attempt limit (PR-11, R2-A-04).</summary>
+    public object MobileLock { get; } = new();
+
     public bool EmailMarkedVerified
     {
         get { lock (_lock) return _emailStatus == EmailStatus.Verified; }

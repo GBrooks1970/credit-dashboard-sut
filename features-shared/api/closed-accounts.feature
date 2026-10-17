@@ -1,4 +1,4 @@
-# version: 2 | created: 2026-10-04T18:09Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 3 | created: 2026-10-04T18:09Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @api
 Feature: Closed accounts
   Closed accounts stay on the report for six years from the day they closed, with nothing owing.
@@ -13,6 +13,7 @@ Feature: Closed accounts
     When Alex asks for the closed accounts for "Bureau A"
     Then the credit card is listed
     And its balance is 0.00
+    And its utilisation is 0%
 
   # An account drops off on the sixth anniversary of its close date (DR-012, decision
   # brief 1 D2). The 29 February case is a unit test of the date rule, not a scenario.

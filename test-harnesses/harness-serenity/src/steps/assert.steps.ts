@@ -93,6 +93,13 @@ Then('its balance is {money}', (amount: number) => {
     assert.ok(card, `${id} is not in the list`);
     assert.equal(minor(card.balance), amount);
 });
+// BR-03 with BR-13: a closed account's utilisation follows the balance it reports, which is 0 (R2-A-08, R2-B-06).
+Then('its utilisation is {percent}', (percent: number) => {
+    const id = thatCard();
+    const card = listedCreditCards().find((a: { id: string }) => a.id === id);
+    assert.ok(card, `${id} is not in the list`);
+    assert.equal(card.utilisation, percent);
+});
 
 Then('the account is not found', () => {
     problem(404, '/problems/not-found');

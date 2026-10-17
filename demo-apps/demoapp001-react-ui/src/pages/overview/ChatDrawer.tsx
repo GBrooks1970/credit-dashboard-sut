@@ -1,7 +1,8 @@
-// version: 1 | created: 2026-10-13T10:20Z | project: credit-dashboard-sut | type: source | language: en-GB
+// version: 2 | created: 2026-10-13T10:20Z | project: credit-dashboard-sut | type: source | language: en-GB
 // The chat drawer (UI specification section 7): a dialog with a focus trap, closed by Escape, that returns focus to the
 // button that opened it. The assistant is a mock with canned replies and always carries its disclaimer.
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
+import { useLatest } from '../../useLatest.ts';
 import { useSession } from '../../session.tsx';
 
 interface Props {
@@ -16,6 +17,7 @@ export function ChatDrawer({ open, onClose }: Props) {
   const [message, setMessage] = useState('');
   const [exchange, setExchange] = useState<{ asked: string; reply: string; disclaimer: string } | null>(null);
   const [failed, setFailed] = useState(false);
+  const latest = useLatest();
 
   useEffect(() => {
     if (open) input.current?.focus();
@@ -44,8 +46,11 @@ export function ChatDrawer({ open, onClose }: Props) {
     const asked = message.trim();
     if (!asked) return;
     setFailed(false);
+    // A slow answer to an earlier question must not replace the answer to the one asked last (CDS-38 R2-C-02).
+    const current = latest();
     try {
       const { data } = await client.POST('/assistant/messages', { body: { message: asked } });
+      if (!current()) return;
       if (data) {
         setExchange({ asked, reply: data.reply, disclaimer: data.disclaimer });
         setMessage('');
@@ -53,7 +58,7 @@ export function ChatDrawer({ open, onClose }: Props) {
         setFailed(true);
       }
     } catch {
-      setFailed(true);
+      if (current()) setFailed(true);
     }
   }
 

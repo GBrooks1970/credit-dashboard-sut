@@ -1,8 +1,9 @@
-// version: 1 | created: 2026-10-13T10:20Z | project: credit-dashboard-sut | type: source | language: en-GB
+// version: 2 | created: 2026-10-13T10:20Z | project: credit-dashboard-sut | type: source | language: en-GB
 // The summary (UI specification 6.2): the generated text, a route to the chat drawer and the impact section, and the
 // like and dislike buttons. Feedback is stored by the service, so it survives a new visit (BR-10).
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { components } from '@credit-dashboard-sut/api-client';
+import { useLatest } from '../../useLatest.ts';
 import { useSession } from '../../session.tsx';
 import { ChatDrawer } from './ChatDrawer.tsx';
 
@@ -15,24 +16,38 @@ export function SummarySection({ bureauId, summary }: { bureauId: string; summar
   const [chatOpen, setChatOpen] = useState(false);
   const [problem, setProblem] = useState(false);
   const chatButton = useRef<HTMLButtonElement>(null);
+  const returnFocus = useRef(false);
+  const latest = useLatest();
 
   async function choose(value: 'like' | 'dislike') {
     // Pressing the chosen button again clears it.
     const next: Feedback = feedback === value ? 'none' : value;
     setProblem(false);
+    // An answer to an earlier press must not replace what the customer pressed last (CDS-38 R2-C-02).
+    const current = latest();
     try {
       const { data } = await client.PUT('/reports/{bureauId}/summary/feedback', { params: { path: { bureauId } }, body: { value: next } });
+      if (!current()) return;
       if (data) setFeedback(data.value);
       else setProblem(true);
     } catch {
-      setProblem(true);
+      if (current()) setProblem(true);
     }
   }
 
+  // Focus goes back to the button that opened the drawer only after the drawer has gone: while it is open the rest of the page is
+  // inert, and the drawer lifts that when its effect is cleaned up, which happens in the commit after the one that closes it. Focusing
+  // in the click handler would try to focus an inert button, and a browser refuses (CDS-38 R2-C-01).
   function closeChat() {
+    returnFocus.current = true;
     setChatOpen(false);
-    chatButton.current?.focus();
   }
+  useEffect(() => {
+    if (!chatOpen && returnFocus.current) {
+      returnFocus.current = false;
+      chatButton.current?.focus();
+    }
+  }, [chatOpen]);
 
   return (
     <section aria-labelledby="summary-heading" className="card">

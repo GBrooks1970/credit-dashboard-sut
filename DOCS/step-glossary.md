@@ -1,5 +1,5 @@
 ---
-version: 15
+version: 16
 created: 2026-10-13T22:02Z
 project: credit-dashboard-sut
 type: step-glossary
@@ -185,7 +185,7 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 | Masking | `the account number is shown as {string}`; `no response contains {string}` | `api/masking` |
 | Debt | `the total debt is {money}`; `the debt trend is {trend}`; `the debt on {accountType} is {money}` | `api/debt`, `ui/debt` |
 | Payment history | `the years {year} to {year} are covered`; `{year} is marked {yearStatus}`; `seven years are offered, from {year} to {year}`; `{year} is chosen`; `{actor} sees {count} missed payments, all on the {provider} loan`; `{actor} is told there were no missed payments in {year}` | `api/payment-history`, `ui/payment-history` |
-| Account details form | `the credit card shows an interest rate of {percent}`; `{actor} is told the rate must be between 0% and 100%`; `no interest rate is recorded`; `{actor} is back on the credit card's own page`; `{actor} is on the page {string}` (the path of the address the browser is on: the positive control of the return-link guard) | `security/open-redirect`, `ui/account-details-form` |
+| Account details form | `the credit card shows an interest rate of {percent}`; `{actor} is told the rate must be between 0% and 100%`; `no interest rate is recorded`; `{actor} is back on the credit card's own page`; `{actor} opens the chat drawer`; `{actor} closes the chat drawer with {closer}` (Escape or the Close button); `the focus is on the chat button` (read from the page, `ui/report-overview`); `{actor} is on the page {string}` (the path of the address the browser is on: the positive control of the return-link guard) | `security/open-redirect`, `ui/account-details-form` |
 | Account details (API) | `the interest rate is {accepted or refused}` | `api/account-details` |
 | Searches and personal details | `{count} hard searches are listed` / `1 soft search is listed`; `no hard search is listed`; `{actor} is told there are no hard searches` (`search-list-empty`); `{actor} sees {count} current address and {count} previous addresses`; `{actor} is shown as on the electoral roll`; `none of the personal details can be edited` | `ui/personal-details`, `ui/searches` |
 | Sign-in | `{actor} sees the report for {bureau}`; `{actor} is told the sign-in details were not recognised`; `{actor} is still on the sign-in page`; `{actor} is asked to sign in again` | `ui/login` |

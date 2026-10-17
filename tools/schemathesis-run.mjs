@@ -1,10 +1,10 @@
-// version: 2 | created: 2026-10-08T15:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 3 | created: 2026-10-08T15:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Runs Schemathesis against the live service (CDS-23, DR-056). The tool starts the built service on its own port with
 // test control on and a synthetic key, freezes its clock, binds a persona and signs in, then makes two passes:
 // The stateful phase is left out: it chooses its next call from the last response, so two runs of the same seed can differ,
 // and a gate must not flake (CDS-23: one run in four reported a request with extra properties as an 'accepted invalid request').
 //   1. every operation but `logout` (it revokes the run's own token) and the test-control tag;
-//   2. the test-control operations, last, except the latency control (it can delay a request by 10 s) and the bug-flag control
+//   2. the test-control operations, last, except the bug-flag control
 //      (it switches defects on that break the contract for every later call: a fuzzed `problem-json-missing` made later error
 //      responses plain text and failed 'Undocumented Content-Type'. The flags are covered by FlagTests and the flag proof, DR-064).
 // It always stops the service. Needs `pip install -r tools/requirements.txt` (PYTHON overrides 'python') and the .NET 10 SDK.
@@ -78,7 +78,10 @@ function schemathesis(label, extra) {
   // The package has no __main__; this is the console script's own entry point, so it needs no PATH.
   const args = ['-c', 'from schemathesis.cli import schemathesis; schemathesis()', '--config-file', config, 'run', contract, '--url', base,
     '--phases', 'examples,coverage,fuzzing', '--max-examples', '25', '--generation-deterministic', '--workers', '1', '--max-failures', '50', ...extra];
-  const run = spawnSync(python, args, { stdio: 'inherit', env: { ...process.env, PYTHONUTF8: '1' } });
+  const run = spawnSync(python, args, { stdio: 'inherit', env: {
+    ...process.env, PYTHONUTF8: '1', PYTHONIOENCODING: 'utf-8', // the second: a redirected stdout crashed on Windows without it (R2-A-13)
+    PYTHONPATH: [path.join(root, 'tools'), process.env.PYTHONPATH].filter(Boolean).join(path.delimiter), SCHEMATHESIS_HOOKS: 'schemathesis_hooks',
+  } });
   return run.status === 0;
 }
 
@@ -99,8 +102,11 @@ try {
     '-H', `X-Test-Control-Key: ${controlKey}`,
     // The key is an apiKey scheme, which Schemathesis would otherwise generate at random instead of using ours.
     '--generation-with-security-parameters', 'false',
-    '--include-tag', 'test-control', '--exclude-operation-id', 'testSetLatency', '--exclude-operation-id', 'testSetBugs',
+    '--include-tag', 'test-control', '--exclude-operation-id', 'testSetBugs',
   ]);
+  // The latency control is fuzzed with the rest (R2-A-02 showed it faulting): it delays every request but test control's own, so
+  // the pass is not slowed, and the reset makes sure nothing it set outlives the run.
+  await api('POST', '/__test/reset', undefined, control);
   ok = business && controlPass;
   console.log(`\nschemathesis: business ${business ? 'pass' : 'FAIL'}, test control ${controlPass ? 'pass' : 'FAIL'}`);
 } catch (error) {

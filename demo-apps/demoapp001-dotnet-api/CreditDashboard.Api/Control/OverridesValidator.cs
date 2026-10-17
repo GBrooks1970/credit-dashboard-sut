@@ -36,6 +36,15 @@ public static class OverridesValidator
     private static void CheckAccount(string personaName, JsonObject a, int asAtYear, string asAtMonth, FixtureSet fixtures, List<string> problems)
     {
         var id = a["id"]!.GetValue<string>();
+
+        // The contract says these are dates (`format: date`), and the edge does not assert formats: a value such as "x" would bind and
+        // then fault a later read (CDS-38 R2-A-03, decision D3). Checked here, once, before anything reads them.
+        var badDates = new[] { "openedDate", "closedDate", "lastUpdated" }
+            .Where(name => a[name] is JsonValue v && v.TryGetValue<string>(out var text) && !DateOnly.TryParseExact(text, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
+            .ToList();
+        foreach (var name in badDates) problems.Add($"{id} {name} is not a date (yyyy-MM-dd).");
+        if (badDates.Count > 0) return;
+
         if (fixtures.AccountOwners.TryGetValue(id, out var owner) && owner != personaName)
             problems.Add($"{id} is also used in the {owner} persona (BR-15).");
 

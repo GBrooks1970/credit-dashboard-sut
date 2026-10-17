@@ -137,7 +137,7 @@ internal static class ReportData
     {
         // A page number can be any size the schema allows (it has no maximum), so it is read wide and clamped.
         int Read(string name, int fallback) =>
-            System.Numerics.BigInteger.TryParse(request.Query[name], NumberStyles.None, CultureInfo.InvariantCulture, out var v)
+            System.Numerics.BigInteger.TryParse(request.Query[name], NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var v)
                 ? (int)System.Numerics.BigInteger.Min(v, int.MaxValue) : fallback;
         return (Read("page", 1), Read("pageSize", 20));
     }

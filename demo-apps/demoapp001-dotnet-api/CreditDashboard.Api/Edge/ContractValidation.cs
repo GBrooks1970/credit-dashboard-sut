@@ -79,18 +79,34 @@ public sealed class ContractValidation(RequestDelegate next, ContractModel contr
         if (operation.BodySchema is not null)
         {
             context.Request.EnableBuffering();
-            using var reader = new StreamReader(context.Request.Body, leaveOpen: true);
-            var text = await reader.ReadToEndAsync(context.RequestAborted);
+            using var buffer = new MemoryStream();
+            await context.Request.Body.CopyToAsync(buffer, context.RequestAborted);
+            var bytes = buffer.ToArray();
             context.Request.Body.Position = 0;
-            if (string.IsNullOrWhiteSpace(text))
+            // Strict: an invalid byte sequence is refused here, not replaced by U+FFFD (which would let the handlers meet it later).
+            string? text;
+            try
+            {
+                text = new System.Text.UTF8Encoding(false, throwOnInvalidBytes: true).GetString(bytes);
+            }
+            catch (System.Text.DecoderFallbackException)
+            {
+                text = null;
+            }
+            if (text is null)
+            {
+                errors.Add(new("body", "is not valid UTF-8 text"));
+            }
+            else if (string.IsNullOrWhiteSpace(text))
             {
                 if (operation.BodyRequired) errors.Add(new("body", "is required"));
             }
-            else if (DuplicatePropertyName(text) is { } duplicate)
+            else if (BodyProblem(bytes) is { } problem)
             {
-                // JSON allows it, but the handlers read the body into objects that cannot hold two members of one name, and a
-                // repeated name is a way to say two things at once. It is a bad body, never a fault (CDS-38 A-02).
-                errors.Add(new("body", $"names the property '{duplicate}' more than once"));
+                // JSON allows a repeated property name and an unpaired surrogate escape, but the handlers read the body into objects that
+                // cannot hold the first and strings that cannot hold the second, and a repeated name is a way to say two things at once.
+                // Both are a bad body, never a fault (CDS-38 A-02, R2-A-01, R2-C-13).
+                errors.Add(new("body", problem));
             }
             else
             {
@@ -99,7 +115,7 @@ public sealed class ContractValidation(RequestDelegate next, ContractModel contr
                     using var doc = JsonDocument.Parse(text);
                     errors.AddRange(Evaluate(operation.BodySchema, doc.RootElement, null));
                 }
-                catch (Exception fault) when (fault is JsonException or ArgumentException)
+                catch (Exception fault) when (fault is JsonException or ArgumentException or InvalidOperationException)
                 {
                     // ArgumentException: the schema evaluator refuses an object that names a property twice.
                     errors.Add(new("body", "is not valid JSON"));
@@ -122,12 +138,15 @@ public sealed class ContractValidation(RequestDelegate next, ContractModel contr
         await next(context);
     }
 
-    /// <summary>The first property name an object in the text uses twice, or null (also null for text that is not JSON: the parser reports that).</summary>
-    private static string? DuplicatePropertyName(string text)
+    /// <summary>
+    /// What is wrong with the body beyond its shape, or null: a property name an object uses twice, or a string (or name) that is not
+    /// text because it holds an unpaired surrogate escape. Null also for text that is not JSON: the parser reports that.
+    /// </summary>
+    private static string? BodyProblem(byte[] bytes)
     {
         try
         {
-            var reader = new Utf8JsonReader(System.Text.Encoding.UTF8.GetBytes(text));
+            var reader = new Utf8JsonReader(bytes);
             var names = new Stack<HashSet<string>>();
             while (reader.Read())
             {
@@ -137,13 +156,20 @@ public sealed class ContractValidation(RequestDelegate next, ContractModel contr
                     case JsonTokenType.EndObject: names.Pop(); break;
                     case JsonTokenType.PropertyName:
                         var name = reader.GetString()!;
-                        if (!names.Peek().Add(name)) return name;
+                        if (!names.Peek().Add(name)) return $"names the property '{name}' more than once";
+                        break;
+                    case JsonTokenType.String:
+                        _ = reader.GetString(); // throws for an unpaired surrogate escape
                         break;
                 }
             }
         }
         catch (JsonException)
         {
+        }
+        catch (InvalidOperationException)
+        {
+            return "holds a string that is not valid text (an unpaired surrogate escape)";
         }
         return null;
     }

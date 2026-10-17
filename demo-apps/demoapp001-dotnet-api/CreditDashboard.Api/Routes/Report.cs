@@ -85,7 +85,7 @@ public static class Report
         // The checks run in the order of API specification section 8: the request's own values (400) before the target (404) and the persona (500).
         var today = DateOnly.FromDateTime(clock.UtcNow.UtcDateTime);
         var window = Rules.PaymentHistory.Window(today);
-        var year = int.TryParse(context.Request.Query["year"], NumberStyles.None, CultureInfo.InvariantCulture, out var y) ? y : today.Year;
+        var year = int.TryParse(context.Request.Query["year"], NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out var y) ? y : today.Year;
         if (!window.Contains(year))
         {
             await Problems.Validation(context, [new FieldError("year", $"must be within the seven-year window, {window[0]} to {window[^1]}")]);

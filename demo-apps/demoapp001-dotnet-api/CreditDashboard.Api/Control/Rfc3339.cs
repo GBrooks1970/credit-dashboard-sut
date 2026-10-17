@@ -10,7 +10,8 @@ namespace CreditDashboard.Api.Control;
 /// </summary>
 public static partial class Rfc3339
 {
-    [GeneratedRegex(@"^\d{4}-\d{2}-\d{2}[Tt]\d{2}:\d{2}:\d{2}(\.\d+)?([Zz]|[+-]\d{2}:\d{2})$")]
+    // [0-9], not \d (which matches digits of other scripts), and \z, not $ (which also matches before a final newline): R2-A-05.
+    [GeneratedRegex(@"^[0-9]{4}-[0-9]{2}-[0-9]{2}[Tt][0-9]{2}:[0-9]{2}:[0-9]{2}(\.[0-9]+)?([Zz]|[+-][0-9]{2}:[0-9]{2})\z")]
     private static partial Regex Shape();
 
     public static bool TryParse(string? text, out DateTimeOffset value)

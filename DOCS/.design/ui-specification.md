@@ -1,5 +1,5 @@
 ---
-version: 31
+version: 32
 created: 2026-10-14T09:43Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Normative since Phase 0 was accepted on 5 October 2026 (DR-038); changes are recorded in the lines below
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v32:** CDS-41 (P3c): `currency-format` (money shown as the count of pence), `double-render` (a list drawn twice) and `ph-a11y` (the year buttons lose `aria-pressed`, the status icons lose their text) are built in the test build only. The `@ui` scenarios the registry planned catch all three for the stated reason, so no scenario, step or component test changed; `ph-a11y` has a second catcher, axe `role-img-alt` on the payment-history target, for the icons. 19 of 19 implemented flags caught; 11 pending.
 **Changes in v31:** CDS-41 (P3b): section 9 lists the seven semantic rules the exit run applies to every page and state, in the same pass as axe-core (`src/exit/semantic-rules.ts`). Six UI bug flags are built in the test build only, each caught by its own rule for the stated reason: `util-mismatch`, `minor-units-label`, `placeholder-aria`, `chart-no-values`, `button-href` and `decorative-alt` (16 of 16 implemented flags caught; 14 pending). The profile header image carries `data-decorative`. The rule `form-controls-follow-text-size` proves the CDS-38 fix R2-C-04, which no check read before: with `font: inherit` removed it reports the control at 13.33 px among text of 32 px.
 **Changes in v30:** CDS-41 (P3a): section 9 says what an exit-check catcher is. `duplicate-nav` (both navigations rendered) and `nested-button` (the information button inside another button) are built in the test build only, and each is caught by an existing exit check, proved by `npm run check:bug-flags` (10 of 10 implemented flags; the other 20 of 30 are pending).
 **Changes in v29:** CDS-38 (F11f, the confirmation pass): section 8's 'Expected catch' column is the registry's (`fixtures/bug-flags.json`) for every flag in the table, and `schema-check` fails if the two differ (R2-C-08); the catalogue in section 5 lists what is built (R2-C-12). The guard's marker list, the flags it cannot see and the exit run's own cover are in sections 3 and 9 (R2-C-06, R2-C-07, R2-C-15).
@@ -280,7 +281,7 @@ Off by default. Each one recreates a defect seen in the source pages or a common
 | --- | --- | --- |
 | `duplicate-nav` | Desktop and mobile navs both rendered | exit check: layouts |
 | `util-mismatch` | Bar width differs from percentage text | exit check: text equals aria-valuenow |
-| `currency-format` | Money shown unformatted (`53024`) | `@ui` debt and overview scenarios |
+| `currency-format` | Money shown unformatted (`53024`) | Scenario `Total debt and its trend are shown` |
 | `minor-units-label` | Progress bar named '423600% of 510000' | exit check: a bar's name matches its value |
 | `placeholder-aria` | All row bars named 'Accessible label' | exit check: no placeholder names |
 | `chart-no-values` | Chart points announced without values | exit check: the table alternative carries values |
@@ -289,8 +290,8 @@ Off by default. Each one recreates a defect seen in the source pages or a common
 | `like-both` | Like and Dislike both pressed | `@ui` summary feedback scenarios |
 | `plural` | '1 topics', 'Updates in 1 days' | Scenario `Next update wording`; component test `says "1 day" for one day to the next update` |
 | `button-href` | Tiles rendered as buttons with `href` | exit check: no button with href |
-| `double-render` | List rendered twice during route change | `@ui` list-count scenarios |
-| `ph-a11y` | Year buttons lose `aria-pressed`; icons lose text | payment history `@ui` scenarios |
+| `double-render` | List rendered twice during route change | Scenario `Only the three newest changes are shown at first` |
+| `ph-a11y` | Year buttons lose `aria-pressed`; icons lose text | Scenario `The current year is chosen first`; exit check: axe role-img-alt |
 | `open-redirect` | `redirectUrl` guard removed | security open-redirect scenario |
 | `truncate-summary` | Summary cut mid-word with no way to expand | new component test (brief 13 D4) |
 | `negative-balance` | An account in credit is shown as an amount owed (`£44`, no 'in credit') (DR-019) | `@BR-06` UI scenario |

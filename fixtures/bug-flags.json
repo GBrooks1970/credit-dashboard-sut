@@ -149,8 +149,16 @@
       "group": "B",
       "layer": "ui",
       "effect": "Money shown unformatted",
-      "status": "pending",
-      "plannedCatcher": "`@ui` debt and overview scenarios"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "ui",
+          "feature": "ui/debt.feature",
+          "name": "Total debt and its trend are shown",
+          "failsWith": "Received string: 19827960"
+        }
+      ]
     },
     {
       "flag": "minor-units-label",
@@ -217,16 +225,38 @@
       "group": "B",
       "layer": "ui",
       "effect": "List rendered twice during route change",
-      "status": "pending",
-      "plannedCatcher": "`@ui` list-count scenarios"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "ui",
+          "feature": "ui/report-overview.feature",
+          "name": "Only the three newest changes are shown at first",
+          "failsWith": "Received number: 6"
+        }
+      ]
     },
     {
       "flag": "ph-a11y",
       "group": "B",
       "layer": "ui",
       "effect": "Year buttons lose aria-pressed; icons lose text",
-      "status": "pending",
-      "plannedCatcher": "payment history `@ui` scenarios"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "ui",
+          "feature": "ui/payment-history.feature",
+          "name": "The current year is chosen first",
+          "failsWith": "Expected \"aria-pressed\" attribute of ph-year-2026 to equal \"true\""
+        },
+        {
+          "kind": "exit-check",
+          "target": "payment history",
+          "name": "exit check: axe role-img-alt",
+          "failsWith": "role-img-alt (serious): 7 node(s)"
+        }
+      ]
     },
     {
       "flag": "nested-button",

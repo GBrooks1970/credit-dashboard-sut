@@ -16,7 +16,7 @@ export const MARKERS = ['cds.testControlKey', '__test', 'x-test-control-key', 'd
  * cannot be a marker without false alarms: those are recorded in the UI specification for P3, where the UI flags are built through a
  * constant `TEST_BUILD && ...` check that the bundler removes.
  */
-export const FLAG_MARKERS = ['duplicate-nav', 'util-mismatch', 'currency-format', 'minor-units-label', 'placeholder-aria', 'chart-no-values', 'range-stale', 'toggle-label', 'like-both', 'truncate-summary', 'negative-balance'];
+export const FLAG_MARKERS = ['duplicate-nav', 'util-mismatch', 'currency-format', 'minor-units-label', 'placeholder-aria', 'chart-no-values', 'range-stale', 'toggle-label', 'like-both', 'truncate-summary', 'negative-balance', 'button-href', 'double-render', 'ph-a11y', 'nested-button', 'decorative-alt'];
 
 /** Everything the guard looks for. */
 export const ALL_MARKERS = [...MARKERS, ...FLAG_MARKERS];

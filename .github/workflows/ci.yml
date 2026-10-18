@@ -105,6 +105,44 @@ jobs:
         run: npm run test:exit
         working-directory: test-harnesses/harness-serenity
 
+  # The bug-flag proof (CDS-41, decision D4 of the P3 plan): each implemented flag on and off against its catchers. Its own job because it
+  # grows with every flag (about 4 minutes for 19 flags at P3c) and the `ui` job has a 15 minute limit; the two run side by side.
+  flags:
+    name: Bug-flag proof (each implemented flag on and off against its catchers)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            packages/api-client/package-lock.json
+            demo-apps/demoapp001-react-ui/package-lock.json
+            test-harnesses/harness-serenity/package-lock.json
+
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: demo-apps/demoapp001-dotnet-api/global.json
+          cache: true
+          cache-dependency-path: demo-apps/demoapp001-dotnet-api/*/packages.lock.json
+
+      - name: Install the client, the UI and the harness
+        env:
+          SCARF_ANALYTICS: "false"
+        run: |
+          npm ci --prefix packages/api-client --no-audit --no-fund
+          npm ci --prefix demo-apps/demoapp001-react-ui --no-audit --no-fund
+          npm ci --prefix test-harnesses/harness-serenity --no-audit --no-fund
+
+      - name: Install the browser
+        run: npx playwright install --with-deps chromium
+        working-directory: test-harnesses/harness-serenity
+
       - name: 'Bug-flag proof: each implemented flag on and off against its catchers'
         run: npm run test:flags
         working-directory: test-harnesses/harness-serenity

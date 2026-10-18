@@ -1,7 +1,7 @@
 // version: 1 | created: 2026-10-13T10:45Z | project: credit-dashboard-sut | type: source | language: en-GB
 // Formatting (UI specification section 4.2, locale en-GB). Money arrives as integer minor units (DR-004) and is never
 // converted through floating point except for display.
-import { flagOn } from './flags.tsx';
+import { TEST_BUILD, flagOn } from './flags.tsx';
 
 const pounds = (fractionDigits: 0 | 2) =>
   new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits });
@@ -14,6 +14,8 @@ const poundsAndPence = pounds(2);
  * (`£53,024`); detail figures show pence (`£4,236.00`).
  */
 export function formatMoney(amountMinor: number, options: { pence: boolean }): string {
+  // The `currency-format` bug flag (test build only; UI specification 8): money shown as the raw count of pence, `53024`.
+  if (TEST_BUILD && flagOn('currency-format')) return String(amountMinor);
   const formatter = options.pence ? poundsAndPence : wholePounds;
   const text = formatter.format(Math.abs(amountMinor) / 100);
   return amountMinor < 0 ? `${text} in credit` : text;

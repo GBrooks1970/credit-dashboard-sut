@@ -1,5 +1,5 @@
 ---
-version: 68
+version: 69
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 68 (CDS-38 done: the review, the confirmation pass and the fixes to both merged; CDS-41 unblocked)
+**Version:** 69 (CDS-41 done: the eleven UI display and semantics flags, 19 of 30 flags caught; CDS-42 unblocked)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -89,7 +89,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-38` | Independent review of the Phase 4 UI and the Serenity/JS harness by a fresh-context agent, findings handled as CDS-24 was (decision brief 12 D1 option 2; runs after CDS-40, brief 13 D6) | UI | — | MEDIUM | `CDS-36`, `CDS-40` | Done 2026-10-18 |
 | `CDS-39` | P1 the flag mechanism and the proof runner: `Flags` in the service, the test build of the UI reads the flags, the debug panel, `bug-flags.json`, `check:bug-flags` | Tooling | — | HIGH | `CDS-37` | Done 2026-10-14 |
 | `CDS-40` | P2 the seven API flags implemented and proved | Service | — | HIGH | `CDS-39` | Done 2026-10-14 |
-| `CDS-41` | P3 the eleven UI display and semantics flags, with exit-check catchers for six | UI | — | HIGH | `CDS-40`, `CDS-38` | Open |
+| `CDS-41` | P3 the eleven UI display and semantics flags, with exit-check catchers for six | UI | — | HIGH | `CDS-40`, `CDS-38` | Done 2026-10-18 |
 | `CDS-42` | P4 the twelve UI behaviour flags, with component-test catchers for three | UI | — | HIGH | `CDS-41` | Open |
 | `CDS-43` | P5 visual regression: 32 screenshots, Linux CI baselines | Tooling | — | MEDIUM | `CDS-42` | Open |
 | `CDS-44` | P6 the published Serenity report on Pages beside the board; DR-060 amended | Tooling | — | MEDIUM | `CDS-43` | Open |
@@ -270,6 +270,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 ### CDS-39: P1, the flag mechanism and the proof runner
 
 **COMPLETE (2026-10-14; #73 `0117333`, CI run 38545013647).** `Flags` and `Defects` in the service (`rounding-down` is the first API flag); `FlagsProvider`, `useFlag` and the `/debug` panel in a test build of the UI (`plural` is the first UI flag); `fixtures/bug-flags.json` (all 30 flags) checked against the contract in `verify`; `ControlTheTestEnvironment.setBugs` and `HARNESS_BUGS`; `npm run check:bug-flags` (the proof runner), in the `ui` CI job. 332 service tests, 142 Vitest tests, 51 `@ui` executions and 59 `@api` executions green with every flag off; the two implemented flags are caught for the stated reason (3 catchers). Status is Done when merged.
+
+### CDS-41: P3, the eleven UI display and semantics flags
+
+**COMPLETE (2026-10-18; plan `DOCS/implementation-plans/2026-10-18_cds-41-ui-display-flags.md`; P3a #103 `30e3168`, P3b #104 `9c86205`, P3c #105 `eee78fa`; CI jobs `Verify`, `UI` and the new `flags` all green on each).** `duplicate-nav`, `nested-button`, `util-mismatch`, `minor-units-label`, `placeholder-aria`, `chart-no-values`, `button-href`, `decorative-alt`, `currency-format`, `double-render` and `ph-a11y` built in the UI's test build only (`TEST_BUILD && flagOn(...)`, guarded by the public-build guard) and each caught for its stated reason: eight by the exit run (a third catcher kind in the proof runner, seven semantic rules in `src/exit/semantic-rules.ts`) and three by the `@ui` scenarios the registry planned, with no scenario changed. `check:bug-flags` 19 of 19 implemented flags caught, 11 pending. The rule `form-controls-follow-text-size` also proves the CDS-38 fix R2-C-04. The flag proof moved to its own CI job (`flags`, 7m39s). UI specification v32, harness design v6. Log: `DOCS/implementation-logs/2026-10-18_cds-41-ui-display-flags-p3a-p3c.md`. **CDS-42 (P4) is unblocked.**
 
 ### CDS-40: P2, the seven API flags
 

@@ -4,9 +4,9 @@ created: 2026-10-18T14:40Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-41
-status: approved
+status: implemented
 approved: "2026-10-18, Gary Brooks, 'all as recommended, approved, push the plan PR' (D1 to D6 as recommended); merge only on the owner's word per pull request"
-delivered: not yet
+delivered: "2026-10-18: P3a #103 `30e3168`, P3b #104 `9c86205`, P3c #105 `eee78fa`"
 language: en-GB
 ---
 
@@ -87,4 +87,14 @@ The twelve group C flags (CDS-42); visual regression (CDS-43); the Serenity repo
 
 ## Outcome
 
-[Appended after delivery.]
+**Delivered 2026-10-18** in three pull requests, each merged after every CI job showed `pass`: P3a #103 (`30e3168`), P3b #104 (`9c86205`), P3c #105 (`eee78fa`). The implementation log is `DOCS/implementation-logs/2026-10-18_cds-41-ui-display-flags-p3a-p3c.md`. `check:bug-flags` shows 19 of 19 implemented flags caught for the stated reason; 11 (group C) are pending.
+
+**Where it departed from the plan.**
+1. **The cost estimate was wrong.** P3a estimated 8 s for an exit-check proof run; the measured figure was about 17 s (P3b).
+2. **Decision D4 was taken.** The `ui` job was 8m47s with 16 flags in it; the proof for the last three flags measured 4 min 8 s, which would have been about 13 minutes against 15. The proof moved to its own CI job, `flags` (30 minutes), in P3c. In CI the `flags` job took 7m39s and the `ui` job 4m57s.
+3. **Decision D3 was not needed.** The registry's planned scenarios caught `currency-format`, `double-render` and `ph-a11y` for the stated reason, so no scenario, step or component test changed. `ph-a11y` gained a second catcher (axe `role-img-alt` on the payment-history target) for its icons, which the scenario does not read.
+4. **Decision D5 was taken as planned:** the form-control rule `form-controls-follow-text-size` rode with P3b and proved the CDS-38 fix R2-C-04 (with `font: inherit` removed it reports 13.33 px among text of 32 px).
+5. **The public-build guard** also looks for `button-href`, `double-render`, `ph-a11y`, `nested-button` and `decorative-alt` (16 flag names in all), which the plan did not list.
+6. **Stop point 2 (D6):** the owner decided to go on to P4.
+
+**Counts at the close** (`eee78fa`): 435 service tests, 239 rules tests, 198 component tests, 20 guard tests, 23 harness unit tests, 59 `@api` and 59 `@ui` executions, 124 axe scans and 288 layout checks (0 problems), `verify` 14 of 14.

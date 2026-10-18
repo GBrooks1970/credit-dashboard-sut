@@ -156,6 +156,22 @@ function PreferredName({ stored: initial }: { stored: string }) {
     if (saved) await refreshUser().catch(() => undefined);
   }
 
+  // Leaving by a link in the app while the name is changed and not saved asks first (My Profile spec 3.2). The `lost-edit` bug flag (test
+  // build only) removes the question. A capture listener on the document sees the click before the router does, and a refusal stops it.
+  useEffect(() => {
+    if (!changed || (TEST_BUILD && flagOn('lost-edit'))) return;
+    const ask = (event: MouseEvent) => {
+      const link = (event.target as Element | null)?.closest?.('a[href]');
+      if (!link || link.getAttribute('target') === '_blank') return;
+      if (!window.confirm('You have a preferred name that is not saved. Leave without saving it?')) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+    document.addEventListener('click', ask, true);
+    return () => document.removeEventListener('click', ask, true);
+  }, [changed]);
+
   return (
     <section aria-labelledby="profile-preferred-heading" className="card">
       <h2 id="profile-preferred-heading" data-testid="profile-preferred-heading">

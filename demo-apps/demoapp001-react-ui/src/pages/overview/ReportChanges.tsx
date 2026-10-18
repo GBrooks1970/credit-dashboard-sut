@@ -62,7 +62,8 @@ export function ReportChanges({ bureauId, recent, total }: { bureauId: string; r
       {total > recent.length && (
         <>
           <button type="button" data-testid="changes-toggle" aria-expanded={expanded} disabled={loading} onClick={toggle}>
-            {expanded ? 'Show fewer' : `Show all ${total}`}
+            {/* The `toggle-label` bug flag (test build only; UI specification 8): once opened, the label stays "Show fewer". */}
+            {expanded || (TEST_BUILD && flagOn('toggle-label') && all) ? 'Show fewer' : `Show all ${total}`}
           </button>
           {loading && <div data-testid="changes-toggle-loading" aria-busy="true" role="status" aria-label="Loading changes" />}
           {failed && (

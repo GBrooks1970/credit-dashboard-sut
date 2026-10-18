@@ -22,6 +22,20 @@ export function formatMoney(amountMinor: number, options: { pence: boolean }): s
   return amountMinor < 0 && !(TEST_BUILD && flagOn('negative-balance')) ? `${text} in credit` : text;
 }
 
+/** A summary longer than this is cut (UI specification 6.2). */
+export const SUMMARY_LIMIT = 280;
+
+/**
+ * The text of a long summary cut at the last whole word before the limit, with an ellipsis; a short text is returned as it is. The
+ * `truncate-summary` bug flag (test build only) cuts at the limit whatever is there, which can fall inside a word.
+ */
+export function shortened(text: string, limit: number = SUMMARY_LIMIT): string {
+  if (text.length <= limit) return text;
+  if (TEST_BUILD && flagOn('truncate-summary')) return `${text.slice(0, limit)}…`;
+  const space = text.lastIndexOf(' ', limit);
+  return `${text.slice(0, space > 0 ? space : limit)}…`;
+}
+
 /** A whole percentage: `54%`. Above 100 the page adds an 'Over limit' label (DR-013). */
 export function formatPercent(value: number): string {
   return `${value}%`;

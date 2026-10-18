@@ -1,5 +1,5 @@
 ---
-version: 33
+version: 34
 created: 2026-10-14T09:43Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Normative since Phase 0 was accepted on 5 October 2026 (DR-038); changes are recorded in the lines below
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v34:** CDS-42 (P4c): two behaviours the flag table already assumed are now specified and built, so that a flag can remove them. A summary longer than 280 characters is shown cut at the last whole word before the limit, followed by an ellipsis, with a button `summary-toggle` ("Read more" and "Read less") that shows the whole text and folds it again; a shorter summary has no button (section 6.2). `toggle-label`, `truncate-summary` and `lost-edit` are built in the test build only, each caught for the stated reason by a component test in `src/flags.test.tsx`; that is 30 of 30 implemented flags caught.
 **Changes in v33:** CDS-42 (P4b): `range-stale`, `like-both`, `open-redirect`, `negative-balance`, `preferred-on-report` and `pii-in-title` are built in the test build only. The `@ui` scenarios the registry planned catch all six for the stated reason, so no scenario, step or component test changed. The public-build guard also looks for `open-redirect`, `preferred-on-report` and `pii-in-title`. 27 of 27 implemented flags caught; 3 pending (`toggle-label`, `truncate-summary`, `lost-edit`). The profile pages show the service's specific `errors[0]` message when it sends one (capitalised, with a full stop), else its `detail` (CDS-38 C-26).
 **Changes in v32:** CDS-41 (P3c): `currency-format` (money shown as the count of pence), `double-render` (a list drawn twice) and `ph-a11y` (the year buttons lose `aria-pressed`, the status icons lose their text) are built in the test build only. The `@ui` scenarios the registry planned catch all three for the stated reason, so no scenario, step or component test changed; `ph-a11y` has a second catcher, axe `role-img-alt` on the payment-history target, for the icons. 19 of 19 implemented flags caught; 11 pending.
 **Changes in v31:** CDS-41 (P3b): section 9 lists the seven semantic rules the exit run applies to every page and state, in the same pass as axe-core (`src/exit/semantic-rules.ts`). Six UI bug flags are built in the test build only, each caught by its own rule for the stated reason: `util-mismatch`, `minor-units-label`, `placeholder-aria`, `chart-no-values`, `button-href` and `decorative-alt` (16 of 16 implemented flags caught; 14 pending). The profile header image carries `data-decorative`. The rule `form-controls-follow-text-size` proves the CDS-38 fix R2-C-04, which no check read before: with `font: inherit` removed it reports the control at 13.33 px among text of 32 px.
@@ -157,7 +158,7 @@ One `GET /reports/{bureauId}/overview` call feeds every section except the histo
 | --- | --- | --- | --- |
 | Score hero | `score-value`, `score-max`, `score-gauge` | `score` | Score 0, 1000 (`boundary`) |
 | Comparison | `bureau-name`, `next-update`, `bench-national`, `bench-local` | `bureau`, `score` | `Updates in 0 days`, `1 day` (clock control) |
-| Summary | `summary-text`, `btn-chat`, `link-impact`, `btn-like`, `btn-dislike`, `ai-disclaimer` | `summary` | Feedback persists after reload (BR-10) |
+| Summary | `summary-text`, `summary-toggle`, `btn-chat`, `link-impact`, `btn-like`, `btn-dislike`, `ai-disclaimer` | `summary` | Feedback persists after reload (BR-10). A summary over 280 characters is cut at the last whole word before the limit with an ellipsis; `summary-toggle` ("Read more", "Read less") shows the whole text and folds it again (CDS-42) |
 | History chart | `history-chart`, `range-3m`, `range-6m`, `range-1y` | `GET /score/history` | Null months render as gaps (BR-02); own loading state |
 | Report changes | `changes-heading`, `change-card-{id}`, `changes-toggle`, `changes-see-all` | `recentChanges`, `changesTotal`; the toggle calls `GET /reports/{bureauId}/changes` and lists every change in place, then collapses back to the 3 newest | Toggle hidden when total ≤ 3; the toggle's own loading and error states |
 | Impact | `impact-action-needed`, `impact-monitor`, `impact-doing-well`, `impact-link` | `impact` | Pluralisation |
@@ -287,14 +288,14 @@ Off by default. Each one recreates a defect seen in the source pages or a common
 | `placeholder-aria` | All row bars named 'Accessible label' | exit check: no placeholder names |
 | `chart-no-values` | Chart points announced without values | exit check: the table alternative carries values |
 | `range-stale` | Chart ignores range changes | Scenario `Score history range` |
-| `toggle-label` | 'See less' never flips back | new component test (brief 13 D4) |
+| `toggle-label` | 'See less' never flips back | Component test `reads "Show fewer" while open and "Show all 5" again once closed` |
 | `like-both` | Like and Dislike both pressed | Scenario `Summary feedback is remembered` |
 | `plural` | '1 topics', 'Updates in 1 days' | Scenario `Next update wording`; component test `says "1 day" for one day to the next update` |
 | `button-href` | Tiles rendered as buttons with `href` | exit check: no button with href |
 | `double-render` | List rendered twice during route change | Scenario `Only the three newest changes are shown at first` |
 | `ph-a11y` | Year buttons lose `aria-pressed`; icons lose text | Scenario `The current year is chosen first`; exit check: axe role-img-alt |
 | `open-redirect` | `redirectUrl` guard removed | Scenario `The return link cannot leave the site` |
-| `truncate-summary` | Summary cut mid-word with no way to expand | new component test (brief 13 D4) |
+| `truncate-summary` | Summary cut mid-word with no way to expand | Component test `cuts at the last whole word before 280 characters, shows an ellipsis, and Read more shows it all` |
 | `negative-balance` | An account in credit is shown as an amount owed (`£44`, no 'in credit') (DR-019) | Scenario `A card in credit says so` |
 
 Profile-page flags (`nested-button`, `decorative-alt`, `preferred-on-report`, `preferred-no-trim`, `email-stays-verified`, `pii-in-title`, `lost-edit`) are listed in the My Profile UI feature spec, section 7.

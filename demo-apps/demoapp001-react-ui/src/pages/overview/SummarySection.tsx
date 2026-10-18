@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { components } from '@credit-dashboard-sut/api-client';
 import { TEST_BUILD, flagOn } from '../../flags.tsx';
 import { useLatest } from '../../useLatest.ts';
+import { SUMMARY_LIMIT, shortened } from '../../format.ts';
 import { useSession } from '../../session.tsx';
 import { ChatDrawer } from './ChatDrawer.tsx';
 
@@ -15,6 +16,7 @@ export function SummarySection({ bureauId, summary }: { bureauId: string; summar
   const { client } = useSession();
   const [feedback, setFeedback] = useState<Feedback>(summary.feedback);
   const [chatOpen, setChatOpen] = useState(false);
+  const [showAll, setShowAll] = useState(false);
   const [problem, setProblem] = useState(false);
   const chatButton = useRef<HTMLButtonElement>(null);
   const returnFocus = useRef(false);
@@ -53,7 +55,13 @@ export function SummarySection({ bureauId, summary }: { bureauId: string; summar
   return (
     <section aria-labelledby="summary-heading" className="card">
       <h2 id="summary-heading">Summary</h2>
-      <p data-testid="summary-text">{summary.text}</p>
+      <p data-testid="summary-text">{showAll ? summary.text : shortened(summary.text)}</p>
+      {/* A long summary can be read in full. The `truncate-summary` bug flag (test build only) leaves it cut with no way to expand. */}
+      {summary.text.length > SUMMARY_LIMIT && !(TEST_BUILD && flagOn('truncate-summary')) && (
+        <button type="button" data-testid="summary-toggle" aria-expanded={showAll} onClick={() => setShowAll(!showAll)}>
+          {showAll ? 'Read less' : 'Read more'}
+        </button>
+      )}
       <p data-testid="ai-disclaimer" className="muted">
         This summary is generated for demonstration and is not financial advice.
       </p>

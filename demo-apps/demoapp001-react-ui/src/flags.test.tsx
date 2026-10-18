@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ALL_FLAGS, KEY_STORAGE, readFlags } from './flags.tsx';
-import { json, overviewFixture } from './test/fixtures.ts';
+import { change, json, overviewFixture } from './test/fixtures.ts';
 import { fakeService, openSignedIn } from './test/helpers.tsx';
 
 afterEach(() => {
@@ -110,5 +110,105 @@ describe('the debug panel with storage blocked (CDS-38 C-30)', () => {
     expect(screen.getByTestId('debug-key')).toHaveValue('k');
     expect(uncaught).toEqual([]);
     setItem.mockRestore();
+  });
+});
+
+// The component-test catchers for three behaviour flags (bug-flags.json, decision brief 13 D4, CDS-42): the proof runner gives the
+// fake service the flag with CDS_FLAGS=<flag>, and the test of that flag must then fail with the text recorded in the registry.
+
+describe('the changes toggle flips back (the catcher of toggle-label)', () => {
+  const five = [1, 2, 3, 4, 5].map((n) => change(n));
+
+  it('reads "Show fewer" while open and "Show all 5" again once closed', async () => {
+    fakeService({
+      'GET /reports/bureau-a/overview': () => json(200, { ...overviewFixture, recentChanges: five.slice(0, 3), changesTotal: 5 }),
+      'GET /reports/bureau-a/score/history': () => json(200, []),
+      'GET /reports/bureau-a/changes': () => json(200, { page: 1, pageSize: 100, total: 5, items: five }),
+    });
+    await openSignedIn('/credit-health/report/bureau-a');
+    const toggle = await screen.findByTestId('changes-toggle');
+    expect(toggle).toHaveTextContent('Show all 5');
+    await userEvent.click(toggle);
+    await waitFor(() => expect(screen.getByTestId('changes-toggle')).toHaveTextContent('Show fewer'));
+    await userEvent.click(screen.getByTestId('changes-toggle'));
+    expect(screen.getByTestId('changes-toggle'), "the label did not flip back to 'Show all 5'").toHaveTextContent('Show all 5');
+  });
+});
+
+describe('a long summary is cut at a word and can be expanded (the catcher of truncate-summary)', () => {
+  const words = Array.from({ length: 60 }, (_, i) => `word${i}`);
+  const long = words.join(' ');
+  const overviewWithSummary = (text: string) => ({ ...overviewFixture, summary: { ...overviewFixture.summary, text } });
+  const serve = (text: string) =>
+    fakeService({ 'GET /reports/bureau-a/overview': () => json(200, overviewWithSummary(text)), 'GET /reports/bureau-a/score/history': () => json(200, []) });
+
+  it('cuts at the last whole word before 280 characters, shows an ellipsis, and Read more shows it all', async () => {
+    expect(long.length).toBeGreaterThan(280);
+    serve(long);
+    await openSignedIn('/credit-health/report/bureau-a');
+    const text = await screen.findByTestId('summary-text');
+    const shown = (text.textContent ?? '').replace(/…$/, '');
+    expect(text.textContent).toMatch(/…$/);
+    expect(long.startsWith(shown)).toBe(true);
+    expect(long.charAt(shown.length), 'the summary was cut inside a word at the limit of 280').toBe(' '); // the cut falls on a word boundary, never inside a word
+    expect(shown.length).toBeLessThanOrEqual(280);
+    await userEvent.click(screen.getByTestId('summary-toggle'));
+    expect(screen.getByTestId('summary-text')).toHaveTextContent(long);
+    expect(screen.getByTestId('summary-toggle')).toHaveTextContent('Read less');
+    await userEvent.click(screen.getByTestId('summary-toggle'));
+    expect(screen.getByTestId('summary-text').textContent).toMatch(/…$/);
+  });
+
+  it('shows a short summary whole, with no button', async () => {
+    serve('Your score is good and steady.');
+    await openSignedIn('/credit-health/report/bureau-a');
+    expect(await screen.findByTestId('summary-text')).toHaveTextContent('Your score is good and steady.');
+    expect(screen.queryByTestId('summary-toggle')).not.toBeInTheDocument();
+  });
+});
+
+describe('leaving with an unsaved preferred name asks first (the catcher of lost-edit)', () => {
+  const profile = {
+    legalName: 'Alex Example', dateOfBirth: '1985-03-12', memberSince: '2021-06-01', preferredName: 'Al',
+    email: { address: 'alex.example@example.com', status: 'verified' }, mobile: { lastDigits: '123', status: 'verified' },
+    address: { line1: '1 Example Street', postcode: 'ZZ1 1ZZ', previousCount: 1 }, employment: { status: 'employed-full-time' }, finances: { added: true },
+  };
+  const MESSAGE = 'You have a preferred name that is not saved. Leave without saving it?';
+
+  async function typeAnUnsavedName() {
+    fakeService({ 'GET /me/profile': () => json(200, profile) });
+    await openSignedIn('/my-account/profile');
+    const field = await screen.findByTestId('profile-preferred-input');
+    await userEvent.clear(field);
+    await userEvent.type(field, 'Ally');
+  }
+
+  it('asks, and staying keeps the page and the typed name', async () => {
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    await typeAnUnsavedName();
+    await userEvent.click(screen.getByTestId('nav-primary-debt'));
+    expect(confirm, "no question was asked about the unsaved 'Ally'").toHaveBeenCalledWith(MESSAGE);
+    expect(screen.getByTestId('profile-legal-name')).toBeInTheDocument();
+    expect(screen.getByTestId('profile-preferred-input')).toHaveValue('Ally');
+    confirm.mockRestore();
+  });
+
+  it('asks, and leaving goes on', async () => {
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(true);
+    await typeAnUnsavedName();
+    await userEvent.click(screen.getByTestId('nav-primary-debt'));
+    expect(confirm, "no question was asked about the unsaved 'Ally'").toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(screen.queryByTestId('profile-legal-name')).not.toBeInTheDocument());
+    confirm.mockRestore();
+  });
+
+  it('does not ask when nothing is unsaved', async () => {
+    const confirm = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    fakeService({ 'GET /me/profile': () => json(200, profile) });
+    await openSignedIn('/my-account/profile');
+    await screen.findByTestId('profile-preferred-input');
+    await userEvent.click(screen.getByTestId('nav-primary-debt'));
+    expect(confirm).not.toHaveBeenCalled();
+    confirm.mockRestore();
   });
 });

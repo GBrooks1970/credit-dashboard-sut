@@ -1,4 +1,4 @@
-import { formatDate, formatMoney, formatMonth, formatPercent, plural } from './format.ts';
+import { formatDate, formatMoney, formatMonth, formatPercent, plural, shortened } from './format.ts';
 
 describe('formatMoney (UI specification 4.2)', () => {
   it('shows no pence on summary figures', () => {
@@ -40,5 +40,20 @@ describe('formatMonth (CDS-38 R2-C-05)', () => {
     // The contract's pattern admits both.
     expect(formatMonth('2026-13')).toBe('2026-13');
     expect(formatMonth('2026-00')).toBe('2026-00');
+  });
+});
+
+describe('shortened (UI specification 6.2, CDS-42)', () => {
+  it('leaves a short text as it is, at the limit too', () => {
+    expect(shortened('Your score is good.')).toBe('Your score is good.');
+    expect(shortened('a'.repeat(280))).toBe('a'.repeat(280));
+  });
+  it('cuts a long text at the last whole word before the limit and adds an ellipsis', () => {
+    const text = 'abcd efgh ijkl mnop';
+    expect(shortened(text, 12)).toBe('abcd efgh…');
+    expect(shortened(text, 9)).toBe('abcd efgh…');
+  });
+  it('cuts at the limit when the text has no space to cut at', () => {
+    expect(shortened('x'.repeat(30), 10)).toBe(`${'x'.repeat(10)}…`);
   });
 });

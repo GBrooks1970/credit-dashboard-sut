@@ -1,5 +1,5 @@
 ---
-version: 11
+version: 12
 created: 2026-10-14T09:10Z
 supersedes: v6 (2026-10-07T13:09Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -11,6 +11,7 @@ language: en-GB
 
 **Status:** Normative since Phase 0 was accepted on 5 October 2026 (DR-038); changes are recorded in the lines below
 **Parent:** [UI specification](ui-specification.md) (conventions in its section 4 apply here unchanged)
+**Changes in v12:** CDS-42 (P4b, P4c): section 7 names the catch of each implemented flag as the registry does. Leaving the profile page by a link in the app while the preferred name is changed and not saved asks first ("You have a preferred name that is not saved. Leave without saving it?"): staying keeps the page and the typed name, leaving goes on and drops it. Reloading or closing the tab is the browser's own business and is not covered. The flag `lost-edit` removes the question, and a component test catches it.
 **Changes in v11:** CDS-38 (F9, C-33): the attempts left (`mobile-attempts`) appear with the first wrong code (the 422 `code-wrong`), not when the code step opens; the header image is a whole 1 by 1 GIF (C-27).
 **Changes in v10:** decision brief 13 D4 (DR-064): the expected catch of `lost-edit` is a component test.
 **Changes in v9:** CDS-35 (U5): what the profile pages built settles. The identity header is a region `profile-identity`, so a test can show nothing in it takes input; the name information button reads 'Why can I not change my name?'; the preferred name's status line `profile-preferred-status` carries the error text as well as 'Saved', and is empty until a result is in; the preferred name is checked on the client against PR-02 and a refused name is not sent; the mobile sub-page shows `mobile-attempts` ('2 attempts left'); the email form is `noValidate`, so the service's message and not the browser's bubble is shown at `email-error`; the header account button is now a link to the profile.
@@ -71,6 +72,7 @@ Route `/my-account/profile`. Two stacked regions under the global header:
 | Cancel | button | `profile-preferred-cancel` | Restores the stored value |
 | Status | status, `aria-live="polite"` | `profile-preferred-status` | 'Saved' on success; error text on failure |
 | Field error | text, `aria-describedby` | `profile-preferred-error` | Rule PR-02 |
+| Unsaved change | a link clicked while the name is changed and not saved | the browser's confirmation | Asks "You have a preferred name that is not saved. Leave without saving it?" before leaving the page (CDS-42) |
 
 The source shows the textbox with no visible Save control; how it commits is unknown. This spec chooses an explicit Save and Cancel, because implicit save-on-blur is harder to test reliably and easy to lose data with. Confirmed by the owner (DR-023).
 
@@ -173,7 +175,7 @@ Persona fixtures gain a `profile` block. All values are synthetic (DR-010): inve
 | `preferred-no-trim` | Leading and trailing spaces kept | Scenario `Spaces around a preferred name are removed` (`@api`) |
 | `email-stays-verified` | Changing email keeps the Verified badge (breaks PR-04) | Scenario `A changed email needs verifying again` |
 | `pii-in-title` | Legal name placed in the page title (breaks PR-08) | Scenario `Profile details stay out of the page title and address` |
-| `lost-edit` | Navigating away discards an unsaved preferred name without warning | Component test (brief 13 D4) |
+| `lost-edit` | Navigating away discards an unsaved preferred name without warning | Component test `asks, and staying keeps the page and the typed name` |
 
 ## 8. Feature file
 

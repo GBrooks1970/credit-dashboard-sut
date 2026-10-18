@@ -76,8 +76,9 @@ public static partial class ProfileOperations
             await Problems.RuleViolation(context, "preferred-name", "Preferred name refused", "A preferred name is 1 to 30 letters, spaces, hyphens or apostrophes (PR-02).");
             return;
         }
-        store.Session(Http.Username(context)).SetPreferredName(result.Value);
-        await Http.Json(context, new JsonObject { ["preferredName"] = result.Value });
+        var kept = Defects.PreferredName(submitted, result.Value);
+        store.Session(Http.Username(context)).SetPreferredName(kept);
+        await Http.Json(context, new JsonObject { ["preferredName"] = kept });
     }
 
     private static async Task ChangeEmail(HttpContext context, PersonaStore store, IControlledClock clock)
@@ -91,14 +92,16 @@ public static partial class ProfileOperations
         var username = Http.Username(context);
         var session = store.Session(username);
         EmailChangeResult result;
+        EmailStatus status;
         lock (session.EmailLock)
         {
             var current = CurrentEmail(store, username, store.Document(username)["profile"]!.AsObject());
             result = Email.Change(current.Address, current.Status, submitted);
+            status = Defects.EmailStatusAfterChange(current.Status, result);
             // A link is sent only when the address changed (PR-04): that instant starts the 60 seconds before the next resend (PR-09).
-            if (result.Changed) session.SetEmail(result.Address, result.Status, result.LinkSent ? clock.UtcNow : null);
+            if (result.Changed) session.SetEmail(result.Address, status, result.LinkSent ? clock.UtcNow : null);
         }
-        await Http.Json(context, new JsonObject { ["address"] = result.Address, ["status"] = Name(result.Status) });
+        await Http.Json(context, new JsonObject { ["address"] = result.Address, ["status"] = Name(status) });
     }
 
     private static async Task ResendEmailVerification(HttpContext context, PersonaStore store, IControlledClock clock)

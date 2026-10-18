@@ -1,5 +1,5 @@
 ---
-version: 16
+version: 17
 created: 2026-10-13T22:02Z
 project: credit-dashboard-sut
 type: step-glossary
@@ -168,7 +168,7 @@ Each becomes a Cucumber parameter type in `test-harnesses/harness-serenity/src/s
 | `{actor} opens the closed accounts for {bureau}` | Closed accounts | `ui/account-drilldown` |
 | `{actor} adds the mobile number {string}`; `{actor} enters the code {code}` | Mobile sub-page (the same phrases as the API acts) | `ui/profile` |
 | `{actor} opens the name information` | Name information button | `ui/profile` |
-| `{actor} sets their preferred name to {string}` (optionally `with spaces either side`) / `tries to set their preferred name to {string}` | Preferred name | `ui/profile` |
+| `{actor} sets their preferred name to {string}` (optionally `with spaces either side`) / `tries to set their preferred name to {string}` | Preferred name | `ui/profile`; `api/profile-contact` (the `with spaces either side` form only, CDS-42) |
 | `{actor} clears their preferred name` | Preferred name | `ui/profile` |
 | `{actor} changes their email to {string}` | Email sub-page | `ui/profile` |
 

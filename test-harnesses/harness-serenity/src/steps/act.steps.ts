@@ -92,6 +92,10 @@ When('{actor} sets the interest rate on the {provider} card to {percent}', async
 
 // ---- Profile ----------------------------------------------------------------------------------------------------
 
+When('{actor} sets their preferred name to {string} with spaces either side', async (actor: string, value: string) => {
+    await api(actor).request('updatePreferredName', { body: { preferredName: `  ${value}  ` } });
+});
+
 When('{actor} changes their email to the address already held', async (actor: string) => {
     await api(actor).request('changeEmail', { body: { address: testUser(actor.toLowerCase()).email } });
 });

@@ -371,16 +371,32 @@
       "group": "C",
       "layer": "service",
       "effect": "Leading and trailing spaces kept",
-      "status": "pending",
-      "plannedCatcher": "`@ui` and `@api` preferred-name scenarios"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "api",
+          "feature": "api/profile-contact.feature",
+          "name": "Spaces around a preferred name are removed",
+          "failsWith": "body: {\"preferredName\":\"  Sam  \"}"
+        }
+      ]
     },
     {
       "flag": "email-stays-verified",
       "group": "C",
       "layer": "service",
       "effect": "Changing email keeps the Verified badge",
-      "status": "pending",
-      "plannedCatcher": "`@ui` and `@api` email scenarios"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "ui",
+          "feature": "ui/profile.feature",
+          "name": "A changed email needs verifying again",
+          "failsWith": "text of profile-email-badge to equal \"Unverified\""
+        }
+      ]
     },
     {
       "flag": "pii-in-title",

@@ -162,6 +162,13 @@ Then('the interest rate is {acceptedOrRefused}', (outcome: string) => {
 
 // ---- Profile ----------------------------------------------------------------------------------------------------
 
+// PR-02: refused is 422 `preferred-name`; saved as X is a 200 whose name is X exactly, spaces and all (a name kept with its spaces is not X).
+Then('the preferred name is {nameOutcome}', (outcome: string) => {
+    if (outcome === 'refused') return problem(422, '/problems/rule-violation/preferred-name');
+    assert.equal(lastResponse().status, 200);
+    assert.equal(body().preferredName, outcome.slice('saved as '.length));
+});
+
 Then('the email is still verified', () => assert.equal(body().status, 'verified'));
 
 Then('the resend is {refusedOrSent}', (outcome: string) => {

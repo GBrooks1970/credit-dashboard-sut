@@ -2,6 +2,11 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-18: the eleven UI display and semantics flags (CDS-41, Phase 5 P3)
+
+- `duplicate-nav`, `nested-button`, `util-mismatch`, `minor-units-label`, `placeholder-aria`, `chart-no-values`, `button-href`, `decorative-alt`, `currency-format`, `double-render` and `ph-a11y` are built in the UI's test build only; each is caught for its stated reason (pull requests #103 to #105). The proof runner gained an `exit-check` catcher kind; the exit run gained seven semantic rules in the same scans (124 axe scans and 288 layout checks, unchanged); the flag proof has its own CI job.
+- `check:bug-flags`: 19 of 19 implemented flags caught, 11 pending. 23 harness unit tests. UI specification v32, harness design v6, backlog v69.
+
 ## 2026-10-18: the independent review and its fixes (CDS-38)
 
 - Two fresh-context review rounds of the Phase 4 UI, the service and the harness, and the fixes to both (F1 to F11f, pull requests #77 to #100): every response object in the contract is closed (contract v19); the harness validator judges the whole response; faults, bodies, numbers, dates and the clock are judged at the edge; the mobile-code limit is race-free; the flag proof, the exit checks, the public-build guard and the runner cannot be fooled the ways the reviewers fooled them; the UI keeps focus, ignores late answers and doubles its form controls with the text.

@@ -22,6 +22,17 @@ When('{actor} signs in', (name: string) => {
     return signIn(actorCalled(name), user.username, user.password);
 });
 
+When('{actor} asks for {string} while signed out and then signs in', (name: string, address: string) => {
+    const user = testUser(name.toLowerCase());
+    return actorCalled(name).attemptsTo(
+        Navigate.to(address),
+        Wait.until(byTestId('login-submit'), isVisible()),
+        Enter.theValue(user.username).into(byTestId('login-username')),
+        Enter.theValue(user.password).into(byTestId('login-password')),
+        Click.on(byTestId('login-submit')),
+    );
+});
+
 When('{actor} signs in with the wrong password', (name: string) => {
     const user = testUser(name.toLowerCase());
     return signIn(actorCalled(name), user.username, 'not-the-password');

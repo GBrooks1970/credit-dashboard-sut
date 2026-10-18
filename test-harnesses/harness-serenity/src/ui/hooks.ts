@@ -27,6 +27,9 @@ AfterAll({ timeout: 60_000 }, async () => {
     const closed = await Promise.race([browser.close().then(() => true), new Promise<boolean>((resolve) => setTimeout(() => resolve(false), 30_000))]);
     if (!closed) {
         console.error('harness: the browser did not close within 30 s');
+        // A browser that will not close keeps Node alive after the hook has failed, and the failure would show only when someone killed the run.
+        // The timer does not hold the process open itself; it fires while the stuck browser does, after the report has been written (R2-C-10).
+        setTimeout(() => process.exit(1), 5_000).unref();
         throw new Error('The browser did not close within 30 s');
     }
 });

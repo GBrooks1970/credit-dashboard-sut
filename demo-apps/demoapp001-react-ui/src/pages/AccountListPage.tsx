@@ -91,7 +91,7 @@ export function AccountListPage() {
               {metrics.donut && totals.limit && utilisation !== null && utilisation !== undefined && (
                 <>
                   <p data-testid="list-utilisation">{formatPercent(utilisation)} used</p>
-                  <UtilisationBar testId="list-donut" label={`${label} utilisation`} percent={utilisation} />
+                  <UtilisationBar testId="list-donut" label={`${label} utilisation`} percent={utilisation} figures={{ balanceMinor: totals.balance.amountMinor, limitMinor: totals.limit.amountMinor }} />
                 </>
               )}
             </div>

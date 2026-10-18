@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useLatest } from '../../useLatest.ts';
 import type { components } from '@credit-dashboard-sut/api-client';
 import { SectionState, type SectionStateName } from '../../components/SectionState.tsx';
+import { TEST_BUILD, flagOn } from '../../flags.tsx';
 import { formatMonth } from '../../format.ts';
 import { useSession } from '../../session.tsx';
 
@@ -112,7 +113,7 @@ export function HistoryChart({ bureauId, max }: { bureauId: string; max: number 
             {points.map((point) => (
               <tr key={point.month} data-testid={`history-chart-row-${point.month}`}>
                 <th scope="row">{formatMonth(point.month)}</th>
-                <td>{point.score === null ? 'No score' : point.score}</td>
+                <td>{TEST_BUILD && flagOn('chart-no-values') ? '' : point.score === null ? 'No score' : point.score}</td>
               </tr>
             ))}
           </tbody>

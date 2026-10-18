@@ -1,5 +1,5 @@
 ---
-version: 4
+version: 5
 created: 2026-10-09T11:20Z
 project: credit-dashboard-sut
 type: design
@@ -345,4 +345,7 @@ Review findings C-09 to C-15 and C-29.
 
 - **A third catcher kind.** `fixtures/bug-flags.json` catchers may be `kind: "exit-check"` with a `target` (a target name of `exit-checks.ts`) and `failsWith`. `schema-check` requires the target to exist in the source and the text to be a message the run builds, not a literal the source holds. `src/flags/prove-flags.ts` runs the exit script on that target with the flag in `HARNESS_BUGS`; `exitCheckRan` (`verdict.ts`, unit tested) says whether the run looked at anything, so a target that matches nothing is "did not run", not a pass.
 - **The exit script sets the flags** (`HARNESS_BUGS`, an empty list too) after its reset, and clears them at the end. Its browser contexts carry `cds.testControlKey` in local storage, as the Cucumber hooks do.
-- **Cost.** One exit-check catcher is two single-target runs, about 8 s each plus the proof's own start-up.
+- **Cost.** One exit-check catcher is two single-target runs, about 17 s each (measured in P3b), plus the proof's own start-up.
+
+- **The semantic rules** (`src/exit/semantic-rules.ts`, P3b): seven DOM rules as source text evaluated in the page by `violationsOn`, after axe-core, so they run in all 124 axe scans and 288 layout checks without changing their counts. Six of them are the catchers of six UI flags; the seventh (`form-controls-follow-text-size`) has no flag and is shown by removing `font: inherit` from the form controls' rule. With a flag on, only that flag's rule reports (checked for `minor-units-label` and `placeholder-aria`).
+- **Cost.** An exit-check catcher took about 17 s a run in P3b (browser start, the target's axe passes in both themes and its layouts), against the 8 s estimated in P3a; six flags took 3 min 24 s through the proof.

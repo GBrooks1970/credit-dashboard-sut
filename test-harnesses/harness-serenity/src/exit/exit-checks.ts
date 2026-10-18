@@ -1,4 +1,4 @@
-// version: 3 | created: 2026-10-16T16:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 4 | created: 2026-10-16T16:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // The Phase 4 exit checks (CDS-36; widened in CDS-38 F10): an axe-core scan of every page of the UI and of every state that shows
 // something new (an open dialog, a section error with its Retry, an empty list, a form error), in the light and in the dark theme,
 // with the bug flags off (the flag proof switches one on through HARNESS_BUGS, CDS-41), which must return zero violations (UI specification 4.5 and 9); and the three layouts (375, 768 and
@@ -7,6 +7,8 @@
 // are the behaviour, these are the standing checks on every page.
 import { AxeBuilder } from '@axe-core/playwright';
 import { chromium, type Browser, type Page } from 'playwright';
+
+import { SEMANTIC_RULES } from './semantic-rules.js';
 
 const ui = process.env.HARNESS_UI_URL ?? '';
 const api = process.env.HARNESS_BASE_URL ?? '';
@@ -203,9 +205,11 @@ async function visit(page: Page, target: Target) {
     await page.waitForFunction(NOTHING_LOADING);
 }
 
+/** What axe-core finds, then what the semantic rules find (semantic-rules.ts, CDS-41): both are problems of the page. */
 async function violationsOn(page: Page): Promise<string[]> {
     const result = await new AxeBuilder({ page }).withTags(TAGS).analyze();
-    return result.violations.map((v) => `${v.id} (${v.impact}): ${v.nodes.length} node(s), e.g. ${v.nodes[0]?.target.join(' ')}`);
+    const axe = result.violations.map((v) => `${v.id} (${v.impact}): ${v.nodes.length} node(s), e.g. ${v.nodes[0]?.target.join(' ')}`);
+    return [...axe, ...((await page.evaluate(SEMANTIC_RULES)) as string[])];
 }
 
 /** Puts the target in place (persona, failing calls), brings the page to it, applies its state, and removes what it set. */

@@ -134,8 +134,15 @@
       "group": "B",
       "layer": "ui",
       "effect": "Bar width differs from percentage text",
-      "status": "pending",
-      "plannedCatcher": "new exit check: text equals aria-valuenow"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "exit-check",
+          "target": "overview",
+          "name": "exit check: text equals aria-valuenow",
+          "failsWith": "progress-value-matches-text: 'account-util-bar-creditcard'"
+        }
+      ]
     },
     {
       "flag": "currency-format",
@@ -150,32 +157,60 @@
       "group": "B",
       "layer": "ui",
       "effect": "Progress bar named '423600% of 510000'",
-      "status": "pending",
-      "plannedCatcher": "new exit check: a bar's name matches its value"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "exit-check",
+          "target": "overview",
+          "name": "exit check: a bar's name matches its value",
+          "failsWith": "progress-name-matches-value: 'account-util-bar-creditcard'"
+        }
+      ]
     },
     {
       "flag": "placeholder-aria",
       "group": "B",
       "layer": "ui",
       "effect": "All row bars named 'Accessible label'",
-      "status": "pending",
-      "plannedCatcher": "new exit check: no placeholder names"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "exit-check",
+          "target": "overview",
+          "name": "exit check: no placeholder names",
+          "failsWith": "no-placeholder-names: 'account-util-bar-creditcard'"
+        }
+      ]
     },
     {
       "flag": "chart-no-values",
       "group": "B",
       "layer": "ui",
       "effect": "Chart points announced without values",
-      "status": "pending",
-      "plannedCatcher": "new exit check: the table alternative carries values"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "exit-check",
+          "target": "overview",
+          "name": "exit check: the table alternative carries values",
+          "failsWith": "chart-table-has-values: 'history-chart-table'"
+        }
+      ]
     },
     {
       "flag": "button-href",
       "group": "B",
       "layer": "ui",
       "effect": "Tiles rendered as buttons with href",
-      "status": "pending",
-      "plannedCatcher": "new exit check: no button with href"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "exit-check",
+          "target": "overview",
+          "name": "exit check: no button with href",
+          "failsWith": "no-button-with-href: 'tile-hard-searches'"
+        }
+      ]
     },
     {
       "flag": "double-render",
@@ -213,8 +248,15 @@
       "group": "B",
       "layer": "ui",
       "effect": "Header image given descriptive alt text",
-      "status": "pending",
-      "plannedCatcher": "new exit check: a decorative image has an empty alt"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "exit-check",
+          "target": "profile",
+          "name": "exit check: a decorative image has an empty alt",
+          "failsWith": "decorative-image-empty-alt: 'profile-header-image'"
+        }
+      ]
     },
     {
       "flag": "range-stale",

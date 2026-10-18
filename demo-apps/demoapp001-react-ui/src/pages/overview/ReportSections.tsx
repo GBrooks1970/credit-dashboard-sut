@@ -5,6 +5,7 @@ import { Link } from 'react-router';
 import type { components } from '@credit-dashboard-sut/api-client';
 import { ACCOUNT_TYPE_LABEL } from '../../accountTypes.ts';
 import { UtilisationBar } from '../../components/UtilisationBar.tsx';
+import { TEST_BUILD, flagOn } from '../../flags.tsx';
 import { formatMoney, formatPercent, plural } from '../../format.ts';
 
 type Overview = components['schemas']['ReportOverview'];
@@ -62,7 +63,7 @@ export function AccountsSection({ bureauId, accountTypes }: { bureauId: string; 
               {utilisation !== null && utilisation !== undefined && totals.limit && (
                 <>
                   <p data-testid={`account-util-text-${type}`}>{formatPercent(utilisation)} used</p>
-                  <UtilisationBar testId={`account-util-bar-${type}`} label={`${ACCOUNT_TYPE_LABEL[type]} utilisation`} percent={utilisation} />
+                  <UtilisationBar testId={`account-util-bar-${type}`} label={`${ACCOUNT_TYPE_LABEL[type]} utilisation`} percent={utilisation} figures={{ balanceMinor: totals.balance.amountMinor, limitMinor: totals.limit.amountMinor }} />
                 </>
               )}
             </article>
@@ -89,22 +90,39 @@ export function PaymentsSection({ bureauId, payments }: { bureauId: string; paym
   );
 }
 
+/** A tile is a link. The `button-href` bug flag (test build only; UI specification 8) renders it as a button that carries an `href`. */
+function Tile({ to, testId, children }: { to: string; testId: string; children: string }) {
+  if (TEST_BUILD && flagOn('button-href')) {
+    const wrongAttribute = { href: to };
+    return (
+      <button type="button" data-testid={testId} {...wrongAttribute}>
+        {children}
+      </button>
+    );
+  }
+  return (
+    <Link to={to} data-testid={testId}>
+      {children}
+    </Link>
+  );
+}
+
 export function TilesSection({ bureauId }: { bureauId: string }) {
   const base = `/credit-health/report/${bureauId}`;
   return (
     <section aria-label="More about your report" className="tiles">
-      <Link to={`${base}/searches/hard`} data-testid="tile-hard-searches">
+      <Tile to={`${base}/searches/hard`} testId="tile-hard-searches">
         Hard searches
-      </Link>
-      <Link to={`${base}/searches/soft`} data-testid="tile-soft-searches">
+      </Tile>
+      <Tile to={`${base}/searches/soft`} testId="tile-soft-searches">
         Soft searches
-      </Link>
-      <Link to={`${base}/personal-details`} data-testid="tile-personal-details">
+      </Tile>
+      <Tile to={`${base}/personal-details`} testId="tile-personal-details">
         Personal details
-      </Link>
-      <Link to={`${base}/personal-details`} data-testid="tile-corrections">
+      </Tile>
+      <Tile to={`${base}/personal-details`} testId="tile-corrections">
         Corrections
-      </Link>
+      </Tile>
     </section>
   );
 }

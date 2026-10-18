@@ -3,6 +3,7 @@
 // alternative (4.5), one row per month.
 import type { components } from '@credit-dashboard-sut/api-client';
 import { SectionState } from './SectionState.tsx';
+import { TEST_BUILD, flagOn } from '../flags.tsx';
 import { formatMoney, formatMonth } from '../format.ts';
 import { useSession } from '../session.tsx';
 import { useResource } from '../useResource.ts';
@@ -55,7 +56,7 @@ export function BalanceChart({ accountId }: { accountId: string }) {
             {points.map((point) => (
               <tr key={point.month}>
                 <th scope="row">{formatMonth(point.month)}</th>
-                <td>{formatMoney(point.balance.amountMinor, { pence: true })}</td>
+                <td>{TEST_BUILD && flagOn('chart-no-values') ? '' : formatMoney(point.balance.amountMinor, { pence: true })}</td>
               </tr>
             ))}
           </tbody>

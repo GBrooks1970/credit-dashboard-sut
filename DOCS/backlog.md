@@ -1,5 +1,5 @@
 ---
-version: 69
+version: 70
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 69 (CDS-41 done: the eleven UI display and semantics flags, 19 of 30 flags caught; CDS-42 unblocked)
+**Version:** 70 (CDS-42 done: the eleven remaining behaviour flags, 30 of 30 flags caught; CDS-43 unblocked, stop for the owner first)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -90,7 +90,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-39` | P1 the flag mechanism and the proof runner: `Flags` in the service, the test build of the UI reads the flags, the debug panel, `bug-flags.json`, `check:bug-flags` | Tooling | — | HIGH | `CDS-37` | Done 2026-10-14 |
 | `CDS-40` | P2 the seven API flags implemented and proved | Service | — | HIGH | `CDS-39` | Done 2026-10-14 |
 | `CDS-41` | P3 the eleven UI display and semantics flags, with exit-check catchers for six | UI | — | HIGH | `CDS-40`, `CDS-38` | Done 2026-10-18 |
-| `CDS-42` | P4 the twelve UI behaviour flags, with component-test catchers for three | UI | — | HIGH | `CDS-41` | Open |
+| `CDS-42` | P4 the twelve UI behaviour flags, with component-test catchers for three | UI | — | HIGH | `CDS-41` | Done 2026-10-18 |
 | `CDS-43` | P5 visual regression: 32 screenshots, Linux CI baselines | Tooling | — | MEDIUM | `CDS-42` | Open |
 | `CDS-44` | P6 the published Serenity report on Pages beside the board; DR-060 amended | Tooling | — | MEDIUM | `CDS-43` | Open |
 | `CDS-45` | P7 Phase 5 exit: 30 of 30 flags caught for the stated reason in CI, the report linked, the gate brief | UI | — | HIGH | `CDS-44` | Open |
@@ -270,6 +270,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 ### CDS-39: P1, the flag mechanism and the proof runner
 
 **COMPLETE (2026-10-14; #73 `0117333`, CI run 38545013647).** `Flags` and `Defects` in the service (`rounding-down` is the first API flag); `FlagsProvider`, `useFlag` and the `/debug` panel in a test build of the UI (`plural` is the first UI flag); `fixtures/bug-flags.json` (all 30 flags) checked against the contract in `verify`; `ControlTheTestEnvironment.setBugs` and `HARNESS_BUGS`; `npm run check:bug-flags` (the proof runner), in the `ui` CI job. 332 service tests, 142 Vitest tests, 51 `@ui` executions and 59 `@api` executions green with every flag off; the two implemented flags are caught for the stated reason (3 catchers). Status is Done when merged.
+
+### CDS-42: P4, the eleven remaining behaviour flags
+
+**COMPLETE (2026-10-18; plan `DOCS/implementation-plans/2026-10-18_cds-42-ui-behaviour-flags.md`; P4a #108 `c3547c0`, P4b #109 `642f4e2`, P4c #110 `8f3c3fb`; `Verify`, `UI` and `flags` green on each).** `preferred-no-trim` and `email-stays-verified` (service `Defects` call sites); `range-stale`, `like-both`, `open-redirect`, `negative-balance`, `preferred-on-report` and `pii-in-title` (UI, test build only, each caught by the `@ui` scenario the registry planned); `toggle-label`, `truncate-summary` and `lost-edit` (UI, caught by component tests, after the summary expander and the unsaved-name warning were specified and built). **`check:bug-flags`: 30 of 30 implemented flags caught for the stated reason, none pending (stop point 3).** One planned catcher failed to catch (`preferred-no-trim`, the UI trims first); the owner chose a new `@api` scenario (60 `@api` executions). CDS-38 items closed here: A-24 (no flag is pending) and C-26 (the specific `errors[0]` message is shown). The `flags` CI job takes 16m41s (limit 30). Log: `DOCS/implementation-logs/2026-10-18_cds-42-ui-behaviour-flags-p4a-p4c.md`. **CDS-43 (P5, visual regression) is unblocked; the owner decides first.**
 
 ### CDS-41: P3, the eleven UI display and semantics flags
 

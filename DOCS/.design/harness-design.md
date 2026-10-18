@@ -1,5 +1,5 @@
 ---
-version: 3
+version: 4
 created: 2026-10-09T11:20Z
 project: credit-dashboard-sut
 type: design
@@ -340,3 +340,9 @@ Review findings C-09 to C-15 and C-29.
 - **The public build is guarded** (`demo-apps/demoapp001-react-ui/scripts/public-build-guard.mjs`, run by `npm run check` and so by the `ui` CI job): any test-only marker in `dist/` fails. The guard has its own tests. Inverting the switch in `src/flags.tsx` makes all 179 component tests pass and the guard fail. The harness builds the test build into `dist-test/` (`npm run build:test`), so `dist/` is only ever the public build.
 - **A failed hook is no longer silent.** `AfterAll` in the `ui` profile bounds the browser close (30 s) and fails with its reason; `run.mjs` reads the message report after a failing run and prints any run hook that did not pass. With a close time of 1 ms the run prints "3 successful", then "a run hook failed: The browser did not close within 30 s", then exit code 1: the case the review met. Service logs are named by port and process.
 - **CI:** every action is pinned to a commit SHA with its version in a comment, and `@redocly/cli` 2.57.0 is in the root `package.json` and lockfile (the lint step runs the local binary, not `npx --yes`).
+
+## 21. Exit-check catchers (CDS-41)
+
+- **A third catcher kind.** `fixtures/bug-flags.json` catchers may be `kind: "exit-check"` with a `target` (a target name of `exit-checks.ts`) and `failsWith`. `schema-check` requires the target to exist in the source and the text to be a message the run builds, not a literal the source holds. `src/flags/prove-flags.ts` runs the exit script on that target with the flag in `HARNESS_BUGS`; `exitCheckRan` (`verdict.ts`, unit tested) says whether the run looked at anything, so a target that matches nothing is "did not run", not a pass.
+- **The exit script sets the flags** (`HARNESS_BUGS`, an empty list too) after its reset, and clears them at the end. Its browser contexts carry `cds.testControlKey` in local storage, as the Cucumber hooks do.
+- **Cost.** One exit-check catcher is two single-target runs, about 8 s each plus the proof's own start-up.

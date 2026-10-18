@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { judgeOff, judgeOn, verdictOf, type RunResult } from './verdict.js';
+import { exitCheckRan, judgeOff, judgeOn, verdictOf, type RunResult } from './verdict.js';
 
 // The ways the review (CDS-38) fooled the flag proof, each as a case it must now refuse (B-02, B-03, B-07, B-08).
 
@@ -52,5 +52,18 @@ describe('the flag proof, one run', () => {
 
     it('is caught when one catcher fails as stated and none misbehaves with the flag off', () => {
         assert.equal(verdictOf([{ off: 'passed', on: 'failed-for-another-reason' }, { off: 'passed', on: 'failed-as-stated' }]), 'caught');
+    });
+});
+
+describe('whether an exit-check run looked at anything (CDS-41)', () => {
+    it('did, when its closing line counts at least one scan or layout check', () => {
+        assert.equal(exitCheckRan('x' + String.fromCharCode(10) + 'exit checks: 2 axe scans and 6 layout checks; 0 problem(s)'), true);
+        assert.equal(exitCheckRan('exit checks: 0 axe scans and 1 layout checks; 0 problem(s)'), true);
+    });
+
+    it('did not, when it checked nothing or printed no closing line', () => {
+        assert.equal(exitCheckRan('exit checks: 0 axe scans and 0 layout checks; 0 problem(s)'), false);
+        assert.equal(exitCheckRan("exit checks: CDS_EXIT_ONLY='zzz' matches no target"), false);
+        assert.equal(exitCheckRan(''), false);
     });
 });

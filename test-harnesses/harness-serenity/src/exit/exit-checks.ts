@@ -1,7 +1,7 @@
-// version: 2 | created: 2026-10-16T16:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 3 | created: 2026-10-16T16:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // The Phase 4 exit checks (CDS-36; widened in CDS-38 F10): an axe-core scan of every page of the UI and of every state that shows
 // something new (an open dialog, a section error with its Retry, an empty list, a form error), in the light and in the dark theme,
-// with the bug flags off, which must return zero violations (UI specification 4.5 and 9); and the three layouts (375, 768 and
+// with the bug flags off (the flag proof switches one on through HARNESS_BUGS, CDS-41), which must return zero violations (UI specification 4.5 and 9); and the three layouts (375, 768 and
 // 1280 px; specification 4.4) for every page, each with the text size of this machine and with the root text doubled.
 // Run by `node scripts/run.mjs exit`, against the live service serving the built UI. Not a Gherkin scenario: the @ui scenarios
 // are the behaviour, these are the standing checks on every page.
@@ -131,9 +131,13 @@ const allTargets: Target[] = [
     { name: 'a page not built yet: finances', address: '/my-account/profile/finances', ready: 'page-not-built' },
 ];
 
-// CDS_EXIT_ONLY=text runs only the targets whose name holds the text: for looking at one page while fixing it. The standing run is whole.
+// CDS_EXIT_ONLY=text runs only the targets whose name holds the text, or the one target whose name it equals: for looking at one page
+// while fixing it, and for the flag proof, which runs one target with a flag on (CDS-41). The standing run is whole. A filtered run
+// leaves out the sign-in page and the expected-size assertion, which belong to the whole run.
 const only = process.env.CDS_EXIT_ONLY;
-const targets = only ? allTargets.filter((t) => t.name.includes(only)) : allTargets;
+const targets = only ? (allTargets.some((t) => t.name === only) ? allTargets.filter((t) => t.name === only) : allTargets.filter((t) => t.name.includes(only))) : allTargets;
+// The bug flags the run switches on (HARNESS_BUGS, comma separated): none in the standing run.
+const bugs = (process.env.HARNESS_BUGS ?? '').split(',').map((f) => f.trim()).filter(Boolean);
 // A filter that matches nothing would end '0 problem(s)' with exit 0 (CDS-38 R2-C-15): it is an error.
 if (targets.length === 0) {
     console.error(`exit checks: CDS_EXIT_ONLY='${only}' matches no target; the names are: ${allTargets.map((t) => t.name).join('; ')}`);
@@ -240,26 +244,39 @@ let scans = 0;
 let layoutChecks = 0;
 const fail = (where: string, problems: string[]) => failures.push(...problems.map((p) => `${where}: ${p}`));
 
+/**
+ * A browser context for the UI. A test build of the UI reads the bug flags once at start and needs the control key in browser storage
+ * to do it (decision brief 13 D1), as the Cucumber hooks provide; without it no flag would ever reach the page (CDS-41).
+ */
+function uiContext(browser: Browser, options: Parameters<Browser['newContext']>[0]) {
+    return browser.newContext({
+        ...options,
+        storageState: { cookies: [], origins: [{ origin: new URL(ui).origin, localStorage: [{ name: 'cds.testControlKey', value: key }] }] },
+    });
+}
+
 async function axePass(browser: Browser, theme: (typeof THEMES)[number]) {
-    const context = await browser.newContext({ viewport: { width: 1280, height: 800 }, colorScheme: theme });
+    const context = await uiContext(browser, { viewport: { width: 1280, height: 800 }, colorScheme: theme });
     const page = await context.newPage();
     signedIn = new WeakSet<Page>();
     const suffix = theme === 'dark' ? ', dark' : '';
-    // The anonymous sign-in page first.
-    await page.goto(`${ui}/login`);
-    await page.getByTestId('login-submit').waitFor();
-    const login = await violationsOn(page);
-    scans++;
-    fail(`sign-in${suffix}`, login);
-    console.log(`  ${login.length === 0 ? 'pass' : 'FAIL'}  axe  sign-in${suffix}${login.length ? `: ${login.length} violation(s)` : ''}`);
-    await page.getByTestId('login-username').fill('alex');
-    await page.getByTestId('login-password').fill('wrong');
-    await page.getByTestId('login-submit').click();
-    await page.getByTestId('login-error').waitFor();
-    const loginError = await violationsOn(page);
-    scans++;
-    fail(`sign-in, error shown${suffix}`, loginError);
-    console.log(`  ${loginError.length === 0 ? 'pass' : 'FAIL'}  axe  sign-in, error shown${suffix}${loginError.length ? `: ${loginError.length} violation(s)` : ''}`);
+    // The anonymous sign-in page first (the whole run only).
+    if (!only) {
+        await page.goto(`${ui}/login`);
+        await page.getByTestId('login-submit').waitFor();
+        const login = await violationsOn(page);
+        scans++;
+        fail(`sign-in${suffix}`, login);
+        console.log(`  ${login.length === 0 ? 'pass' : 'FAIL'}  axe  sign-in${suffix}${login.length ? `: ${login.length} violation(s)` : ''}`);
+        await page.getByTestId('login-username').fill('alex');
+        await page.getByTestId('login-password').fill('wrong');
+        await page.getByTestId('login-submit').click();
+        await page.getByTestId('login-error').waitFor();
+        const loginError = await violationsOn(page);
+        scans++;
+        fail(`sign-in, error shown${suffix}`, loginError);
+        console.log(`  ${loginError.length === 0 ? 'pass' : 'FAIL'}  axe  sign-in, error shown${suffix}${loginError.length ? `: ${loginError.length} violation(s)` : ''}`);
+    }
 
     for (const target of targets) {
         await arrange(page, target, async () => {
@@ -275,6 +292,8 @@ async function axePass(browser: Browser, theme: (typeof THEMES)[number]) {
 const browser = await chromium.launch({ headless: true, executablePath: process.env.HARNESS_BROWSER_PATH || undefined });
 try {
     await control('/__test/reset', 'POST');
+    // The flags this run asks for, set once; a page reads them when it starts (an empty list too, so a run with none relies on the reset alone no more).
+    await control('/__test/bugs', 'PUT', { flags: bugs });
 
     // 1. axe-core on every page and every state, desktop width, flags off, in each theme (CDS-38 C-10).
     for (const theme of THEMES) await axePass(browser, theme);
@@ -282,7 +301,7 @@ try {
     // 2. The three layouts: one navigation at a time, no sideways scroll, the demo banner shown, and axe at each width (normal text).
     for (const layout of LAYOUTS) {
         for (const text of TEXT) {
-            const context = await browser.newContext({ viewport: { width: layout.width, height: layout.height } });
+            const context = await uiContext(browser, { viewport: { width: layout.width, height: layout.height } });
             const page = await context.newPage();
             signedIn = new WeakSet<Page>();
             for (const target of targets.filter((t) => t.layouts ?? !t.act)) {
@@ -307,9 +326,9 @@ try {
     }
     // 3. The sign-in page at the three widths, normal and doubled text: it is not a target (it needs no session), and it is the first page
     //    every customer sees (CDS-38 R2-C-15).
-    for (const layout of LAYOUTS) {
+    for (const layout of only ? [] : LAYOUTS) {
         for (const text of TEXT) {
-            const context = await browser.newContext({ viewport: { width: layout.width, height: layout.height } });
+            const context = await uiContext(browser, { viewport: { width: layout.width, height: layout.height } });
             const page = await context.newPage();
             await page.goto(`${ui}/login`);
             await page.getByTestId('login-submit').waitFor();
@@ -327,6 +346,7 @@ try {
     }
     await control('/__test/users/alex/persona', 'PUT', { persona: 'drilldown' });
 } finally {
+    await control('/__test/bugs', 'PUT', { flags: [] }).catch(() => undefined);
     await browser.close();
 }
 

@@ -119,8 +119,15 @@
       "group": "B",
       "layer": "ui",
       "effect": "Desktop and mobile navs both rendered",
-      "status": "pending",
-      "plannedCatcher": "exit check: layouts"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "exit-check",
+          "target": "overview",
+          "name": "exit check: layouts",
+          "failsWith": "found 3 tab(s) and 3 top link(s)"
+        }
+      ]
     },
     {
       "flag": "util-mismatch",
@@ -191,8 +198,15 @@
       "group": "B",
       "layer": "ui",
       "effect": "Information button rendered inside another button",
-      "status": "pending",
-      "plannedCatcher": "exit check: axe nested-interactive"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "exit-check",
+          "target": "profile",
+          "name": "exit check: axe nested-interactive",
+          "failsWith": "nested-interactive (serious): 1 node(s)"
+        }
+      ]
     },
     {
       "flag": "decorative-alt",

@@ -6,7 +6,7 @@ type: implementation-plan
 item: CDS-38
 status: approved
 approved: "2026-10-15, Gary Brooks, 'confirmed, approve plan, merge #75 once CI green' (choices D1 to D6 answered by interview 2026-10-15); merge authority: per pull request, on request"
-delivered: not yet
+delivered: 2026-10-18
 language: en-GB
 ---
 
@@ -99,4 +99,6 @@ Fixing anything the reviewers find that the owner defers (it goes to the backlog
 
 ## Outcome
 
-[Appended after delivery.]
+**Delivered 2026-10-18.** The review was run on `409249e` by three fresh-context reviewers (record `.review/2026-10-14_cds-38-independent-review.md`, #76), signed off by interview (#77; 62 Blockers and Changes and 26 Notes accepted), and its fixes were delivered by the plan `2026-10-15_cds-38-fixes.md`. A confirmation pass on those fixes followed (`2026-10-16_cds-38-confirmation-pass.md`). The decision register entry is DR-065; the README, specification headers and scope statements were brought up to date in F12.
+
+**Where it departed from the plan.** The reviewers' prompts were hashed and kept verbatim, as planned; a second round was added (the confirmation pass) because the first round's fixes were themselves large. Deferred, as the sign-off said: C-23 to P5, A-24 and C-26 to P4, A-22 to the backlog.

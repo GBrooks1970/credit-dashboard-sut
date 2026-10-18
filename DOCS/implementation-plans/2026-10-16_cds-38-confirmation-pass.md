@@ -6,7 +6,7 @@ type: implementation-plan
 item: CDS-38
 status: approved
 approved: "2026-10-16, Gary Brooks, 'all as recommended, approved, merge #92 once CI green, then launch reviewers' (D1 to D6 as recommended); merge authority: per pull request, on request"
-delivered: not yet
+delivered: 2026-10-18
 language: en-GB
 ---
 
@@ -83,4 +83,4 @@ Fixing anything the owner defers; reviewing code not yet written; reopening the 
 
 ## Outcome
 
-[Appended after delivery.]
+**Delivered 2026-10-17.** Three fix-aware Sonnet 5.5 reviewers (one for each area) read the fixes on `20ecebc`; the record is `.review/2026-10-16_cds-38-confirmation-pass.md` (#93): their prompts verbatim with SHA-256, their reports verbatim, the author's verification (all 12 Blockers and 27 Changes reproduced or accepted from the code; R2-A-05 only for the newline case) and the owner's sign-off by interview (12 Blockers and 27 Changes accepted; 16 Notes: 11 accepted, 3 deferred, 2 no action). The fixes are the plan `2026-10-16_cds-38-confirmation-fixes.md`.

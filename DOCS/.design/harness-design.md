@@ -12,7 +12,7 @@ status: draft
 
 **What this is.** How the harness in `test-harnesses/harness-serenity/` runs the `@api` scenarios against the service: layout, abilities, the order of arrange, act and assert, response validation, the service lifecycle, the clock-and-token rule, and where each step pattern of `DOCS/step-glossary.md` lands. It follows the approved plan (`DOCS/implementation-plans/2026-10-08_cds-22-serenity-harness.md`, decisions D1 to D5) and DR-006, DR-008 and DR-042. It is written before the code; the slices H1 to H4 build to it, and a difference found while building is fixed here first.
 
-**Scope.** The 12 `@api` feature files: ten in `features-shared/api/` (28 scenarios and outlines) and two `@security @api` in `features-shared/security/` (3). `security/open-redirect` is `@security @ui` and waits for Phase 4. The 92 distinct step patterns (130 step lines) in those files are the whole vocabulary; the UI patterns of glossary section 4.2 are not built.
+**Scope.** The 12 `@api` feature files: ten in `features-shared/api/` and two `@security @api` in `features-shared/security/`, 32 scenarios and outlines in all (59 executions). The `ui` profile (section 20) runs the eleven UI files and `security/open-redirect` (`@security @ui`): 44 scenarios and outlines, 59 executions. The step patterns of the glossary are the whole vocabulary of each profile.
 
 ---
 

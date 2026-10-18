@@ -220,6 +220,11 @@ for (const entry of flagFile.flags) {
       // The test is declared with exactly this name (it/test, any modifier), not merely mentioned in a comment (B-26).
       const declared = fs.existsSync(file) && new RegExp(`\\b(it|test)(\\.\\w+)*\\(\\s*(['"\x60])${escapeRegExp(c.name)}\\3`).test(fs.readFileSync(file, 'utf8'));
       check(declared, where, `test '${c.name}' is not declared with it(...) or test(...) in ${c.file}`);
+    } else if (c.kind === 'exit-check') {
+      // An exit-check catcher names one target of the exit run (CDS-41); the exit run is a script, so the target is read from its source.
+      const source = fs.readFileSync(path.join(repoRoot, 'test-harnesses', 'harness-serenity', 'src', 'exit', 'exit-checks.ts'), 'utf8');
+      check(typeof c.target === 'string' && source.includes(`name: '${c.target}'`), where, `exit target '${c.target}' is not a target in exit-checks.ts`);
+      check(!source.includes(c.failsWith), where, `failsWith '${c.failsWith}' occurs in exit-checks.ts as written; it must be a message the run builds`);
     } else {
       check(false, where, `unknown catcher kind '${c.kind}'`);
     }

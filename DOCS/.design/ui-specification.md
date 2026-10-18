@@ -1,5 +1,5 @@
 ---
-version: 29
+version: 30
 created: 2026-10-14T09:43Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Normative since Phase 0 was accepted on 5 October 2026 (DR-038); changes are recorded in the lines below
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v30:** CDS-41 (P3a): section 9 says what an exit-check catcher is. `duplicate-nav` (both navigations rendered) and `nested-button` (the information button inside another button) are built in the test build only, and each is caught by an existing exit check, proved by `npm run check:bug-flags` (10 of 10 implemented flags; the other 20 of 30 are pending).
 **Changes in v29:** CDS-38 (F11f, the confirmation pass): section 8's 'Expected catch' column is the registry's (`fixtures/bug-flags.json`) for every flag in the table, and `schema-check` fails if the two differ (R2-C-08); the catalogue in section 5 lists what is built (R2-C-12). The guard's marker list, the flags it cannot see and the exit run's own cover are in sections 3 and 9 (R2-C-06, R2-C-07, R2-C-15).
 **Changes in v28:** CDS-38 (F11e, the confirmation pass): what the second review found the UI built differently from this specification, now as it says. Closing the chat drawer returns focus to `btn-chat` after the drawer has lifted its `inert` from the page (a browser refuses to focus an inert element), pinned by a `@ui` scenario (R2-C-01). Feedback and chat answers use latest-request-wins like every other fetching widget (R2-C-02). Form controls follow the text size, so 'wider text' doubles them too (R2-C-04). A month the formatter cannot read is shown as sent, and a page that throws shows a message with the menu still working (R2-C-05). The mobile page shows the number just saved in the code step (R2-C-11). The client's preferred-name pattern takes the straight apostrophe only, as PR-02 and the service do (R2-C-14). Below 768px the page leaves room for the bottom tab bar (R2-C-16). A failed greeting refresh after a saved preferred name is not reported as a failed save (R2-C-18).
 **Changes in v27:** CDS-38 (F10): the exit checks (section 9) are as wide as section 9 says. `npm run check:ui-exit` scans every page and every state that shows something new (an open dialog, a section error with its Retry, an empty list, a form error or a saved message, the debug page, the pages not built yet) with axe-core in the light and in the dark theme (60 targets and the two sign-in states, 124 scans), and checks every page that is not a state of another page in the three layouts with this machine's text and with the root text doubled (282 checks). "Wider text" means `html { font-size: 200% }`, so `rem` sizes follow (WCAG 1.4.4). The public build is checked after `vite build`: `npm run check` in the UI package fails if `dist/` holds any of `cds.testControlKey`, `__test`, `x-test-control-key`, `debug-flag` or `Debug panel`. The harness builds its test build into `dist-test/`, never `dist/`. The catch stated for `ph-a11y` is narrowed to what axe can see: axe has no rule for a missing `aria-pressed`, so the year buttons' `aria-pressed` is caught by the component tests, and axe catches the icons that lose their text. The widened checks found, and this change fixed, a dark-theme error colour that failed contrast (`#dc-error`), account cards that did not shrink to a phone with doubled text, and two hidden chart tables that widened the page.
@@ -296,6 +297,8 @@ Off by default. Each one recreates a defect seen in the source pages or a common
 Profile-page flags (`nested-button`, `decorative-alt`, `preferred-on-report`, `preferred-no-trim`, `email-stays-verified`, `pii-in-title`, `lost-edit`) are listed in the My Profile UI feature spec, section 7.
 
 ## 9. Verification checks
+
+**Exit-check catchers (CDS-41).** A UI bug flag may be caught by the exit run (`npm run check:ui-exit`) on one of its targets. The flag proof runs the exit script for that target alone (`CDS_EXIT_ONLY=<target>`) with the flag switched on through `HARNESS_BUGS`: with the flag off it must pass, and with it on it must fail with the message the registry records as `failsWith`. A browser context of the exit run carries the control key in storage, because a test build of the UI reads the flags once at start. A filtered run leaves out the sign-in page and the expected-size assertion, which belong to the whole run.
 
 | Check | Tool (proposed) | Runs at |
 | --- | --- | --- |

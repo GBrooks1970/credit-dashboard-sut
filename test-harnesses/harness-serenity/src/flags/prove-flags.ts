@@ -1,4 +1,4 @@
-// version: 2 | created: 2026-10-14T10:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 3 | created: 2026-10-14T10:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // The bug-flag proof (CDS-39, decision brief 13, DR-064). For every flag that fixtures/bug-flags.json marks implemented, run each
 // of its committed catchers twice: with the flag OFF it must pass, and with the flag ON it must fail, and the failure must
 // contain the text the registry records for it (`failsWith`). A flag is "caught" when at least one catcher fails for the stated
@@ -9,7 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { judgeOff, judgeOn, verdictOf, type Outcome, type RunResult, type Verdict } from './verdict.js';
+import { exitCheckRan, judgeOff, judgeOn, verdictOf, type Outcome, type RunResult, type Verdict } from './verdict.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const harness = path.resolve(here, '..', '..');
@@ -18,11 +18,13 @@ const uiProject = path.join(repo, 'demo-apps', 'demoapp001-react-ui');
 const wanted = process.argv.slice(2);
 
 interface Catcher {
-    kind: 'scenario' | 'component-test';
+    kind: 'scenario' | 'component-test' | 'exit-check';
     failsWith: string;
     profile?: 'api' | 'ui';
     feature?: string;
     file?: string;
+    /** An exit-check catcher: the name of the one target the exit run looks at (CDS_EXIT_ONLY). */
+    target?: string;
     name: string;
 }
 interface Entry {
@@ -54,6 +56,16 @@ function run(catcher: Catcher, flags: string[]): RunResult {
         // A catcher whose name matches no scenario runs nothing and exits 0: that is not a pass.
         const ran = /Scenarios:\s+[1-9]/.test(output);
         return { passed: result.status === 0, ran, timedOut: (result.error as NodeJS.ErrnoException | undefined)?.code === 'ETIMEDOUT', output: ran ? output : `${output}\n(no scenario ran: check the catcher's name)` };
+    }
+    if (catcher.kind === 'exit-check') {
+        // The exit run on one target with the flag set (CDS-41). It sets HARNESS_BUGS itself; the proof's services are already running.
+        const result = spawnSync(process.execPath, ['--import', 'tsx', path.join(harness, 'src', 'exit', 'exit-checks.ts')], { cwd: harness, env: { ...env, CDS_EXIT_ONLY: catcher.target! }, encoding: 'utf8', timeout: TIMEOUT_MS, killSignal: 'SIGKILL', maxBuffer: 64 * 1024 * 1024 });
+        const output = stripAnsi(`${result.stdout}
+${result.stderr}`);
+        // A target that matches nothing exits 1 with its own message; a run that scanned nothing is not a pass.
+        const ran = exitCheckRan(output);
+        return { passed: result.status === 0, ran, timedOut: (result.error as NodeJS.ErrnoException | undefined)?.code === 'ETIMEDOUT', output: ran ? output : `${output}
+(no check ran: check the catcher's target)` };
     }
     const vitest = path.join(uiProject, 'node_modules', 'vitest', 'vitest.mjs');
     // Vitest reads -t as a pattern, so the name is escaped to match literally (B-26).

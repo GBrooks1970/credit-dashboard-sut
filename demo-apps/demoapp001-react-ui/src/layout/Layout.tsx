@@ -1,9 +1,10 @@
 // version: 1 | created: 2026-10-13T10:45Z | project: credit-dashboard-sut | type: source | language: en-GB
 // The page frame (UI specification 4.4 and the header of 6.2): the demo banner above the header on every page, one
 // primary navigation (a bottom tab bar below 768px, never both at once), and the account button labelled with the
-// customer's greeting name (PR-03, DR-036).
+// customer's greeting name (PR-03, DR-036). The `duplicate-nav` bug flag (test build only) renders both navigations (UI specification 8).
 import { useEffect, useState, type ReactNode } from 'react';
 import { Link, Outlet } from 'react-router';
+import { TEST_BUILD, flagOn } from '../flags.tsx';
 import { useSession } from '../session.tsx';
 
 const MOBILE_QUERY = '(max-width: 767px)';
@@ -54,7 +55,7 @@ function Header({ children }: { children?: ReactNode }) {
       <Link to={reportPath} data-testid="nav-logo" className="logo">
         ScoreHarbour
       </Link>
-      {!mobile && <PrimaryNav mobile={false} reportPath={reportPath} />}
+      {(!mobile || (TEST_BUILD && flagOn('duplicate-nav'))) && <PrimaryNav mobile={false} reportPath={reportPath} />}
       <Link to="/my-account/profile" data-testid="btn-account" className="account">
         {user?.greetingName}
       </Link>
@@ -75,7 +76,7 @@ export function Layout() {
       <main id="main">
         <Outlet />
       </main>
-      {mobile && <PrimaryNav mobile reportPath={reportPath} />}
+      {(mobile || (TEST_BUILD && flagOn('duplicate-nav'))) && <PrimaryNav mobile reportPath={reportPath} />}
     </>
   );
 }

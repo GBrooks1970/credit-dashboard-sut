@@ -11,6 +11,15 @@ export interface RunResult {
     output: string;
 }
 
+/**
+ * Whether an exit-check run looked at anything: its closing line names how many axe scans and layout checks it made. A target that
+ * matches nothing prints no such line, and a run of 0 and 0 checked nothing (CDS-41).
+ */
+export function exitCheckRan(output: string): boolean {
+    const counts = /exit checks: (\d+) axe scans and (\d+) layout checks/.exec(output);
+    return counts !== null && Number(counts[1]) + Number(counts[2]) > 0;
+}
+
 export type Outcome = 'passed' | 'failed-as-stated' | 'failed-for-another-reason' | 'did-not-run' | 'timed-out';
 export type Verdict = 'caught' | 'not-caught' | 'caught-for-another-reason' | 'false-alarm' | 'timed-out' | 'pending';
 

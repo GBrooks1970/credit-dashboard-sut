@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import type { components } from '@credit-dashboard-sut/api-client';
 import { SectionState } from '../../components/SectionState.tsx';
+import { TEST_BUILD, flagOn } from '../../flags.tsx';
 import { formatDate } from '../../format.ts';
 import { problemText } from '../../problem.ts';
 import { useSession } from '../../session.tsx';
@@ -76,9 +77,18 @@ function Identity({ profile }: { profile: Profile }) {
       <h1 id="profile-legal-name" data-testid="profile-legal-name">
         {profile.legalName}
       </h1>
-      <button ref={button} type="button" data-testid="profile-name-info" aria-expanded={open} aria-controls="profile-name-info-panel" onClick={() => setOpen(!open)}>
-        Why can I not change my name?
-      </button>
+      {TEST_BUILD && flagOn('nested-button') ? (
+        // The `nested-button` bug flag: the information button inside another button (test build only; UI specification 8).
+        <button type="button" data-testid="profile-name-info-wrap">
+          <button ref={button} type="button" data-testid="profile-name-info" aria-expanded={open} aria-controls="profile-name-info-panel" onClick={() => setOpen(!open)}>
+            Why can I not change my name?
+          </button>
+        </button>
+      ) : (
+        <button ref={button} type="button" data-testid="profile-name-info" aria-expanded={open} aria-controls="profile-name-info-panel" onClick={() => setOpen(!open)}>
+          Why can I not change my name?
+        </button>
+      )}
       {open && (
         <div ref={panel} id="profile-name-info-panel" data-testid="profile-name-info-panel" role="dialog" aria-label="About your legal name" className="card">
           <p>Your legal name matches the credit report, so it cannot be changed here. To correct it, use the corrections route on your report.</p>

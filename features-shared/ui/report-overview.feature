@@ -1,4 +1,4 @@
-# version: 6 | created: 2026-10-12T09:49Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 7 | created: 2026-10-12T09:49Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @ui
 Feature: Report overview
   The overview gives a customer their score, how it compares, and a route into every part of the report.
@@ -47,3 +47,14 @@ Feature: Report overview
       | 0 days | 0 days  |
       | 1 day  | 1 day   |
       | 2 days | 2 days  |
+
+  # The drawer makes the rest of the page inert while it is open. A browser refuses to focus an inert element, so focus must go back
+  # after the page is live again (CDS-38 R2-C-01): a component test cannot see this.
+  Scenario Outline: The chat drawer gives focus back
+    When Alex opens the chat drawer
+    And Alex closes the chat drawer with <closer>
+    Then the focus is on the chat button
+    Examples:
+      | closer           |
+      | Escape           |
+      | the Close button |

@@ -359,6 +359,85 @@ describe('mobile sub-page (My Profile UI feature spec 4.1)', () => {
   });
 });
 
+describe('preferred name: apostrophe and the greeting refresh (CDS-38 R2-C-14, R2-C-18)', () => {
+  it('refuses a curly apostrophe, which the service refuses, without asking it', async () => {
+    const patches: unknown[] = [];
+    fakeService({
+      'GET /me/profile': () => json(200, profile()),
+      'PATCH /me/profile/preferred-name': async (request) => {
+        patches.push(await request.json());
+        return json(200, { preferredName: 'x' });
+      },
+    });
+    await openSignedIn('/my-account/profile');
+    const field = await screen.findByTestId('profile-preferred-input');
+    await userEvent.clear(field);
+    await userEvent.type(field, 'O’Brien');
+    await userEvent.click(screen.getByTestId('profile-preferred-save'));
+    expect(await screen.findByTestId('profile-preferred-error')).toHaveTextContent('1 to 30 letters, spaces, hyphens or apostrophes');
+    expect(patches).toEqual([]);
+  });
+
+  it('still accepts the straight apostrophe', async () => {
+    const patches: unknown[] = [];
+    fakeService({
+      'GET /me/profile': () => json(200, profile()),
+      'PATCH /me/profile/preferred-name': async (request) => {
+        patches.push(await request.json());
+        return json(200, { preferredName: "O'Brien" });
+      },
+    });
+    await openSignedIn('/my-account/profile');
+    const field = await screen.findByTestId('profile-preferred-input');
+    await userEvent.clear(field);
+    await userEvent.type(field, "O'Brien");
+    await userEvent.click(screen.getByTestId('profile-preferred-save'));
+    await waitFor(() => expect(screen.getByTestId('profile-preferred-status')).toHaveTextContent('Saved'));
+    expect(patches).toEqual([{ preferredName: "O'Brien" }]);
+  });
+
+  it('says Saved when the name was saved even if the greeting could not be refreshed', async () => {
+    let reads = 0;
+    fakeService({
+      'GET /me/profile': () => json(200, profile()),
+      'GET /me': () => {
+        reads += 1;
+        if (reads > 1) throw new TypeError('network down');
+        return json(200, { id: 'usr_01', displayName: 'Alex Example', greetingName: 'Al', defaultBureauId: 'bureau-a' });
+      },
+      'PATCH /me/profile/preferred-name': () => json(200, { preferredName: 'Ally' }),
+    });
+    await openSignedIn('/my-account/profile');
+    const field = await screen.findByTestId('profile-preferred-input');
+    await userEvent.clear(field);
+    await userEvent.type(field, 'Ally');
+    await userEvent.click(screen.getByTestId('profile-preferred-save'));
+    await waitFor(() => expect(screen.getByTestId('profile-preferred-status')).toHaveTextContent('Saved'));
+    await waitFor(() => expect(reads).toBeGreaterThan(1));
+    expect(screen.queryByTestId('profile-preferred-error')).not.toBeInTheDocument();
+    expect(screen.getByTestId('profile-preferred-status')).not.toHaveTextContent('could not be saved');
+  });
+});
+
+describe('mobile sub-page: the number shown follows the one just saved (CDS-38 R2-C-11)', () => {
+  it('shows the new last digits in the code step', async () => {
+    let held = { lastDigits: '123', status: 'verified' };
+    fakeService({
+      'GET /me/profile': () => json(200, profile({ mobile: held })),
+      'PUT /me/profile/mobile': () => {
+        held = { lastDigits: '789', status: 'unverified' };
+        return json(200, { lastDigits: '789', status: 'unverified', expiresAt: '2026-10-03T10:10:00Z', attemptsRemaining: 3 });
+      },
+    });
+    await openSignedIn('/my-account/profile/mobile');
+    expect(await screen.findByTestId('mobile-current')).toHaveTextContent('•••• ••• 123');
+    await userEvent.type(screen.getByTestId('mobile-input'), '07700 900789');
+    await userEvent.click(screen.getByTestId('mobile-save'));
+    await screen.findByTestId('mobile-code-input');
+    await waitFor(() => expect(screen.getByTestId('mobile-current')).toHaveTextContent('•••• ••• 789 · Unverified'));
+  });
+});
+
 describe('the profile header image (CDS-38 C-27)', () => {
   it('is a whole GIF, ending in its trailer byte', async () => {
     fakeService({ 'GET /me/profile': () => json(200, profile()) });

@@ -14,7 +14,7 @@ import { useResource } from '../../useResource.ts';
 type Profile = components['schemas']['Profile'];
 
 /** PR-02: 1 to 30 letters, spaces, hyphens and apostrophes, after trimming. Empty clears the name. */
-const PREFERRED_NAME = /^[\p{L} '’-]{1,30}$/u;
+const PREFERRED_NAME = /^[\p{L} '-]{1,30}$/u;
 const PREFERRED_NAME_RULE = 'A preferred name is 1 to 30 letters, spaces, hyphens or apostrophes.';
 
 const BADGE = { verified: 'Verified', unverified: 'Unverified' } as const;
@@ -113,6 +113,7 @@ function PreferredName({ stored: initial }: { stored: string }) {
     }
     setError(null);
     setSaving(true);
+    let saved = false;
     try {
       const { data, error: problem } = await client.PATCH('/me/profile/preferred-name', { body: { preferredName: value === '' ? null : value } });
       if (data) {
@@ -120,7 +121,7 @@ function PreferredName({ stored: initial }: { stored: string }) {
         setStored(next);
         setDraft(next);
         setStatus('Saved');
-        await refreshUser();
+        saved = true;
       } else {
         const text = problemText(problem, 'The preferred name could not be saved.');
         setError(text);
@@ -132,6 +133,8 @@ function PreferredName({ stored: initial }: { stored: string }) {
     } finally {
       setSaving(false);
     }
+    // The greeting is refreshed outside the save: a failure here must not say the name could not be saved (CDS-38 R2-C-18).
+    if (saved) await refreshUser().catch(() => undefined);
   }
 
   return (

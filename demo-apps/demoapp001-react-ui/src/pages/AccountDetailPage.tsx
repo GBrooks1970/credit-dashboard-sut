@@ -76,7 +76,7 @@ function AccountBody({ account, bureauId, detailAddress }: { account: Account; b
             <p>
               {formatPercent(utilisation)} of your {formatMoney(account.limit.amountMinor, { pence: true })} limit
             </p>
-            <UtilisationBar testId="detail-balance-bar" label="Balance against limit" percent={utilisation} />
+            <UtilisationBar testId="detail-balance-bar" label="Balance against limit" percent={utilisation} figures={{ balanceMinor: account.balance.amountMinor, limitMinor: account.limit.amountMinor }} />
           </>
         )}
         <p className="muted" data-testid="detail-updated">

@@ -73,7 +73,7 @@ function Identity({ profile }: { profile: Profile }) {
 
   return (
     <section data-testid="profile-identity" aria-labelledby="profile-legal-name" className="card">
-      <img data-testid="profile-header-image" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" width="1" height="1" />
+      <img data-testid="profile-header-image" data-decorative="true" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt={TEST_BUILD && flagOn('decorative-alt') ? 'Profile header image' : ''} width="1" height="1" />
       <h1 id="profile-legal-name" data-testid="profile-legal-name">
         {profile.legalName}
       </h1>

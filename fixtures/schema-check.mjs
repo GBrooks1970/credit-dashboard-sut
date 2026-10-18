@@ -224,7 +224,8 @@ for (const entry of flagFile.flags) {
       // An exit-check catcher names one target of the exit run (CDS-41); the exit run is a script, so the target is read from its source.
       const source = fs.readFileSync(path.join(repoRoot, 'test-harnesses', 'harness-serenity', 'src', 'exit', 'exit-checks.ts'), 'utf8');
       check(typeof c.target === 'string' && source.includes(`name: '${c.target}'`), where, `exit target '${c.target}' is not a target in exit-checks.ts`);
-      check(!source.includes(c.failsWith), where, `failsWith '${c.failsWith}' occurs in exit-checks.ts as written; it must be a message the run builds`);
+      const rules = fs.readFileSync(path.join(repoRoot, 'test-harnesses', 'harness-serenity', 'src', 'exit', 'semantic-rules.ts'), 'utf8');
+      check(!source.includes(c.failsWith) && !rules.includes(c.failsWith), where, `failsWith '${c.failsWith}' occurs in exit-checks.ts or semantic-rules.ts as written; it must be a message the run builds`);
     } else {
       check(false, where, `unknown catcher kind '${c.kind}'`);
     }

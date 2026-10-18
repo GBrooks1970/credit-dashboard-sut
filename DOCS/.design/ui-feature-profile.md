@@ -9,7 +9,7 @@ language: en-GB
 
 # Credit Dashboard SUT: UI Feature Spec, My Profile
 
-**Status:** Phase 0 draft, for review
+**Status:** Normative since Phase 0 was accepted on 5 October 2026 (DR-038); changes are recorded in the lines below
 **Parent:** [UI specification](ui-specification.md) (conventions in its section 4 apply here unchanged)
 **Changes in v11:** CDS-38 (F9, C-33): the attempts left (`mobile-attempts`) appear with the first wrong code (the 422 `code-wrong`), not when the code step opens; the header image is a whole 1 by 1 GIF (C-27).
 **Changes in v10:** decision brief 13 D4 (DR-064): the expected catch of `lost-edit` is a component test.

@@ -1,5 +1,5 @@
 ---
-version: 67
+version: 68
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 67 (CDS-40 merged; the CDS-38 review plan written, status proposed)
+**Version:** 68 (CDS-38 done: the review, the confirmation pass and the fixes to both merged; CDS-41 unblocked)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -86,7 +86,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | ID | Ticket | Type | Priority | Tier | Blocked by | Status |
 | --- | --- | --- | --- | --- | --- | --- |
 | `CDS-37` | Phase 5 plan: bug flags and the scenarios that catch each, visual regression, the published Serenity report, the three bug-flag catches from the CDS-18 notes (a plan first, stop point at each flag group) | UI | — | HIGH | `CDS-36` | Open |
-| `CDS-38` | Independent review of the Phase 4 UI and the Serenity/JS harness by a fresh-context agent, findings handled as CDS-24 was (decision brief 12 D1 option 2; runs after CDS-40, brief 13 D6) | UI | — | MEDIUM | `CDS-36`, `CDS-40` | Open |
+| `CDS-38` | Independent review of the Phase 4 UI and the Serenity/JS harness by a fresh-context agent, findings handled as CDS-24 was (decision brief 12 D1 option 2; runs after CDS-40, brief 13 D6) | UI | — | MEDIUM | `CDS-36`, `CDS-40` | Done 2026-10-18 |
 | `CDS-39` | P1 the flag mechanism and the proof runner: `Flags` in the service, the test build of the UI reads the flags, the debug panel, `bug-flags.json`, `check:bug-flags` | Tooling | — | HIGH | `CDS-37` | Done 2026-10-14 |
 | `CDS-40` | P2 the seven API flags implemented and proved | Service | — | HIGH | `CDS-39` | Done 2026-10-14 |
 | `CDS-41` | P3 the eleven UI display and semantics flags, with exit-check catchers for six | UI | — | HIGH | `CDS-40`, `CDS-38` | Open |
@@ -262,6 +262,8 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 **PLAN APPROVED (2026-10-14; plan v2, brief 13 answered and confirmed, brief 13 answered, DR-064; slices CDS-39 to CDS-45).** Plan `DOCS/implementation-plans/2026-10-14_cds-37-phase-5-defects-and-evidence.md` and decision brief 13 (D1 to D6, awaiting the owner). The spike found that none of the 30 bug flags changes any behaviour yet, so the phase implements them as well as proving them: eight slices (P0 to P7, tickets CDS-39 to CDS-45 once approved), a stop point after each flag group. Nine flags have no committed catcher today. **Original note:** the owner chose to continue to Phase 5 (decision brief 12 D2, DR-063). A plan comes first, as for Phase 4: the bug flags and the scenario that catches each, visual regression, the published Serenity report, and the three bug-flag catches left from the CDS-18 notes, with a stop point at each flag group. Implementation does not start before the plan is approved.
 
 ### CDS-38: Independent review of the Phase 4 UI and the harness
+
+**COMPLETE (2026-10-18; plans `DOCS/implementation-plans/2026-10-14_cds-38-independent-review.md`, `2026-10-15_cds-38-fixes.md`, `2026-10-16_cds-38-confirmation-pass.md` and `2026-10-16_cds-38-confirmation-fixes.md`; decision DR-065).** Two fresh-context review rounds, each with its prompts hashed and its reports kept verbatim, the author's verification kept apart and the owner's sign-off by interview (`.review/`). Round one (on `409249e`): 62 Blockers and Changes and 26 Notes accepted, fixed in F1 to F10 (#78 to #90). Round two, a fix-aware confirmation pass (on `20ecebc`): 12 Blockers and 27 Changes accepted, 16 Notes (11 accepted, 3 deferred, 2 no action), fixed in F11a to F11f (#94 to #100). At the close (`88e44a8`): 435 service tests, 239 rules tests, 198 component tests, 20 guard tests, 21 harness unit tests, 59 `@api` and 59 `@ui` executions, 124 axe scans and 288 layout checks, 8 of 8 implemented flags caught for the stated reason. Deferred, each to a named place: C-23 (the `ui` job's time limit) to CDS-43 (P5), A-24 and C-26 to CDS-42 (P4), and A-22, R2-B-13, R2-B-17 and R2-B-19 stay open as low-priority backlog items, recorded in section 5 of the two review records. **CDS-41 (P3) is unblocked.**
 
 **PLAN APPROVED (2026-10-15; `DOCS/implementation-plans/2026-10-14_cds-38-independent-review.md`, six choices awaiting the owner).** The owner chose to record the Phase 4 gate and to commission the review that Phases 3 and 4 have not had, as Phase 2 had its three passes (decision brief 12 D1 option 2, DR-063). Scope: the React UI, the `@ui` steps, the exit checks and the harness, read by a fresh-context agent against the specifications and the 41 scenarios, with findings triaged and handled as CDS-24 was. The review is the quality check after the gate, not its condition. A short plan comes first; the Phase 5 plan (CDS-37) says where it falls in the order.
 

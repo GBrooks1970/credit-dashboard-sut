@@ -2,6 +2,11 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-18: the independent review and its fixes (CDS-38)
+
+- Two fresh-context review rounds of the Phase 4 UI, the service and the harness, and the fixes to both (F1 to F11f, pull requests #77 to #100): every response object in the contract is closed (contract v19); the harness validator judges the whole response; faults, bodies, numbers, dates and the clock are judged at the edge; the mobile-code limit is race-free; the flag proof, the exit checks, the public-build guard and the runner cannot be fooled the ways the reviewers fooled them; the UI keeps focus, ignores late answers and doubles its form controls with the text.
+- 435 service tests, 239 rules tests, 198 component tests, 20 guard tests, 21 harness unit tests, 59 `@api` and 59 `@ui` executions, 124 axe scans and 288 layout checks. API specification v35, UI specification v29, contract v19. DR-065.
+
 ## 2026-10-14: the seven API flags (CDS-40, Phase 5 P2)
 
 - `excluded-in-total`, `history-carry-forward`, `idor`, `problem-json-missing`, `mask-format` and `currency-float` are implemented in the service (with `rounding-down` from P1 that is all seven API flags); each is caught for its stated reason by an existing scenario. `check:bug-flags`: 8 of 8 implemented flags caught.

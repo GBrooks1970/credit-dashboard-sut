@@ -9,7 +9,7 @@ language: en-GB
 
 # Credit Dashboard SUT: UI Specification
 
-**Status:** Phase 0 draft, for review
+**Status:** Normative since Phase 0 was accepted on 5 October 2026 (DR-038); changes are recorded in the lines below
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
 **Changes in v29:** CDS-38 (F11f, the confirmation pass): section 8's 'Expected catch' column is the registry's (`fixtures/bug-flags.json`) for every flag in the table, and `schema-check` fails if the two differ (R2-C-08); the catalogue in section 5 lists what is built (R2-C-12). The guard's marker list, the flags it cannot see and the exit run's own cover are in sections 3 and 9 (R2-C-06, R2-C-07, R2-C-15).

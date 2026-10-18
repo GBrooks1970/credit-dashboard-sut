@@ -6,7 +6,7 @@ type: implementation-plan
 item: CDS-38
 status: approved
 approved: "2026-10-17, Gary Brooks, 'all as recommended, approved, merge #93 once CI green, then start F11a' (D1 to D5 as recommended); merge authority: per pull request, on request"
-delivered: not yet
+delivered: 2026-10-18
 language: en-GB
 ---
 
@@ -94,4 +94,8 @@ The three deferred Notes (R2-B-13, 17, 19); the two no-action Notes; the earlier
 
 ## Outcome
 
-[Appended after delivery.]
+**Delivered 2026-10-18.** F11a #94, F11b #95, F11c #96, F11d in two pull requests #97 (guards) and #98 (the runner), F11e #99, F11f #100; the records are F12.
+
+**Where it departed from the plan.** (1) F11d was split into two pull requests, as the plan allowed. (2) The specification versions the plan named moved with the order of merging: API specification v33 (F11a), v34 (F11b), v35 (F11c); UI specification v28 (F11e), v29 (F11f). (3) Three things were not mutation-proven and say so in their pull requests: the SIGINT and SIGTERM handlers of `run.mjs` (Windows cannot deliver the signal), the doubling of form controls by `font: inherit` (no check read the size), and the exit run's expected-count assertion. (4) Two overflows that the new checks found were fixed in place: the debug page (F11e) and the sign-in page (F11f), both at 375 px with doubled text.
+
+**Counts at the close of CDS-38 (2026-10-18, `88e44a8`):** 435 service tests, 239 rules tests, 198 component tests, 20 guard tests, 21 harness unit tests, 59 `@api` executions (32 scenarios and outlines), 59 `@ui` executions (44 scenarios and outlines), 124 axe scans and 288 layout checks, `check:bug-flags` 8 of 8 implemented flags caught for the stated reason, `verify` 14 of 14, the `ui` CI job about 6.5 minutes (15 minute limit; C-23 stays with P5).

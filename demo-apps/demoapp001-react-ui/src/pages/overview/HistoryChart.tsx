@@ -43,7 +43,9 @@ export function HistoryChart({ bureauId, max }: { bureauId: string; max: number 
     const current = begin();
     setState('loading');
     try {
-      const { data } = await client.GET('/reports/{bureauId}/score/history', { params: { path: { bureauId }, query: { range } } });
+      // The `range-stale` bug flag (test build only; UI specification 8): the chart asks for the default range whatever was chosen.
+      const asked = TEST_BUILD && flagOn('range-stale') ? '6m' : range;
+      const { data } = await client.GET('/reports/{bureauId}/score/history', { params: { path: { bureauId }, query: { range: asked } } });
       if (!current()) return; // stale: another range was chosen, or the page was left (CDS-38 C-03)
       if (data) {
         setPoints(data);

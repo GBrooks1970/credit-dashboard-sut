@@ -37,6 +37,15 @@ export function ProfilePage() {
 }
 
 function ProfileBody({ profile }: { profile: Profile }) {
+  // The `pii-in-title` bug flag (test build only; UI specification 8): the legal name is put in the page title (PR-08 forbids it).
+  useEffect(() => {
+    if (!(TEST_BUILD && flagOn('pii-in-title'))) return;
+    const before = document.title;
+    document.title = `${profile.legalName} - ${before}`;
+    return () => {
+      document.title = before;
+    };
+  }, [profile.legalName]);
   return (
     <>
       <Identity profile={profile} />

@@ -229,6 +229,21 @@ describe('email sub-page (My Profile UI feature spec 4.2)', () => {
     expect(field).toHaveAccessibleDescription('That is not an email address.');
   });
 
+  it('shows the specific message of the field that was refused, not the generic detail (CDS-38 C-26)', async () => {
+    fakeService({
+      'GET /me/profile': () => json(200, verified),
+      'PUT /me/profile/email': () => problem(400, '/problems/validation', 'One or more fields are invalid.', { errors: [{ field: 'address', message: 'must be an email address' }] }),
+    });
+    await openSignedIn('/my-account/profile/email');
+    const field = await screen.findByTestId('email-input');
+    await userEvent.clear(field);
+    await userEvent.type(field, 'nonsense');
+    await userEvent.click(screen.getByTestId('email-save'));
+    const error = await screen.findByTestId('email-error');
+    expect(error).toHaveTextContent('Must be an email address.');
+    expect(error).not.toHaveTextContent('One or more fields are invalid');
+  });
+
   it('offers no resend while the address is verified', async () => {
     fakeService({ 'GET /me/profile': () => json(200, verified) });
     await openSignedIn('/my-account/profile/email');

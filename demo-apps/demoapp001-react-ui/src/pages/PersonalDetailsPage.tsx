@@ -3,12 +3,13 @@
 // no edit control and no link to a data-capture form on this page. The editable profile is a different page.
 import { useParams } from 'react-router';
 import { SectionState } from '../components/SectionState.tsx';
+import { TEST_BUILD, flagOn } from '../flags.tsx';
 import { useSession } from '../session.tsx';
 import { useResource } from '../useResource.ts';
 
 export function PersonalDetailsPage() {
   const { bureauId = '' } = useParams();
-  const { client } = useSession();
+  const { client, user } = useSession();
   const { state, data, reload } = useResource(
     async () => (await client.GET('/reports/{bureauId}/personal-details', { params: { path: { bureauId } } })).data,
     [client, bureauId],
@@ -27,7 +28,8 @@ export function PersonalDetailsPage() {
         {data && (
           <dl>
             <dt>Name</dt>
-            <dd data-testid="pd-name">{data.name}</dd>
+            {/* The `preferred-on-report` bug flag (test build only; UI specification 8): the name the customer is greeted by, not the legal name. */}
+            <dd data-testid="pd-name">{TEST_BUILD && flagOn('preferred-on-report') && user?.greetingName ? user.greetingName : data.name}</dd>
             <dt>Current address</dt>
             {current.map((a) => (
               <dd key={line(a)} data-testid="pd-address-current">

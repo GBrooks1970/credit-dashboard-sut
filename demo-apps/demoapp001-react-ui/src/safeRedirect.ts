@@ -3,9 +3,13 @@
 // else, including a protocol-relative `//host`, a backslash trick and dot segments that collapse to `//host`, falls back to the
 // page the customer came from. What is judged is the address the URL parser resolves, because that is what a browser would
 // follow (CDS-38 C-01): the input can look harmless (`/..//evil.example`) and resolve to `//evil.example`.
+import { TEST_BUILD, flagOn } from './flags.tsx';
+
 const BASE = 'http://site.invalid';
 
 export function safeRedirect(target: string | null | undefined, fallback: string): string {
+  // The `open-redirect` bug flag (test build only; UI specification 8): the guard is removed and any return address is followed.
+  if (TEST_BUILD && flagOn('open-redirect')) return target || fallback;
   if (!target || !target.startsWith('/')) return fallback;
   try {
     // The URL parser drops tabs and newlines, reads `\` as `/` and removes dot segments.

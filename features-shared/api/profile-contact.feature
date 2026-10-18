@@ -1,4 +1,4 @@
-# version: 2 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
+# version: 3 | created: 2026-10-07T10:25Z | project: credit-dashboard-sut | type: feature | language: en-GB
 @api @profile
 Feature: Email and mobile verification
   A customer can change their email and add a mobile number, and each must be verified before it is trusted.
@@ -7,6 +7,13 @@ Feature: Email and mobile verification
   Background:
     Given Alex holds the "excellent" persona
     And today is 3 October 2026
+
+  # Added in CDS-42 (P4a, the owner's choice): the @ui scenario of the same name cannot catch `preferred-no-trim`, because the UI trims the
+  # name before it sends it; this one speaks to the API directly.
+  @PR-02
+  Scenario: Spaces around a preferred name are removed
+    When Alex sets their preferred name to "Sam" with spaces either side
+    Then the preferred name is saved as Sam
 
   @PR-04
   Scenario: Submitting the email already held changes nothing

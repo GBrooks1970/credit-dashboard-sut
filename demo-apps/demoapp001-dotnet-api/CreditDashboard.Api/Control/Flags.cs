@@ -14,6 +14,7 @@ public static class Flags
     public static readonly IReadOnlySet<string> Implemented = new HashSet<string>
     {
         "rounding-down", "excluded-in-total", "history-carry-forward", "idor", "problem-json-missing", "mask-format", "currency-float",
+        "preferred-no-trim", "email-stays-verified",
     };
 
     public static void Begin(IReadOnlySet<string> flags) => Active.Value = flags;

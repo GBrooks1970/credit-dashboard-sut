@@ -1,5 +1,6 @@
 using System.Text.Json.Nodes;
 using CreditDashboard.BusinessRules;
+using CreditDashboard.BusinessRules.Profile;
 
 namespace CreditDashboard.Api.Control;
 
@@ -17,6 +18,19 @@ public static class Defects
         var raw = (int)((Int128)balanceMinor * 100 / limitMinor.Value); // integer division truncates towards zero
         return new UtilisationResult(Math.Max(0, raw), raw);
     }
+
+    /// <summary>
+    /// PR-02. With <c>preferred-no-trim</c> a name that is allowed keeps the spaces the customer typed around it. The name is validated as
+    /// before; what changes is what is kept (CDS-42).
+    /// </summary>
+    public static string? PreferredName(string? submitted, string? validated) => validated is not null && Flags.Has("preferred-no-trim") ? submitted : validated;
+
+    /// <summary>
+    /// PR-04. With <c>email-stays-verified</c> an email address that has changed keeps the status the old address had, instead of going
+    /// back to unverified (CDS-42).
+    /// </summary>
+    public static EmailStatus EmailStatusAfterChange(EmailStatus before, EmailChangeResult result) =>
+        result.Changed && Flags.Has("email-stays-verified") ? before : result.Status;
 
     /// <summary>BR-05. With <c>excluded-in-total</c> a loan the bureau marks as left out of the totals is counted in them.</summary>
     public static bool IncludedInTotals(bool stored) => stored || Flags.Has("excluded-in-total");

@@ -196,6 +196,39 @@ public class FlagTests
     }
 
     [Test]
+    public async Task Preferred_no_trim_keeps_the_spaces_around_a_preferred_name()
+    {
+        var token = await _service.Token("alex");
+        var proper = await _service.Send(new HttpMethod("PATCH"), "/me/profile/preferred-name", """{"preferredName":"  Sam  "}""", token);
+        Assert.That(JsonNode.Parse(await proper.Content.ReadAsStringAsync())!["preferredName"]!.GetValue<string>(), Is.EqualTo("Sam"), "PR-02 trims it");
+        await Flag("preferred-no-trim");
+        var flawed = await _service.Send(new HttpMethod("PATCH"), "/me/profile/preferred-name", """{"preferredName":"  Sam  "}""", token);
+        Assert.That(flawed.StatusCode, Is.EqualTo(HttpStatusCode.OK), "the name is still accepted");
+        Assert.That(JsonNode.Parse(await flawed.Content.ReadAsStringAsync())!["preferredName"]!.GetValue<string>(), Is.EqualTo("  Sam  "));
+        Assert.That((await Get("getProfile", "/me/profile", check: false))!["preferredName"]!.GetValue<string>(), Is.EqualTo("  Sam  "), "and it is stored that way");
+        // A name that is not allowed is still refused: the flag changes what is kept, not what is accepted.
+        var refused = await _service.Send(new HttpMethod("PATCH"), "/me/profile/preferred-name", """{"preferredName":"Sam1"}""", token);
+        Assert.That(refused.StatusCode, Is.EqualTo(HttpStatusCode.UnprocessableEntity));
+    }
+
+    [Test]
+    public async Task Email_stays_verified_keeps_the_verified_status_after_the_address_changes()
+    {
+        var token = await _service.Token("alex");
+        Assert.That((await Get("getProfile", "/me/profile"))!["email"]!["status"]!.GetValue<string>(), Is.EqualTo("verified"), "the excellent persona holds a verified email");
+        var proper = await _service.Send(HttpMethod.Put, "/me/profile/email", """{"address":"alex.new@example.com"}""", token);
+        Assert.That(JsonNode.Parse(await proper.Content.ReadAsStringAsync())!["status"]!.GetValue<string>(), Is.EqualTo("unverified"), "PR-04");
+        await _service.Control(HttpMethod.Post, "/reset");
+        await _service.Freeze("2026-10-03T09:00:00Z");
+        await Flag("email-stays-verified");
+        token = await _service.Token("alex");
+        var flawed = await _service.Send(HttpMethod.Put, "/me/profile/email", """{"address":"alex.new@example.com"}""", token);
+        var body = JsonNode.Parse(await flawed.Content.ReadAsStringAsync())!;
+        Assert.That((body["address"]!.GetValue<string>(), body["status"]!.GetValue<string>()), Is.EqualTo(("alex.new@example.com", "verified")), "the address changed and the badge did not");
+        Assert.That((await Get("getProfile", "/me/profile", check: false))!["email"]!["status"]!.GetValue<string>(), Is.EqualTo("verified"));
+    }
+
+    [Test]
     public async Task Idor_lets_one_customer_read_another_customers_account()
     {
         await _service.Bind("alex", "drilldown");

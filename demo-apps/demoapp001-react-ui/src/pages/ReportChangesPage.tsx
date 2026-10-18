@@ -6,6 +6,7 @@ import type { components } from '@credit-dashboard-sut/api-client';
 import { ChangeCard } from '../components/ChangeCard.tsx';
 import { Pager } from '../components/Pager.tsx';
 import { SectionState } from '../components/SectionState.tsx';
+import { TEST_BUILD, flagOn } from '../flags.tsx';
 import { useResource } from '../useResource.ts';
 import { useSession } from '../session.tsx';
 
@@ -76,8 +77,8 @@ export function ReportChangesPage() {
               </p>
             ) : (
               <ul className="change-list">
-                {data.items.map((change) => (
-                  <ChangeCard key={change.id} change={change} />
+                {(TEST_BUILD && flagOn('double-render') ? [...data.items, ...data.items] : data.items).map((change, index) => (
+                  <ChangeCard key={`${change.id}-${index}`} change={change} />
                 ))}
               </ul>
             )}

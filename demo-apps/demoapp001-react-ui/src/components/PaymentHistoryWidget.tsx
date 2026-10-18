@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useLatest } from '../useLatest.ts';
 import type { components } from '@credit-dashboard-sut/api-client';
 import { SectionState, type SectionStateName } from './SectionState.tsx';
+import { TEST_BUILD, flagOn } from '../flags.tsx';
 import { formatMonth } from '../format.ts';
 import { useSession } from '../session.tsx';
 
@@ -59,10 +60,11 @@ export function PaymentHistoryWidget({ bureauId, accountId }: { bureauId: string
             <div role="group" aria-label="Year" className="actions">
               {history.years.map((entry) => (
                 <span key={entry.year} className="year">
-                  <button type="button" data-testid={`ph-year-${entry.year}`} aria-pressed={entry.year === history.selectedYear} onClick={() => setYear(entry.year)}>
+                  {/* The `ph-a11y` bug flag (test build only; UI specification 8): the year buttons lose `aria-pressed` and the status icons lose their text. */}
+                  <button type="button" data-testid={`ph-year-${entry.year}`} aria-pressed={TEST_BUILD && flagOn('ph-a11y') ? undefined : entry.year === history.selectedYear} onClick={() => setYear(entry.year)}>
                     {entry.year}
                   </button>
-                  <span data-testid={`ph-year-status-${entry.year}`} role="img" aria-label={`${entry.year}: ${STATUS_LABEL[entry.status]}`}>
+                  <span data-testid={`ph-year-status-${entry.year}`} role="img" aria-label={TEST_BUILD && flagOn('ph-a11y') ? undefined : `${entry.year}: ${STATUS_LABEL[entry.status]}`}>
                     {STATUS_MARK[entry.status]}
                   </span>
                 </span>

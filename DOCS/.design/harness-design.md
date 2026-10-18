@@ -1,5 +1,5 @@
 ---
-version: 5
+version: 6
 created: 2026-10-09T11:20Z
 project: credit-dashboard-sut
 type: design
@@ -349,3 +349,5 @@ Review findings C-09 to C-15 and C-29.
 
 - **The semantic rules** (`src/exit/semantic-rules.ts`, P3b): seven DOM rules as source text evaluated in the page by `violationsOn`, after axe-core, so they run in all 124 axe scans and 288 layout checks without changing their counts. Six of them are the catchers of six UI flags; the seventh (`form-controls-follow-text-size`) has no flag and is shown by removing `font: inherit` from the form controls' rule. With a flag on, only that flag's rule reports (checked for `minor-units-label` and `placeholder-aria`).
 - **Cost.** An exit-check catcher took about 17 s a run in P3b (browser start, the target's axe passes in both themes and its layouts), against the 8 s estimated in P3a; six flags took 3 min 24 s through the proof.
+
+- **The proof has its own CI job** (`flags`, P3c). At 16 flags the `ui` job took 8 min 47 s; 19 flags with their four more catchers were measured at 4 min 8 s through the proof alone, which would put the `ui` job at about 13 minutes against its limit of 15. The decision D4 of the P3 plan said to move the proof out at 11 minutes, so the proof runs beside the `ui` job, with a 30 minute limit.

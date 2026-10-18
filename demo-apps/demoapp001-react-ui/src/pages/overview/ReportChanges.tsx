@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Link } from 'react-router';
 import { ChangeCard, type Change } from '../../components/ChangeCard.tsx';
 import { SectionState } from '../../components/SectionState.tsx';
+import { TEST_BUILD, flagOn } from '../../flags.tsx';
 import { useSession } from '../../session.tsx';
 
 const PAGE_SIZE = 100;
@@ -52,8 +53,9 @@ export function ReportChanges({ bureauId, recent, total }: { bureauId: string; r
         <p>No changes to your report yet.</p>
       ) : (
         <ul className="change-list">
-          {shown.map((change) => (
-            <ChangeCard key={change.id} change={change} />
+          {/* The `double-render` bug flag (test build only; UI specification 8): the list drawn twice. */}
+          {(TEST_BUILD && flagOn('double-render') ? [...shown, ...shown] : shown).map((change, index) => (
+            <ChangeCard key={`${change.id}-${index}`} change={change} />
           ))}
         </ul>
       )}

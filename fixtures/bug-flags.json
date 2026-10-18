@@ -309,8 +309,15 @@
       "group": "C",
       "layer": "ui",
       "effect": "'See less' never flips back",
-      "status": "pending",
-      "plannedCatcher": "new component test (brief 13 D4)"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "component-test",
+          "file": "demo-apps/demoapp001-react-ui/src/flags.test.tsx",
+          "name": "reads \"Show fewer\" while open and \"Show all 5\" again once closed",
+          "failsWith": "the label did not flip back to 'Show all 5'"
+        }
+      ]
     },
     {
       "flag": "like-both",
@@ -371,8 +378,15 @@
       "group": "C",
       "layer": "ui",
       "effect": "Summary cut mid-word with no way to expand",
-      "status": "pending",
-      "plannedCatcher": "new component test (brief 13 D4)"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "component-test",
+          "file": "demo-apps/demoapp001-react-ui/src/flags.test.tsx",
+          "name": "cuts at the last whole word before 280 characters, shows an ellipsis, and Read more shows it all",
+          "failsWith": "the summary was cut inside a word at the limit of 280"
+        }
+      ]
     },
     {
       "flag": "negative-balance",
@@ -459,8 +473,15 @@
       "group": "C",
       "layer": "ui",
       "effect": "Unsaved preferred name discarded without warning",
-      "status": "pending",
-      "plannedCatcher": "new component test (brief 13 D4)"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "component-test",
+          "file": "demo-apps/demoapp001-react-ui/src/flags.test.tsx",
+          "name": "asks, and staying keeps the page and the typed name",
+          "failsWith": "no question was asked about the unsaved 'Ally'"
+        }
+      ]
     }
   ]
 }

@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router';
+import { MemoryRouter, useLocation } from 'react-router';
 import { App } from './App.tsx';
 import { NOT_RECOGNISED } from './pages/LoginPage.tsx';
 import { SessionProvider } from './session.tsx';
@@ -93,3 +93,45 @@ describe('signing in (UI specification 6.1)', () => {
     expect(screen.queryByTestId('bureau-name')).not.toBeInTheDocument();
   });
 });
+describe('signing in returns to the page asked for, and only on this site (CDS-38 R2-C-03)', () => {
+  beforeEach(() => {
+    vi.stubGlobal('fetch', fakeService());
+  });
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  /** Where the router ends up, shown as text so the test can read it. */
+  function Where() {
+    return <p data-testid="where">{useLocation().pathname}</p>;
+  }
+
+  async function signInWith(from: unknown) {
+    render(
+      <MemoryRouter initialEntries={[{ pathname: '/login', state: { from } }]}>
+        <SessionProvider>
+          <App />
+          <Where />
+        </SessionProvider>
+      </MemoryRouter>,
+    );
+    await userEvent.type(await screen.findByTestId('login-username'), 'alex');
+    await userEvent.type(screen.getByTestId('login-password'), 'demo-only');
+    await userEvent.click(screen.getByTestId('login-submit'));
+  }
+
+  it.each(['//evil.example', '/..//evil.example', '/.//evil.example', 'https://evil.example/x', 'javascript:alert(1)'])(
+    'does not follow %s: it opens the default report',
+    async (from) => {
+      await signInWith(from);
+      expect(await screen.findByTestId('bureau-name')).toHaveTextContent('Bureau A');
+      expect(screen.getByTestId('where')).toHaveTextContent('/credit-health/report/bureau-a');
+    },
+  );
+
+  it('follows a path on this site', async () => {
+    await signInWith('/credit-health/debt-overview');
+    await waitFor(() => expect(screen.getByTestId('where')).toHaveTextContent('/credit-health/debt-overview'));
+  });
+});
+

@@ -1,5 +1,5 @@
 ---
-version: 28
+version: 29
 created: 2026-10-14T09:43Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Phase 0 draft, for review
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v29:** CDS-38 (F11f, the confirmation pass): section 8's 'Expected catch' column is the registry's (`fixtures/bug-flags.json`) for every flag in the table, and `schema-check` fails if the two differ (R2-C-08); the catalogue in section 5 lists what is built (R2-C-12). The guard's marker list, the flags it cannot see and the exit run's own cover are in sections 3 and 9 (R2-C-06, R2-C-07, R2-C-15).
 **Changes in v28:** CDS-38 (F11e, the confirmation pass): what the second review found the UI built differently from this specification, now as it says. Closing the chat drawer returns focus to `btn-chat` after the drawer has lifted its `inert` from the page (a browser refuses to focus an inert element), pinned by a `@ui` scenario (R2-C-01). Feedback and chat answers use latest-request-wins like every other fetching widget (R2-C-02). Form controls follow the text size, so 'wider text' doubles them too (R2-C-04). A month the formatter cannot read is shown as sent, and a page that throws shows a message with the menu still working (R2-C-05). The mobile page shows the number just saved in the code step (R2-C-11). The client's preferred-name pattern takes the straight apostrophe only, as PR-02 and the service do (R2-C-14). Below 768px the page leaves room for the bottom tab bar (R2-C-16). A failed greeting refresh after a saved preferred name is not reported as a failed save (R2-C-18).
 **Changes in v27:** CDS-38 (F10): the exit checks (section 9) are as wide as section 9 says. `npm run check:ui-exit` scans every page and every state that shows something new (an open dialog, a section error with its Retry, an empty list, a form error or a saved message, the debug page, the pages not built yet) with axe-core in the light and in the dark theme (60 targets and the two sign-in states, 124 scans), and checks every page that is not a state of another page in the three layouts with this machine's text and with the root text doubled (282 checks). "Wider text" means `html { font-size: 200% }`, so `rem` sizes follow (WCAG 1.4.4). The public build is checked after `vite build`: `npm run check` in the UI package fails if `dist/` holds any of `cds.testControlKey`, `__test`, `x-test-control-key`, `debug-flag` or `Debug panel`. The harness builds its test build into `dist-test/`, never `dist/`. The catch stated for `ph-a11y` is narrowed to what axe can see: axe has no rule for a missing `aria-pressed`, so the year buttons' `aria-pressed` is caught by the component tests, and axe catches the icons that lose their text. The widened checks found, and this change fixed, a dark-theme error colour that failed contrast (`#dc-error`), account cards that did not shrink to a phone with doubled text, and two hidden chart tables that widened the page.
 **Changes in v26:** CDS-38 (F9): what the review found the UI built differently from this specification, now built as written, with the few places where the specification follows the build. One `UtilisationBar` serves the overview, the lists and the account page: `aria-valuenow` is the real value, `aria-valuemax` is raised above 100, the fill stops at full, the colour band is on the fill and in `data-band` (below 30 `low`, 30 to 75 `mid`, above 75 `high`), and the badge `{testid}-over-limit` reads `Over limit`; the text beside the bar carries the figure only (C-02, C-05). An account row shows the provider's initials as its logo fallback (`row-initials-{id}`, decorative); real logos are not loaded, because the data's `logoUrl` is a placeholder (C-21). The searches list is `search-list` (C-06). The account detail header is a region named `Account summary` (C-28). While the chat drawer is open, everything outside it is `inert` (C-25). The history chart's table words its months (`June 2026`) as the balance chart's does (C-32).
@@ -62,7 +63,7 @@ Out of scope: real branding, real lenders, open-banking flows, offers and market
 
 | Concern | Decision | Status |
 | --- | --- | --- |
-| Framework | React with Vite and TypeScript: `react` and `react-dom` 19.3.0, `vite` 8.3.3, `@vitejs/plugin-react` 6.1.2, TypeScript 5.9.3 (aligned with `packages/api-client`), exact pins in the UI's `package.json` when it is scaffolded, taking the latest patch on that day (DR-044) | Accepted (DR-003, DR-044) |
+| Framework | React with Vite and TypeScript: `react` and `react-dom` 19.3.0, `vite` 8.3.4, `@vitejs/plugin-react` 6.1.2, TypeScript 5.9.3 (aligned with `packages/api-client`), exact pins in the UI's `package.json` when it is scaffolded, taking the latest patch on that day (DR-044) | Accepted (DR-003, DR-044) |
 | Routing | Client-side router; deep links work on refresh | Proposed |
 | Hosting | The built UI is served by the service from the same origin (static files at `/`, the API under `/api/v1`); development uses the Vite dev server with a proxy to port 4000; no CORS (brief 11 D2) | Accepted |
 | Data | Generated client `packages/api-client` (`openapi-typescript` 7.13.0 types, `openapi-fetch` 0.17.0, DR-043), base URL per environment (DR-039); query cache with retry off in test mode | Accepted (client); Proposed (cache) |
@@ -163,7 +164,7 @@ One `GET /reports/{bureauId}/overview` call feeds every section except the histo
 
 **Built in CDS-32:** the changes toggle fetches 100 changes a page and follows the pages until it has `changesTotal`; it shows its own loading (`changes-toggle-loading`) and error state (`changes-toggle-error`, `changes-toggle-retry`); the history chart defaults to 6 months, its table alternative `history-chart-table` has one row `history-chart-row-{month}` per month with 'No score' for a gap, and a point `history-point-{month}` exists only for a month with a score; `link-impact` and `impact-link` are in-page links (`#impact`, `#changes`); the chat drawer is a dialog (`chat-drawer`, `chat-input`, `chat-send`, `chat-reply`, `chat-disclaimer`, `chat-close`) that traps focus, closes on Escape and returns focus to `btn-chat`.
 
-Header (all pages): `nav-logo`, `nav-primary-{item}`, `btn-account` (labelled with `greetingName` from `GET /me`, PR-03, DR-036), `btn-notifications` with badge `notifications-unread`, `nav-mobile-{item}`.
+Header (all pages): `nav-logo`, `nav-primary-{item}`, `btn-account` (labelled with `greetingName` from `GET /me`, PR-03, DR-036), `nav-mobile-{item}`. The notifications button (`btn-notifications`, badge `notifications-unread`) is specified and not built: the notifications operations are in the contract and no page uses them.
 
 ### 6.3 Payment history (Release 2)
 
@@ -242,6 +243,8 @@ These pages reuse the list patterns above. The debt overview rows are `debt-type
 
 Present only in a test build (`VITE_TEST_BUILD`) and only for a signed-in customer, so never in the public demo build (DR-037); whether its calls succeed is decided by the service's test-control gate. Lists every bug flag as a checkbox `debug-flag-{flag}`, a persona selector `debug-persona`, a clock input `debug-clock` and `debug-reset`, with a key field `debug-key`, a user field `debug-username`, `debug-bind`, `debug-set-clock` and a status line `debug-status`. It calls the `/__test/*` endpoints; it never changes UI state directly.
 
+**What the public-build guard can and cannot see (CDS-38 R2-C-06).** `public-build-guard.mjs` looks in the built bundle for the five strings above, and for the names of the UI flags that no ordinary word could spell (`duplicate-nav`, `util-mismatch`, `currency-format`, `minor-units-label`, `placeholder-aria`, `chart-no-values`, `range-stale`, `toggle-label`, `like-both`, `truncate-summary`, `negative-balance`). It cannot see a flag whose defect branch is a plain expression, such as `plural`, which folds into the page's own text. When the remaining UI flags are built (P3), each defect branch is written inside a constant `TEST_BUILD && ...` check, which the bundler removes from the public build, and the guard's marker list gains any string the branch leaves behind.
+
 ### 6.9 My profile (Release 3)
 
 Specified in full in the [My Profile UI feature spec](ui-feature-profile.md): layout, element inventory with `data-testid` values, rules PR-01 to PR-11 and seed scenarios. Reached from the header account button `btn-account`. It is a different page from the report's read-only personal details in section 6.7.
@@ -253,13 +256,13 @@ Release 3 adds the email and mobile sub-pages (DR-022), specified in that spec's
 | Component | Props (key) | Used on | Notes |
 | --- | --- | --- | --- |
 | `DemoBanner` | none | All | Always on |
-| `ScoreGauge` | `score`, `max` | Overview | A bar; `role="progressbar"` named 'Credit score' with `aria-valuenow` the score, `aria-valuemin` 0 and `aria-valuemax` the maximum |
-| `BenchmarkBar` | `label`, `value`, `max` | Overview | progressbar |
-| `LineChart` | `points[]`, `range` | Overview | Gaps for null; table alternative |
-| `BarChart` | `points[]`, `referenceLine` | Account detail | Limit line; table alternative |
-| `SegmentedControl` | `options[]`, `value` | Overview | radiogroup, arrow-key navigation |
+| `ScoreSection` (the gauge) | `score` | Overview | Not a separate component. A bar; `role="progressbar"` named 'Credit score' with `aria-valuenow` the score, `aria-valuemin` 0 and `aria-valuemax` the maximum |
+| Benchmarks | none | Overview | Not a separate component: the national and local averages are figures in `ScoreSection` (`bench-national`, `bench-local`), not bars |
+| `HistoryChart` | `points[]`, `range` | Overview | Gaps for null; table alternative (`history-chart-table`) |
+| `BalanceChart` | `points[]` | Account detail | Balance for each of the last six months; table alternative. No limit line is drawn |
+| Range buttons | none | Overview | Not a separate component: three `aria-pressed` buttons (`range-3m`, `range-6m`, `range-1y`), reached with Tab like any button; there is no arrow-key navigation |
 | `UtilisationBar` | `percent`, `label` | Overview, lists, detail | Colour bands: below 30%, 30 to 75%, above 75%. Above 100: bar full, `aria-valuenow` the real value, `aria-valuemax` raised to match, text `115%` and badge `{testid}-over-limit` reading 'Over limit' (DR-013) |
-| `UtilisationDonut` | `percent` | Lists | progressbar; over limit as `UtilisationBar` |
+| (no donut) | none | Lists | Lists use `UtilisationBar`; no donut is built |
 | `AccountRow` | `account` | Lists, closed | Logo fallback to initials |
 | `ChangeCard` | `change` | Overview, lists, changes | Impact badge; hook `change-card-{id}` on every page (DR-016) |
 | `PaymentHistoryWidget` | `bureauId`, `accountId?` | Payment history, detail | Shared |
@@ -273,21 +276,21 @@ Off by default. Each one recreates a defect seen in the source pages or a common
 
 | Flag | Effect | Expected catch |
 | --- | --- | --- |
-| `duplicate-nav` | Desktop and mobile navs both rendered | Strict locator / visibility check |
-| `util-mismatch` | Bar width differs from percentage text | Assertion comparing `aria-valuenow` with text |
-| `currency-format` | Money shown unformatted (`53024`) | Format assertion |
-| `minor-units-label` | Progress bar named '423600% of 510000' | ARIA name assertion |
-| `placeholder-aria` | All row bars named 'Accessible label' | axe-core / role locator |
-| `chart-no-values` | Chart points announced without values | Accessibility tree check |
-| `range-stale` | Chart ignores range changes | Interaction scenario |
-| `toggle-label` | 'See less' never flips back | Component test (brief 13 D4) |
-| `like-both` | Like and Dislike both pressed | Behaviour scenario |
-| `plural` | '1 topics', 'Updates in 1 days' | Copy assertion |
-| `button-href` | Tiles rendered as buttons with `href` | Semantics lint |
-| `double-render` | List rendered twice during route change | Strict-mode locator failure |
-| `ph-a11y` | Year buttons lose `aria-pressed`; icons lose text | Component test (`aria-pressed` on the year buttons; axe has no rule for it); axe-core (the icons' text) |
-| `open-redirect` | `redirectUrl` guard removed | Security scenario |
-| `truncate-summary` | Summary cut mid-word with no way to expand | Component test (brief 13 D4) |
+| `duplicate-nav` | Desktop and mobile navs both rendered | exit check: layouts |
+| `util-mismatch` | Bar width differs from percentage text | new exit check: text equals aria-valuenow |
+| `currency-format` | Money shown unformatted (`53024`) | `@ui` debt and overview scenarios |
+| `minor-units-label` | Progress bar named '423600% of 510000' | new exit check: a bar's name matches its value |
+| `placeholder-aria` | All row bars named 'Accessible label' | new exit check: no placeholder names |
+| `chart-no-values` | Chart points announced without values | new exit check: the table alternative carries values |
+| `range-stale` | Chart ignores range changes | `@ui` score history range scenario |
+| `toggle-label` | 'See less' never flips back | new component test (brief 13 D4) |
+| `like-both` | Like and Dislike both pressed | `@ui` summary feedback scenarios |
+| `plural` | '1 topics', 'Updates in 1 days' | Scenario `Next update wording`; component test `says "1 day" for one day to the next update` |
+| `button-href` | Tiles rendered as buttons with `href` | new exit check: no button with href |
+| `double-render` | List rendered twice during route change | `@ui` list-count scenarios |
+| `ph-a11y` | Year buttons lose `aria-pressed`; icons lose text | payment history `@ui` scenarios |
+| `open-redirect` | `redirectUrl` guard removed | security open-redirect scenario |
+| `truncate-summary` | Summary cut mid-word with no way to expand | new component test (brief 13 D4) |
 | `negative-balance` | An account in credit is shown as an amount owed (`£44`, no 'in credit') (DR-019) | `@BR-06` UI scenario |
 
 Profile-page flags (`nested-button`, `decorative-alt`, `preferred-on-report`, `preferred-no-trim`, `email-stays-verified`, `pii-in-title`, `lost-edit`) are listed in the My Profile UI feature spec, section 7.

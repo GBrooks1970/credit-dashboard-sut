@@ -134,6 +134,11 @@ const allTargets: Target[] = [
 // CDS_EXIT_ONLY=text runs only the targets whose name holds the text: for looking at one page while fixing it. The standing run is whole.
 const only = process.env.CDS_EXIT_ONLY;
 const targets = only ? allTargets.filter((t) => t.name.includes(only)) : allTargets;
+// A filter that matches nothing would end '0 problem(s)' with exit 0 (CDS-38 R2-C-15): it is an error.
+if (targets.length === 0) {
+    console.error(`exit checks: CDS_EXIT_ONLY='${only}' matches no target; the names are: ${allTargets.map((t) => t.name).join('; ')}`);
+    process.exit(1);
+}
 
 async function control(path: string, method: string, body?: unknown) {
     const response = await fetch(`${api}${path}`, {
@@ -289,12 +294,34 @@ try {
                     if (layout.nav === 'primary' && !(nav.primary === 3 && nav.mobile === 0)) problems.push(`expected the top navigation only, found ${nav.primary} link(s) and ${nav.mobile} tab(s)`);
                     if (nav.overflow > 0) problems.push(`the page scrolls sideways by ${nav.overflow}px (reaching: ${nav.wide.join(', ')})`);
                     if (!nav.banner) problems.push('the demo banner is missing');
-                    if (!text.css) problems.push(...(await violationsOn(page)));
+                    // axe at each width with the text doubled as well as normal: a clipped or hidden control can show only at a larger size
+                    // (CDS-38 R2-C-15).
+                    problems.push(...(await violationsOn(page)));
                     layoutChecks++;
                     fail(`${layout.width}px${text.label}, ${target.name}`, problems);
                     console.log(`  ${problems.length === 0 ? 'pass' : 'FAIL'}  layout ${layout.width}px${text.label}  ${target.name}${problems.length ? `: ${problems.join('; ')}` : ''}`);
                 });
             }
+            await context.close();
+        }
+    }
+    // 3. The sign-in page at the three widths, normal and doubled text: it is not a target (it needs no session), and it is the first page
+    //    every customer sees (CDS-38 R2-C-15).
+    for (const layout of LAYOUTS) {
+        for (const text of TEXT) {
+            const context = await browser.newContext({ viewport: { width: layout.width, height: layout.height } });
+            const page = await context.newPage();
+            await page.goto(`${ui}/login`);
+            await page.getByTestId('login-submit').waitFor();
+            if (text.css) await page.addStyleTag({ content: text.css });
+            const nav = (await page.evaluate(LAYOUT_FACTS)) as { overflow: number; banner: boolean; wide: string[] };
+            const problems: string[] = [];
+            if (nav.overflow > 0) problems.push(`the page scrolls sideways by ${nav.overflow}px (reaching: ${nav.wide.join(', ')})`);
+            if (!nav.banner) problems.push('the demo banner is missing');
+            problems.push(...(await violationsOn(page)));
+            layoutChecks++;
+            fail(`${layout.width}px${text.label}, sign-in`, problems);
+            console.log(`  ${problems.length === 0 ? 'pass' : 'FAIL'}  layout ${layout.width}px${text.label}  sign-in${problems.length ? `: ${problems.join('; ')}` : ''}`);
             await context.close();
         }
     }
@@ -304,6 +331,12 @@ try {
 }
 
 console.log(`\nexit checks: ${scans} axe scans and ${layoutChecks} layout checks; ${failures.length} problem(s)`);
+// The whole run has a known size (CDS-38 R2-C-15): a target or a width that silently dropped out would otherwise still end at '0 problem(s)'.
+// Adding a page or a state to the targets changes these numbers; change them with it, in the same pull request.
+const EXPECTED = { scans: 124, layoutChecks: 288 };
+if (!only && (scans !== EXPECTED.scans || layoutChecks !== EXPECTED.layoutChecks)) {
+    failures.push(`expected ${EXPECTED.scans} axe scans and ${EXPECTED.layoutChecks} layout checks, ran ${scans} and ${layoutChecks}`);
+}
 if (failures.length > 0) {
     for (const failure of failures) console.error(`  - ${failure}`);
     process.exitCode = 1;

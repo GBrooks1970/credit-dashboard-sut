@@ -4,7 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { describe, it } from 'node:test';
 
-import { MARKERS, scan } from './public-build-guard.mjs';
+import { ALL_MARKERS, FLAG_MARKERS, MARKERS, scan } from './public-build-guard.mjs';
 
 // The guard on its own (CDS-38 C-13): it must find each marker, and must not pass a folder it cannot judge.
 function build(files) {
@@ -16,12 +16,28 @@ function build(files) {
     return dir;
 }
 
+describe('the markers the guard looks for (CDS-38 R2-C-07, R2-C-06)', () => {
+    it('are the five the UI specification names, whatever the list in the guard says', () => {
+        // Written out here, from UI specification section 3, and not taken from the guard: a list that shrank would otherwise still pass.
+        assert.deepEqual([...MARKERS], ['cds.testControlKey', '__test', 'x-test-control-key', 'debug-flag', 'Debug panel']);
+    });
+
+    it('add only names of UI bug flags in the registry, each with a hyphen so that no ordinary word is one', () => {
+        const registry = JSON.parse(fs.readFileSync(new URL('../../../fixtures/bug-flags.json', import.meta.url), 'utf8')).flags;
+        const ui = registry.filter((f) => f.layer === 'ui').map((f) => f.flag);
+        for (const marker of FLAG_MARKERS) {
+            assert.ok(ui.includes(marker), `${marker} is not a UI flag in fixtures/bug-flags.json`);
+            assert.ok(marker.includes('-'), `${marker} could be an ordinary word`);
+        }
+    });
+});
+
 describe('the public build guard', () => {
     it('passes a build with none of the markers', () => {
         assert.deepEqual(scan(build({ 'index.html': '<div id="root"></div>', 'assets/app.js': 'console.log("hello")' })), []);
     });
 
-    for (const marker of MARKERS) {
+    for (const marker of ALL_MARKERS) {
         it(`finds ${marker} in a bundle`, () => {
             const hits = scan(build({ 'index.html': '<div></div>', 'assets/app.js': `fetch("/api/v1/${marker}/reset")` }));
             assert.deepEqual(hits, [`${path.join('assets', 'app.js')}: ${marker}`]);

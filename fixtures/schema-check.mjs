@@ -225,6 +225,15 @@ for (const entry of flagFile.flags) {
     }
   }
 }
+// UI specification section 8 names, for each UI flag it lists, what catches it; it must say what the registry says (CDS-38 R2-C-08).
+const uiSpec = fs.readFileSync(path.join(here, '../DOCS/.design/ui-specification.md'), 'utf8');
+for (const row of uiSpec.matchAll(/^\| `([a-z0-9-]+)` \| .* \| (.*) \|\s*$/gm)) {
+  const entry = flagFile.flags.find((f) => f.flag === row[1] && f.layer === 'ui');
+  if (!entry) continue;
+  const where = `ui-specification.md section 8, ${entry.flag}`;
+  if (entry.status === 'pending') check(row[2] === entry.plannedCatcher, where, `says '${row[2]}', the registry's plannedCatcher is '${entry.plannedCatcher}'`);
+  else check((entry.catchers ?? []).every((c) => row[2].includes(c.name)), where, `does not name every catcher of the registry (${(entry.catchers ?? []).map((c) => c.name).join('; ')})`);
+}
 summary.push(`bug flags ${String(listed.length).padStart(2)} in the contract, ${flagFile.flags.filter((f) => f.status === 'implemented').length} implemented`);
 
 console.log(summary.join('\n'));

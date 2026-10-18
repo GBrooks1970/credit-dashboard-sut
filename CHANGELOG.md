@@ -2,6 +2,11 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-18: the eleven remaining behaviour flags, 30 of 30 caught (CDS-42, Phase 5 P4)
+
+- Service: `preferred-no-trim`, `email-stays-verified` (`Defects` call sites). UI, test build only: `range-stale`, `like-both`, `open-redirect`, `negative-balance`, `preferred-on-report`, `pii-in-title` (caught by `@ui` scenarios), `toggle-label`, `truncate-summary`, `lost-edit` (caught by component tests; the summary expander and the unsaved-name warning are new, specified behaviour). A new `@api` scenario catches `preferred-no-trim`. `problemText` shows the specific `errors[0]` message (CDS-38 C-26).
+- `check:bug-flags`: **30 of 30 implemented flags caught for the stated reason** (pull requests #108 to #110). 437 service tests, 208 component tests, 60 `@api` and 59 `@ui` executions. API specification v36, UI specification v34, backlog v70.
+
 ## 2026-10-18: the eleven UI display and semantics flags (CDS-41, Phase 5 P3)
 
 - `duplicate-nav`, `nested-button`, `util-mismatch`, `minor-units-label`, `placeholder-aria`, `chart-no-values`, `button-href`, `decorative-alt`, `currency-format`, `double-render` and `ph-a11y` are built in the UI's test build only; each is caught for its stated reason (pull requests #103 to #105). The proof runner gained an `exit-check` catcher kind; the exit run gained seven semantic rules in the same scans (124 axe scans and 288 layout checks, unchanged); the flag proof has its own CI job.

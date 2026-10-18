@@ -4,9 +4,9 @@ created: 2026-10-18T17:10Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-42
-status: approved
+status: implemented
 approved: "2026-10-18, Gary Brooks, 'all as recommended, approved' (D1 to D6 as recommended); merge only on the owner's word per pull request"
-delivered: not yet
+delivered: "2026-10-18: P4a #108 `c3547c0`, P4b #109 `642f4e2`, P4c #110 `8f3c3fb`"
 language: en-GB
 ---
 
@@ -95,4 +95,15 @@ Visual regression (CDS-43); the Serenity report (CDS-44); Phase 5 exit (CDS-45);
 
 ## Outcome
 
-[Appended after delivery.]
+**Delivered 2026-10-18** in three pull requests, each merged after all three CI jobs (`Verify`, `UI`, `flags`) showed `pass`: P4a #108 (`c3547c0`), P4b #109 (`642f4e2`), P4c #110 (`8f3c3fb`). The implementation log is `DOCS/implementation-logs/2026-10-18_cds-42-ui-behaviour-flags-p4a-p4c.md`. `check:bug-flags` shows **30 of 30 implemented flags caught for the stated reason, none pending**: stop point 3 of the Phase 5 plan.
+
+**Where it departed from the plan.**
+1. **Decision D2 was needed once.** The planned `@ui` scenario for `preferred-no-trim` stayed green with the flag on, because the UI trims the name before it sends it, and no `@api` scenario existed. I stopped; the owner chose to add an `@api` scenario ("Spaces around a preferred name are removed", two new `@api` steps, glossary v17). That is one more `@api` execution (60). The other five planned scenario catchers were right.
+2. **The recorded reason for `preferred-no-trim`** is the contract validator's refusal of the response (`{"preferredName":"  Sam  "}` does not match the name pattern), not the step's assertion, which the validator pre-empts. The first proof run said "fails, but not as stated"; the text was corrected to the real message.
+3. **Decision D3 (build the behaviour) applied to two flags:** the summary expander and the unsaved-name warning did not exist and were specified, tested and built in P4c. The warning is a click listener on links, because the app uses `BrowserRouter` and `useBlocker` needs a data router; reload and tab close are not covered, and the specification says so.
+4. **Decision D4 (C-26):** `problemText` shows the specific `errors[0]` message, with a test, in P4b. **D5 (A-24):** closed by P4a, no code.
+5. **The flag proof grew to 16m41s** in CI at 30 flags (limit 30 minutes). The plan estimated 3 to 4 minutes of growth; it was more, and P5 (visual regression) must not share this job.
+6. **Version slip, found and fixed:** the My Profile spec's version stayed at 11 through P4b (a string replace missed its CRLF); it is 12 with its changes line.
+7. **Stop point 3 (D6):** the owner decides before P5.
+
+**Counts at the close** (`8f3c3fb`): 437 service tests, 239 rules tests, 208 component tests, 20 guard tests, 23 harness unit tests, 60 `@api` and 59 `@ui` executions, 124 axe scans and 288 layout checks (0 problems), `verify` 14 of 14.

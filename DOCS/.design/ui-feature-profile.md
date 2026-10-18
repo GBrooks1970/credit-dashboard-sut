@@ -167,12 +167,12 @@ Persona fixtures gain a `profile` block. All values are synthetic (DR-010): inve
 
 | Flag | Effect | Expected catch |
 | --- | --- | --- |
-| `nested-button` | Information button rendered inside another button (seen in the source) | HTML validity / axe-core |
-| `decorative-alt` | Header image given descriptive alt text (seen in the source) | axe-core / accessibility tree |
-| `preferred-on-report` | Preferred name leaks onto report pages (breaks PR-03) | UI scenario |
-| `preferred-no-trim` | Leading and trailing spaces kept | Validation scenario |
-| `email-stays-verified` | Changing email keeps the Verified badge (breaks PR-04) | State scenario |
-| `pii-in-title` | Legal name placed in the page title (breaks PR-08) | Security / privacy scenario |
+| `nested-button` | Information button rendered inside another button (seen in the source) | exit check: axe nested-interactive |
+| `decorative-alt` | Header image given descriptive alt text (seen in the source) | exit check: a decorative image has an empty alt |
+| `preferred-on-report` | Preferred name leaks onto report pages (breaks PR-03) | Scenario `Alex sets a preferred name` |
+| `preferred-no-trim` | Leading and trailing spaces kept | Scenario `Spaces around a preferred name are removed` (`@api`) |
+| `email-stays-verified` | Changing email keeps the Verified badge (breaks PR-04) | Scenario `A changed email needs verifying again` |
+| `pii-in-title` | Legal name placed in the page title (breaks PR-08) | Scenario `Profile details stay out of the page title and address` |
 | `lost-edit` | Navigating away discards an unsaved preferred name without warning | Component test (brief 13 D4) |
 
 ## 8. Feature file

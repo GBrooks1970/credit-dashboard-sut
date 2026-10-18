@@ -293,8 +293,16 @@
       "group": "C",
       "layer": "ui",
       "effect": "Chart ignores range changes",
-      "status": "pending",
-      "plannedCatcher": "`@ui` score history range scenario"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "ui",
+          "feature": "ui/report-overview.feature",
+          "name": "Score history range",
+          "failsWith": "history-chart-row-\"]') to equal 12"
+        }
+      ]
     },
     {
       "flag": "toggle-label",
@@ -309,8 +317,16 @@
       "group": "C",
       "layer": "ui",
       "effect": "Like and Dislike both pressed",
-      "status": "pending",
-      "plannedCatcher": "`@ui` summary feedback scenarios"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "ui",
+          "feature": "ui/report-overview.feature",
+          "name": "Summary feedback is remembered",
+          "failsWith": "Expected \"aria-pressed\" attribute of btn-dislike to equal \"false\""
+        }
+      ]
     },
     {
       "flag": "plural",
@@ -339,8 +355,16 @@
       "group": "C",
       "layer": "ui",
       "effect": "redirectUrl guard removed",
-      "status": "pending",
-      "plannedCatcher": "security open-redirect scenario"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "ui",
+          "feature": "security/open-redirect.feature",
+          "name": "The return link cannot leave the site",
+          "failsWith": "Timeout of 5s has expired while waiting for <<detail-header>>.isPresent() to equal true"
+        }
+      ]
     },
     {
       "flag": "truncate-summary",
@@ -355,16 +379,32 @@
       "group": "C",
       "layer": "ui",
       "effect": "An account in credit shown as an amount owed",
-      "status": "pending",
-      "plannedCatcher": "`@BR-06` UI scenario"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "ui",
+          "feature": "ui/account-drilldown.feature",
+          "name": "A card in credit says so",
+          "failsWith": "Expected the text of row-balance-acc_ddcc02 to equal \"£44.00 in credit\""
+        }
+      ]
     },
     {
       "flag": "preferred-on-report",
       "group": "C",
       "layer": "ui",
       "effect": "Preferred name leaks onto report pages",
-      "status": "pending",
-      "plannedCatcher": "`@ui` profile scenario"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "ui",
+          "feature": "ui/profile.feature",
+          "name": "Alex sets a preferred name",
+          "failsWith": "Expected the text of pd-name to equal \"Alex Example\""
+        }
+      ]
     },
     {
       "flag": "preferred-no-trim",
@@ -403,8 +443,16 @@
       "group": "C",
       "layer": "ui",
       "effect": "Legal name placed in the page title",
-      "status": "pending",
-      "plannedCatcher": "profile security scenario"
+      "status": "implemented",
+      "catchers": [
+        {
+          "kind": "scenario",
+          "profile": "ui",
+          "feature": "ui/profile.feature",
+          "name": "Profile details stay out of the page title and address",
+          "failsWith": "Expected <<current page>>.title() to not include \"Alex Example\""
+        }
+      ]
     },
     {
       "flag": "lost-edit",

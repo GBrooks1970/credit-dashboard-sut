@@ -3,6 +3,7 @@
 // like and dislike buttons. Feedback is stored by the service, so it survives a new visit (BR-10).
 import { useEffect, useRef, useState } from 'react';
 import type { components } from '@credit-dashboard-sut/api-client';
+import { TEST_BUILD, flagOn } from '../../flags.tsx';
 import { useLatest } from '../../useLatest.ts';
 import { useSession } from '../../session.tsx';
 import { ChatDrawer } from './ChatDrawer.tsx';
@@ -63,10 +64,11 @@ export function SummarySection({ bureauId, summary }: { bureauId: string; summar
         <a href="#impact" data-testid="link-impact">
           See what affects your score
         </a>
-        <button type="button" data-testid="btn-like" aria-pressed={feedback === 'like'} onClick={() => void choose('like')}>
+        {/* The `like-both` bug flag (test build only; UI specification 8): once either is chosen, both read as pressed. */}
+        <button type="button" data-testid="btn-like" aria-pressed={feedback === 'like' || (TEST_BUILD && flagOn('like-both') && feedback === 'dislike')} onClick={() => void choose('like')}>
           Helpful
         </button>
-        <button type="button" data-testid="btn-dislike" aria-pressed={feedback === 'dislike'} onClick={() => void choose('dislike')}>
+        <button type="button" data-testid="btn-dislike" aria-pressed={feedback === 'dislike' || (TEST_BUILD && flagOn('like-both') && feedback === 'like')} onClick={() => void choose('dislike')}>
           Not helpful
         </button>
       </div>

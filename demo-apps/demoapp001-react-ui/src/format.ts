@@ -18,7 +18,8 @@ export function formatMoney(amountMinor: number, options: { pence: boolean }): s
   if (TEST_BUILD && flagOn('currency-format')) return String(amountMinor);
   const formatter = options.pence ? poundsAndPence : wholePounds;
   const text = formatter.format(Math.abs(amountMinor) / 100);
-  return amountMinor < 0 ? `${text} in credit` : text;
+  // The `negative-balance` bug flag (test build only; UI specification 8): an account in credit reads as an amount owed.
+  return amountMinor < 0 && !(TEST_BUILD && flagOn('negative-balance')) ? `${text} in credit` : text;
 }
 
 /** A whole percentage: `54%`. Above 100 the page adds an 'Over limit' label (DR-013). */

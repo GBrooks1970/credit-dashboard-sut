@@ -1,13 +1,16 @@
-// version: 9 | created: 2026-10-13T11:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 10 | created: 2026-10-13T11:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Builds the service, starts it with test control on and a synthetic key, starts a second instance without test control
 // (for the scenario that needs the surface absent), runs the Cucumber profile against them, and always stops both
 // (design section 8, CDS-22). Run from test-harnesses/harness-serenity:  node scripts/run.mjs api|ui [feature ...]
 // `exit` runs the Phase 4 exit checks (src/exit/exit-checks.ts: axe-core on every page, the three layouts) instead of Cucumber.
 // `flags [flag ...]` runs the bug-flag proof (src/flags/prove-flags.ts): each implemented flag on and off against its catchers.
-// The UI the ui, exit and flags runs build is a TEST BUILD (VITE_TEST_BUILD=true: it reads the flags and has the debug panel).
+// `visual` runs the visual checks (src/visual/: eight pages, two widths, two themes, compared with the committed baselines, CDS-43). Baselines
+// are made and compared on Linux CI only: anywhere else the run refuses, except with VISUAL_LOCAL_TRY=1 (throw-away images, never a result).
+// `visual --update` rewrites the baselines (CI only; the refresh workflow).
+// The UI the ui, exit, flags and visual runs build is a TEST BUILD (VITE_TEST_BUILD=true: it reads the flags and has the debug panel).
 // The ui and exit runs also build the UI (demo-apps/demoapp001-react-ui) and have the service serve it (UI_DIRECTORY, brief 11 D2).
 // The Cucumber, exit and flags child runs asynchronously: a SIGINT or SIGTERM is forwarded to it, and each mode has a whole-run limit
-// (api 10 min, ui and exit 15 min, flags 60 min; HARNESS_TIMEOUT_MS overrides) so a hung run ends with a message, not a cancelled job (CDS-38 R2-B-08).
+// (api 10 min, ui, exit and visual 15 min, flags 60 min; HARNESS_TIMEOUT_MS overrides) so a hung run ends with a message, not a cancelled job (CDS-38 R2-B-08).
 // A run that names a feature file that does not exist, or in which no scenario finished, fails (R2-B-09). The api run type-checks the harness first (R2-B-10).
 // HARNESS_PORT (default 4600) and HARNESS_OFF_PORT (default 4601) override the ports. Anything already answering on
 // either port stops the run, because it would be tested in place of the service started here.
@@ -28,7 +31,16 @@ const controlKey = 'harness-run-key'; // synthetic: the service exists only for 
 
 const [requested = 'api', ...features] = process.argv.slice(2);
 const profile = features.length > 0 ? `select-${requested}` : requested;
-const needsUi = requested === 'ui' || requested === 'exit' || requested === 'flags';
+const needsUi = requested === 'ui' || requested === 'exit' || requested === 'flags' || requested === 'visual';
+// The baselines of the visual checks are Linux CI images: fonts and rendering differ on any other machine, so a comparison there says nothing.
+if (requested === 'visual' && process.env.CI !== 'true' && process.env.VISUAL_LOCAL_TRY !== '1') {
+    console.error('harness: the visual checks compare with baselines made on Linux CI; nothing was compared here (VISUAL_LOCAL_TRY=1 looks for flaky pages against throw-away images and is never a result)');
+    process.exit(1);
+}
+if (requested === 'visual' && features.some((f) => f !== '--update')) {
+    console.error('harness: visual takes no argument but --update');
+    process.exit(1);
+}
 const uiProject = path.resolve(harness, '..', '..', 'demo-apps', 'demoapp001-react-ui');
 
 const answers = (p) => fetch(`${baseOf(p)}/bureaux`).then(() => true, () => false);
@@ -126,7 +138,7 @@ if (requested === 'api' && features.length === 0) {
 
 // A feature that does not exist selects nothing, and Cucumber exits 0 for a run with no scenario (R2-B-09).
 const featurePaths = features.map((f) => path.resolve(harness, '..', '..', 'features-shared', f.endsWith('.feature') ? f : `${f}.feature`));
-if (requested !== 'flags') {
+if (requested !== 'flags' && requested !== 'visual') {
     const missing = featurePaths.filter((f) => !fs.existsSync(f));
     if (missing.length > 0) {
         console.error(`harness: no such feature file: ${missing.map((m) => path.relative(path.resolve(harness, '..', '..'), m)).join(', ')} (the path is under features-shared/, for example api/closed-accounts)`);
@@ -134,7 +146,7 @@ if (requested !== 'flags') {
     }
 }
 
-const limitMs = Number(process.env.HARNESS_TIMEOUT_MS || { api: 10, ui: 15, exit: 15, flags: 60 }[requested] * 60_000 || 15 * 60_000);
+const limitMs = Number(process.env.HARNESS_TIMEOUT_MS || { api: 10, ui: 15, exit: 15, visual: 15, flags: 60 }[requested] * 60_000 || 15 * 60_000);
 /** Runs the child without blocking this process, so a signal reaches the handler above and the limit can end it. */
 function runChild(command, env) {
     return new Promise((resolve) => {
@@ -166,7 +178,9 @@ try {
             ? ['--import', 'tsx', path.join(harness, 'src', 'exit', 'exit-checks.ts')]
             : requested === 'flags'
               ? ['--import', 'tsx', path.join(harness, 'src', 'flags', 'prove-flags.ts'), ...features]
-              : ['--import', 'tsx', cucumber, '--profile', profile, ...paths];
+              : requested === 'visual'
+                ? [path.join(harness, 'node_modules', '@playwright', 'test', 'cli.js'), 'test', '-c', path.join('src', 'visual', 'playwright.config.ts'), ...(features.includes('--update') ? ['--update-snapshots=all'] : ['--update-snapshots=none'])]
+                : ['--import', 'tsx', cucumber, '--profile', profile, ...paths];
     const run = await runChild(command, { ...process.env, HARNESS_BASE_URL: baseOf(port), HARNESS_UI_URL: `http://127.0.0.1:${port}`, HARNESS_OFF_BASE_URL: baseOf(offPort), HARNESS_CONTROL_KEY: controlKey });
     code = run.status ?? 1;
     if (run.timedOut) console.error(`harness: the ${requested} run did not finish within ${limitMs >= 60_000 ? `${Math.round(limitMs / 60_000)} minutes` : `${Math.round(limitMs / 1000)} seconds`} and was stopped (HARNESS_TIMEOUT_MS changes the limit)`);
@@ -193,7 +207,7 @@ try {
             }
         }
     }
-    console.log(`\nharness: ${requested === 'exit' ? 'exit checks' : requested === 'flags' ? 'flag proof' : 'Cucumber'} exit code ${code}; service logs ${main.logPath}, ${off.logPath}`);
+    console.log(`\nharness: ${requested === 'exit' ? 'exit checks' : requested === 'flags' ? 'flag proof' : requested === 'visual' ? 'visual checks' : 'Cucumber'} exit code ${code}; service logs ${main.logPath}, ${off.logPath}`);
 } catch (error) {
     console.error(`harness: ${error.message}`);
 } finally {

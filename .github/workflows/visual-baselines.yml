@@ -1,0 +1,81 @@
+# Refreshes the visual baselines (CDS-43, plan step 6): runs the visual checks in update mode on Linux, the only place the baselines are valid
+# (decision D2), and pushes the 32 images to a new branch for a pull request. It never commits to main. The images are also kept as an
+# artefact so they can be looked at before anyone accepts them (decision D5).
+#
+# Manual only. The repository does not allow Actions to open pull requests, so the workflow pushes the branch and prints its name; the pull
+# request is opened from there.
+name: Visual baselines
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: visual-baselines
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    name: Make the baselines on Linux and push them to a branch
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: true
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            packages/api-client/package-lock.json
+            demo-apps/demoapp001-react-ui/package-lock.json
+            test-harnesses/harness-serenity/package-lock.json
+
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: demo-apps/demoapp001-dotnet-api/global.json
+          cache: true
+          cache-dependency-path: demo-apps/demoapp001-dotnet-api/*/packages.lock.json
+
+      - name: Install the client, the UI and the harness
+        env:
+          SCARF_ANALYTICS: "false"
+        run: |
+          npm ci --prefix packages/api-client --no-audit --no-fund
+          npm ci --prefix demo-apps/demoapp001-react-ui --no-audit --no-fund
+          npm ci --prefix test-harnesses/harness-serenity --no-audit --no-fund
+
+      - name: Install the browser
+        run: npx playwright install --with-deps chromium
+        working-directory: test-harnesses/harness-serenity
+
+      # The old images go first, so a page that was dropped does not leave its image behind.
+      - name: Make the baselines
+        run: |
+          rm -rf visual-baselines
+          npm run test:visual -- --update
+        working-directory: test-harnesses/harness-serenity
+
+      - name: The baselines, to look at
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: visual-baselines
+          path: test-harnesses/harness-serenity/visual-baselines/
+          retention-days: 14
+          if-no-files-found: error
+
+      - name: Push the images to a branch
+        env:
+          BRANCH: claude/visual-baselines-${{ github.run_id }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$BRANCH"
+          git add test-harnesses/harness-serenity/visual-baselines
+          git commit -m "test: visual baselines made on Linux CI (run ${{ github.run_id }})"
+          git push origin "$BRANCH"
+          echo "Pushed $BRANCH; open a pull request from it." >> "$GITHUB_STEP_SUMMARY"

@@ -1,5 +1,5 @@
 ---
-version: 72
+version: 73
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 72 (CDS-43 P5b: the 32 Linux baselines and the visual job enabled; records and C-23 follow in P5c)
+**Version:** 73 (CDS-43 done: visual regression on Linux CI; CDS-44 unblocked)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -91,7 +91,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-40` | P2 the seven API flags implemented and proved | Service | — | HIGH | `CDS-39` | Done 2026-10-14 |
 | `CDS-41` | P3 the eleven UI display and semantics flags, with exit-check catchers for six | UI | — | HIGH | `CDS-40`, `CDS-38` | Done 2026-10-18 |
 | `CDS-42` | P4 the twelve UI behaviour flags, with component-test catchers for three | UI | — | HIGH | `CDS-41` | Done 2026-10-18 |
-| `CDS-43` | P5 visual regression: 32 screenshots, Linux CI baselines | Tooling | — | MEDIUM | `CDS-42` | Open |
+| `CDS-43` | P5 visual regression: 32 screenshots, Linux CI baselines | Tooling | — | MEDIUM | `CDS-42` | Done 2026-10-19 |
 | `CDS-44` | P6 the published Serenity report on Pages beside the board; DR-060 amended | Tooling | — | MEDIUM | `CDS-43` | Open |
 | `CDS-45` | P7 Phase 5 exit: 30 of 30 flags caught for the stated reason in CI, the report linked, the gate brief | UI | — | HIGH | `CDS-44` | Open |
 
@@ -273,7 +273,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-43: P5, visual regression
 
-**IN PROGRESS (plan `DOCS/implementation-plans/2026-10-19_cds-43-visual-regression.md`, approved 2026-10-19; plan pull request #112).** P5a (the check and its workflows, #113 `1999d2e`) and P5b (the 32 Linux baselines, #114 `2642c3a`; the job enabled and the visual-check catcher kind, #115) are done; P5c (records, C-23) follows. Two plan decisions were revised by the owner on 2026-10-19: D3 (the matcher needs `@playwright/test`, a new pinned dev dependency) and D4 (no pixel difference allowed beyond a colour distance of 0.2, because 0.1% hid `util-mismatch`).
+**COMPLETE (2026-10-19; plan `DOCS/implementation-plans/2026-10-19_cds-43-visual-regression.md`; #112 the plan, P5a #113 `1999d2e`, P5b #114 `2642c3a` and #115 `3009bf0`, P5c the records; every CI job green on each).** `npm run check:visual`: eight pages at 375 and 1280 px, light and dark, 32 images against Linux CI baselines made by the manual `visual-baselines.yml` and accepted by the owner; the `Visual` workflow runs when the UI, service or harness changes, on `ubuntu-24.04`. It passed twice running on Linux; a changed colour failed 16 of 32 and a wider margin 32 of 32, each uploading the diff images. `util-mismatch` and `currency-format` are also caught by one image each (the visual-check catcher kind); `check:bug-flags` stays 30 of 30. CDS-38 C-23 closed with the limit unchanged (the `ui` job 3m50s to 5m01s of 15). Known limit: a one-channel colour change of 10 steps is inside the colour distance and passes. Log: `DOCS/implementation-logs/2026-10-19_cds-43-visual-regression-p5a-p5c.md`. **CDS-44 (P6, the published Serenity report) is unblocked; the owner decides first.** Two plan decisions were revised by the owner on 2026-10-19: D3 (the matcher needs `@playwright/test`, a new pinned dev dependency) and D4 (no pixel difference allowed beyond a colour distance of 0.2, because 0.1% hid `util-mismatch`).
 
 ### CDS-42: P4, the eleven remaining behaviour flags
 

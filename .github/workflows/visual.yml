@@ -1,0 +1,83 @@
+# The visual checks (CDS-43, Phase 5 P5): eight pages at 375 and 1280 px, light and dark, compared with the committed baselines.
+#
+# A workflow of its own, not a job of ci.yml: it runs only when something that can change how the pages look changes (plan decision D7),
+# and it must not share the `flags` job, which is at 17 of its 30 minutes (decision D6 of the P4 plan). Baselines are Linux images made by
+# visual-baselines.yml and are compared here and nowhere else (D2).
+#
+# DISABLED in P5a: the job below has `if: false` until the first baselines are committed in P5b, which removes it.
+name: Visual
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - demo-apps/demoapp001-react-ui/**
+      - demo-apps/demoapp001-dotnet-api/**
+      - test-harnesses/harness-serenity/**
+      - .github/workflows/visual.yml
+  pull_request:
+    paths:
+      - demo-apps/demoapp001-react-ui/**
+      - demo-apps/demoapp001-dotnet-api/**
+      - test-harnesses/harness-serenity/**
+      - .github/workflows/visual.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: visual-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  visual:
+    name: Visual (eight pages, two widths, light and dark, against the baselines)
+    if: false
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: |
+            packages/api-client/package-lock.json
+            demo-apps/demoapp001-react-ui/package-lock.json
+            test-harnesses/harness-serenity/package-lock.json
+
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: demo-apps/demoapp001-dotnet-api/global.json
+          cache: true
+          cache-dependency-path: demo-apps/demoapp001-dotnet-api/*/packages.lock.json
+
+      - name: Install the client, the UI and the harness
+        env:
+          SCARF_ANALYTICS: "false"
+        run: |
+          npm ci --prefix packages/api-client --no-audit --no-fund
+          npm ci --prefix demo-apps/demoapp001-react-ui --no-audit --no-fund
+          npm ci --prefix test-harnesses/harness-serenity --no-audit --no-fund
+
+      - name: Install the browser
+        run: npx playwright install --with-deps chromium
+        working-directory: test-harnesses/harness-serenity
+
+      - name: 'Visual checks: every page against its baseline'
+        run: npm run test:visual
+        working-directory: test-harnesses/harness-serenity
+
+      # The actual, expected and diff images of every page that changed, for looking at what moved.
+      - name: The images of a failed check
+        if: failure()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: visual-diff
+          path: test-harnesses/harness-serenity/reports/visual-results/
+          retention-days: 14
+          if-no-files-found: ignore

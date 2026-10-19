@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-19: visual regression closed (CDS-43, Phase 5 P5)
+
+- P5a to P5c done (pull requests #113 to #115 and the records): 32 images against Linux CI baselines, the `Visual` workflow, the visual-check catcher kind. `check:bug-flags` 30 of 30; 29 harness unit tests. CDS-38 C-23 closed. Backlog v73.
+
 ## 2026-10-19: the visual checks on Linux CI (CDS-43, Phase 5 P5b)
 
 - The 32 baselines, made on Linux CI (pull request #114, accepted by the owner). The `Visual` workflow is enabled, with the runner pinned to `ubuntu-24.04` because `ubuntu-latest` moved to Ubuntu 26 on this date and the baselines depend on the image's fonts. On CI it passed twice running; a changed accent colour failed 16 of 32 images and a wider margin 32 of 32, each uploading the diff images.

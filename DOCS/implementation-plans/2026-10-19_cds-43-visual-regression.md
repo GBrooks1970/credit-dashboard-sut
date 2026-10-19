@@ -4,9 +4,9 @@ created: 2026-10-19T08:58Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-43
-status: approved
+status: implemented
 approved: "2026-10-19, Gary Brooks, 'all as recommended, approved' (D1 to D7 as recommended); merge only on the owner's word per pull request"
-delivered: not yet
+delivered: "2026-10-19: P5a #113 `1999d2e`, P5b #114 `2642c3a` and #115 `3009bf0`, P5c this pull request"
 language: en-GB
 ---
 
@@ -85,4 +85,18 @@ The 768 px layout; error and empty states; the debug page; the sign-in page; oth
 
 ## Outcome
 
-[Appended after delivery.]
+**Delivered 2026-10-19** in four pull requests, each merged after every CI job showed `pass`: P5a #113 (`1999d2e`, the check, the shared targets, the two workflows with the job disabled), P5b #114 (`2642c3a`, the 32 Linux baselines) and #115 (`3009bf0`, the job enabled, the runner pinned, the visual-check catcher kind), and P5c (the records). The implementation log is `DOCS/implementation-logs/2026-10-19_cds-43-visual-regression-p5a-p5c.md`. `check:bug-flags` still shows **30 of 30 caught for the stated reason**, and `util-mismatch` and `currency-format` are each now also caught by one image.
+
+**Where it departed from the plan.**
+1. **D3 was revised by the owner.** The plan said Playwright's built-in matcher needed nothing new. `toHaveScreenshot` is in `@playwright/test`, which the harness did not have. I stopped and asked; the owner chose to add it, pinned at 1.64.0 (the release of `playwright`). It also needs a test to run in, so the check is a Playwright spec, not a script beside the exit checks as the Phase 5 plan said.
+2. **D4 was revised by the owner.** With up to 0.1% of the pixels allowed, `util-mismatch` was not caught (a bar 7 points too wide changes under 0.01% of a page), which broke the plan's own proof. Now no pixel may differ beyond a colour distance of 0.2: `util-mismatch` fails 12 of 32 images, and three clean runs on the Windows machine and two on Linux CI all passed. The limit that remains: a one-channel colour change of 10 steps (`#0b5cad` to `#0b66ad`) is inside the colour distance and passes.
+3. **The service clock is frozen** at 2026-10-03T09:00Z for the check. The first local baselines showed dates and the history chart's months that depend on it; without the freeze every baseline would have gone out of date at the turn of a month. Not in the plan.
+4. **A serial test mode hid failures** and was removed: after the first failing image the rest were skipped, so only one diff image was produced and the baseline-folder check did not run.
+5. **The runner is pinned to `ubuntu-24.04`**, not `ubuntu-latest`: GitHub moved `latest` to Ubuntu 26 on the day the baselines were made. Not in the plan.
+6. **The refresh workflow pushes a branch; it does not open the pull request.** The repository does not allow Actions to open pull requests, and I did not change that setting. A push by the workflow's token also starts no checks, so an empty commit from my own account started them on #114.
+7. **The `visual` job is its own workflow (`visual.yml`)**, not a fourth job of `ci.yml`, because D7 asked for a path filter. It runs when the UI, the service, the harness or the workflow changes; it was skipped on the documentation-only pull requests.
+8. **The plan's proof "a flag that changes the look is caught by the snapshot" is built in the proof runner**, as a new catcher kind, `visual-check`. Off Linux CI the proof leaves those catchers out and says so; the flags' other catchers still judge them. The `flags` job grew by under 2 minutes (16m55s to 16m59s on the pull requests, against 16m41s at P4).
+9. **C-23 is closed with no change to the limit.** The flag proof has its own job since P3c, and the visual check its own workflow; the `ui` job ran 3m50s to 5m01s on these pull requests against its 15-minute limit, so 15 minutes stays.
+10. **The first baselines were accepted by the owner** after I viewed six of the 32 and sent four (D5). At 375 px the whole-page image draws the fixed bottom tab bar part-way down the page; it is deterministic and was left.
+
+**Counts at the close** (`3009bf0`): 437 service tests, 239 rules tests, 208 component tests, 20 guard tests, 29 harness unit tests (23 and the six of `cases.test.ts`), 60 `@api` and 59 `@ui` executions, 124 axe scans and 288 layout checks (0 problems), 32 visual images, `verify` 14 of 14. CI: `Verify` 2m04s to 2m14s, `UI` 3m50s to 5m01s, `flags` 16m55s to 16m59s, `Visual` 1m11s to 1m21s.

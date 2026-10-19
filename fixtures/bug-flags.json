@@ -141,6 +141,14 @@
           "target": "overview",
           "name": "exit check: text equals aria-valuenow",
           "failsWith": "progress-value-matches-text: 'account-util-bar-creditcard'"
+        },
+        {
+          "kind": "visual-check",
+          "page": "account list: creditcard",
+          "width": 1280,
+          "theme": "light",
+          "name": "visual check: the credit card list at 1280 px, light",
+          "failsWith": "account-list-creditcard-1280-light-actual.png"
         }
       ]
     },
@@ -157,6 +165,14 @@
           "feature": "ui/debt.feature",
           "name": "Total debt and its trend are shown",
           "failsWith": "Received string: 19827960"
+        },
+        {
+          "kind": "visual-check",
+          "page": "overview",
+          "width": 1280,
+          "theme": "light",
+          "name": "visual check: the overview at 1280 px, light",
+          "failsWith": "overview-1280-light-actual.png"
         }
       ]
     },

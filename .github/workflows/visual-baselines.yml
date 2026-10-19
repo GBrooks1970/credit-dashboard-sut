@@ -2,6 +2,8 @@
 # (decision D2), and pushes the 32 images to a new branch for a pull request. It never commits to main. The images are also kept as an
 # artefact so they can be looked at before anyone accepts them (decision D5).
 #
+# The runner is ubuntu-24.04, the same as visual.yml, so the baselines are made where they are compared.
+#
 # Manual only. The repository does not allow Actions to open pull requests, so the workflow pushes the branch and prints its name; the pull
 # request is opened from there.
 name: Visual baselines
@@ -19,7 +21,7 @@ concurrency:
 jobs:
   refresh:
     name: Make the baselines on Linux and push them to a branch
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0

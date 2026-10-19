@@ -1,5 +1,5 @@
 ---
-version: 71
+version: 72
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 71 (CDS-43 P5a built: the visual check; baselines and the job follow in P5b)
+**Version:** 72 (CDS-43 P5b: the 32 Linux baselines and the visual job enabled; records and C-23 follow in P5c)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -273,7 +273,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-43: P5, visual regression
 
-**IN PROGRESS (plan `DOCS/implementation-plans/2026-10-19_cds-43-visual-regression.md`, approved 2026-10-19; plan pull request #112).** P5a (the check, its workflows with the job disabled) is built on `claude/cds-43-visual-regression`; P5b (the 32 Linux baselines, the proofs, the registry catcher kind, the job enabled) and P5c (records, C-23) follow. Two plan decisions were revised by the owner on 2026-10-19: D3 (the matcher needs `@playwright/test`, a new pinned dev dependency) and D4 (no pixel difference allowed beyond a colour distance of 0.2, because 0.1% hid `util-mismatch`).
+**IN PROGRESS (plan `DOCS/implementation-plans/2026-10-19_cds-43-visual-regression.md`, approved 2026-10-19; plan pull request #112).** P5a (the check and its workflows, #113 `1999d2e`) and P5b (the 32 Linux baselines, #114 `2642c3a`; the job enabled and the visual-check catcher kind, #115) are done; P5c (records, C-23) follows. Two plan decisions were revised by the owner on 2026-10-19: D3 (the matcher needs `@playwright/test`, a new pinned dev dependency) and D4 (no pixel difference allowed beyond a colour distance of 0.2, because 0.1% hid `util-mismatch`).
 
 ### CDS-42: P4, the eleven remaining behaviour flags
 

@@ -2,6 +2,11 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-19: the visual checks, built (CDS-43, Phase 5 P5a)
+
+- `npm run check:visual`: eight pages at 375 and 1280 px, light and dark, 32 images compared with Linux CI baselines (no pixel difference beyond a colour distance of 0.2). `@playwright/test` 1.64.0 added (the harness had only `playwright`). The exit checks' target list moved to `src/exit/targets.ts`, unchanged (124 scans, 288 layout checks). Workflows `visual.yml` (disabled until the baselines exist) and `visual-baselines.yml` (manual refresh to a branch). The baselines and the job follow in P5b.
+- UI specification v35, harness design v7, backlog v71.
+
 ## 2026-10-18: the eleven remaining behaviour flags, 30 of 30 caught (CDS-42, Phase 5 P4)
 
 - Service: `preferred-no-trim`, `email-stays-verified` (`Defects` call sites). UI, test build only: `range-stale`, `like-both`, `open-redirect`, `negative-balance`, `preferred-on-report`, `pii-in-title` (caught by `@ui` scenarios), `toggle-label`, `truncate-summary`, `lost-edit` (caught by component tests; the summary expander and the unsaved-name warning are new, specified behaviour). A new `@api` scenario catches `preferred-no-trim`. `problemText` shows the specific `errors[0]` message (CDS-38 C-26).

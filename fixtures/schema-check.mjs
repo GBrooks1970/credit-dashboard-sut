@@ -1,4 +1,4 @@
-// version: 5 | created: 2026-10-05T20:28Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 6 | created: 2026-10-05T20:28Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Validates the persona and test-user fixtures against persona.schema.json, which references the
 // OpenAPI contract's component schemas, then runs the rule cross-checks in API specification v8, section 9.1.
 // Also validates the override samples in overrides/ against the contract's PersonaOverrides, applies each to
@@ -222,10 +222,12 @@ for (const entry of flagFile.flags) {
       check(declared, where, `test '${c.name}' is not declared with it(...) or test(...) in ${c.file}`);
     } else if (c.kind === 'exit-check') {
       // An exit-check catcher names one target of the exit run (CDS-41); the exit run is a script, so the target is read from its source.
-      const source = fs.readFileSync(path.join(repoRoot, 'test-harnesses', 'harness-serenity', 'src', 'exit', 'exit-checks.ts'), 'utf8');
-      check(typeof c.target === 'string' && source.includes(`name: '${c.target}'`), where, `exit target '${c.target}' is not a target in exit-checks.ts`);
+      // The targets live in targets.ts since CDS-43 (the visual checks share them); the run itself is exit-checks.ts.
+      const exitDir = path.join(repoRoot, 'test-harnesses', 'harness-serenity', 'src', 'exit');
+      const source = fs.readFileSync(path.join(exitDir, 'exit-checks.ts'), 'utf8') + fs.readFileSync(path.join(exitDir, 'targets.ts'), 'utf8');
+      check(typeof c.target === 'string' && source.includes(`name: '${c.target}'`), where, `exit target '${c.target}' is not a target in exit-checks.ts or targets.ts`);
       const rules = fs.readFileSync(path.join(repoRoot, 'test-harnesses', 'harness-serenity', 'src', 'exit', 'semantic-rules.ts'), 'utf8');
-      check(!source.includes(c.failsWith) && !rules.includes(c.failsWith), where, `failsWith '${c.failsWith}' occurs in exit-checks.ts or semantic-rules.ts as written; it must be a message the run builds`);
+      check(!source.includes(c.failsWith) && !rules.includes(c.failsWith), where, `failsWith '${c.failsWith}' occurs in exit-checks.ts, targets.ts or semantic-rules.ts as written; it must be a message the run builds`);
     } else {
       check(false, where, `unknown catcher kind '${c.kind}'`);
     }

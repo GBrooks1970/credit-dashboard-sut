@@ -1,5 +1,5 @@
 ---
-version: 34
+version: 35
 created: 2026-10-14T09:43Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Normative since Phase 0 was accepted on 5 October 2026 (DR-038); changes are recorded in the lines below
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v35:** CDS-43 (P5a): the visual regression check is specified (section 9): eight pages, two widths, two themes, 32 images compared with Linux CI baselines with no pixel difference allowed beyond a colour distance of 0.2. The check is built; the first baselines and the job that runs it follow in P5b.
 **Changes in v34:** CDS-42 (P4c): two behaviours the flag table already assumed are now specified and built, so that a flag can remove them. A summary longer than 280 characters is shown cut at the last whole word before the limit, followed by an ellipsis, with a button `summary-toggle` ("Read more" and "Read less") that shows the whole text and folds it again; a shorter summary has no button (section 6.2). `toggle-label`, `truncate-summary` and `lost-edit` are built in the test build only, each caught for the stated reason by a component test in `src/flags.test.tsx`; that is 30 of 30 implemented flags caught.
 **Changes in v33:** CDS-42 (P4b): `range-stale`, `like-both`, `open-redirect`, `negative-balance`, `preferred-on-report` and `pii-in-title` are built in the test build only. The `@ui` scenarios the registry planned catch all six for the stated reason, so no scenario, step or component test changed. The public-build guard also looks for `open-redirect`, `preferred-on-report` and `pii-in-title`. 27 of 27 implemented flags caught; 3 pending (`toggle-label`, `truncate-summary`, `lost-edit`). The profile pages show the service's specific `errors[0]` message when it sends one (capitalised, with a full stop), else its `detail` (CDS-38 C-26).
 **Changes in v32:** CDS-41 (P3c): `currency-format` (money shown as the count of pence), `double-render` (a list drawn twice) and `ph-a11y` (the year buttons lose `aria-pressed`, the status icons lose their text) are built in the test build only. The `@ui` scenarios the registry planned catch all three for the stated reason, so no scenario, step or component test changed; `ph-a11y` has a second catcher, axe `role-img-alt` on the payment-history target, for the icons. 19 of 19 implemented flags caught; 11 pending.
@@ -324,8 +325,10 @@ Profile-page flags (`nested-button`, `decorative-alt`, `preferred-on-report`, `p
 | Component fixtures | Vitest with responses taken from the contract examples; Prism stays for the typed-client smoke | Phase 4 onwards |
 | Accessibility | axe-core on every page and every state that shows something new, in the light and the dark theme, flags off: zero violations (`@axe-core/playwright`, `npm run check:ui-exit`; also in the `ui` CI job) | Phase 4 exit |
 | Layouts | 375, 768 and 1280 px: one navigation at a time (the bottom tab bar below 768 px), no sideways scroll, the demo banner shown, and axe-core at each width, with normal text and with the root text doubled (`npm run check:ui-exit`) | Phase 4 exit |
-| Visual regression | Snapshots at 375px and 1280px, light and dark | Phase 5 |
+| Visual regression | Eight pages at 375 and 1280 px, light and dark: 32 images against Linux CI baselines, `npm run check:visual` (CDS-43; see below) | Phase 5 |
 | Bug-flag proof | Each flag on: at least one committed check (scenario, exit check, component test or service test) fails for the stated reason, and passes with it off; `npm run check:bug-flags` (brief 13 D5, DR-064) | Phase 5 |
+
+**Visual regression (CDS-43).** `npm run check:visual` (`src/visual/`, run by `node scripts/run.mjs visual`) photographs eight pages (overview, payment history, report changes, hard searches, personal details, the credit card list, a credit card's detail, the profile) at 375 and 1280 px in the light and the dark theme, 32 images, each whole page in its settled state with the flags off, persona `drilldown` and the service's clock frozen at 2026-10-03T09:00Z (what a page shows depends on it), animations off. Each is compared with a baseline in `test-harnesses/harness-serenity/visual-baselines/` with a colour distance of 0.2 per pixel and no pixel allowed to differ beyond it (0.1% of the pixels was tried first and hid `util-mismatch`; decision D4 revised on 2026-10-19). A missing baseline fails, and so does a file in the folder that no case compares. Baselines are made and compared on Linux CI only: anywhere else the run refuses. They are refreshed by the manual workflow `visual-baselines.yml`, which pushes a branch for a reviewed pull request and never commits to `main`. The workflow `visual.yml` runs the check when the UI, the service or the harness changes, and uploads the actual, expected and diff images when it fails.
 
 ## 10. Open questions
 

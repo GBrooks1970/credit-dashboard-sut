@@ -1,5 +1,5 @@
 ---
-version: 70
+version: 71
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 70 (CDS-42 done: the eleven remaining behaviour flags, 30 of 30 flags caught; CDS-43 unblocked, stop for the owner first)
+**Version:** 71 (CDS-43 P5a built: the visual check; baselines and the job follow in P5b)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -270,6 +270,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 ### CDS-39: P1, the flag mechanism and the proof runner
 
 **COMPLETE (2026-10-14; #73 `0117333`, CI run 38545013647).** `Flags` and `Defects` in the service (`rounding-down` is the first API flag); `FlagsProvider`, `useFlag` and the `/debug` panel in a test build of the UI (`plural` is the first UI flag); `fixtures/bug-flags.json` (all 30 flags) checked against the contract in `verify`; `ControlTheTestEnvironment.setBugs` and `HARNESS_BUGS`; `npm run check:bug-flags` (the proof runner), in the `ui` CI job. 332 service tests, 142 Vitest tests, 51 `@ui` executions and 59 `@api` executions green with every flag off; the two implemented flags are caught for the stated reason (3 catchers). Status is Done when merged.
+
+### CDS-43: P5, visual regression
+
+**IN PROGRESS (plan `DOCS/implementation-plans/2026-10-19_cds-43-visual-regression.md`, approved 2026-10-19; plan pull request #112).** P5a (the check, its workflows with the job disabled) is built on `claude/cds-43-visual-regression`; P5b (the 32 Linux baselines, the proofs, the registry catcher kind, the job enabled) and P5c (records, C-23) follow. Two plan decisions were revised by the owner on 2026-10-19: D3 (the matcher needs `@playwright/test`, a new pinned dev dependency) and D4 (no pixel difference allowed beyond a colour distance of 0.2, because 0.1% hid `util-mismatch`).
 
 ### CDS-42: P4, the eleven remaining behaviour flags
 

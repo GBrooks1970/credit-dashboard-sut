@@ -1,4 +1,4 @@
-// version: 6 | created: 2026-10-05T20:28Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 7 | created: 2026-10-05T20:28Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Validates the persona and test-user fixtures against persona.schema.json, which references the
 // OpenAPI contract's component schemas, then runs the rule cross-checks in API specification v8, section 9.1.
 // Also validates the override samples in overrides/ against the contract's PersonaOverrides, applies each to
@@ -228,6 +228,13 @@ for (const entry of flagFile.flags) {
       check(typeof c.target === 'string' && source.includes(`name: '${c.target}'`), where, `exit target '${c.target}' is not a target in exit-checks.ts or targets.ts`);
       const rules = fs.readFileSync(path.join(repoRoot, 'test-harnesses', 'harness-serenity', 'src', 'exit', 'semantic-rules.ts'), 'utf8');
       check(!source.includes(c.failsWith) && !rules.includes(c.failsWith), where, `failsWith '${c.failsWith}' occurs in exit-checks.ts, targets.ts or semantic-rules.ts as written; it must be a message the run builds`);
+    } else if (c.kind === 'visual-check') {
+      // A visual-check catcher names one case of the visual checks (CDS-43): a page, a width and a theme that src/visual/cases.ts has.
+      const cases = fs.readFileSync(path.join(repoRoot, 'test-harnesses', 'harness-serenity', 'src', 'visual', 'cases.ts'), 'utf8');
+      check(typeof c.page === 'string' && cases.includes(`'${c.page}'`), where, `visual page '${c.page}' is not a page in src/visual/cases.ts`);
+      check([375, 1280].includes(c.width) && ['light', 'dark'].includes(c.theme), where, 'a visual-check catcher names its width (375 or 1280) and its theme (light or dark)');
+      check(typeof c.failsWith === 'string' && c.failsWith.endsWith('-actual.png'), where, `failsWith '${c.failsWith}' must be the name of the image the failed case writes (...-actual.png)`);
+      check(!cases.includes(c.failsWith), where, `failsWith '${c.failsWith}' occurs in cases.ts as written; it must be a name the run builds`);
     } else {
       check(false, where, `unknown catcher kind '${c.kind}'`);
     }

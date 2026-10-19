@@ -1,5 +1,5 @@
 ---
-version: 35
+version: 36
 created: 2026-10-14T09:43Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -12,6 +12,7 @@ language: en-GB
 **Status:** Normative since Phase 0 was accepted on 5 October 2026 (DR-038); changes are recorded in the lines below
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
+**Changes in v36:** CDS-43 (P5b): the visual check is enabled in CI (workflow `visual.yml`, runner pinned to `ubuntu-24.04`, because the baselines are images that depend on the runner's fonts) against the 32 Linux baselines. A second kind of catcher, the visual check, is listed in section 9: `util-mismatch` and `currency-format` are each also caught by one image. The flag proof runs these on Linux CI only.
 **Changes in v35:** CDS-43 (P5a): the visual regression check is specified (section 9): eight pages, two widths, two themes, 32 images compared with Linux CI baselines with no pixel difference allowed beyond a colour distance of 0.2. The check is built; the first baselines and the job that runs it follow in P5b.
 **Changes in v34:** CDS-42 (P4c): two behaviours the flag table already assumed are now specified and built, so that a flag can remove them. A summary longer than 280 characters is shown cut at the last whole word before the limit, followed by an ellipsis, with a button `summary-toggle` ("Read more" and "Read less") that shows the whole text and folds it again; a shorter summary has no button (section 6.2). `toggle-label`, `truncate-summary` and `lost-edit` are built in the test build only, each caught for the stated reason by a component test in `src/flags.test.tsx`; that is 30 of 30 implemented flags caught.
 **Changes in v33:** CDS-42 (P4b): `range-stale`, `like-both`, `open-redirect`, `negative-balance`, `preferred-on-report` and `pii-in-title` are built in the test build only. The `@ui` scenarios the registry planned catch all six for the stated reason, so no scenario, step or component test changed. The public-build guard also looks for `open-redirect`, `preferred-on-report` and `pii-in-title`. 27 of 27 implemented flags caught; 3 pending (`toggle-label`, `truncate-summary`, `lost-edit`). The profile pages show the service's specific `errors[0]` message when it sends one (capitalised, with a full stop), else its `detail` (CDS-38 C-26).
@@ -283,8 +284,8 @@ Off by default. Each one recreates a defect seen in the source pages or a common
 | Flag | Effect | Expected catch |
 | --- | --- | --- |
 | `duplicate-nav` | Desktop and mobile navs both rendered | exit check: layouts |
-| `util-mismatch` | Bar width differs from percentage text | exit check: text equals aria-valuenow |
-| `currency-format` | Money shown unformatted (`53024`) | Scenario `Total debt and its trend are shown` |
+| `util-mismatch` | Bar width differs from percentage text | exit check: text equals aria-valuenow; visual check: the credit card list at 1280 px, light |
+| `currency-format` | Money shown unformatted (`53024`) | Scenario `Total debt and its trend are shown`; visual check: the overview at 1280 px, light |
 | `minor-units-label` | Progress bar named '423600% of 510000' | exit check: a bar's name matches its value |
 | `placeholder-aria` | All row bars named 'Accessible label' | exit check: no placeholder names |
 | `chart-no-values` | Chart points announced without values | exit check: the table alternative carries values |
@@ -314,6 +315,8 @@ Profile-page flags (`nested-button`, `decorative-alt`, `preferred-on-report`, `p
 | `no-button-with-href` | a `button` or `role="button"` carries an `href` |
 | `decorative-image-empty-alt` | an image marked `data-decorative` has any `alt` but the empty one |
 | `form-controls-follow-text-size` | an input, select or textarea has a font size different from the text around it |
+
+**Visual-check catchers (CDS-43).** A UI bug flag that changes how a page looks may be caught by one case of the visual check. The flag proof runs that case alone with the flag on (`HARNESS_BUGS`): with the flag off it must pass, with it on it must fail, and the failure must name the image the case writes (`<page>-<width>-<theme>-actual.png`). The baselines are Linux CI images, so the proof runs these catchers on CI (or locally with `VISUAL_LOCAL_TRY=1` against throw-away images); anywhere else it says they were not run and the flag's other catchers judge it.
 
 **Exit-check catchers (CDS-41).** A UI bug flag may be caught by the exit run (`npm run check:ui-exit`) on one of its targets. The flag proof runs the exit script for that target alone (`CDS_EXIT_ONLY=<target>`) with the flag switched on through `HARNESS_BUGS`: with the flag off it must pass, and with it on it must fail with the message the registry records as `failsWith`. A browser context of the exit run carries the control key in storage, because a test build of the UI reads the flags once at start. A filtered run leaves out the sign-in page and the expected-size assertion, which belong to the whole run.
 

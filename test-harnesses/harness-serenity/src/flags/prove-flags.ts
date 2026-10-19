@@ -18,7 +18,7 @@ const uiProject = path.join(repo, 'demo-apps', 'demoapp001-react-ui');
 const wanted = process.argv.slice(2);
 
 interface Catcher {
-    kind: 'scenario' | 'component-test' | 'exit-check';
+    kind: 'scenario' | 'component-test' | 'exit-check' | 'visual-check';
     failsWith: string;
     profile?: 'api' | 'ui';
     feature?: string;
@@ -26,6 +26,10 @@ interface Catcher {
     /** An exit-check catcher: the name of the one target the exit run looks at (CDS_EXIT_ONLY). */
     target?: string;
     name: string;
+    /** A visual-check catcher: the one case of the visual checks it runs (src/visual/cases.ts): the page, the width and the theme. */
+    page?: string;
+    width?: number;
+    theme?: string;
 }
 interface Entry {
     flag: string;
@@ -67,6 +71,15 @@ ${result.stderr}`);
         return { passed: result.status === 0, ran, timedOut: (result.error as NodeJS.ErrnoException | undefined)?.code === 'ETIMEDOUT', output: ran ? output : `${output}
 (no check ran: check the catcher's target)` };
     }
+    if (catcher.kind === 'visual-check') {
+        // One case of the visual checks with the flag set (CDS-43). Its title is the spec's: the describe, then the page.
+        const title = `${catcher.width}px, ${catcher.theme} ${catcher.page}`;
+        const cli = path.join(harness, 'node_modules', '@playwright', 'test', 'cli.js');
+        const result = spawnSync(process.execPath, [cli, 'test', '-c', path.join('src', 'visual', 'playwright.config.ts'), '--update-snapshots=none', '-g', escapeRegExp(title)], { cwd: harness, env, encoding: 'utf8', timeout: TIMEOUT_MS, killSignal: 'SIGKILL', maxBuffer: 64 * 1024 * 1024 });
+        const output = stripAnsi(`${result.stdout}\n${result.stderr}`);
+        const ran = /\b[1-9]\d* (passed|failed)/.test(output);
+        return { passed: result.status === 0, ran, timedOut: (result.error as NodeJS.ErrnoException | undefined)?.code === 'ETIMEDOUT', output: ran ? output : `${output}\n(no case ran: check the catcher's page, width and theme)` };
+    }
     const vitest = path.join(uiProject, 'node_modules', 'vitest', 'vitest.mjs');
     // Vitest reads -t as a pattern, so the name is escaped to match literally (B-26).
     const result = spawnSync(process.execPath, [vitest, 'run', path.join(repo, catcher.file!), '-t', escapeRegExp(catcher.name)], { cwd: uiProject, env, encoding: 'utf8', timeout: TIMEOUT_MS, killSignal: 'SIGKILL' });
@@ -81,6 +94,8 @@ async function resetService() {
     await fetch(`${base}/__test/reset`, { method: 'POST', headers: { 'x-test-control-key': process.env.HARNESS_CONTROL_KEY ?? '' } });
 }
 
+const visualHere = process.env.CI === 'true' || process.env.VISUAL_LOCAL_TRY === '1';
+const leftOut: string[] = [];
 const rows: { flag: string; group: string; layer: string; verdict: Verdict; catchers: { name: string; kind: string; off: Outcome; on: Outcome }[] }[] = [];
 const describeOn = (on: Outcome) => ({ passed: 'PASSES', 'failed-as-stated': 'fails as stated', 'failed-for-another-reason': 'fails, but not as stated', 'did-not-run': 'DID NOT RUN', 'timed-out': 'TIMED OUT' })[on];
 const describeOff = (off: Outcome) => (off === 'passed' ? 'passes' : off === 'failed-for-another-reason' ? 'FAILS (or prints the failure text)' : off === 'did-not-run' ? 'DID NOT RUN' : 'TIMED OUT');
@@ -93,6 +108,13 @@ for (const entry of registry.flags) {
     }
     const results: { name: string; kind: string; off: Outcome; on: Outcome }[] = [];
     for (const catcher of entry.catchers ?? []) {
+        // The visual baselines are Linux CI images: a visual-check catcher runs there, or here with VISUAL_LOCAL_TRY=1 against throw-away
+        // images. Anywhere else it is left out and said so; the flag's other catchers still judge it.
+        if (catcher.kind === 'visual-check' && !visualHere) {
+            leftOut.push(`${entry.flag}: ${catcher.name}`);
+            console.log(`  ${entry.flag.padEnd(24)} ${catcher.kind.padEnd(15)} not run here (Linux CI baselines)  ${catcher.name}`);
+            continue;
+        }
         const off = run(catcher, []);
         const on = run(catcher, [entry.flag]);
         const outcome = { name: catcher.name, kind: catcher.kind, off: judgeOff(off, catcher.failsWith), on: judgeOn(on, catcher.failsWith) };
@@ -114,5 +136,6 @@ fs.writeFileSync(path.join(reports, 'bug-flags.md'), `${lines.join('\n')}\n`);
 const proved = rows.filter((r) => r.verdict !== 'pending');
 const bad = proved.filter((r) => r.verdict !== 'caught');
 console.log(`\nbug flags: ${proved.filter((r) => r.verdict === 'caught').length} of ${proved.length} implemented flags caught for the stated reason; ${rows.length - proved.length} pending`);
+if (leftOut.length > 0) console.log(`${leftOut.length} visual-check catcher(s) not run here, because their baselines are Linux CI images: ${leftOut.join('; ')}`);
 for (const r of bad) console.error(`  - ${r.flag}: ${r.verdict}`);
 process.exitCode = bad.length > 0 ? 1 : 0;

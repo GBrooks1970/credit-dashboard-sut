@@ -1,5 +1,5 @@
 ---
-version: 20
+version: 21
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: implementation-plan-index
@@ -37,3 +37,4 @@ Every implementation plan is written to a file here before implementation starts
 | [`2026-10-16_cds-38-confirmation-fixes.md`](2026-10-16_cds-38-confirmation-fixes.md) | CDS-38 F11a to F11f Fixes from the confirmation pass | 2026-10-16 | delivered 2026-10-18 | outcome appended |
 | [`2026-10-18_cds-41-ui-display-flags.md`](2026-10-18_cds-41-ui-display-flags.md) | CDS-41 P3 The eleven UI display and semantics flags | 2026-10-18 | implemented | #103, #104, #105 (`eee78fa`) |
 | [`2026-10-18_cds-42-ui-behaviour-flags.md`](2026-10-18_cds-42-ui-behaviour-flags.md) | CDS-42 P4 The eleven remaining behaviour flags | 2026-10-18 | implemented | #108, #109, #110 (`8f3c3fb`) |
+| [`2026-10-19_cds-43-visual-regression.md`](2026-10-19_cds-43-visual-regression.md) | CDS-43 P5 Visual regression | 2026-10-19 | approved | P5a next |

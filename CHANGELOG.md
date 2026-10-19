@@ -2,6 +2,11 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-19: the visual checks on Linux CI (CDS-43, Phase 5 P5b)
+
+- The 32 baselines, made on Linux CI (pull request #114, accepted by the owner). The `Visual` workflow is enabled, with the runner pinned to `ubuntu-24.04` because `ubuntu-latest` moved to Ubuntu 26 on this date and the baselines depend on the image's fonts. On CI it passed twice running; a changed accent colour failed 16 of 32 images and a wider margin 32 of 32, each uploading the diff images.
+- A second catcher kind in the bug-flag registry, the visual check: `util-mismatch` and `currency-format` are each also caught by one image (UI specification v36, harness design v8).
+
 ## 2026-10-19: the visual checks, built (CDS-43, Phase 5 P5a)
 
 - `npm run check:visual`: eight pages at 375 and 1280 px, light and dark, 32 images compared with Linux CI baselines (no pixel difference beyond a colour distance of 0.2). `@playwright/test` 1.64.0 added (the harness had only `playwright`). The exit checks' target list moved to `src/exit/targets.ts`, unchanged (124 scans, 288 layout checks). Workflows `visual.yml` (disabled until the baselines exist) and `visual-baselines.yml` (manual refresh to a branch). The baselines and the job follow in P5b.

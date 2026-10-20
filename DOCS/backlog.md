@@ -1,5 +1,5 @@
 ---
-version: 76
+version: 77
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 76 (CDS-44 P6b built: the report job in CI; publication follows)
+**Version:** 77 (CDS-44 P6c built: the site job and the deploy job; the first deployment on main is the proof)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -274,7 +274,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-44: P6, the published Serenity report
 
-**IN PROGRESS (plan `DOCS/implementation-plans/2026-10-20_cds-44-serenity-report.md`, approved 2026-10-20; plan pull request #118).** P6a (the harness writes the Serenity JSON; `check:report`; `report`; #119 `3866e0a`) and P6b (the `report` CI job, Java 21; #120) are built; P6c (the `publish` job, `pages.yml` manual-only, DR-066) follows.
+**IN PROGRESS (plan `DOCS/implementation-plans/2026-10-20_cds-44-serenity-report.md`, approved 2026-10-20; plan pull request #118).** P6a (#119 `3866e0a`), P6b (the `report` CI job, Java 21; #120 `89c74c9`) and P6c (the `site` and `deploy` jobs, `pages.yml` manual-only, DR-066) are built; the first deployment on `main` is the proof of P6c.
 
 ### CDS-46: the flag proof's reset call crashed on a dropped connection
 

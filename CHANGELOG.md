@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-20: the site is assembled, checked and deployed (CDS-44, Phase 5 P6c; DR-066)
+
+- `ci.yml` gains `site` (board plus report, stamped with the commit, checked on every run) and `deploy` (`main` only, the single Pages deployer). `pages.yml` is manual-only. `src/report/site.ts` and `scripts/check-site.ts` (eight unit tests, five mutations; 52 harness unit tests). DR-066 amends DR-060. The first deployment, on the merge to `main`, is the proof. Harness design v12, decision register v30.
+
 ## 2026-10-20: the report job in CI (CDS-44, Phase 5 P6b)
 
 - `Verify` and `UI` upload their Serenity JSON; a new `report` job (Java 21, the CLI pinned at 4.3.4) makes the Serenity BDD report from it, checks it (every execution, the counts, no key or token, the HTML present) and uploads it as an artifact. Nothing is published yet. Harness design v11.

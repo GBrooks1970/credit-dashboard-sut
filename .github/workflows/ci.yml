@@ -235,3 +235,74 @@ jobs:
           path: test-harnesses/harness-serenity/reports/serenity-report/
           retention-days: 14
           if-no-files-found: warn
+
+  # The site (CDS-44, P6c; DR-060 as amended by DR-066): the Kanban board at the top and the Serenity report under /report/, assembled and
+  # checked on every run, so a pull request proves the folder that `deploy` would publish. Only `deploy` publishes, and only from main.
+  site:
+    name: Site (the board and the Serenity report, assembled and checked)
+    needs: [report]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: test-harnesses/harness-serenity/package-lock.json
+
+      - name: Install the harness
+        env:
+          SCARF_ANALYTICS: "false"
+        run: npm ci --prefix test-harnesses/harness-serenity --no-audit --no-fund
+
+      - name: The Serenity report
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          name: serenity-report
+          path: _site/report
+
+      - name: Assemble the site
+        env:
+          SOURCE_SHA: ${{ github.sha }}
+          SOURCE_RUN: ${{ github.run_id }}
+        run: |
+          cp credit-dashboard-sut_implementation-kanban_v1.html _site/index.html
+          printf 'commit: %s\nrun: %s\nbuilt: %s\n' "$SOURCE_SHA" "$SOURCE_RUN" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > _site/report/commit.txt
+
+      # The board must carry its tickets, the report must be a report stamped with this commit, nothing else may be in the folder, and no file may
+      # hold the run's control key or a token (src/report/site.ts).
+      - name: Check the site
+        run: npm --prefix test-harnesses/harness-serenity run check:site -- "$GITHUB_WORKSPACE/_site" "${{ github.sha }}"
+
+      - name: Upload the site
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4.0.0
+        with:
+          path: _site
+
+  # Published from main only (a push, or a manual run of this workflow on main). One deployer for the whole site: the board and the report are
+  # one deployment, so a second workflow deploying would replace one with the other. pages.yml is manual-only (DR-066).
+  deploy:
+    name: Deploy (GitHub Pages, main only)
+    needs: [site]
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+
+      - id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5

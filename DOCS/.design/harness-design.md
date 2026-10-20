@@ -1,5 +1,5 @@
 ---
-version: 8
+version: 9
 created: 2026-10-09T11:20Z
 project: credit-dashboard-sut
 type: design
@@ -363,3 +363,10 @@ Review findings C-09 to C-15 and C-29.
 - **On Linux CI (P5b, 2026-10-19, runner image `ubuntu-24.04`):** the 32 baselines were made by the refresh workflow (run 39238484690, pushed to a branch, accepted by the owner in pull request #114). The check then passed against them twice running on the same commit (run 39240828272, attempts 1 and 2, 1m11s and 1m14s of job time). Planted changes, run by `workflow_dispatch` on throw-away branches that were never merged: a changed accent colour failed 16 of 32 and a wider margin failed 32 of 32, the same counts as the local probes, each uploading the `visual-diff` artefact (3.1 MB and 6.7 MB). So the local and Linux results agree here, and no Linux image differed from itself.
 - **The runner is pinned to `ubuntu-24.04`** in both visual workflows, not `ubuntu-latest`: GitHub moves `latest` to Ubuntu 26 from 2026-10-19, and a new image can change fonts and so every baseline. Move the pin only together with a refresh of the baselines.
 - **The visual-check catcher kind** (P5b): `util-mismatch` (the credit card list, 1280 px, light) and `currency-format` (the overview, 1280 px, light) are each also caught by one image; `prove-flags.ts` runs the one case with the flag on and requires the failure to name the image the case writes (`<page>-<width>-<theme>-actual.png`). Off Linux CI it leaves these catchers out and says so (the flags' other catchers still judge them); `VISUAL_LOCAL_TRY=1` runs them against throw-away images.
+
+## 33. The flag proof and a dropped connection (CDS-46, 2026-10-20)
+
+- **What happened.** The proof crashed on two pushes to `main` on 2026-10-19, after `pii-in-title` (28 of 30 flags), with an uncaught `fetch failed: SocketError: other side closed` from `resetService`; a re-run on the same commit passed, and the pull-request runs passed. Every flag before it was "fails as stated".
+- **The change.** `src/flags/reset.ts` (pure): a 204 is success; a connection error is retried once; a second one, or a status that is not 204, is a result with a message, never a throw. `prove-flags.ts` makes each reset on a connection of its own (`node:http`, `agent: false`, `connection: close`) and, when a reset fails, writes the table so far, prints the message with the end of the service log (`HARNESS_SERVICE_LOG`, set by `run.mjs`) and exits 1. The `flags` job uploads the service logs when it fails.
+- **Proved:** five unit tests, two by mutation (retry removed: three fail; the flag name removed: one fails); a run against a port where nothing listens stops with the named message and exit code 1; a normal run of a flag is unchanged.
+- **Not proved:** that the cause was a stale pooled connection, or that the flakiness is gone. The job kept no log when it failed. Watch the next runs on `main`; a failure now carries the service log.

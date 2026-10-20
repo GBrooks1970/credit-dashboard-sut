@@ -1,5 +1,5 @@
 ---
-version: 73
+version: 74
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 73 (CDS-43 done: visual regression on Linux CI; CDS-44 unblocked)
+**Version:** 74 (CDS-46 opened: the flag proof's reset call crashed on a dropped connection, main CI red twice; CDS-44 awaits the owner)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -94,6 +94,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-43` | P5 visual regression: 32 screenshots, Linux CI baselines | Tooling | — | MEDIUM | `CDS-42` | Done 2026-10-19 |
 | `CDS-44` | P6 the published Serenity report on Pages beside the board; DR-060 amended | Tooling | — | MEDIUM | `CDS-43` | Open |
 | `CDS-45` | P7 Phase 5 exit: 30 of 30 flags caught for the stated reason in CI, the report linked, the gate brief | UI | — | HIGH | `CDS-44` | Open |
+| `CDS-46` | The flag proof's reset call crashed on a dropped connection (main CI red twice, 2026-10-19); retry on a new connection, a named stop, service logs kept on failure | Tooling | — | HIGH | — | Open |
 
 ## Items
 
@@ -270,6 +271,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 ### CDS-39: P1, the flag mechanism and the proof runner
 
 **COMPLETE (2026-10-14; #73 `0117333`, CI run 38545013647).** `Flags` and `Defects` in the service (`rounding-down` is the first API flag); `FlagsProvider`, `useFlag` and the `/debug` panel in a test build of the UI (`plural` is the first UI flag); `fixtures/bug-flags.json` (all 30 flags) checked against the contract in `verify`; `ControlTheTestEnvironment.setBugs` and `HARNESS_BUGS`; `npm run check:bug-flags` (the proof runner), in the `ui` CI job. 332 service tests, 142 Vitest tests, 51 `@ui` executions and 59 `@api` executions green with every flag off; the two implemented flags are caught for the stated reason (3 catchers). Status is Done when merged.
+
+### CDS-46: the flag proof's reset call crashed on a dropped connection
+
+**OPEN (2026-10-20; plan `DOCS/implementation-plans/2026-10-20_cds-46-flag-proof-reset.md`, approved by the owner; fix in review).** The landing page showed the project red: the `flags` job crashed on the pushes of `2642c3a` and `c69c8a7` to `main`, each time after `pii-in-title` (28 of 30), with an uncaught `fetch failed: other side closed` from the proof runner's reset call. A re-run of `CI` on `c69c8a7` passed (run 39375128700), so it is intermittent; the pull-request runs of the same code passed. A stale pooled connection is the likely cause and is not proved, because the job kept no service log. The fix: each reset on a connection of its own, one retry, a named stop with the log tail instead of a crash, and the service logs uploaded when the proof fails. Whether the flakiness is gone shows only over the next runs on `main`.
 
 ### CDS-43: P5, visual regression
 

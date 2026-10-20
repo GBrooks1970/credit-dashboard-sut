@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-20: the exit evidence made durable (CDS-45, Phase 5 P7a)
+
+- The `flags` job writes the proof table to its run summary and uploads it as the `bug-flag-proof` artifact (14 days), also when the proof stops early. The README links the published report and the board and says the deployer is the `deploy` job of `ci.yml`; its decisions count is DR-001 to DR-066.
+
 ## 2026-10-20: the Serenity report published, P6 closed (CDS-44; CDS-46 closed)
 
 - P6a to P6d done (pull requests #119 to #121 and the records): the report at `/report/` beside the board, the first deployment checked live (77 scenarios, 119 test cases, commit stamp `3bdeefe`). CDS-46 (the flag proof's reset call) closed. 52 harness unit tests. Backlog v78.

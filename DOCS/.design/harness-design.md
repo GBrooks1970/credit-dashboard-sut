@@ -1,5 +1,5 @@
 ---
-version: 10
+version: 11
 created: 2026-10-09T11:20Z
 project: credit-dashboard-sut
 type: design
@@ -379,3 +379,9 @@ Review findings C-09 to C-15 and C-29.
 - **The scripts.** `npm run report` gathers the two folders into `reports/serenity/all` (a file name both profiles wrote is an error) and, where Java is installed, runs the Serenity BDD CLI pinned at `net.serenity-bdd:serenity-cli:jar:4.3.4` (as `parabank-bank-automation` does) to `reports/serenity-report`; without Java it says so and stops. `npm run check:report` checks the JSON, and the HTML too where Java is installed or `CI=true`: `index.html` exists and is not a stub, and no text file of the report holds the key or a token.
 - **Probed against real JSON, each reverted:** a failed scenario, a missing file and a planted control key each fail `check:report`; the clean run passes. A first probe that changed only the first `"result"` of a file passed, correctly: only the scenario's own result counts, and Serenity sets it from the steps.
 - **Not proved here:** the HTML. Java is not installed on the author's machine, so `report.mjs`'s Java half and the HTML half of `check-report.ts` run for the first time on CI in P6b, and P6b's pull request says what it shows. The commit stamp of the published folder is checked in P6c, where it is made, not here (a small departure from the plan's P6a list).
+
+## 35. The report job (CDS-44 P6b, 2026-10-20)
+
+- **The job.** `report` in `ci.yml` needs `Verify` and `UI`. Those two upload the Serenity JSON of the runs they already make (`serenity-json-api`, `serenity-json-ui`, always); the job installs the harness, sets up Java 21 (Temurin), downloads both, runs `npm run report` (the CLI pinned at `serenity-cli` 4.3.4) and `npm run check:report` (HTML required because `CI=true`), and uploads the report (`serenity-report`, 14 days). It does not run the suites again, so the report is the runs that gate the pull request. If either suite fails, the job is skipped and no report is made; the JSON artifacts remain for looking at the failure. `setup-java`, `upload-artifact` and `download-artifact` are pinned by SHA at v6.0.0, each more than two weeks old.
+- **First run on CI (pull request #120), the HTML half proved:** the job took 28 seconds; the Serenity BDD CLI made the report from the two JSON artifacts (77 scenarios, 119 test cases, 100% passing, the capabilities Api 56, Security 10 and Ui 53 test cases); the report is 3,873 files (34 MB unpacked, 6.1 MB as an artifact); `check:report` looked at 425 of its text files and found no control key or token. A planted fault, run by `workflow_dispatch` on a throw-away branch that was never merged (the suite's expected count raised by one): the job failed at `Check the report` with "api: the report holds 60 executions, the suite runs 61", and the branch was deleted
+- **Not yet:** nothing is published; `publish` and the Pages change are P6c. The report is 34 MB unpacked in 3,873 files, so the Pages folder is well inside the 1 GB limit.

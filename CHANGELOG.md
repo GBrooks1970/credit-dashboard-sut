@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-20: the report job in CI (CDS-44, Phase 5 P6b)
+
+- `Verify` and `UI` upload their Serenity JSON; a new `report` job (Java 21, the CLI pinned at 4.3.4) makes the Serenity BDD report from it, checks it (every execution, the counts, no key or token, the HTML present) and uploads it as an artifact. Nothing is published yet. Harness design v11.
+
 ## 2026-10-20: the Serenity report, harness side (CDS-44, Phase 5 P6a)
 
 - Both profiles write Serenity BDD JSON (`reports/serenity/api`, `/ui`; `@serenity-js/serenity-bdd` 3.49.0 added). `src/report/checks.ts` (pure, ten unit tests, five mutations): every execution present and `SUCCESS`, the counts (60 and 59), every file parses, no control key or token. `npm run report` (Java optional) and `npm run check:report`. 44 harness unit tests. The HTML half is first proved on CI in P6b. Harness design v10.

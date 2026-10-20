@@ -4,9 +4,9 @@ created: 2026-10-20T23:35Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-47
-status: approved
+status: implemented
 approved: "2026-10-20, Gary Brooks, 'Confirmed, approve CDS-47 plan, merge and continue' (decision brief 14 D4 option 1); merge only on the owner's word per pull request"
-delivered: not yet
+delivered: "2026-10-21: #127 (merged on the owner's word; the merge commit is in the P7c records)"
 language: en-GB
 ---
 
@@ -43,4 +43,6 @@ The report job, the site job, anything in CI; the flag proof; any scenario.
 
 ## Outcome
 
-[Appended after delivery.]
+**Delivered 2026-10-21** in #127, merged after every CI job showed `pass`. The implementation log is `DOCS/implementation-logs/2026-10-21_cds-47-serenity-json-switch.md`. As planned: `src/report/switch.ts` (pure, two unit tests written first, one mutation caught), `crewFor` writing and emptying the folder only when `HARNESS_SERENITY_JSON` is `on`, `run.mjs` v12 setting it for a whole `api` or `ui` run only. Probed on real runs: a whole `api` run 33 files, a whole `ui` run 44; a named feature (4 scenarios) and a one-flag proof leave them untouched; `check:report` passes with 60 and 59; with the switch forced on, the same named run leaves 2 files holding 4 executions and `check:report` fails.
+
+**Where it departed from the plan.** One probe was mistyped and was redone: `run.mjs api closed-accounts` stopped at once ("no such feature file", the path is `api/closed-accounts`), so it proved nothing; the real named-feature probe and the mutation were run with `api/closed-accounts`. The first mutation probe was therefore also invalid and was repeated. Nothing in the code differs from the plan.

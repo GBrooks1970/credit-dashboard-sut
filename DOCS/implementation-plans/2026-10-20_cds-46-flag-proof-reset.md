@@ -4,9 +4,9 @@ created: 2026-10-20T07:10Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-46
-status: approved
+status: implemented
 approved: "2026-10-20, Gary Brooks, 'Action the reset fix' after the proposal below; merge only on the owner's word"
-delivered: not yet
+delivered: "2026-10-20: #117 `3860187`"
 language: en-GB
 ---
 
@@ -38,4 +38,8 @@ Any change to a flag, a catcher or the service; the P6 plan (CDS-44), which wait
 
 ## Outcome
 
-[Appended after delivery.]
+**Delivered 2026-10-20** in #117 (`3860187`), merged after all four jobs showed `pass` (the proof 17m00s). The implementation log is `DOCS/implementation-logs/2026-10-20_cds-46-flag-proof-reset.md`. The fix is as planned: `src/flags/reset.ts` (pure, five unit tests, two proved by mutation), each reset on a connection of its own with one retry, a named stop with the log tail instead of a crash, and the service logs uploaded when the proof fails.
+
+**What the evidence says now.** The first push to main after the fix (`3bdeefe`, run 39438399295) passed all jobs, the proof in 17m06s; it is one run. Whether the cause was a stale pooled connection is still not proved, and the flakiness cannot be called gone from a few runs. A failure now keeps the service log.
+
+**Where it departed from the plan.** Nothing in the code. The records were split: this Outcome and the backlog status are set here, in the P6d records, not in #117.

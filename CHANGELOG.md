@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-20: the Serenity report published, P6 closed (CDS-44; CDS-46 closed)
+
+- P6a to P6d done (pull requests #119 to #121 and the records): the report at `/report/` beside the board, the first deployment checked live (77 scenarios, 119 test cases, commit stamp `3bdeefe`). CDS-46 (the flag proof's reset call) closed. 52 harness unit tests. Backlog v78.
+
 ## 2026-10-20: the site is assembled, checked and deployed (CDS-44, Phase 5 P6c; DR-066)
 
 - `ci.yml` gains `site` (board plus report, stamped with the commit, checked on every run) and `deploy` (`main` only, the single Pages deployer). `pages.yml` is manual-only. `src/report/site.ts` and `scripts/check-site.ts` (eight unit tests, five mutations; 52 harness unit tests). DR-066 amends DR-060. The first deployment, on the merge to `main`, is the proof. Harness design v12, decision register v30.

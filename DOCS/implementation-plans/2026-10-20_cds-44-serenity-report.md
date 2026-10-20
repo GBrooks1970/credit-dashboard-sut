@@ -4,9 +4,9 @@ created: 2026-10-20T07:15Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-44
-status: approved
+status: implemented
 approved: "2026-10-20, Gary Brooks, 'all approved as recommended' (D1 to D8 as recommended); merge only on the owner's word per pull request"
-delivered: not yet
+delivered: "2026-10-20: P6a #119 `3866e0a`, P6b #120 `89c74c9`, P6c #121 `3bdeefe`, P6d this pull request"
 language: en-GB
 ---
 
@@ -83,4 +83,16 @@ Linking the report from the README or the landing card (P7); a failure screensho
 
 ## Outcome
 
-[Appended after delivery.]
+**Delivered 2026-10-20** in four pull requests, each merged after every CI job showed `pass`: P6a #119 (`3866e0a`, the harness writes the Serenity JSON and checks it), P6b #120 (`89c74c9`, the `report` job), P6c #121 (`3bdeefe`, the `site` and `deploy` jobs, `pages.yml` manual-only, DR-066) and P6d (the records). The implementation log is `DOCS/implementation-logs/2026-10-20_cds-44-serenity-report-p6a-p6d.md`. The first deployment, on the merge of #121, worked: the live site serves the board at `/` and the report at `/report/` (77 scenarios, 119 test cases, all passing), and `/report/commit.txt` names the commit it was built from (`3bdeefe`). No key or token is on the live pages.
+
+**Where it departed from the plan.**
+1. **Two jobs, not one `publish` job.** A job with `environment: github-pages` would run, and may be held, on every pull request. `site` (assemble and check) runs on every run and `deploy` (main only, a push or a manual run) publishes, so a pull request proves the folder it would publish and only the deploy step is skipped.
+2. **The commit stamp check moved from P6a to P6c**, where the stamp is made.
+3. **A type cast.** `configure` and `@serenity-js/serenity-bdd` are typed from two builds of `@serenity-js/core`; the crew is cast once, with the reason beside it.
+4. **Decision D6 (the nine-day-old package) was accepted as recommended.** `@serenity-js/serenity-bdd` 3.49.0 pulled `axios` and about 40 smaller packages into the harness lock file (no install scripts).
+5. **The expected counts are 60 and 59 executions, not files:** an outline is one Serenity JSON file with one row per example (33 and 44 files).
+6. **The planned proof on CI was a planted count** (the expected `@api` executions raised by one, run by `workflow_dispatch` on a branch that was never merged): the report job failed at "Check the report" with the message the plan asked for. A planted failing scenario was not run on CI: a failing suite fails `Verify` or `UI`, so the `report` job is skipped and no report is made; the unit tests and local probes cover a failed result in the JSON.
+7. **The plan PR #118 hit a conflict** in the plans index when the CDS-46 fix merged first; resolved by merging `main` in and keeping both rows.
+8. **A bug found in the proof runner while this was being planned** (CDS-46, below) was fixed first, on its own plan.
+
+**Counts at the close** (`3bdeefe`): 437 service tests, 239 rules tests, 208 component tests, 20 guard tests, 52 harness unit tests (29 before P6, five of CDS-46, ten for the report checks, eight for the site check), 60 `@api` and 59 `@ui` executions, 124 axe scans and 288 layout checks, 32 visual images, `verify` 14 of 14, 30 of 30 flags. CI: `Verify` 2m00s to 2m34s, `UI` 4m43s to 5m15s, `flags` 15m52s to 17m12s, `Visual` 1m03s to 1m28s, `Report` 28 s to 45 s, `Site` 19 s, `Deploy` about 1 minute. The report is 3,875 files, 34 MB unpacked, 6 MB as an artifact.

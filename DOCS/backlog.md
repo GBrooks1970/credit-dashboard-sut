@@ -1,5 +1,5 @@
 ---
-version: 79
+version: 80
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 79 (CDS-45 P7a built: the proof table kept and the README links the report; the gate brief follows)
+**Version:** 80 (CDS-45 P7b: the full run is done and decision brief 14 is written; stop for the owner's answers; CDS-47 opened)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -95,6 +95,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-44` | P6 the published Serenity report on Pages beside the board; DR-060 amended | Tooling | — | MEDIUM | `CDS-43` | Done 2026-10-20 |
 | `CDS-45` | P7 Phase 5 exit: 30 of 30 flags caught for the stated reason in CI, the report linked, the gate brief | UI | — | HIGH | `CDS-44` | Open |
 | `CDS-46` | The flag proof's reset call crashed on a dropped connection (main CI red twice, 2026-10-19); retry on a new connection, a named stop, service logs kept on failure | Tooling | — | HIGH | — | Done 2026-10-20 |
+| `CDS-47` | The Serenity JSON is overwritten by any other Cucumber run (the flag proof, a named-feature run): only a whole `api` or `ui` run should write it (found by the Phase 5 gate's full run; decision brief 14 D4) | Tooling | — | MEDIUM | — | Open |
 
 ## Items
 
@@ -274,7 +275,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-45: P7, the Phase 5 exit
 
-**IN PROGRESS (plan `DOCS/implementation-plans/2026-10-20_cds-45-phase-5-exit.md`, approved 2026-10-20; plan pull request #123).** P7a (the `flags` job keeps its table; the README links the published report and the board) is built on `claude/cds-45-p7a-evidence`; P7b (the full run, decision brief 14) and P7c (the gate record, DR-067, after the owner's answers) follow. The gate record is the owner's.
+**IN PROGRESS (plan `DOCS/implementation-plans/2026-10-20_cds-45-phase-5-exit.md`, approved 2026-10-20; plan pull request #123).** P7a (the `flags` job keeps its table; the README links the published report and the board; #124 `5b3a452`) is done. P7b is done: the full run on `5b3a452` (`verify` 14 of 14, 208 component tests, 59 `@ui` executions, the exit run 124 and 288, 30 of 30 flags) and decision brief 14 (D1 the gate record, D2 what comes after, D3 the landing link, D4 CDS-47). **Stop for the owner's answers.** P7c (the gate record, DR-067, after the answers) follows. The gate record is the owner's.
 
 ### CDS-44: P6, the published Serenity report
 

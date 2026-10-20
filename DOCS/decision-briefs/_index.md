@@ -1,5 +1,5 @@
 ---
-version: 12
+version: 13
 created: 2026-10-14T09:10Z
 project: credit-dashboard-sut
 type: decision-brief-index
@@ -25,3 +25,4 @@ One row per brief. Briefs are cited by number from other documents; this index r
 | 11 | [`credit-dashboard-sut_decision-brief-11_v1_20261012T1832Z.md`](credit-dashboard-sut_decision-brief-11_v1_20261012T1832Z.md) | 2026-10-12 | Phase 4 (the React UI): backend for the UI scenarios, how the browser reaches the API, layout, CI, harness, pins | CDS-29; CDS-31 to CDS-36 | decided | DR-062; UI specification v13; backlog v53 |
 | 12 | [`credit-dashboard-sut_decision-brief-12_v1_20261013T2243Z.md`](credit-dashboard-sut_decision-brief-12_v1_20261013T2243Z.md) | 2026-10-13 | Recording the Phase 4 gate; what comes after the UI; the two unbuilt items of UI specification 6.4 | Phase 4 gate record; Phase 5 plan | decided | DR-063 (D1 option 2: CDS-38, the independent review); README; UI specification v20; backlog v62 (CDS-37, CDS-38) |
 | 13 | [`credit-dashboard-sut_decision-brief-13_v1_20261014T0830Z.md`](credit-dashboard-sut_decision-brief-13_v1_20261014T0830Z.md) | 2026-10-14 | Phase 5 (defects and evidence): how the flags reach the UI, screenshot baselines, where the report is published, the three uncaught flags, what counts as a catch, when the independent review runs | CDS-37; CDS-39 to CDS-45 | decided | DR-064; plan v2; UI specification v21; backlog v64 (CDS-39 to CDS-45) |
+| 14 | [`credit-dashboard-sut_decision-brief-14_v1_20261020T2045Z.md`](credit-dashboard-sut_decision-brief-14_v1_20261020T2045Z.md) | 2026-10-20 | Recording the Phase 5 gate; what comes after it; the landing link to the report; the Serenity JSON overwritten by other Cucumber runs | CDS-45; CDS-47 | awaiting-decision | DR-067 follows the answers |

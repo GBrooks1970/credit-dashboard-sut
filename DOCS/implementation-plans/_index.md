@@ -1,5 +1,5 @@
 ---
-version: 23
+version: 24
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: implementation-plan-index
@@ -39,3 +39,4 @@ Every implementation plan is written to a file here before implementation starts
 | [`2026-10-18_cds-42-ui-behaviour-flags.md`](2026-10-18_cds-42-ui-behaviour-flags.md) | CDS-42 P4 The eleven remaining behaviour flags | 2026-10-18 | implemented | #108, #109, #110 (`8f3c3fb`) |
 | [`2026-10-19_cds-43-visual-regression.md`](2026-10-19_cds-43-visual-regression.md) | CDS-43 P5 Visual regression | 2026-10-19 | implemented | #113, #114, #115 (`3009bf0`) |
 | [`2026-10-20_cds-46-flag-proof-reset.md`](2026-10-20_cds-46-flag-proof-reset.md) | CDS-46 The flag proof's reset call crashed on a dropped connection | 2026-10-20 | approved | in review |
+| [`2026-10-20_cds-44-serenity-report.md`](2026-10-20_cds-44-serenity-report.md) | CDS-44 P6 The published Serenity report | 2026-10-20 | approved | P6a next |

@@ -146,3 +146,13 @@ jobs:
       - name: 'Bug-flag proof: each implemented flag on and off against its catchers'
         run: npm run test:flags
         working-directory: test-harnesses/harness-serenity
+
+      # What the service said, when the proof failed (CDS-46): the proof crashed twice on 2026-10-19 with a dropped connection and no log to read.
+      - name: The service logs of a failed proof
+        if: failure()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: flag-proof-service-logs
+          path: /tmp/harness-service-*.log
+          retention-days: 14
+          if-no-files-found: ignore

@@ -1,5 +1,5 @@
 ---
-version: 77
+version: 78
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 77 (CDS-44 P6c built: the site job and the deploy job; the first deployment on main is the proof)
+**Version:** 78 (CDS-44 done: the Serenity report is published beside the board; CDS-46 done; CDS-45 unblocked, stop for the owner first)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -92,9 +92,9 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-41` | P3 the eleven UI display and semantics flags, with exit-check catchers for six | UI | — | HIGH | `CDS-40`, `CDS-38` | Done 2026-10-18 |
 | `CDS-42` | P4 the twelve UI behaviour flags, with component-test catchers for three | UI | — | HIGH | `CDS-41` | Done 2026-10-18 |
 | `CDS-43` | P5 visual regression: 32 screenshots, Linux CI baselines | Tooling | — | MEDIUM | `CDS-42` | Done 2026-10-19 |
-| `CDS-44` | P6 the published Serenity report on Pages beside the board; DR-060 amended | Tooling | — | MEDIUM | `CDS-43` | Open |
+| `CDS-44` | P6 the published Serenity report on Pages beside the board; DR-060 amended | Tooling | — | MEDIUM | `CDS-43` | Done 2026-10-20 |
 | `CDS-45` | P7 Phase 5 exit: 30 of 30 flags caught for the stated reason in CI, the report linked, the gate brief | UI | — | HIGH | `CDS-44` | Open |
-| `CDS-46` | The flag proof's reset call crashed on a dropped connection (main CI red twice, 2026-10-19); retry on a new connection, a named stop, service logs kept on failure | Tooling | — | HIGH | — | Open |
+| `CDS-46` | The flag proof's reset call crashed on a dropped connection (main CI red twice, 2026-10-19); retry on a new connection, a named stop, service logs kept on failure | Tooling | — | HIGH | — | Done 2026-10-20 |
 
 ## Items
 
@@ -274,11 +274,11 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-44: P6, the published Serenity report
 
-**IN PROGRESS (plan `DOCS/implementation-plans/2026-10-20_cds-44-serenity-report.md`, approved 2026-10-20; plan pull request #118).** P6a (#119 `3866e0a`), P6b (the `report` CI job, Java 21; #120 `89c74c9`) and P6c (the `site` and `deploy` jobs, `pages.yml` manual-only, DR-066) are built; the first deployment on `main` is the proof of P6c.
+**COMPLETE (2026-10-20; plan `DOCS/implementation-plans/2026-10-20_cds-44-serenity-report.md`; #118 the plan, P6a #119 `3866e0a`, P6b #120 `89c74c9`, P6c #121 `3bdeefe`, P6d the records; every CI job green on each).** The Serenity BDD report of the 60 `@api` and 59 `@ui` executions (77 scenarios, 119 test cases, all passing) is published at `/report/` beside the Kanban board at `/`, built from the runs that gate each pull request (Java 21, the CLI pinned at 4.3.4), checked before it is deployed (every execution, the counts, no control key or token, the board payload, a commit stamp) and deployed from `main` only by the `deploy` job of `ci.yml`; `pages.yml` is manual-only. DR-066 amends DR-060. The first deployment was checked live. Log: `DOCS/implementation-logs/2026-10-20_cds-44-serenity-report-p6a-p6d.md`. **CDS-45 (P7, the Phase 5 exit) is unblocked; the owner decides first.**
 
 ### CDS-46: the flag proof's reset call crashed on a dropped connection
 
-**OPEN (2026-10-20; plan `DOCS/implementation-plans/2026-10-20_cds-46-flag-proof-reset.md`, approved by the owner; fix in review).** The landing page showed the project red: the `flags` job crashed on the pushes of `2642c3a` and `c69c8a7` to `main`, each time after `pii-in-title` (28 of 30), with an uncaught `fetch failed: other side closed` from the proof runner's reset call. A re-run of `CI` on `c69c8a7` passed (run 39375128700), so it is intermittent; the pull-request runs of the same code passed. A stale pooled connection is the likely cause and is not proved, because the job kept no service log. The fix: each reset on a connection of its own, one retry, a named stop with the log tail instead of a crash, and the service logs uploaded when the proof fails. Whether the flakiness is gone shows only over the next runs on `main`.
+**COMPLETE (2026-10-20; plan `DOCS/implementation-plans/2026-10-20_cds-46-flag-proof-reset.md`; #117 `3860187`; log `DOCS/implementation-logs/2026-10-20_cds-46-flag-proof-reset.md`).** The landing page showed the project red: the `flags` job crashed on the pushes of `2642c3a` and `c69c8a7` to `main`, each time after `pii-in-title` (28 of 30), with an uncaught `fetch failed: other side closed` from the proof runner's reset call. A re-run of `CI` on `c69c8a7` passed (run 39375128700), so it is intermittent; the pull-request runs of the same code passed. A stale pooled connection is the likely cause and is not proved, because the job kept no service log. The fix: each reset on a connection of its own, one retry, a named stop with the log tail instead of a crash, and the service logs uploaded when the proof fails. Whether the flakiness is gone shows only over the next runs on `main`.
 
 ### CDS-43: P5, visual regression
 

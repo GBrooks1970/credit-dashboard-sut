@@ -167,6 +167,25 @@ jobs:
         run: npm run test:flags
         working-directory: test-harnesses/harness-serenity
 
+      # The table the proof wrote, kept where a gate can cite it (CDS-45, P7a): in this run's summary, and as an artifact after the log has expired.
+      # Written when the proof stops early as well, with the flags judged so far.
+      - name: The proof table in the job summary
+        if: always()
+        run: |
+          if [ -f reports/bug-flags.md ]; then cat reports/bug-flags.md >> "$GITHUB_STEP_SUMMARY"; else echo 'The proof wrote no table.' >> "$GITHUB_STEP_SUMMARY"; fi
+        working-directory: test-harnesses/harness-serenity
+
+      - name: The proof table as an artifact
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: bug-flag-proof
+          path: |
+            test-harnesses/harness-serenity/reports/bug-flags.json
+            test-harnesses/harness-serenity/reports/bug-flags.md
+          retention-days: 14
+          if-no-files-found: warn
+
       # What the service said, when the proof failed (CDS-46): the proof crashed twice on 2026-10-19 with a dropped connection and no log to read.
       - name: The service logs of a failed proof
         if: failure()

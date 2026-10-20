@@ -27,11 +27,12 @@ service validates every request against the contract (CDS-19) and serves all 36 
 | [`DOCS/.design/ui-feature-profile.md`](DOCS/.design/ui-feature-profile.md) | My Profile feature spec: rules PR-01 to PR-11 |
 | [`DOCS/.design/harness-design.md`](DOCS/.design/harness-design.md) | Harness design: layout, abilities, contract validation, service lifecycle, clock-and-token rule, where each step pattern lands (CDS-22) |
 | [`DOCS/.design/page-survey.md`](DOCS/.design/page-survey.md) | Structure survey that informed the specifications (input, not a specification) |
-| [`DOCS/decision-register.md`](DOCS/decision-register.md) | Decisions DR-001 to DR-065 |
+| [`DOCS/decision-register.md`](DOCS/decision-register.md) | Decisions DR-001 to DR-066 |
 | [`DOCS/decision-briefs/`](DOCS/decision-briefs/_index.md) | The reasoning behind decisions: options, a recommendation and the argument against |
 | [`DOCS/glossary.md`](DOCS/glossary.md), [`DOCS/step-glossary.md`](DOCS/step-glossary.md) | Normative vocabulary and agreed Gherkin steps |
 | [`DOCS/backlog.md`](DOCS/backlog.md) | Backlog: the source of truth for status |
-| [`credit-dashboard-sut_implementation-kanban_v1.html`](credit-dashboard-sut_implementation-kanban_v1.html) | Kanban board generated from the backlog by `portfolio-kanban-generator` (one self-contained file; `npm run kanban`); published at <https://gbrooks1970.github.io/credit-dashboard-sut/> by `.github/workflows/pages.yml` when it changes (CDS-30, DR-060) |
+| [`credit-dashboard-sut_implementation-kanban_v1.html`](credit-dashboard-sut_implementation-kanban_v1.html) | Kanban board generated from the backlog by `portfolio-kanban-generator` (one self-contained file; `npm run kanban`); published at <https://gbrooks1970.github.io/credit-dashboard-sut/> by the `deploy` job of `.github/workflows/ci.yml` from `main` (CDS-30, DR-060; DR-066: `pages.yml` is manual-only and publishes the board alone) |
+| The Serenity report | The Serenity BDD report of the 60 `@api` and 59 `@ui` executions (77 scenarios, 119 test cases), built by CI from the runs that gate each pull request and published at <https://gbrooks1970.github.io/credit-dashboard-sut/report/>; `/report/commit.txt` names the commit it was built from (CDS-44, DR-066). The same two jobs prove every flag: the `flags` job's table is in its run summary and kept as the `bug-flag-proof` artifact (CDS-45) |
 | [`features-shared/`](features-shared/) | Gherkin scenarios by layer: `api/`, `ui/`, `security/` |
 | [`fixtures/`](fixtures/) | Seven personas, test users, override samples, the fixture schema and its check |
 | [`DOCS/implementation-plans/`](DOCS/implementation-plans/_index.md) | Implementation plans, written and approved before the work starts (DR-041) |

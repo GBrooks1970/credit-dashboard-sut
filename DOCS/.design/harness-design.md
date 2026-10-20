@@ -1,5 +1,5 @@
 ---
-version: 12
+version: 13
 created: 2026-10-09T11:20Z
 project: credit-dashboard-sut
 type: design
@@ -393,3 +393,8 @@ Review findings C-09 to C-15 and C-29.
 - **`deploy` does not wait for the flag proof.** `site` needs `report`, which needs `Verify` and `UI`. A flaky proof (CDS-46) cannot hold the board back; a failing suite, or a failing report check, does.
 - **Probed on a real folder** (the report downloaded from CI, the board, a stamp), each reverted: the clean folder passes (3,875 files); an extra file, a stamp for another commit, a control key in a report file, a bearer token in a report file and a board with no payload each fail with the file named and the value not shown.
 - **Not proved until the first deployment on `main`:** that `deploy` runs and the live site serves the board and the report. The `github-pages` environment may restrict branches, so this cannot be rehearsed from a branch; the checks that run before it are rehearsed on every pull request. Rollback is a revert pull request.
+
+## 37. The proof table kept (CDS-45 P7a, 2026-10-20)
+
+- **Why.** The Phase 5 gate cites 30 of 30 flags caught in CI, and the `flags` job kept that only in its log, which expires. After the proof step the job now appends `reports/bug-flags.md` to the run summary and uploads `bug-flags.json` and `.md` as the `bug-flag-proof` artifact (14 days). Both steps run when the proof fails or stops early (CDS-46), so a red run shows the flags judged so far.
+- **Not a published page.** The table is in the run and the artifact only; the report on Pages is the scenario runs (DR-066).

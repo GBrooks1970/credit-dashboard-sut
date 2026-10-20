@@ -1,5 +1,5 @@
 ---
-version: 78
+version: 79
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 78 (CDS-44 done: the Serenity report is published beside the board; CDS-46 done; CDS-45 unblocked, stop for the owner first)
+**Version:** 79 (CDS-45 P7a built: the proof table kept and the README links the report; the gate brief follows)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -271,6 +271,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 ### CDS-39: P1, the flag mechanism and the proof runner
 
 **COMPLETE (2026-10-14; #73 `0117333`, CI run 38545013647).** `Flags` and `Defects` in the service (`rounding-down` is the first API flag); `FlagsProvider`, `useFlag` and the `/debug` panel in a test build of the UI (`plural` is the first UI flag); `fixtures/bug-flags.json` (all 30 flags) checked against the contract in `verify`; `ControlTheTestEnvironment.setBugs` and `HARNESS_BUGS`; `npm run check:bug-flags` (the proof runner), in the `ui` CI job. 332 service tests, 142 Vitest tests, 51 `@ui` executions and 59 `@api` executions green with every flag off; the two implemented flags are caught for the stated reason (3 catchers). Status is Done when merged.
+
+### CDS-45: P7, the Phase 5 exit
+
+**IN PROGRESS (plan `DOCS/implementation-plans/2026-10-20_cds-45-phase-5-exit.md`, approved 2026-10-20; plan pull request #123).** P7a (the `flags` job keeps its table; the README links the published report and the board) is built on `claude/cds-45-p7a-evidence`; P7b (the full run, decision brief 14) and P7c (the gate record, DR-067, after the owner's answers) follow. The gate record is the owner's.
 
 ### CDS-44: P6, the published Serenity report
 

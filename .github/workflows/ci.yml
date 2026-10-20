@@ -54,6 +54,16 @@ jobs:
           npm ci
           npm run verify
 
+      # The Serenity JSON of the @api run that `verify` made, for the report job (CDS-44). Kept even when a later step failed.
+      - name: The Serenity JSON of the @api run
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: serenity-json-api
+          path: test-harnesses/harness-serenity/reports/serenity/api/
+          retention-days: 14
+          if-no-files-found: warn
+
   # The UI (Phase 4, decision brief 11 D4): typecheck, component tests, build, then the @ui scenarios in a real browser
   # against the service, which serves the built UI. A separate job so `verify` stays short and the browser setup is isolated.
   ui:
@@ -104,6 +114,16 @@ jobs:
       - name: 'Exit checks: axe-core on every page, the three layouts'
         run: npm run test:exit
         working-directory: test-harnesses/harness-serenity
+
+      # The Serenity JSON of the @ui run, for the report job (CDS-44). Kept even when a later step failed.
+      - name: The Serenity JSON of the @ui run
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: serenity-json-ui
+          path: test-harnesses/harness-serenity/reports/serenity/ui/
+          retention-days: 14
+          if-no-files-found: warn
 
   # The bug-flag proof (CDS-41, decision D4 of the P3 plan): each implemented flag on and off against its catchers. Its own job because it
   # grows with every flag (about 4 minutes for 19 flags at P3c) and the `ui` job has a 15 minute limit; the two run side by side.
@@ -156,3 +176,62 @@ jobs:
           path: /tmp/harness-service-*.log
           retention-days: 14
           if-no-files-found: ignore
+
+  # The Serenity report (CDS-44, P6b): built from the JSON of the two runs that gate this pull request, not from a third run of the suites.
+  # Java 21 is for the Serenity BDD CLI, which makes the HTML; `check:report` requires the HTML here (CI=true) and checks every execution,
+  # the counts, and that no file holds the run's control key or a token. Nothing is published by this job (P6c adds `publish`).
+  report:
+    name: Report (the Serenity BDD report of the @api and @ui runs, checked)
+    needs: [specification, ui]
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: test-harnesses/harness-serenity/package-lock.json
+
+      - name: Set up Java (Serenity BDD report generator)
+        uses: actions/setup-java@dd06d9cba3e5552c54d9f8ea23572deb30010f7c # v6.0.0
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install the harness
+        env:
+          SCARF_ANALYTICS: "false"
+        run: npm ci --prefix test-harnesses/harness-serenity --no-audit --no-fund
+
+      - name: The Serenity JSON of the @api run
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          name: serenity-json-api
+          path: test-harnesses/harness-serenity/reports/serenity/api/
+
+      - name: The Serenity JSON of the @ui run
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          name: serenity-json-ui
+          path: test-harnesses/harness-serenity/reports/serenity/ui/
+
+      - name: Make the report
+        run: npm run report
+        working-directory: test-harnesses/harness-serenity
+
+      - name: Check the report
+        run: npm run check:report
+        working-directory: test-harnesses/harness-serenity
+
+      - name: The Serenity report
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: serenity-report
+          path: test-harnesses/harness-serenity/reports/serenity-report/
+          retention-days: 14
+          if-no-files-found: warn

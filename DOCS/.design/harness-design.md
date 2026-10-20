@@ -1,5 +1,5 @@
 ---
-version: 13
+version: 14
 created: 2026-10-09T11:20Z
 project: credit-dashboard-sut
 type: design
@@ -398,3 +398,10 @@ Review findings C-09 to C-15 and C-29.
 
 - **Why.** The Phase 5 gate cites 30 of 30 flags caught in CI, and the `flags` job kept that only in its log, which expires. After the proof step the job now appends `reports/bug-flags.md` to the run summary and uploads `bug-flags.json` and `.md` as the `bug-flag-proof` artifact (14 days). Both steps run when the proof fails or stops early (CDS-46), so a red run shows the flags judged so far.
 - **Not a published page.** The table is in the run and the artifact only; the report on Pages is the scenario runs (DR-066).
+
+## 38. Only a whole run writes the Serenity JSON (CDS-47, 2026-10-21)
+
+- **What went wrong.** `crewFor` emptied `reports/serenity/<profile>` at the start of every Cucumber run, so the bug-flag proof's single-scenario runs (and a run of one named feature) replaced the JSON of a whole-suite run with one scenario. The Phase 5 gate's full local run found it: `check:report` refused (it held 1 execution, the suite runs 60). CI was never affected, because the `Verify` and `UI` jobs run the whole suites and upload their JSON before any other run on those runners.
+- **The rule.** `src/report/switch.ts` (pure, two unit tests, one mutation): a run writes the JSON only when `HARNESS_SERENITY_JSON` is exactly `on`. `scripts/run.mjs` sets it to `on` for an `api` or `ui` run with no feature argument and to `off` for everything else (`exit`, `flags`, `visual`, named features). With the switch off `crewFor` returns the console reporter only and neither empties nor writes the folder.
+- **Probed on real runs, each reverted:** a whole `api` run gives 33 files, a whole `ui` run 44; a named feature (`api api/closed-accounts`, 4 scenarios) and a one-flag proof (`plural`) leave both folders untouched, and `check:report` passes (60 and 59 executions). With the switch forced on, the same named run leaves 2 files holding 4 executions and `check:report` fails ("the report holds 4 executions, the suite runs 60"). 54 harness unit tests.
+- **Not proved here:** nothing new on CI. The change is in the harness; CI's whole-suite runs are unchanged, and the pull request's own `Report` job reads the JSON they upload.

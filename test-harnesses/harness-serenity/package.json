@@ -7,7 +7,7 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test:unit": "node --import tsx --test src/contract/validate.test.ts src/unit/parallel.test.ts src/flags/verdict.test.ts src/visual/cases.test.ts src/flags/reset.test.ts src/report/checks.test.ts src/report/site.test.ts",
+    "test:unit": "node --import tsx --test src/contract/validate.test.ts src/unit/parallel.test.ts src/flags/verdict.test.ts src/visual/cases.test.ts src/flags/reset.test.ts src/report/checks.test.ts src/report/site.test.ts src/report/switch.test.ts",
     "test:api": "node scripts/run.mjs api",
     "test:ui": "node scripts/run.mjs ui",
     "test:exit": "node scripts/run.mjs exit",

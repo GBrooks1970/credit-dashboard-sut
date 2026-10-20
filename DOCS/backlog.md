@@ -1,5 +1,5 @@
 ---
-version: 74
+version: 75
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 74 (CDS-46 opened: the flag proof's reset call crashed on a dropped connection, main CI red twice; CDS-44 awaits the owner)
+**Version:** 75 (CDS-44 P6a built: the Serenity JSON and its checks; CI and publication follow)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -271,6 +271,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 ### CDS-39: P1, the flag mechanism and the proof runner
 
 **COMPLETE (2026-10-14; #73 `0117333`, CI run 38545013647).** `Flags` and `Defects` in the service (`rounding-down` is the first API flag); `FlagsProvider`, `useFlag` and the `/debug` panel in a test build of the UI (`plural` is the first UI flag); `fixtures/bug-flags.json` (all 30 flags) checked against the contract in `verify`; `ControlTheTestEnvironment.setBugs` and `HARNESS_BUGS`; `npm run check:bug-flags` (the proof runner), in the `ui` CI job. 332 service tests, 142 Vitest tests, 51 `@ui` executions and 59 `@api` executions green with every flag off; the two implemented flags are caught for the stated reason (3 catchers). Status is Done when merged.
+
+### CDS-44: P6, the published Serenity report
+
+**IN PROGRESS (plan `DOCS/implementation-plans/2026-10-20_cds-44-serenity-report.md`, approved 2026-10-20; plan pull request #118).** P6a (the harness writes the Serenity JSON; `check:report`; `report`) is built on `claude/cds-44-p6a-harness-report`; P6b (the `report` CI job, Java 21) and P6c (the `publish` job, `pages.yml` manual-only, DR-066) follow.
 
 ### CDS-46: the flag proof's reset call crashed on a dropped connection
 

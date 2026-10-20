@@ -1,5 +1,4 @@
 import { After, AfterAll, Before, BeforeAll } from '@cucumber/cucumber';
-import { ConsoleReporter } from '@serenity-js/console-reporter';
 import { actorCalled, Cast, configure, engage } from '@serenity-js/core';
 import { BrowseTheWebWithPlaywright } from '@serenity-js/playwright';
 import { Page } from '@serenity-js/web';
@@ -8,6 +7,7 @@ import { chromium, type Browser } from 'playwright';
 import { ControlTheTestEnvironment } from '../abilities/ControlTheTestEnvironment.js';
 import { STAGE_MANAGER } from '../support/actors.js';
 import { afterScenario } from '../support/diagnostics.js';
+import { crewFor } from '../support/serenity-crew.js';
 import { controlKey, resetScenario, scenario } from '../support/world.js';
 
 let browser: Browser;
@@ -16,7 +16,7 @@ let browser: Browser;
 export const uiUrl = () => process.env.HARNESS_UI_URL ?? '';
 
 BeforeAll(async () => {
-    configure({ crew: [ConsoleReporter.fromJSON({ theme: 'auto' })] });
+    configure({ crew: crewFor('ui') });
     // HARNESS_BROWSER_PATH lets a machine use a Chromium it already has; CI installs the one Playwright wants.
     browser = await chromium.launch({ headless: true, executablePath: process.env.HARNESS_BROWSER_PATH || undefined });
 });

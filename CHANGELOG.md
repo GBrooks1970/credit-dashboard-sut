@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-20: the Serenity report, harness side (CDS-44, Phase 5 P6a)
+
+- Both profiles write Serenity BDD JSON (`reports/serenity/api`, `/ui`; `@serenity-js/serenity-bdd` 3.49.0 added). `src/report/checks.ts` (pure, ten unit tests, five mutations): every execution present and `SUCCESS`, the counts (60 and 59), every file parses, no control key or token. `npm run report` (Java optional) and `npm run check:report`. 44 harness unit tests. The HTML half is first proved on CI in P6b. Harness design v10.
+
 ## 2026-10-20: the flag proof survives a dropped connection (CDS-46)
 
 - `prove-flags.ts` v4: each reset of the service is made on a new connection, retried once on a connection error, and a reset that still fails stops the proof with a message that names the flag and prints the end of the service log (the table so far is written, the exit code is 1), instead of an uncaught `fetch failed`. A status other than 204 is not retried. `src/flags/reset.ts` is pure, with five unit tests (retry and the flag name proved by mutation); 34 harness unit tests. The `flags` CI job uploads `/tmp/harness-service-*.log` when it fails. Cause: the proof crashed twice on `main` on 2026-10-19; likely a stale pooled connection, not proved. Backlog v74.

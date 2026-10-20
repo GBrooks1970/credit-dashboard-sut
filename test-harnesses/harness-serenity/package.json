@@ -7,12 +7,14 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test:unit": "node --import tsx --test src/contract/validate.test.ts src/unit/parallel.test.ts src/flags/verdict.test.ts src/visual/cases.test.ts src/flags/reset.test.ts",
+    "test:unit": "node --import tsx --test src/contract/validate.test.ts src/unit/parallel.test.ts src/flags/verdict.test.ts src/visual/cases.test.ts src/flags/reset.test.ts src/report/checks.test.ts",
     "test:api": "node scripts/run.mjs api",
     "test:ui": "node scripts/run.mjs ui",
     "test:exit": "node scripts/run.mjs exit",
     "test:flags": "node scripts/run.mjs flags",
-    "test:visual": "node scripts/run.mjs visual"
+    "test:visual": "node scripts/run.mjs visual",
+    "report": "node scripts/report.mjs",
+    "check:report": "node --import tsx scripts/check-report.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
@@ -23,6 +25,7 @@
     "@serenity-js/core": "3.49.0",
     "@serenity-js/cucumber": "3.49.0",
     "@serenity-js/playwright": "3.49.0",
+    "@serenity-js/serenity-bdd": "3.49.0",
     "@serenity-js/web": "3.49.0",
     "@types/node": "24.19.0",
     "ajv": "8.20.0",

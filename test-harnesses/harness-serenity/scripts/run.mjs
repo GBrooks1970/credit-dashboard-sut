@@ -1,4 +1,4 @@
-// version: 10 | created: 2026-10-13T11:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 11 | created: 2026-10-13T11:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Builds the service, starts it with test control on and a synthetic key, starts a second instance without test control
 // (for the scenario that needs the surface absent), runs the Cucumber profile against them, and always stops both
 // (design section 8, CDS-22). Run from test-harnesses/harness-serenity:  node scripts/run.mjs api|ui [feature ...]
@@ -181,7 +181,7 @@ try {
               : requested === 'visual'
                 ? [path.join(harness, 'node_modules', '@playwright', 'test', 'cli.js'), 'test', '-c', path.join('src', 'visual', 'playwright.config.ts'), ...(features.includes('--update') ? ['--update-snapshots=all'] : ['--update-snapshots=none'])]
                 : ['--import', 'tsx', cucumber, '--profile', profile, ...paths];
-    const run = await runChild(command, { ...process.env, HARNESS_BASE_URL: baseOf(port), HARNESS_UI_URL: `http://127.0.0.1:${port}`, HARNESS_OFF_BASE_URL: baseOf(offPort), HARNESS_CONTROL_KEY: controlKey });
+    const run = await runChild(command, { ...process.env, HARNESS_BASE_URL: baseOf(port), HARNESS_UI_URL: `http://127.0.0.1:${port}`, HARNESS_OFF_BASE_URL: baseOf(offPort), HARNESS_CONTROL_KEY: controlKey, HARNESS_SERVICE_LOG: main.logPath });
     code = run.status ?? 1;
     if (run.timedOut) console.error(`harness: the ${requested} run did not finish within ${limitMs >= 60_000 ? `${Math.round(limitMs / 60_000)} minutes` : `${Math.round(limitMs / 1000)} seconds`} and was stopped (HARNESS_TIMEOUT_MS changes the limit)`);
     if (code === 0 && (requested === 'api' || requested === 'ui')) {

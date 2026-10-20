@@ -1,4 +1,4 @@
-// version: 3 | created: 2026-10-14T10:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 4 | created: 2026-10-14T10:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // The bug-flag proof (CDS-39, decision brief 13, DR-064). For every flag that fixtures/bug-flags.json marks implemented, run each
 // of its committed catchers twice: with the flag OFF it must pass, and with the flag ON it must fail, and the failure must
 // contain the text the registry records for it (`failsWith`). A flag is "caught" when at least one catcher fails for the stated
@@ -9,6 +9,9 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import http from 'node:http';
+
+import { resetWithRetry } from './reset.js';
 import { exitCheckRan, judgeOff, judgeOn, verdictOf, type Outcome, type RunResult, type Verdict } from './verdict.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -89,10 +92,29 @@ ${result.stderr}`);
     return { passed: result.status === 0, ran, timedOut: (result.error as NodeJS.ErrnoException | undefined)?.code === 'ETIMEDOUT', output: ran ? output : `${output}\n(no test ran: check the catcher's name)` };
 }
 
-async function resetService() {
-    const base = process.env.HARNESS_BASE_URL ?? '';
-    await fetch(`${base}/__test/reset`, { method: 'POST', headers: { 'x-test-control-key': process.env.HARNESS_CONTROL_KEY ?? '' } });
+/** One reset call on a connection of its own (`agent: false`): a pooled socket the service has closed is what crashed the proof on 2026-10-19 (CDS-46). */
+function resetOnce(): Promise<number> {
+    const url = new URL(`${process.env.HARNESS_BASE_URL ?? ''}/__test/reset`);
+    return new Promise((resolve, reject) => {
+        const request = http.request(url, { method: 'POST', agent: false, headers: { 'x-test-control-key': process.env.HARNESS_CONTROL_KEY ?? '', connection: 'close' } }, (response) => {
+            response.resume();
+            response.on('end', () => resolve(response.statusCode ?? 0));
+            response.on('error', reject);
+        });
+        request.setTimeout(30_000, () => request.destroy(new Error('no answer within 30 s')));
+        request.on('error', reject);
+        request.end();
+    });
 }
+
+/** The end of the main service's log, for the message when it does not answer (run.mjs passes the path). */
+function logTail(): string {
+    const file = process.env.HARNESS_SERVICE_LOG;
+    if (!file || !fs.existsSync(file)) return '(no service log path was given)';
+    return fs.readFileSync(file, 'utf8').split(/\r?\n/).slice(-40).join('\n');
+}
+
+let stoppedBecause: string | undefined;
 
 const visualHere = process.env.CI === 'true' || process.env.VISUAL_LOCAL_TRY === '1';
 const leftOut: string[] = [];
@@ -123,7 +145,12 @@ for (const entry of registry.flags) {
     }
     const verdict = verdictOf(results);
     rows.push({ flag: entry.flag, group: entry.group, layer: entry.layer, verdict, catchers: results });
-    await resetService();
+    const reset = await resetWithRetry(resetOnce, { flag: entry.flag, logTail });
+    if (!reset.ok) {
+        // Named, with the table so far written below: the proof stops here and is not a pass.
+        stoppedBecause = reset.message;
+        break;
+    }
 }
 
 const reports = path.join(harness, 'reports');
@@ -138,4 +165,5 @@ const bad = proved.filter((r) => r.verdict !== 'caught');
 console.log(`\nbug flags: ${proved.filter((r) => r.verdict === 'caught').length} of ${proved.length} implemented flags caught for the stated reason; ${rows.length - proved.length} pending`);
 if (leftOut.length > 0) console.log(`${leftOut.length} visual-check catcher(s) not run here, because their baselines are Linux CI images: ${leftOut.join('; ')}`);
 for (const r of bad) console.error(`  - ${r.flag}: ${r.verdict}`);
-process.exitCode = bad.length > 0 ? 1 : 0;
+if (stoppedBecause) console.error(`\nbug flags: the proof stopped early, ${rows.length} of ${registry.flags.length} flags judged: ${stoppedBecause}`);
+process.exitCode = bad.length > 0 || stoppedBecause ? 1 : 0;

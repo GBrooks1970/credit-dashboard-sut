@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-20: the flag proof survives a dropped connection (CDS-46)
+
+- `prove-flags.ts` v4: each reset of the service is made on a new connection, retried once on a connection error, and a reset that still fails stops the proof with a message that names the flag and prints the end of the service log (the table so far is written, the exit code is 1), instead of an uncaught `fetch failed`. A status other than 204 is not retried. `src/flags/reset.ts` is pure, with five unit tests (retry and the flag name proved by mutation); 34 harness unit tests. The `flags` CI job uploads `/tmp/harness-service-*.log` when it fails. Cause: the proof crashed twice on `main` on 2026-10-19; likely a stale pooled connection, not proved. Backlog v74.
+
 ## 2026-10-19: visual regression closed (CDS-43, Phase 5 P5)
 
 - P5a to P5c done (pull requests #113 to #115 and the records): 32 images against Linux CI baselines, the `Visual` workflow, the visual-check catcher kind. `check:bug-flags` 30 of 30; 29 harness unit tests. CDS-38 C-23 closed. Backlog v73.

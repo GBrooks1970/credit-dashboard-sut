@@ -1,15 +1,15 @@
 import { After, Before, BeforeAll } from '@cucumber/cucumber';
-import { ConsoleReporter } from '@serenity-js/console-reporter';
 import { actorCalled, Cast, configure, engage } from '@serenity-js/core';
 
 import { CallAnApi } from '../abilities/CallAnApi.js';
 import { ControlTheTestEnvironment } from '../abilities/ControlTheTestEnvironment.js';
 import { STAGE_MANAGER } from '../support/actors.js';
 import { afterScenario } from '../support/diagnostics.js';
+import { crewFor } from '../support/serenity-crew.js';
 import { resetScenario } from '../support/world.js';
 
 BeforeAll(() => {
-    configure({ crew: [ConsoleReporter.fromJSON({ theme: 'auto' })] });
+    configure({ crew: crewFor('api') });
 });
 
 Before(async () => {

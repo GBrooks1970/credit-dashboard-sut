@@ -18,6 +18,8 @@
     "check:ui-scenarios": "npm --prefix test-harnesses/harness-serenity run test:ui",
     "check:ui-exit": "npm --prefix test-harnesses/harness-serenity run test:exit",
     "check:visual": "npm --prefix test-harnesses/harness-serenity run test:visual",
+    "report": "npm --prefix test-harnesses/harness-serenity run report",
+    "check:report": "npm --prefix test-harnesses/harness-serenity run check:report",
     "check:bug-flags": "npm --prefix test-harnesses/harness-serenity run test:flags",
     "check:schemathesis": "node tools/schemathesis-run.mjs",
     "check:service": "dotnet test demo-apps/demoapp001-dotnet-api/CreditDashboard.sln -c Release --nologo",

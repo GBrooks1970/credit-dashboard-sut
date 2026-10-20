@@ -1,4 +1,6 @@
-# Publishes the implementation Kanban board (CDS-30; DR-060).
+# Publishes the implementation Kanban board alone (CDS-30; DR-060). MANUAL ONLY since CDS-44 P6c (DR-066): the site, the board and the Serenity
+# report together, is deployed by the `deploy` job of ci.yml from main, and Pages takes one deployment at a time, so this workflow would replace the
+# report with the board. Run it only to publish the board without the report, for example when main is red and the board must still be current.
 #
 # Just the board. The specifications, service, tests and tooling are not published: the board is a single
 # self-contained file generated from DOCS/backlog.md (portfolio-kanban-generator, no framework, no CDN, no
@@ -6,11 +8,6 @@
 name: Pages
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - credit-dashboard-sut_implementation-kanban_v1.html
-      - .github/workflows/pages.yml
   workflow_dispatch:
 
 permissions:

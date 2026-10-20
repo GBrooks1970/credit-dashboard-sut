@@ -1,5 +1,5 @@
 ---
-version: 11
+version: 12
 created: 2026-10-09T11:20Z
 project: credit-dashboard-sut
 type: design
@@ -385,3 +385,11 @@ Review findings C-09 to C-15 and C-29.
 - **The job.** `report` in `ci.yml` needs `Verify` and `UI`. Those two upload the Serenity JSON of the runs they already make (`serenity-json-api`, `serenity-json-ui`, always); the job installs the harness, sets up Java 21 (Temurin), downloads both, runs `npm run report` (the CLI pinned at `serenity-cli` 4.3.4) and `npm run check:report` (HTML required because `CI=true`), and uploads the report (`serenity-report`, 14 days). It does not run the suites again, so the report is the runs that gate the pull request. If either suite fails, the job is skipped and no report is made; the JSON artifacts remain for looking at the failure. `setup-java`, `upload-artifact` and `download-artifact` are pinned by SHA at v6.0.0, each more than two weeks old.
 - **First run on CI (pull request #120), the HTML half proved:** the job took 28 seconds; the Serenity BDD CLI made the report from the two JSON artifacts (77 scenarios, 119 test cases, 100% passing, the capabilities Api 56, Security 10 and Ui 53 test cases); the report is 3,873 files (34 MB unpacked, 6.1 MB as an artifact); `check:report` looked at 425 of its text files and found no control key or token. A planted fault, run by `workflow_dispatch` on a throw-away branch that was never merged (the suite's expected count raised by one): the job failed at `Check the report` with "api: the report holds 60 executions, the suite runs 61", and the branch was deleted
 - **Not yet:** nothing is published; `publish` and the Pages change are P6c. The report is 34 MB unpacked in 3,873 files, so the Pages folder is well inside the 1 GB limit.
+
+## 36. The site and the deployment (CDS-44 P6c, 2026-10-20; DR-066)
+
+- **Two jobs in `ci.yml`.** `site` (needs `report`) runs on every run: it downloads the report, copies the board to `_site/index.html`, writes `_site/report/commit.txt` (the commit, the run, the time), and checks the folder with `npm run check:site` (`src/report/site.ts`, pure, eight unit tests, five mutations): the board has its ticket payload with the first and last tickets, `report/index.html` exists and is not a stub, the stamp names this commit, nothing else is in the folder, no control key or token in any file. On a push or a manual run it uploads the folder as the Pages artifact. `deploy` (needs `site`; `main` only, a push or a manual run) deploys it with `deploy-pages`, in the `github-pages` environment, with its own `pages: write` and `id-token: write`.
+- **One deployer.** `pages.yml` is now manual-only and says why: Pages takes one deployment, so a second workflow deploying would replace the report with the board. It stays for publishing the board alone when `main` is red.
+- **`deploy` does not wait for the flag proof.** `site` needs `report`, which needs `Verify` and `UI`. A flaky proof (CDS-46) cannot hold the board back; a failing suite, or a failing report check, does.
+- **Probed on a real folder** (the report downloaded from CI, the board, a stamp), each reverted: the clean folder passes (3,875 files); an extra file, a stamp for another commit, a control key in a report file, a bearer token in a report file and a board with no payload each fail with the file named and the value not shown.
+- **Not proved until the first deployment on `main`:** that `deploy` runs and the live site serves the board and the report. The `github-pages` environment may restrict branches, so this cannot be rehearsed from a branch; the checks that run before it are rehearsed on every pull request. Rollback is a revert pull request.

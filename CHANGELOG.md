@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-21: the Phase 5 gate is recorded (CDS-45, P7c; DR-067)
+
+- Decision brief 14 answered (D1 option 2, D2 option 1, D3 option 1, D4 option 1). DR-067 records the Phase 5 exit gate as met on 20 October 2026 with its exceptions; the README Phase 5 row says so; CDS-45 and CDS-37 are Done; CDS-48 (the independent review of the Phase 5 additions) is opened. Decision register v31, backlog v82.
+
 ## 2026-10-21: only a whole run writes the Serenity JSON (CDS-47)
 
 - `src/report/switch.ts` (pure, two unit tests, one mutation) and `HARNESS_SERENITY_JSON`: `run.mjs` v12 marks a whole `api` or `ui` run `on` and everything else `off`; `crewFor` writes and empties the folder only when it is on. Found by the Phase 5 gate's full run (decision brief 14 B9, D4). 54 harness unit tests. Harness design v14.

@@ -1,5 +1,5 @@
 ---
-version: 81
+version: 82
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 81 (decision brief 14 answered 2026-10-20; CDS-47 fixed; the gate record, P7c, follows)
+**Version:** 82 (the Phase 5 gate is recorded, DR-067; CDS-45, CDS-37 and CDS-47 done; CDS-48, the independent review of the Phase 5 additions, opened)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -85,7 +85,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 
 | ID | Ticket | Type | Priority | Tier | Blocked by | Status |
 | --- | --- | --- | --- | --- | --- | --- |
-| `CDS-37` | Phase 5 plan: bug flags and the scenarios that catch each, visual regression, the published Serenity report, the three bug-flag catches from the CDS-18 notes (a plan first, stop point at each flag group) | UI | — | HIGH | `CDS-36` | Open |
+| `CDS-37` | Phase 5 plan: bug flags and the scenarios that catch each, visual regression, the published Serenity report, the three bug-flag catches from the CDS-18 notes (a plan first, stop point at each flag group) | UI | — | HIGH | `CDS-36` | Done 2026-10-20 |
 | `CDS-38` | Independent review of the Phase 4 UI and the Serenity/JS harness by a fresh-context agent, findings handled as CDS-24 was (decision brief 12 D1 option 2; runs after CDS-40, brief 13 D6) | UI | — | MEDIUM | `CDS-36`, `CDS-40` | Done 2026-10-18 |
 | `CDS-39` | P1 the flag mechanism and the proof runner: `Flags` in the service, the test build of the UI reads the flags, the debug panel, `bug-flags.json`, `check:bug-flags` | Tooling | — | HIGH | `CDS-37` | Done 2026-10-14 |
 | `CDS-40` | P2 the seven API flags implemented and proved | Service | — | HIGH | `CDS-39` | Done 2026-10-14 |
@@ -93,8 +93,9 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-42` | P4 the twelve UI behaviour flags, with component-test catchers for three | UI | — | HIGH | `CDS-41` | Done 2026-10-18 |
 | `CDS-43` | P5 visual regression: 32 screenshots, Linux CI baselines | Tooling | — | MEDIUM | `CDS-42` | Done 2026-10-19 |
 | `CDS-44` | P6 the published Serenity report on Pages beside the board; DR-060 amended | Tooling | — | MEDIUM | `CDS-43` | Done 2026-10-20 |
-| `CDS-45` | P7 Phase 5 exit: 30 of 30 flags caught for the stated reason in CI, the report linked, the gate brief | UI | — | HIGH | `CDS-44` | Open |
+| `CDS-45` | P7 Phase 5 exit: 30 of 30 flags caught for the stated reason in CI, the report linked, the gate brief | UI | — | HIGH | `CDS-44` | Done 2026-10-20 |
 | `CDS-46` | The flag proof's reset call crashed on a dropped connection (main CI red twice, 2026-10-19); retry on a new connection, a named stop, service logs kept on failure | Tooling | — | HIGH | — | Done 2026-10-20 |
+| `CDS-48` | Independent review of the Phase 5 additions (P3 to P6: the UI flags, the visual check, the report and site jobs) by a fresh-context agent, findings handled as CDS-38 was (decision brief 14 D1 option 2); the project is closed after it (D2) | Tooling | — | HIGH | `CDS-45` | Open |
 | `CDS-47` | The Serenity JSON is overwritten by any other Cucumber run (the flag proof, a named-feature run): only a whole `api` or `ui` run should write it (found by the Phase 5 gate's full run; decision brief 14 D4) | Tooling | — | MEDIUM | — | Done 2026-10-21 |
 
 ## Items
@@ -275,7 +276,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-45: P7, the Phase 5 exit
 
-**IN PROGRESS (plan `DOCS/implementation-plans/2026-10-20_cds-45-phase-5-exit.md`, approved 2026-10-20; plan pull request #123).** P7a (the `flags` job keeps its table; the README links the published report and the board; #124 `5b3a452`) is done. P7b is done: the full run on `5b3a452` (`verify` 14 of 14, 208 component tests, 59 `@ui` executions, the exit run 124 and 288, 30 of 30 flags) and decision brief 14 (D1 the gate record, D2 what comes after, D3 the landing link, D4 CDS-47). **Stop for the owner's answers.** P7c (the gate record, DR-067, after the answers) follows. The gate record is the owner's.
+**COMPLETE (2026-10-20; plan `DOCS/implementation-plans/2026-10-20_cds-45-phase-5-exit.md`; #123 the plan, P7a #124 `5b3a452`, P7b #125 `e66219b`, P7c the gate record; CDS-47 #127 `74d8bce`; every CI job green on each).** The gate is met and recorded with its exceptions (DR-067; decision brief 14 D1 option 2, D2 option 1, D3 option 1, D4 option 1). The full local run and CI on `5b3a452` are in the brief (B2 to B5); CDS-47 was found by that run and fixed first. **Commissioned and open: CDS-48** (the independent review of the Phase 5 additions); after it and its fixes the project is closed with `close-project`; the landing card links the report when it moves to "Phase 5 complete". Log: `DOCS/implementation-logs/2026-10-20_cds-45-phase-5-exit-p7a-p7c.md`.
 
 ### CDS-44: P6, the published Serenity report
 

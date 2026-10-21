@@ -4,9 +4,9 @@ created: 2026-10-20T19:50Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-45
-status: approved
+status: implemented
 approved: "2026-10-20, Gary Brooks, 'Approved as recommended, Merge and continue' (D1 to D6 as recommended); merge only on the owner's word per pull request"
-delivered: not yet
+delivered: "2026-10-20: P7a #124 `5b3a452`, P7b #125 `e66219b`, P7c this pull request; CDS-47 #127 `74d8bce`"
 language: en-GB
 ---
 
@@ -85,4 +85,13 @@ The course after Phase 5 (rest and maintain, build the stretch profile pages, th
 
 ## Outcome
 
-[Appended after delivery.]
+**Delivered 2026-10-20 and 2026-10-21** in four pull requests, each merged after every CI job showed `pass`: P7a #124 (`5b3a452`), P7b #125 (`e66219b`), the fix CDS-47 #127 (`74d8bce`) that the plan's full run made necessary, and P7c (the gate record). The implementation log is `DOCS/implementation-logs/2026-10-20_cds-45-phase-5-exit-p7a-p7c.md`. The owner answered decision brief 14 on 2026-10-20 (D1 option 2, D2 option 1, D3 option 1, D4 option 1; all as recommended) and the gate is recorded as met with its exceptions (DR-067).
+
+**Where it departed from the plan.**
+1. **The plan's full run found a defect (CDS-47)**: the flag proof's single scenarios had overwritten the Serenity JSON, so `check:report` refused. It was not in the plan. It was put to the owner as brief 14 D4, and fixed first on its own plan (#126, #127).
+2. **The independent review was not "offered after" but commissioned** (D1 option 2; the plan's D4 recommended option 1, the owner's brief answer took option 2). CDS-48 holds it.
+3. **The brief's evidence on the final commit** was the CI run on `5b3a452` plus one full local run (D5 as planned). The local run's `check:report` first failed for the CDS-47 reason and was re-run after a whole `test:api` and `test:ui`; the brief says so.
+4. **The `flags` job's table** is kept as an artifact and in the run summary (D3), as planned; the first run to use it was #124's own.
+5. **The README link** went in with P7a (D2 option 1); the landing link is deferred to the landing update at "Phase 5 complete" (brief 14 D3 option 1).
+
+**Counts at the close** (`74d8bce`): 437 service tests, 239 rules tests, 208 component tests, 20 guard tests, 54 harness unit tests, 60 `@api` and 59 `@ui` executions, 124 axe scans and 288 layout checks, 32 visual images, `verify` 14 of 14, 30 of 30 flags. CI: `Verify` 1m30s to 2m37s, `UI` 3m56s to 5m00s, `flags` 15m37s to 17m06s, `Visual` 1m03s to 1m09s, `Report` 26 s to 41 s, `Site` 16 s to 24 s.

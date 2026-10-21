@@ -7,7 +7,7 @@ brief: 14
 subject: "Recording the Phase 5 gate, what comes after it, the landing link to the report, and a defect found by the gate's own run"
 blocks: Phase 5 gate record (a new DR, DR-067); README Phase 5 row; registry, landing card and capability matrix wording; the choice of next work
 approver: the project owner (Gary Brooks)
-status: awaiting-decision
+status: decided
 supersedes: none
 language: en-GB
 ---
@@ -111,13 +111,33 @@ The card says the report is published and has no link; the README now links it (
 
 | File | Section | Change required | Done |
 |---|---|---|---|
-| `DOCS/decision-register.md` | New entry | The Phase 5 gate (D1) with the exceptions listed; D2 to D4 outcomes (DR-067) | [ ] after the owner's answers |
-| `README.md` | 'SDD workflow' Phase 5 row, 'Status' | "Met" or the chosen wording, with the date | [ ] |
-| `DOCS/backlog.md` | CDS-45, CDS-37; new items | Close the phase; CDS-47 (D4); the review ticket (D1 option 2) | [ ] CDS-47 added as Open in this pull request |
-| `portfolio-prompts/registry.yml` and README row | Status label | Wording follows D1 and D2 | [ ] follows the record |
-| `portfolio-landing` card, capability matrix | Summary and link | Wording follows D1 to D3 | [ ] follows the record |
+| `DOCS/decision-register.md` | New entry | The Phase 5 gate (D1) with the exceptions listed; D2 to D4 outcomes (DR-067) | [x] DR-067 |
+| `README.md` | 'SDD workflow' Phase 5 row, 'Status' | "Met" or the chosen wording, with the date | [x] |
+| `DOCS/backlog.md` | CDS-45, CDS-37; new items | Close the phase; CDS-47 (D4); the review ticket (D1 option 2) | [x] v82: CDS-45 and CDS-37 Done, CDS-47 Done, CDS-48 opened |
+| `portfolio-prompts/registry.yml` and README row | Status label | Wording follows D1 and D2 | [ ] follows this pull request |
+| `portfolio-landing` card, capability matrix | Summary and link | Wording follows D1 to D3 | [ ] follows this pull request |
 | `DOCS/decision-briefs/_index.md` | Brief 14 row | Status and where the decision landed | [x] row added as awaiting-decision |
 
 ## 7. Decision record
 
-[Pending the owner's answers. The read-back is written here, then DR-067.]
+The owner replied on 2026-10-20, in chat: "D1:option2, D2: option 1, D3: option 1, D4: option 1" (all four the recommended options). The read-back was given and the owner replied "Confirmed, approve CDS-47 plan, merge and continue".
+
+### 7.1 Read-back
+
+1. **D1 option 2.** The Phase 5 gate is recorded as met (DR-067) on the evidence of B2 to B7. An independent review of the Phase 5 additions (P3 to P6: the UI flags, the visual check, the report and site jobs) is commissioned as a follow-up ticket (CDS-48), with findings handled as CDS-38 was. The review is the quality check afterwards, not the condition of the gate. The exceptions are in the record: the colour limit of B3, the unproved cause of B6, the author-chosen probes of B7, and B8 (the review not yet held). B9 is fixed first under D4.
+2. **D2 option 1.** After the review and its fixes, the project is closed with `close-project` (a FINAL handover; the README and registry say all phases are delivered; the stretch pages, the container image and the deferred review items are listed as deferred). Nothing is closed today.
+3. **D3 option 1.** The landing card links to the report in the landing update that moves it to "Phase 5 complete", after the gate is recorded.
+4. **D4 option 1.** CDS-47 is fixed before the gate, on its own plan, tests first (plan `2026-10-21_cds-47-serenity-json-switch.md`, #127).
+
+### 7.2 Decisions
+
+| Ref | Item | Decision | Conditions | Who | When |
+|---|---|---|---|---|---|
+| D1 | Recording the Phase 5 gate | **Option 2.** Record now (DR-067) and commission an independent review of the Phase 5 additions (CDS-48) | Exceptions B3, B6, B7, B8 listed in the record; the review is not a condition of the gate | Gary Brooks | 2026-10-20 |
+| D2 | What happens after the gate | **Option 1.** Close with `close-project` after the review and its fixes | Stretch items and deferred review items listed as deferred | Gary Brooks | 2026-10-20 |
+| D3 | The landing link to the report | **Option 1.** Link it in the landing update that moves the card to "Phase 5 complete" | None | Gary Brooks | 2026-10-20 |
+| D4 | The Serenity JSON overwritten by other runs | **Option 1.** Fix before the gate (CDS-47) | A plan first, tests first | Gary Brooks | 2026-10-20 |
+
+### 7.3 Corrections after decision
+
+None.

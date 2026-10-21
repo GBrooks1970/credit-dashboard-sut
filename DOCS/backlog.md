@@ -1,5 +1,5 @@
 ---
-version: 80
+version: 81
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 80 (CDS-45 P7b: the full run is done and decision brief 14 is written; stop for the owner's answers; CDS-47 opened)
+**Version:** 81 (decision brief 14 answered 2026-10-20; CDS-47 fixed; the gate record, P7c, follows)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -95,7 +95,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-44` | P6 the published Serenity report on Pages beside the board; DR-060 amended | Tooling | — | MEDIUM | `CDS-43` | Done 2026-10-20 |
 | `CDS-45` | P7 Phase 5 exit: 30 of 30 flags caught for the stated reason in CI, the report linked, the gate brief | UI | — | HIGH | `CDS-44` | Open |
 | `CDS-46` | The flag proof's reset call crashed on a dropped connection (main CI red twice, 2026-10-19); retry on a new connection, a named stop, service logs kept on failure | Tooling | — | HIGH | — | Done 2026-10-20 |
-| `CDS-47` | The Serenity JSON is overwritten by any other Cucumber run (the flag proof, a named-feature run): only a whole `api` or `ui` run should write it (found by the Phase 5 gate's full run; decision brief 14 D4) | Tooling | — | MEDIUM | — | Open |
+| `CDS-47` | The Serenity JSON is overwritten by any other Cucumber run (the flag proof, a named-feature run): only a whole `api` or `ui` run should write it (found by the Phase 5 gate's full run; decision brief 14 D4) | Tooling | — | MEDIUM | — | Done 2026-10-21 |
 
 ## Items
 

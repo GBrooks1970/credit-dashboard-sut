@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-21: only a whole run writes the Serenity JSON (CDS-47)
+
+- `src/report/switch.ts` (pure, two unit tests, one mutation) and `HARNESS_SERENITY_JSON`: `run.mjs` v12 marks a whole `api` or `ui` run `on` and everything else `off`; `crewFor` writes and empties the folder only when it is on. Found by the Phase 5 gate's full run (decision brief 14 B9, D4). 54 harness unit tests. Harness design v14.
+
 ## 2026-10-20: the exit evidence made durable (CDS-45, Phase 5 P7a)
 
 - The `flags` job writes the proof table to its run summary and uploads it as the `bug-flag-proof` artifact (14 days), also when the proof stops early. The README links the published report and the board and says the deployer is the `deploy` job of `ci.yml`; its decisions count is DR-001 to DR-066.

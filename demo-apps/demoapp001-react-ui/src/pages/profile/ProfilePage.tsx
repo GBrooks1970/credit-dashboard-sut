@@ -238,17 +238,17 @@ function Tiles({ profile }: { profile: Profile }) {
   return (
     <section aria-label="Your details" className="tiles">
       <Link to="/my-account/profile/email" data-testid="profile-tile-email">
-        <strong>Email</strong>
-        <span>{profile.email.address}</span>
+        <strong>Email</strong>{' '}
+        <span>{profile.email.address}</span>{' '}
         <span data-testid="profile-email-badge" className="badge">
           {BADGE[profile.email.status]}
         </span>
       </Link>
       <Link to="/my-account/profile/mobile" data-testid="profile-tile-mobile">
-        <strong>Mobile</strong>
+        <strong>Mobile</strong>{' '}
         {mobile ? (
           <>
-            <span>•••• ••• {mobile.lastDigits}</span>
+            <span>•••• ••• {mobile.lastDigits}</span>{' '}
             <span data-testid="profile-mobile-badge" className="badge">
               {BADGE[mobile.status]}
             </span>
@@ -258,15 +258,15 @@ function Tiles({ profile }: { profile: Profile }) {
         )}
       </Link>
       <Link to="/my-account/profile/address" data-testid="profile-tile-address">
-        <strong>Address</strong>
+        <strong>Address</strong>{' '}
         <span>{profile.address ? `${profile.address.line1}, ${profile.address.postcode}` : 'Not added'}</span>
       </Link>
       <Link to="/my-account/profile/employment" data-testid="profile-tile-employment">
-        <strong>Employment</strong>
+        <strong>Employment</strong>{' '}
         <span>{profile.employment ? sentence(profile.employment.status) : 'Not added'}</span>
       </Link>
       <Link to="/my-account/profile/finances" data-testid="profile-tile-finances">
-        <strong>Finances</strong>
+        <strong>Finances</strong>{' '}
         <span>{profile.finances.added ? 'Added' : 'Not added'}</span>
       </Link>
     </section>

@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-22: the visual check, from the review (CDS-48 slice 3)
+
+- Findings B-02 to B-05: 34 images (the fixed tab bar hidden from the pages and photographed alone at 375 px, light and dark), a colour distance of 0.1 (a shift of 0.15 now fails), `visual.yml` also watches `fixtures/**` and `packages/api-client/**`, and the profile tiles read "Email alex..." not "Emailalex...". UI specification v39, harness design v17. The baselines are refreshed by the manual workflow and accepted by the owner.
+
 ## 2026-10-22: the UI, the rules and the exit run, from the review (CDS-48 slice 2)
 
 - Findings A-04, A-05, A-06, A-07: `plural` guarded and found by the public-build guard; the semantic rules compare drawn width, only percentages in a name, and a figure in every chart cell; two exit targets for a long summary, folded and open. 8 rule tests in a real browser (`npm run test:rules`, in the `ui` job); 32 guard tests; the exit run 128 scans and 294 layout checks. UI specification v38, harness design v16.

@@ -168,5 +168,7 @@ fieldset { border: 1px solid var(--color-border); border-radius: var(--radius); 
 /* A long unbroken value (an email address) wraps rather than widening the page: it scrolled sideways at 375px with wider fonts. */
 main { overflow-wrap: anywhere; }
 .tiles > * { min-width: 0; }
+/* The label is on a line of its own, over its value: the markup has a space between them too, for a screen reader and for copied text (CDS-48 B-05). */
+.tiles a > strong { display: block; margin-bottom: 0.25rem; }
 /* Every form control follows the text size: the browser's own control font ignores a root of 200% (CDS-38 R2-C-04). */
 input, select, textarea { font: inherit; max-width: 100%; }

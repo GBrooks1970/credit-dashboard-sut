@@ -1,5 +1,5 @@
 ---
-version: 82
+version: 83
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 82 (the Phase 5 gate is recorded, DR-067; CDS-45, CDS-37 and CDS-47 done; CDS-48, the independent review of the Phase 5 additions, opened)
+**Version:** 83 (CDS-48: the two reviews are held and signed off; the fixes plan is next)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -273,6 +273,10 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 ### CDS-39: P1, the flag mechanism and the proof runner
 
 **COMPLETE (2026-10-14; #73 `0117333`, CI run 38545013647).** `Flags` and `Defects` in the service (`rounding-down` is the first API flag); `FlagsProvider`, `useFlag` and the `/debug` panel in a test build of the UI (`plural` is the first UI flag); `fixtures/bug-flags.json` (all 30 flags) checked against the contract in `verify`; `ControlTheTestEnvironment.setBugs` and `HARNESS_BUGS`; `npm run check:bug-flags` (the proof runner), in the `ui` CI job. 332 service tests, 142 Vitest tests, 51 `@ui` executions and 59 `@api` executions green with every flag off; the two implemented flags are caught for the stated reason (3 catchers). Status is Done when merged.
+
+### CDS-48: independent review of the Phase 5 additions
+
+**IN PROGRESS (plan `DOCS/implementation-plans/2026-10-21_cds-48-phase-5-review.md`, #129).** Two fresh-context reviewers on the Opus model reviewed `1f87a06` (record `.review/2026-10-22_cds-48-phase-5-review.md`, #130): 2 Blockers, 15 Changes (after four duplicates) and 16 Notes; every Blocker and Change reproduced or confirmed by the author. The owner signed off on 2026-10-22: all 17 accepted and to be fixed (variants: a fixtures and exit-target fix for A-07, limits and table writing before process groups for A-09 and B-10, a lower colour threshold for B-02), no finding rejected; N-3 and A-14 also fixed. **Next:** the fixes plan, then the fixes, a confirmation pass, DR-068, and the closure (`close-project`). Deferred to the backlog from this review: the process-group kill of timed-out catchers.
 
 ### CDS-45: P7, the Phase 5 exit
 

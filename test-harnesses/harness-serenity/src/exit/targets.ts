@@ -1,4 +1,4 @@
-// version: 1 | created: 2026-10-19T09:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 2 | created: 2026-10-19T09:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // What the exit checks (exit-checks.ts) and the visual checks (src/visual/) share (CDS-43): the pages and states of the UI as targets, the
 // browser context that carries the control key, and the way a target is reached (sign in once, then move by in-app navigation) and arranged
 // (persona, failing calls, the state to show). Moved out of exit-checks.ts unchanged, so a page added to the list is looked at by both.
@@ -17,6 +17,11 @@ export interface Target {
     persona?: string;
     /** API calls to fail with a 500 for this target, as URL patterns: shows a section's own error state with its Retry. */
     failing?: string[];
+    /**
+     * A response changed on its way to the page: the real response, with `change` applied to its JSON. For a state no persona holds and the
+     * personas' schema cannot override, such as a summary longer than the 280 characters the overview shows folded (CDS-48 A-07).
+     */
+    patch?: { url: string; change: (body: any) => void };
     /** Brings the page into a state worth scanning (an open dialog, a form error). */
     act?: (page: Page) => Promise<void>;
     /** Whether the page is looked at in every layout (default: every target that has no `act`, since a state of a page is not another page). */
@@ -24,6 +29,10 @@ export interface Target {
 }
 
 const R = '/credit-health/report/bureau-a';
+/** A summary of 360 characters: over the 280 the overview cuts at a word and offers 'Read more'. No persona has one, and an override cannot set a summary. */
+const LONG_SUMMARY =
+    'Your score is fair. Your mortgage payment in February 2025 was missed, and that is the main reason your score is not higher. Your credit card is well within its limit and your loan is being repaid on time. Paying the mortgage on time for the next twelve months is the single change that would help your score most, and the other accounts need nothing from you.';
+const longSummary = { url: '**/reports/*/overview', change: (body: any) => { body.summary.text = LONG_SUMMARY; } };
 const card = 'acc_ddcc01';
 /** A page that shows nothing of its own (not built yet): where the browser waits between two targets. */
 export const NEUTRAL = '/my-account/profile/address';
@@ -33,6 +42,9 @@ const editAddress = (field: string) => `/data-capture/${field}?accountId=${card}
 
 export const allTargets: Target[] = [
     { name: 'overview', address: R, ready: 'score-value' },
+    // A summary over 280 characters is cut at a word with a 'Read more' control (UI specification 6.2): folded, then open (CDS-48 A-07).
+    { name: 'overview, a long summary', address: R, ready: 'summary-toggle', patch: longSummary },
+    { name: 'overview, a long summary read in full', address: R, ready: 'summary-toggle', patch: longSummary, act: async (page) => { await page.getByTestId('summary-toggle').click(); await page.locator('[data-testid="summary-toggle"][aria-expanded="true"]').waitFor(); } },
     { name: 'overview, chat open', address: R, ready: 'score-value', act: async (page) => { await page.getByTestId('btn-chat').click(); await page.getByTestId('chat-drawer').waitFor(); } },
     { name: 'overview, every change shown', address: R, ready: 'score-value', act: async (page) => { await page.getByTestId('changes-toggle').click(); await page.getByTestId('changes-toggle').waitFor(); } },
     { name: 'overview, history chart failed', address: R, ready: 'history-chart-error', failing: ['**/score/history*'] },
@@ -176,12 +188,22 @@ export async function arrange(page: Page, target: Target, work: () => Promise<vo
     for (const pattern of target.failing ?? []) {
         await page.route(pattern, (route) => route.fulfill({ status: 500, contentType: 'application/problem+json', body: JSON.stringify({ type: '/problems/internal', title: 'Server fault', status: 500 }) }));
     }
+    if (target.patch) {
+        const { url, change } = target.patch;
+        await page.route(url, async (route) => {
+            const response = await route.fetch();
+            const body = await response.json();
+            change(body);
+            await route.fulfill({ response, json: body });
+        });
+    }
     try {
         await visit(page, target);
         if (target.act) await target.act(page);
         await work();
     } finally {
         for (const pattern of target.failing ?? []) await page.unroute(pattern);
+        if (target.patch) await page.unroute(target.patch.url);
     }
 }
 

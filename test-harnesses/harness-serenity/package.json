@@ -15,6 +15,7 @@
     "test:visual": "node scripts/run.mjs visual",
     "report": "node scripts/report.mjs",
     "check:report": "node --import tsx scripts/check-report.ts",
+    "test:rules": "node --import tsx --test src/exit/semantic-rules.test.ts",
     "check:site": "node --import tsx scripts/check-site.ts"
   },
   "devDependencies": {

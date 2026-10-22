@@ -1,4 +1,4 @@
-// version: 5 | created: 2026-10-16T16:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 6 | created: 2026-10-16T16:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // The Phase 4 exit checks (CDS-36; widened in CDS-38 F10): an axe-core scan of every page of the UI and of every state that shows
 // something new (an open dialog, a section error with its Retry, an empty list, a form error), in the light and in the dark theme,
 // with the bug flags off (the flag proof switches one on through HARNESS_BUGS, CDS-41), which must return zero violations (UI specification 4.5 and 9); and the three layouts (375, 768 and
@@ -170,7 +170,7 @@ try {
 console.log(`\nexit checks: ${scans} axe scans and ${layoutChecks} layout checks; ${failures.length} problem(s)`);
 // The whole run has a known size (CDS-38 R2-C-15): a target or a width that silently dropped out would otherwise still end at '0 problem(s)'.
 // Adding a page or a state to the targets changes these numbers; change them with it, in the same pull request.
-const EXPECTED = { scans: 124, layoutChecks: 288 };
+const EXPECTED = { scans: 128, layoutChecks: 294 };
 if (!only && (scans !== EXPECTED.scans || layoutChecks !== EXPECTED.layoutChecks)) {
     failures.push(`expected ${EXPECTED.scans} axe scans and ${EXPECTED.layoutChecks} layout checks, ran ${scans} and ${layoutChecks}`);
 }

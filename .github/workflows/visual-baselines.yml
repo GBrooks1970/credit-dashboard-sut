@@ -6,28 +6,32 @@
 #
 # Manual only. The repository does not allow Actions to open pull requests, so the workflow pushes the branch and prints its name; the pull
 # request is opened from there.
+#
+# Two jobs, so that no code of the project runs with a token that can write (CDS-48 B-11): `make` installs the project's dependencies and runs its
+# tests with a read-only token and no stored credentials, and hands the images over as an artifact; `push` has the write token and runs only git
+# and shell on the images. The files `make` produces are images, and `push` refuses anything in the folder that is not a PNG.
 name: Visual baselines
 
 on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: visual-baselines
   cancel-in-progress: false
 
 jobs:
-  refresh:
-    name: Make the baselines on Linux and push them to a branch
+  make:
+    name: Make the baselines on Linux
     runs-on: ubuntu-24.04
     # 30, not 20 (CDS-48): as for visual.yml, the browser install can take 10 to 14 minutes on a slow apt mirror.
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
-          persist-credentials: true
+          persist-credentials: false
 
       - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
@@ -71,10 +75,38 @@ jobs:
           retention-days: 14
           if-no-files-found: error
 
+  push:
+    name: Push the images to a branch
+    needs: make
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    # The only job with a token that writes. It installs nothing and runs nothing from the project.
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: true
+
+      - name: Fetch the images
+        uses: actions/download-artifact@018cc2cf5baa6db3ef3c5f8a56943fffe632ef53 # v6.0.0
+        with:
+          name: visual-baselines
+          path: ${{ runner.temp }}/images
+
       - name: Push the images to a branch
         env:
           BRANCH: claude/visual-baselines-${{ github.run_id }}
+          IMAGES: ${{ runner.temp }}/images
         run: |
+          # Only images may come through: the artifact is made by a job that ran the project's code.
+          if find "$IMAGES" -type f ! -name '*.png' | grep -q .; then
+            echo "::error::the artifact holds a file that is not a PNG"
+            exit 1
+          fi
+          rm -rf test-harnesses/harness-serenity/visual-baselines
+          mkdir -p test-harnesses/harness-serenity/visual-baselines
+          cp "$IMAGES"/*.png test-harnesses/harness-serenity/visual-baselines/
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git switch -c "$BRANCH"

@@ -1,4 +1,4 @@
-// version: 1 | created: 2026-10-20T13:35Z | project: credit-dashboard-sut | type: test | language: en-GB
+// version: 2 | created: 2026-10-20T13:35Z | project: credit-dashboard-sut | type: test | language: en-GB
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
@@ -63,4 +63,43 @@ test('the control key or a token in any file is a problem that names the file, n
     const problems = siteProblems(files, { sha: SHA, forbidden: ['harness-run-key'] });
     assert.equal(problems.length, 2);
     assert.doesNotMatch(problems.join('\n'), /abcdef123|"harness-run-key"/);
+});
+
+test('a file under report/ that is not a kind the report holds is a problem, wherever it hides (B-06)', () => {
+    for (const path of ['report/notes.log', 'report/secrets.env', 'report/openapi.yaml', 'report/x.md', 'report/.git/config']) {
+        const problems = siteProblems([...good(), { path, text: 'x' }], { sha: SHA, forbidden: [] });
+        assert.equal(problems.length, 1, path);
+        assert.match(problems[0], new RegExp(path.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&')));
+    }
+});
+
+test('the key, a bearer token and a service token are found in any kind of file, not only the listed ones (B-06)', () => {
+    const files = [
+        ...good(),
+        { path: 'report/notes.log', text: 'harness-run-key' },
+        { path: 'report/x.md', text: 'Authorization: Bearer abcdefgh1234' },
+        { path: 'report/t.html', text: 'tok_0123456789abcdef0123456789abcdef' },
+    ];
+    const problems = siteProblems(files, { sha: SHA, forbidden: ['harness-run-key'] });
+    assert.equal(problems.filter((p) => /holds the run's control key|holds a bearer token|holds a service token/.test(p)).length, 3);
+});
+
+test('a file too large to be looked at is a problem (B-06)', () => {
+    const problems = siteProblems([...good(), { path: 'report/big.js', text: '', tooLarge: true }], { sha: SHA, forbidden: [] });
+    assert.equal(problems.length, 1);
+    assert.match(problems[0], /report\/big\.js/);
+    assert.match(problems[0], /too large/);
+});
+
+test('a stamp that only starts with the commit is a problem: the whole commit, on its own line (N-3)', () => {
+    const files = (stamp: string) => good().map((f) => (f.path === 'report/commit.txt' ? { ...f, text: stamp } : f));
+    assert.match(siteProblems(files(`commit: ${SHA}0\n`), { sha: SHA, forbidden: [] }).join('\n'), /commit\.txt/);
+    assert.match(siteProblems(files(`commit: ${SHA.slice(0, 10)}\n`), { sha: SHA, forbidden: [] }).join('\n'), /commit\.txt/);
+    assert.match(siteProblems(files(`note commit: ${SHA}\n`), { sha: SHA, forbidden: [] }).join('\n'), /commit\.txt/);
+    assert.deepEqual(siteProblems(files(`run: 1\ncommit: ${SHA}\n`), { sha: SHA, forbidden: [] }), []);
+});
+
+test('a commit given as less than a full hash is a problem of its own (N-3)', () => {
+    const problems = siteProblems(good().map((f) => (f.path === 'report/commit.txt' ? { ...f, text: 'commit: abc123\n' } : f)), { sha: 'abc123', forbidden: [] });
+    assert.match(problems.join('\n'), /full 40-character commit/);
 });

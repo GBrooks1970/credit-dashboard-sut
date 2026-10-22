@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-23: the report, the site and the workflow, from the review (CDS-48 slice 4)
+
+- Findings B-06, B-07, B-11 and N-3: the secret scans read every file but an image or a font, accept only the kinds of file a Serenity report holds under `report/`, and know the service token and the key in base64; the report check compares scenario names and the rows of each outline with a manifest read from the feature files (no hand-kept count); the commit stamp is the whole commit on its own line; `visual-baselines.yml` makes the images with no write token and a second job pushes them. 37 unit tests, twelve mutations. Harness design v18.
+
 ## 2026-10-22: the CI time limits (CDS-48, CDS-49)
 
 - The `flags` job's limit is 40 minutes (was 30): the proof takes about 16, and a 14-minute browser install cancelled #134's run at 30. The `ui` job's limit is 25 minutes (was 15). The work takes about 5; the browser install alone took over 10 on a slow runner and the limit cancelled two runs (#132 and #134). Owner approved on 2026-10-22.

@@ -39,7 +39,8 @@ jobs:
   visual:
     name: Visual (eight pages, two widths, light and dark, and the tab bar, against the baselines)
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    # 25, not 15 (CDS-48): the work takes about 2 minutes, but the browser install has taken 10 to 14 on a slow apt mirror.
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:

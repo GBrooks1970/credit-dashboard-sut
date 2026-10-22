@@ -115,6 +115,11 @@ jobs:
         run: npm run test:exit
         working-directory: test-harnesses/harness-serenity
 
+      # The semantic rules on hand-made pages, in a real browser (CDS-48 A-05, A-06): a bar drawn the wrong width, a chart cell with no figure, a good name.
+      - name: 'Semantic rules on hand-made pages'
+        run: npm run test:rules
+        working-directory: test-harnesses/harness-serenity
+
       # The Serenity JSON of the @ui run, for the report job (CDS-44). Kept even when a later step failed.
       - name: The Serenity JSON of the @ui run
         if: always()

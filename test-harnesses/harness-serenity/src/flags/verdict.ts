@@ -21,7 +21,7 @@ export function exitCheckRan(output: string): boolean {
 }
 
 export type Outcome = 'passed' | 'failed-as-stated' | 'failed-for-another-reason' | 'did-not-run' | 'timed-out';
-export type Verdict = 'caught' | 'not-caught' | 'caught-for-another-reason' | 'false-alarm' | 'timed-out' | 'pending';
+export type Verdict = 'caught' | 'not-caught' | 'caught-for-another-reason' | 'false-alarm' | 'timed-out' | 'pending' | 'page-changed-only';
 
 /**
  * With the flag off a catcher must pass, must have run, and its output must not hold the failure text: a text that appears
@@ -42,10 +42,31 @@ export function judgeOn(run: RunResult, failsWith: string): Outcome {
     return run.output.includes(failsWith) ? 'failed-as-stated' : 'failed-for-another-reason';
 }
 
-export function verdictOf(results: { off: Outcome; on: Outcome }[]): Verdict {
+/**
+ * A flag's verdict from its catchers. A visual catcher fails for any change to the image (its recorded text is the image's name), so it
+ * is a "page changed" catch and never a reason: a flag is caught for the stated reason only by a catcher that names the reason, and a flag
+ * whose only catch is an image is `page-changed-only` (CDS-48, review findings A-02 and B-08).
+ */
+export function verdictOf(results: { off: Outcome; on: Outcome; kind?: string }[]): Verdict {
     if (results.some((r) => r.off !== 'passed')) return 'false-alarm';
-    if (results.some((r) => r.on === 'failed-as-stated')) return 'caught';
+    if (results.some((r) => r.kind !== 'visual-check' && r.on === 'failed-as-stated')) return 'caught';
+    if (results.some((r) => r.kind === 'visual-check' && r.on === 'failed-as-stated')) return 'page-changed-only';
     if (results.some((r) => r.on === 'failed-for-another-reason')) return 'caught-for-another-reason';
     if (results.some((r) => r.on === 'timed-out')) return 'timed-out';
     return 'not-caught';
+}
+
+/**
+ * How many tests a Vitest run executed: the passed and the failed, not the skipped (a run filtered by name skips the rest). The proof
+ * requires exactly one, so a name that matches two tests, or none, is an error and not a catch (CDS-48 A-02).
+ */
+export function vitestExecuted(output: string): number {
+    const line = /^\s*Tests\s+(.*)$/m.exec(output)?.[1] ?? '';
+    return ['passed', 'failed'].reduce((sum, word) => sum + Number(new RegExp(`(\\d+) ${word}`).exec(line)?.[1] ?? 0), 0);
+}
+
+/** The first line of a run's output that holds the recorded failure text, trimmed and cut at 300 characters: what the proof table keeps (CDS-48 B-01). */
+export function matchedLine(output: string, failsWith: string): string | null {
+    const line = output.split(/\r?\n/).find((l) => l.includes(failsWith));
+    return line === undefined ? null : line.trim().slice(0, 300);
 }

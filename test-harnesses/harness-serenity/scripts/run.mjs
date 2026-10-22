@@ -1,4 +1,4 @@
-// version: 12 | created: 2026-10-13T11:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 13 | created: 2026-10-13T11:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Builds the service, starts it with test control on and a synthetic key, starts a second instance without test control
 // (for the scenario that needs the surface absent), runs the Cucumber profile against them, and always stops both
 // (design section 8, CDS-22). Run from test-harnesses/harness-serenity:  node scripts/run.mjs api|ui [feature ...]
@@ -10,7 +10,9 @@
 // The UI the ui, exit, flags and visual runs build is a TEST BUILD (VITE_TEST_BUILD=true: it reads the flags and has the debug panel).
 // The ui and exit runs also build the UI (demo-apps/demoapp001-react-ui) and have the service serve it (UI_DIRECTORY, brief 11 D2).
 // The Cucumber, exit and flags child runs asynchronously: a SIGINT or SIGTERM is forwarded to it, and each mode has a whole-run limit
-// (api 10 min, ui, exit and visual 15 min, flags 60 min; HARNESS_TIMEOUT_MS overrides) so a hung run ends with a message, not a cancelled job (CDS-38 R2-B-08).
+// (api 8 min, ui and exit 8, visual 10, flags 25; HARNESS_TIMEOUT_MS overrides) so a hung run ends with a message, not a cancelled job (CDS-38 R2-B-08).
+// Each limit is below the CI job's own (10, 15, 15, 30 minutes) and above the measured run (47 s, 2 min, 4 min, 15 s, 17 min), or the job would be cancelled
+// first and keep nothing (CDS-48 B-10).
 // A run that names a feature file that does not exist, or in which no scenario finished, fails (R2-B-09). The api run type-checks the harness first (R2-B-10).
 // HARNESS_PORT (default 4600) and HARNESS_OFF_PORT (default 4601) override the ports. Anything already answering on
 // either port stops the run, because it would be tested in place of the service started here.
@@ -146,7 +148,7 @@ if (requested !== 'flags' && requested !== 'visual') {
     }
 }
 
-const limitMs = Number(process.env.HARNESS_TIMEOUT_MS || { api: 10, ui: 15, exit: 15, visual: 15, flags: 60 }[requested] * 60_000 || 15 * 60_000);
+const limitMs = Number(process.env.HARNESS_TIMEOUT_MS || { api: 8, ui: 8, exit: 8, visual: 10, flags: 25 }[requested] * 60_000 || 15 * 60_000);
 /** Runs the child without blocking this process, so a signal reaches the handler above and the limit can end it. */
 function runChild(command, env) {
     return new Promise((resolve) => {

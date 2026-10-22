@@ -1,4 +1,4 @@
-// version: 4 | created: 2026-10-14T10:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 5 | created: 2026-10-14T10:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // The bug-flag proof (CDS-39, decision brief 13, DR-064). For every flag that fixtures/bug-flags.json marks implemented, run each
 // of its committed catchers twice: with the flag OFF it must pass, and with the flag ON it must fail, and the failure must
 // contain the text the registry records for it (`failsWith`). A flag is "caught" when at least one catcher fails for the stated
@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 import http from 'node:http';
 
 import { resetWithRetry } from './reset.js';
-import { exitCheckRan, judgeOff, judgeOn, verdictOf, type Outcome, type RunResult, type Verdict } from './verdict.js';
+import { exitCheckRan, judgeOff, judgeOn, matchedLine, verdictOf, vitestExecuted, type Outcome, type RunResult, type Verdict } from './verdict.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const harness = path.resolve(here, '..', '..');
@@ -84,12 +84,15 @@ ${result.stderr}`);
         return { passed: result.status === 0, ran, timedOut: (result.error as NodeJS.ErrnoException | undefined)?.code === 'ETIMEDOUT', output: ran ? output : `${output}\n(no case ran: check the catcher's page, width and theme)` };
     }
     const vitest = path.join(uiProject, 'node_modules', 'vitest', 'vitest.mjs');
-    // Vitest reads -t as a pattern, so the name is escaped to match literally (B-26).
-    const result = spawnSync(process.execPath, [vitest, 'run', path.join(repo, catcher.file!), '-t', escapeRegExp(catcher.name)], { cwd: uiProject, env, encoding: 'utf8', timeout: TIMEOUT_MS, killSignal: 'SIGKILL' });
+    // Vitest reads -t as a pattern, so the name is escaped to match literally (B-26) and anchored to the end of a test's full name and to a space
+    // or the start before it: a name that is part of another test's name is not that test (CDS-48 A-02). The timeout is longer than Vitest's 5 s,
+    // so a loaded machine does not turn a flag-off run into a false alarm (A-14).
+    const result = spawnSync(process.execPath, [vitest, 'run', path.join(repo, catcher.file!), '-t', `(?:^| )${escapeRegExp(catcher.name)}$`, '--testTimeout=30000'], { cwd: uiProject, env, encoding: 'utf8', timeout: TIMEOUT_MS, killSignal: 'SIGKILL' });
     const output = stripAnsi(`${result.stdout}\n${result.stderr}`);
-    // Likewise a test name that matches nothing: Vitest skips every test and exits 0.
-    const ran = /Tests\s+.*\b[1-9]\d* (passed|failed)/.test(output);
-    return { passed: result.status === 0, ran, timedOut: (result.error as NodeJS.ErrnoException | undefined)?.code === 'ETIMEDOUT', output: ran ? output : `${output}\n(no test ran: check the catcher's name)` };
+    // Exactly one test must run. A name that matches nothing makes Vitest skip every test and exit 0; one that matches two is not a catcher.
+    const executed = vitestExecuted(output);
+    const ran = executed === 1;
+    return { passed: result.status === 0, ran, timedOut: (result.error as NodeJS.ErrnoException | undefined)?.code === 'ETIMEDOUT', output: ran ? output : `${output}\n(${executed} tests ran, not exactly one: check the catcher's name)` };
 }
 
 /** One reset call on a connection of its own (`agent: false`): a pooled socket the service has closed is what crashed the proof on 2026-10-19 (CDS-46). */
@@ -117,8 +120,25 @@ function logTail(): string {
 let stoppedBecause: string | undefined;
 
 const visualHere = process.env.CI === 'true' || process.env.VISUAL_LOCAL_TRY === '1';
+
+/**
+ * The proof's table, written after every flag (a proof that is stopped or cancelled leaves the flags judged so far, CDS-48 B-10) and at the
+ * end: reports/bug-flags.json, and bug-flags.md with each catcher's failure line, so "caught for the stated reason" can be checked from the
+ * record after the log has gone (B-01).
+ */
+function writeTable() {
+    const reports = path.join(harness, 'reports');
+    fs.mkdirSync(reports, { recursive: true });
+    fs.writeFileSync(path.join(reports, 'bug-flags.json'), JSON.stringify({ flags: rows }, null, 2));
+    const lines = ['# Bug flags: proof', '', '| Flag | Group | Layer | Verdict | Catchers (off, on) |', '|---|---|---|---|---|'];
+    for (const r of rows) lines.push(`| \`${r.flag}\` | ${r.group} | ${r.layer} | ${r.verdict} | ${r.catchers.map((c) => `${c.kind}: ${c.off}, ${c.on}`).join('; ') || 'none yet'} |`);
+    lines.push('', '## What each catcher failed with', '', 'The first line of the catcher\'s output with the flag on that holds the recorded failure text. A visual-check catcher is a page-changed catch: its text is the image\'s name.', '', '| Flag | Catcher | Recorded text | The line it failed with |', '|---|---|---|---|');
+    for (const r of rows) for (const c of r.catchers) lines.push(`| \`${r.flag}\` | ${c.kind}: ${c.name.replace(/\|/g, '/')} | \`${c.failsWith.replace(/\|/g, '/')}\` | ${c.matched === null ? '(not in the output)' : `\`${c.matched.replace(/\|/g, '/').replace(/\`/g, "'")}\``} |`);
+    fs.writeFileSync(path.join(reports, 'bug-flags.md'), `${lines.join('\n')}\n`);
+}
 const leftOut: string[] = [];
-const rows: { flag: string; group: string; layer: string; verdict: Verdict; catchers: { name: string; kind: string; off: Outcome; on: Outcome }[] }[] = [];
+type CatcherResult = { name: string; kind: string; off: Outcome; on: Outcome; failsWith: string; matched: string | null };
+const rows: { flag: string; group: string; layer: string; verdict: Verdict; catchers: CatcherResult[] }[] = [];
 const describeOn = (on: Outcome) => ({ passed: 'PASSES', 'failed-as-stated': 'fails as stated', 'failed-for-another-reason': 'fails, but not as stated', 'did-not-run': 'DID NOT RUN', 'timed-out': 'TIMED OUT' })[on];
 const describeOff = (off: Outcome) => (off === 'passed' ? 'passes' : off === 'failed-for-another-reason' ? 'FAILS (or prints the failure text)' : off === 'did-not-run' ? 'DID NOT RUN' : 'TIMED OUT');
 
@@ -128,7 +148,7 @@ for (const entry of registry.flags) {
         rows.push({ flag: entry.flag, group: entry.group, layer: entry.layer, verdict: 'pending', catchers: [] });
         continue;
     }
-    const results: { name: string; kind: string; off: Outcome; on: Outcome }[] = [];
+    const results: CatcherResult[] = [];
     for (const catcher of entry.catchers ?? []) {
         // The visual baselines are Linux CI images: a visual-check catcher runs there, or here with VISUAL_LOCAL_TRY=1 against throw-away
         // images. Anywhere else it is left out and said so; the flag's other catchers still judge it.
@@ -139,12 +159,13 @@ for (const entry of registry.flags) {
         }
         const off = run(catcher, []);
         const on = run(catcher, [entry.flag]);
-        const outcome = { name: catcher.name, kind: catcher.kind, off: judgeOff(off, catcher.failsWith), on: judgeOn(on, catcher.failsWith) };
+        const outcome = { name: catcher.name, kind: catcher.kind, off: judgeOff(off, catcher.failsWith), on: judgeOn(on, catcher.failsWith), failsWith: catcher.failsWith, matched: matchedLine(on.output, catcher.failsWith) };
         results.push(outcome);
         console.log(`  ${entry.flag.padEnd(24)} ${catcher.kind.padEnd(15)} off: ${describeOff(outcome.off)}  on: ${describeOn(outcome.on)}  ${catcher.name}`);
     }
     const verdict = verdictOf(results);
     rows.push({ flag: entry.flag, group: entry.group, layer: entry.layer, verdict, catchers: results });
+    writeTable();
     const reset = await resetWithRetry(resetOnce, { flag: entry.flag, logTail });
     if (!reset.ok) {
         // Named, with the table so far written below: the proof stops here and is not a pass.
@@ -153,12 +174,7 @@ for (const entry of registry.flags) {
     }
 }
 
-const reports = path.join(harness, 'reports');
-fs.mkdirSync(reports, { recursive: true });
-fs.writeFileSync(path.join(reports, 'bug-flags.json'), JSON.stringify({ flags: rows }, null, 2));
-const lines = ['# Bug flags: proof', '', '| Flag | Group | Layer | Verdict | Catchers (off, on) |', '|---|---|---|---|---|'];
-for (const r of rows) lines.push(`| \`${r.flag}\` | ${r.group} | ${r.layer} | ${r.verdict} | ${r.catchers.map((c) => `${c.kind}: ${c.off}, ${c.on}`).join('; ') || 'none yet'} |`);
-fs.writeFileSync(path.join(reports, 'bug-flags.md'), `${lines.join('\n')}\n`);
+writeTable();
 
 const proved = rows.filter((r) => r.verdict !== 'pending');
 const bad = proved.filter((r) => r.verdict !== 'caught');

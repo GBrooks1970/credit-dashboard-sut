@@ -129,7 +129,10 @@ jobs:
   # grows with every flag (about 4 minutes for 19 flags at P3c) and the `ui` job has a 15 minute limit; the two run side by side.
   flags:
     name: Bug-flag proof (each implemented flag on and off against its catchers)
-    runs-on: ubuntu-latest
+    # Pinned, not ubuntu-latest: with CI=true the proof also runs the two visual catchers against the Linux baselines, which are images made on
+    # ubuntu-24.04 (visual.yml). When `latest` moves, their flag-off runs would fail on font rendering and the proof would go red with no defect
+    # (CDS-48 A-08, B-09). Move the pin only together with a refresh of the baselines.
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
@@ -167,8 +170,9 @@ jobs:
         run: npm run test:flags
         working-directory: test-harnesses/harness-serenity
 
-      # The table the proof wrote, kept where a gate can cite it (CDS-45, P7a): in this run's summary, and as an artifact after the log has expired.
-      # Written when the proof stops early as well, with the flags judged so far.
+      # The table the proof wrote, kept where a gate can cite it (CDS-45, P7a): in this run's summary, and as an artifact. The artifact is kept for the
+      # repository's whole retention (90 days, the same as the log; CDS-48 B-01) and holds each catcher's failure line. The table is written after every
+      # flag, so a proof that stops early, or is cancelled at the job's time limit, leaves the flags judged so far.
       - name: The proof table in the job summary
         if: always()
         run: |
@@ -183,12 +187,12 @@ jobs:
           path: |
             test-harnesses/harness-serenity/reports/bug-flags.json
             test-harnesses/harness-serenity/reports/bug-flags.md
-          retention-days: 14
+          retention-days: 90
           if-no-files-found: warn
 
       # What the service said, when the proof failed (CDS-46): the proof crashed twice on 2026-10-19 with a dropped connection and no log to read.
-      - name: The service logs of a failed proof
-        if: failure()
+      - name: The service logs of a failed or cancelled proof
+        if: failure() || cancelled()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: flag-proof-service-logs

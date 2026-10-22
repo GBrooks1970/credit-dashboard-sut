@@ -69,7 +69,8 @@ jobs:
   ui:
     name: UI (typecheck, component tests, build, @ui scenarios)
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    # 25, not 15 (CDS-48): the work takes about 5 minutes, but 'Install the browser' has taken over 10 on a slow runner, and the limit cancelled the run twice.
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:

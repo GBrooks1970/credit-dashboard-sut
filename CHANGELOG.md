@@ -4,7 +4,7 @@ All notable changes to this project. Dates are UTC.
 
 ## 2026-10-22: the UI job's time limit (CDS-48)
 
-- The `ui` job's limit is 25 minutes (was 15). The work takes about 5; the browser install alone took over 10 on a slow runner and the limit cancelled two runs (#132 and #134). Owner approved on 2026-10-22.
+- The `flags` job's limit is 40 minutes (was 30): the proof takes about 16, and a 14-minute browser install cancelled #134's run at 30. The `ui` job's limit is 25 minutes (was 15). The work takes about 5; the browser install alone took over 10 on a slow runner and the limit cancelled two runs (#132 and #134). Owner approved on 2026-10-22.
 
 ## 2026-10-22: the proof made harder to fool (CDS-48 slice 1)
 

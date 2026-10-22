@@ -134,7 +134,8 @@ jobs:
     # ubuntu-24.04 (visual.yml). When `latest` moves, their flag-off runs would fail on font rendering and the proof would go red with no defect
     # (CDS-48 A-08, B-09). Move the pin only together with a refresh of the baselines.
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    # 40, not 30 (CDS-48): the proof takes about 16 minutes, but 'Install the browser' took 14 on a slow runner and the limit cancelled the run.
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:

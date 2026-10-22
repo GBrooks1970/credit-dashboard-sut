@@ -100,20 +100,8 @@ jobs:
           npm ci --prefix demo-apps/demoapp001-react-ui --no-audit --no-fund
           npm ci --prefix test-harnesses/harness-serenity --no-audit --no-fund
 
-      # The apt mirror is sometimes slow (10 to 14 minutes on 2026-10-22; the same install is 25 seconds on a good run, and the browser download is 8 seconds of it),
-      # so each attempt is cut off at 4 minutes and tried once more (CDS-49). `timeout` ends the whole process group, apt included.
       - name: Install the browser
-        run: |
-          for attempt in 1 2; do
-            if timeout --kill-after=10 240 npx playwright install --with-deps chromium; then exit 0; fi
-            echo "::warning::the browser install did not finish in 4 minutes or failed (attempt $attempt of 2)"
-            # npx is ours to stop, but apt-get runs as root and survives it holding the dpkg lock, which fails the retry at once (seen 2026-10-22).
-            sudo pkill -x apt-get || true
-            sudo pkill -x dpkg || true
-            sleep 5
-            sudo dpkg --configure -a || true
-          done
-          exit 1
+        run: npx playwright install --with-deps chromium
         working-directory: test-harnesses/harness-serenity
 
       - name: UI typecheck, component tests and build
@@ -176,20 +164,8 @@ jobs:
           npm ci --prefix demo-apps/demoapp001-react-ui --no-audit --no-fund
           npm ci --prefix test-harnesses/harness-serenity --no-audit --no-fund
 
-      # The apt mirror is sometimes slow (10 to 14 minutes on 2026-10-22; the same install is 25 seconds on a good run, and the browser download is 8 seconds of it),
-      # so each attempt is cut off at 4 minutes and tried once more (CDS-49). `timeout` ends the whole process group, apt included.
       - name: Install the browser
-        run: |
-          for attempt in 1 2; do
-            if timeout --kill-after=10 240 npx playwright install --with-deps chromium; then exit 0; fi
-            echo "::warning::the browser install did not finish in 4 minutes or failed (attempt $attempt of 2)"
-            # npx is ours to stop, but apt-get runs as root and survives it holding the dpkg lock, which fails the retry at once (seen 2026-10-22).
-            sudo pkill -x apt-get || true
-            sudo pkill -x dpkg || true
-            sleep 5
-            sudo dpkg --configure -a || true
-          done
-          exit 1
+        run: npx playwright install --with-deps chromium
         working-directory: test-harnesses/harness-serenity
 
       - name: 'Bug-flag proof: each implemented flag on and off against its catchers'

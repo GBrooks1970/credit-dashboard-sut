@@ -7,6 +7,10 @@ All notable changes to this project. Dates are UTC.
 - The `flags` job's limit is 40 minutes (was 30): the proof takes about 16, and a 14-minute browser install cancelled #134's run at 30. The `ui` job's limit is 25 minutes (was 15). The work takes about 5; the browser install alone took over 10 on a slow runner and the limit cancelled two runs (#132 and #134). Owner approved on 2026-10-22.
 - The `visual.yml` limit is 25 minutes (was 15) and `visual-baselines.yml` 30 (was 20), for the same reason. The slow part was the apt mirror (about 10 of the 10m35s; the browser download itself 8 seconds; the same install 23 seconds on a good run), so caching the browser would not have helped. A cut-off at 4 minutes with one retry was tried and removed: the retry works (after stopping the root apt-get that kept the dpkg lock) but a slow mirror was too slow for both attempts and failed a job that a patient install passes in 10 to 14 minutes.
 
+## 2026-10-22: the UI, the rules and the exit run, from the review (CDS-48 slice 2)
+
+- Findings A-04, A-05, A-06, A-07: `plural` guarded and found by the public-build guard; the semantic rules compare drawn width, only percentages in a name, and a figure in every chart cell; two exit targets for a long summary, folded and open. 8 rule tests in a real browser (`npm run test:rules`, in the `ui` job); 32 guard tests; the exit run 128 scans and 294 layout checks. UI specification v38, harness design v16.
+
 ## 2026-10-22: the proof made harder to fool (CDS-48 slice 1)
 
 - Review findings A-01 (Blocker), A-02, B-08, B-01 (the proof part), A-08, B-09, A-09, B-10, A-14: the `open-redirect` flag really leaves the site and its catcher asserts it; generic recorded failure text is refused; a visual catcher is a page-changed catch, not a reason; one Vitest test, anchored; the proof table keeps each catcher's failure line, is written after every flag and kept 90 days; the `flags` job is pinned to `ubuntu-24.04`; run limits are below the job limits. 63 harness unit tests, 7 component tests, 4 fixture tests. UI specification v37, harness design v15.

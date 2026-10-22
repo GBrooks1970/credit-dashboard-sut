@@ -1,4 +1,4 @@
-// version: 1 | created: 2026-10-13T10:45Z | project: credit-dashboard-sut | type: source | language: en-GB
+// version: 2 | created: 2026-10-13T10:45Z | project: credit-dashboard-sut | type: source | language: en-GB
 // Formatting (UI specification section 4.2, locale en-GB). Money arrives as integer minor units (DR-004) and is never
 // converted through floating point except for display.
 import { TEST_BUILD, flagOn } from './flags.tsx';
@@ -60,5 +60,5 @@ export function formatMonth(month: string): string {
 /** `1 topic`, `2 topics`. */
 export function plural(count: number, one: string, many: string): string {
   // The `plural` bug flag recreates '1 topics' and 'Updates in 1 days' (UI specification 8).
-  return `${count} ${count === 1 && !flagOn('plural') ? one : many}`;
+  return `${count} ${count === 1 && !(TEST_BUILD && flagOn('plural')) ? one : many}`;
 }

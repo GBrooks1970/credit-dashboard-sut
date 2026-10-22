@@ -1,4 +1,4 @@
-// version: 2 | created: 2026-10-16T16:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 3 | created: 2026-10-16T16:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // The public build must hold none of the test-only code (decision brief 13 D1, DR-064; UI specification 3 and 6.8). Vite removes it
 // when VITE_TEST_BUILD is not 'true'; this check looks at what was actually built, so a switch that is inverted, a variable that
 // leaks into the environment or an import that escapes the guard fails `npm run check` and the `ui` CI job (CDS-38 C-13).
@@ -18,7 +18,14 @@ export const MARKERS = ['cds.testControlKey', '__test', 'x-test-control-key', 'd
  */
 export const FLAG_MARKERS = ['duplicate-nav', 'util-mismatch', 'currency-format', 'minor-units-label', 'placeholder-aria', 'chart-no-values', 'range-stale', 'toggle-label', 'like-both', 'truncate-summary', 'negative-balance', 'button-href', 'double-render', 'ph-a11y', 'nested-button', 'decorative-alt', 'open-redirect', 'preferred-on-report', 'pii-in-title', 'lost-edit'];
 
-/** Everything the guard looks for. */
+/**
+ * The UI bug flags whose names are ordinary words (`plural`): too common to be a marker as plain text, so they are looked for as a quoted
+ * string, which is how a flag call reaches a bundle (CDS-48 A-04: `flagOn('plural')` outside a `TEST_BUILD &&` check survived into the public
+ * build as an inert call). A sentence holding the word is not a quoted flag name.
+ */
+export const QUOTED_FLAG_MARKERS = ['plural'];
+
+/** Everything the guard looks for as plain text. */
 export const ALL_MARKERS = [...MARKERS, ...FLAG_MARKERS];
 
 /** Every marker found in the JavaScript and HTML of a build, as `file: marker`. Throws if the folder holds nothing to look at. */
@@ -38,6 +45,7 @@ export function scan(folder) {
     for (const file of files) {
         const text = fs.readFileSync(file, 'utf8');
         for (const marker of ALL_MARKERS) if (text.includes(marker)) hits.push(`${path.relative(folder, file)}: ${marker}`);
+        for (const flag of QUOTED_FLAG_MARKERS) if (new RegExp('["\'`]' + flag + '["\'`]').test(text)) hits.push(`${path.relative(folder, file)}: ${flag} (as a string)`);
     }
     return hits;
 }

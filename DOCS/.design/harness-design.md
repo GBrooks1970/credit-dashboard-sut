@@ -1,5 +1,5 @@
 ---
-version: 15
+version: 16
 created: 2026-10-09T11:20Z
 project: credit-dashboard-sut
 type: design
@@ -419,3 +419,10 @@ Findings of the independent review of the Phase 5 additions (`.review/2026-10-22
 - **A-14.** Component catchers run with `--testTimeout=30000`, so a loaded machine does not turn a flag-off run into a false alarm.
 - **Proved:** the new unit tests failed on the missing code first (63 harness unit tests, 7 component tests, 4 fixture tests); one mutation each (a visual catcher counted as a reason, the generic-text rule always null, `followAddress` always navigating) fails them; a forced early stop (the service unreachable after the first flag) leaves a table with that flag; the registry's old open-redirect text is refused by `schema-check` and the new one accepted.
 - **Not proved here:** the `ubuntu-24.04` pin and the cancelled-job log upload, which only CI shows; the first full proof on CI after this change is their test.
+
+## 40. The UI, the rules and the exit run, from the review (CDS-48 slice 2, 2026-10-22)
+
+- **A-04.** `plural` in `format.ts` is inside `TEST_BUILD && ...`; the public bundle holds no `plural` string any more. `public-build-guard.mjs` v3 looks for a plain-word flag name as a quoted string (`QUOTED_FLAG_MARKERS`), and its test asserts every UI flag in the registry is a marker or a quoted marker (3 new tests, 32 in all). Proved: the guard passes the fixed build; with the unguarded call put back it fails ("plural (as a string)").
+- **A-05, A-06.** `src/exit/semantic-rules.ts` v2: a bar's fill width is compared with its value (clamped at 100, one point of tolerance); a name's percentages, not every number in it, are compared with the value; a chart cell must hold a figure or "No score". `src/exit/semantic-rules.test.ts` (8 tests, in a real browser, run by `npm run test:rules` in the `ui` job and locally) has the reviewer's pages: the width-only bar, the fuller name with money, the `n/a` cell. They failed first (4 of 8). Three mutations (the width check removed, every number counted again, only empty cells flagged) each fail them. The nine exit-check flags are still all caught, and the full exit run reports no problem on any real page.
+- **A-07.** Two exit targets: the overview with a summary of 360 characters, folded and read in full (`patch` on a target changes the real response on its way to the page, because no persona has a long summary and the overrides schema cannot set one). Both pass axe in both themes and the three layouts, with normal and doubled text: the expander and its accessibility are now checked in a real browser. The exit run is 128 axe scans and 294 layout checks.
+- **Not proved here:** the new `ui` job step on CI (the first run of this change shows it).

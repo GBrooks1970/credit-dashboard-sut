@@ -2,9 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
-## 2026-10-22: the UI job's time limit (CDS-48)
+## 2026-10-22: the CI time limits and the browser install (CDS-48, CDS-49)
 
 - The `flags` job's limit is 40 minutes (was 30): the proof takes about 16, and a 14-minute browser install cancelled #134's run at 30. The `ui` job's limit is 25 minutes (was 15). The work takes about 5; the browser install alone took over 10 on a slow runner and the limit cancelled two runs (#132 and #134). Owner approved on 2026-10-22.
+- The browser install (`npx playwright install --with-deps chromium`, in `ci.yml` twice, `visual.yml` and `visual-baselines.yml`) is cut off at 4 minutes and tried once more. The slow part was the apt mirror (about 10 minutes of the 10m35s; the browser download itself 8 seconds; the same install 23 seconds on the rerun), so caching the browser would not have helped. Proved on the loop's logic with a stalled fake install (killed, retried, succeeded); the real slow mirror cannot be provoked, so the first slow run will show it.
 
 ## 2026-10-22: the proof made harder to fool (CDS-48 slice 1)
 

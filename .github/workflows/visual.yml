@@ -1,4 +1,4 @@
-# The visual checks (CDS-43, Phase 5 P5): eight pages at 375 and 1280 px, light and dark, compared with the committed baselines.
+# The visual checks (CDS-43, Phase 5 P5): eight pages at 375 and 1280 px, light and dark, and the tab bar alone, compared with the committed baselines.
 #
 # A workflow of its own, not a job of ci.yml: it runs only when something that can change how the pages look changes (plan decision D7),
 # and it must not share the `flags` job, which is at 17 of its 30 minutes (decision D6 of the P4 plan). Baselines are Linux images made by
@@ -15,12 +15,16 @@ on:
       - demo-apps/demoapp001-react-ui/**
       - demo-apps/demoapp001-dotnet-api/**
       - test-harnesses/harness-serenity/**
+      - fixtures/**
+      - packages/api-client/**
       - .github/workflows/visual.yml
   pull_request:
     paths:
       - demo-apps/demoapp001-react-ui/**
       - demo-apps/demoapp001-dotnet-api/**
       - test-harnesses/harness-serenity/**
+      - fixtures/**
+      - packages/api-client/**
       - .github/workflows/visual.yml
   workflow_dispatch:
 
@@ -33,7 +37,7 @@ concurrency:
 
 jobs:
   visual:
-    name: Visual (eight pages, two widths, light and dark, against the baselines)
+    name: Visual (eight pages, two widths, light and dark, and the tab bar, against the baselines)
     runs-on: ubuntu-24.04
     # 25, not 15 (CDS-48): the work takes about 2 minutes, but the browser install has taken 10 to 14 on a slow apt mirror.
     timeout-minutes: 25

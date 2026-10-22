@@ -69,6 +69,17 @@ describe('my profile (My Profile UI feature spec 2 to 3)', () => {
     expect(document.body.textContent).not.toContain('£');
   });
 
+  it('each tile separates its label from its value, in the page and in the name a screen reader reads (CDS-48 B-05)', async () => {
+    fakeService({ 'GET /me/profile': () => json(200, profile()) });
+    await openSignedIn('/my-account/profile');
+    await screen.findByTestId('profile-tile-email');
+    for (const [tile, label] of [['email', 'Email'], ['mobile', 'Mobile'], ['address', 'Address'], ['employment', 'Employment'], ['finances', 'Finances']] as const) {
+      const text = screen.getByTestId(`profile-tile-${tile}`).textContent ?? '';
+      // The label, then a space, then a value: "Emailalex.example@example.com" is how the page used to read.
+      expect(text, tile).toMatch(new RegExp(`^${label}\\s\\S`));
+    }
+  });
+
   it('empty tiles say Not added', async () => {
     fakeService({ 'GET /me/profile': () => json(200, profile({ mobile: null, address: null, employment: null, finances: { added: false }, email: { address: 'sam@example.com', status: 'unverified' } })) });
     await openSignedIn('/my-account/profile');

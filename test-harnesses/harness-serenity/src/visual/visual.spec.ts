@@ -1,8 +1,10 @@
-// version: 4 | created: 2026-10-19T09:45Z | project: credit-dashboard-sut | type: test | language: en-GB
-// The visual checks (CDS-43): each of the eight pages, at 375 and 1280 px, in the light and in the dark theme, photographed whole and compared
-// with its baseline. Run by `node scripts/run.mjs visual` against the live service serving the built UI, flags off. Not a Gherkin scenario:
+// version: 5 | created: 2026-10-19T09:45Z | project: credit-dashboard-sut | type: test | language: en-GB
+// The visual checks (CDS-43): each of the eight pages, at 375 and 1280 px, in the light and in the dark theme, photographed whole (the fixed tab
+// bar hidden) and compared with its baseline, and the tab bar photographed on its own at 375 px (CDS-48 B-04). Run by `node scripts/run.mjs visual` against the live service serving the built UI, flags off. Not a Gherkin scenario:
 // the @ui scenarios are the behaviour, this is how the pages look.
 import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { expect, test, type BrowserContext, type Page } from '@playwright/test';
 
@@ -10,6 +12,8 @@ import { allTargets, arrange, control, uiContext } from '../exit/targets.js';
 import { baselineProblems, THEMES, visualCases, WIDTHS } from './cases.js';
 
 const HEIGHTS = { 375: 812, 1280: 800 } as const;
+// Hides the tab bar for a whole-page photograph: it keeps its space, so nothing moves.
+const HIDE_TAB_BAR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'hide-tab-bar.css');
 
 // The service's clock is frozen, because what a page shows depends on it ("Updates in 0 days", the months of the history chart, which changes
 // count as recent): with the real clock every baseline would go out of date at the turn of a month.
@@ -41,13 +45,14 @@ for (const width of WIDTHS) {
             });
 
             for (const c of visualCases().filter((x) => x.width === width && x.theme === theme)) {
-                test(c.page, async () => {
-                    const target = allTargets.find((t) => t.name === c.page);
-                    if (!target) throw new Error(`no exit-check target is named '${c.page}'`);
+                test(c.shot === 'page' ? c.page : `${c.page}: ${c.shot}`, async () => {
+                    const target = allTargets.find((t) => t.name === c.target);
+                    if (!target) throw new Error(`no exit-check target is named '${c.target}'`);
                     await arrange(page, target, async () => {
                         // Fonts in place, then one look: the page is already settled (no section still loading) when arrange returns.
                         await page.evaluate('document.fonts.ready');
-                        await expect(page).toHaveScreenshot(c.file, { fullPage: true });
+                        if (c.shot === 'tab-bar') await expect(page.locator('nav.nav-mobile')).toHaveScreenshot(c.file);
+                        else await expect(page).toHaveScreenshot(c.file, { fullPage: true, stylePath: HIDE_TAB_BAR });
                     });
                 });
             }

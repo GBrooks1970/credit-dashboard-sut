@@ -1,5 +1,5 @@
 # Refreshes the visual baselines (CDS-43, plan step 6): runs the visual checks in update mode on Linux, the only place the baselines are valid
-# (decision D2), and pushes the 32 images to a new branch for a pull request. It never commits to main. The images are also kept as an
+# (decision D2), and pushes the 34 images to a new branch for a pull request. It never commits to main. The images are also kept as an
 # artefact so they can be looked at before anyone accepts them (decision D5).
 #
 # The runner is ubuntu-24.04, the same as visual.yml, so the baselines are made where they are compared.

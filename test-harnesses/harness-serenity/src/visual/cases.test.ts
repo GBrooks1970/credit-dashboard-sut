@@ -1,22 +1,30 @@
-// version: 1 | created: 2026-10-19T09:45Z | project: credit-dashboard-sut | type: test | language: en-GB
+// version: 2 | created: 2026-10-19T09:45Z | project: credit-dashboard-sut | type: test | language: en-GB
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { allTargets } from '../exit/targets.js';
 import { baselineProblems, visualCases } from './cases.js';
 
-test('there are 32 cases with 32 different file names', () => {
+test('there are 34 cases with 34 different file names: 32 pages and 2 shots of the tab bar', () => {
     const cases = visualCases();
-    assert.equal(cases.length, 32);
-    assert.equal(new Set(cases.map((c) => c.file)).size, 32);
+    assert.equal(cases.length, 34);
+    assert.equal(new Set(cases.map((c) => c.file)).size, 34);
+    assert.equal(cases.filter((c) => c.shot === 'page').length, 32);
+    assert.equal(cases.filter((c) => c.shot === 'tab-bar').length, 2);
+});
+
+test('the tab bar is photographed on its own at 375 px, once in each theme (CDS-48 B-04)', () => {
+    const bars = visualCases().filter((c) => c.shot === 'tab-bar');
+    assert.deepEqual(bars.map((c) => [c.width, c.theme, c.file]), [[375, 'light', 'tab-bar-375-light.png'], [375, 'dark', 'tab-bar-375-dark.png']]);
 });
 
 test('every page is a target of the exit checks, and none has a state to arrange', () => {
-    for (const { page } of visualCases()) {
-        const target = allTargets.find((t) => t.name === page);
-        assert.ok(target, `no exit-check target is named '${page}'`);
-        assert.equal(target.act, undefined, `'${page}' needs an action, so it is a state of a page`);
-        assert.equal(target.failing, undefined, `'${page}' fails a call, so it is an error state`);
+    for (const { target: name } of visualCases()) {
+        const target = allTargets.find((t) => t.name === name);
+        assert.ok(target, `no exit-check target is named '${name}'`);
+        assert.equal(target.act, undefined, `'${name}' needs an action, so it is a state of a page`);
+        assert.equal(target.failing, undefined, `'${name}' fails a call, so it is an error state`);
+        assert.equal(target.patch, undefined, `'${name}' changes a response, so it is not the page as served`);
     }
 });
 
@@ -34,6 +42,6 @@ test('an extra file is a problem, whatever it is', () => {
     assert.deepEqual(baselineProblems([...files, 'profile-768-light.png', 'notes.txt']), ['unexpected file in the baseline folder: profile-768-light.png', 'unexpected file in the baseline folder: notes.txt']);
 });
 
-test('an empty folder is 32 problems', () => {
-    assert.equal(baselineProblems([]).length, 32);
+test('an empty folder is 34 problems', () => {
+    assert.equal(baselineProblems([]).length, 34);
 });

@@ -576,6 +576,40 @@ A-10 to A-14 and B N-1 to N-11 are recorded as the reviewers wrote them. I did n
 | Reviewer B | 1 | 11 | 11 |
 | After the duplicates in 6.1 (the author's reading) | 2 | 15 issues | 16 |
 
-## 7. Owner sign-off
+## 7. Owner sign-off (2026-10-22)
 
-[Pending. Blockers and Changes are put to the owner one by one, and the Notes in one table (plan decision D6). The answers are recorded here with their date.]
+Put to the owner one finding at a time through the interview tool, in groups of four (plan decision D6), with the author's recommendation on each; the answers were read back and confirmed ("Confirmed, record it and draft the fixes plan"). Every answer was the recommended option; where an option had a variant, the variant is named.
+
+### 7.1 Blockers and Changes
+
+| ID | Finding | Decision | What is to be done |
+|---|---|---|---|
+| A-01 Blocker | `open-redirect` flag never leaves the site; generic timeout catcher | **Accept and fix** | The flag really leaves the origin; the catcher asserts where the browser ended up, with that as its recorded failure text |
+| B-01 Blocker (A-03) | The gate's artifact expires 2026-11-03 and holds verdicts only | **Accept and fix** | Commit the proof table with the gate record; artifact retention 90 days; keep each catcher's matched failure line in the table; correct the `ci.yml` comment and harness design section 37 |
+| A-02, B-08 | The proof accepts generic `failsWith`; unanchored Vitest name; a visual catcher counts alone | **Accept and fix** | Reject too-generic text in `schema-check`; anchor the test name and require exactly one test ran; report a visual catcher as a separate "page changed" catch that does not count alone towards "caught for the stated reason" |
+| A-04 | `plural` survives into the public bundle | **Accept and fix** | Guard the call with `TEST_BUILD`; the guard test asserts every hyphenated UI flag is a marker; correct UI specification 6.8 and the guard comment |
+| A-05 | Two semantic rules miss the defects their flags model | **Accept and fix** | `progress-value-matches-text` also compares the drawn width; `chart-table-has-values` requires a number or the documented "No score" |
+| A-06 | A good accessible name is flagged | **Accept and fix** | `progress-name-matches-value` compares only the figures followed by `%`; `minor-units-label` still caught |
+| A-07 | The summary expander and the unsaved-name warning never run in a real browser | **Fixtures and exit target** (variant) | A persona override with a long summary and an exit-run target that scans it folded and open; no new Gherkin scenario |
+| A-08, B-09 | The `flags` job runs on `ubuntu-latest` | **Accept and fix** | Pin it to `ubuntu-24.04` with the comment of `visual.yml` |
+| A-09, B-10 | Run limits above job limits; the table written only at the end; logs not kept on cancellation | **Accept, process groups later** (variant) | Run limits below the job limits (flags 25 minutes); the table written after each flag; logs uploaded on `failure() or cancelled()`. The process-group kill of timed-out catchers goes to the backlog |
+| B-02 | The 0.2 colour distance hides a red-to-amber change | **Lower the threshold** (variant) | Try 0.05 to 0.1; prove stability twice running on Linux and the red-to-amber probe; state the new limit. If Linux flakes, stop and bring the evidence to the owner |
+| B-03 | The Visual workflow ignores `fixtures/**` and `packages/api-client/**` | **Accept and fix** | Add both paths to both lists; correct the README and UI specification 9 |
+| B-04 | The 375 px tab bar is painted mid-image | **Accept and fix** | Hide the bar for the full-page shots and photograph it once separately at 375 px; the refreshed 375 px baselines are accepted by the owner |
+| B-05 | Profile tiles run the label into the value (a real UI defect) | **Accept and fix** | Separate label and value, check the accessible name, add a component test; the 8 refreshed profile baselines are accepted by the owner |
+| B-06 | The secret scans miss most file types, `tok_` and base64 | **Accept and fix** | Read every non-binary file as text; allow-list the report's file types; add `tok_[0-9a-f]{32}`; reword the claim in `site.ts` and DR-066; tests first with the reviewer's cases |
+| B-07 | The report counts are a sum | **Accept and fix** | Check scenario names and rows per outline against a manifest derived from the feature files; tests first |
+| B-11 | A write token in every step of the baselines workflow | **Accept and fix** | The image job has no write token and `persist-credentials: false`; a second job pushes the branch and runs no project code. Protecting `main` is a repository setting and stays the owner's |
+| B-12 | Seven documents false or stale against the code | **Accept and fix** | Correct all seven, with a note in harness design section 25 that section 31 supersedes its counts |
+
+### 7.2 Notes
+
+All 16 Notes (A-10 to A-14, B N-1 to N-11) are recorded as the reviewers wrote them. Two are also acted on, as one-line changes with a test: **N-3** (the stamp check compares a value with itself and matches a prefix: require the full-length commit) and **A-14** (pass a Vitest timeout in the proof, so a loaded machine does not give a false alarm).
+
+### 7.3 Nothing rejected
+
+No finding was rejected. One part of one finding is deferred to the backlog: the process-group kill of timed-out catchers (A-09, B-10).
+
+### 7.4 Counts
+
+2 Blockers and 15 Changes accepted (17 groups); 16 Notes recorded, 2 of them acted on; 0 rejected; 1 part deferred. The fixes are planned in `DOCS/implementation-plans/2026-10-22_cds-48-fixes.md` (to be written and approved), and a confirmation pass (plan decision D4) follows them.

@@ -6,6 +6,7 @@ All notable changes to this project. Dates are UTC.
 
 - The `flags` job's limit is 40 minutes (was 30): the proof takes about 16, and a 14-minute browser install cancelled #134's run at 30. The `ui` job's limit is 25 minutes (was 15). The work takes about 5; the browser install alone took over 10 on a slow runner and the limit cancelled two runs (#132 and #134). Owner approved on 2026-10-22.
 - The `visual.yml` limit is 25 minutes (was 15) and `visual-baselines.yml` 30 (was 20), for the same reason. The slow part was the apt mirror (about 10 of the 10m35s; the browser download itself 8 seconds; the same install 23 seconds on a good run), so caching the browser would not have helped. A cut-off at 4 minutes with one retry was tried and removed: the retry works (after stopping the root apt-get that kept the dpkg lock) but a slow mirror was too slow for both attempts and failed a job that a patient install passes in 10 to 14 minutes.
+
 ## 2026-10-22: the visual check, from the review (CDS-48 slice 3)
 
 - Findings B-02 to B-05: 34 images (the fixed tab bar hidden from the pages and photographed alone at 375 px, light and dark), a colour distance of 0.1 (a shift of 0.15 now fails), `visual.yml` also watches `fixtures/**` and `packages/api-client/**`, and the profile tiles read "Email alex..." not "Emailalex...". UI specification v39, harness design v17. The baselines are refreshed by the manual workflow and accepted by the owner.

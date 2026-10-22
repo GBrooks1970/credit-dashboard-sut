@@ -1,5 +1,5 @@
 ---
-version: 29
+version: 30
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: implementation-plan-index
@@ -42,3 +42,4 @@ Every implementation plan is written to a file here before implementation starts
 | [`2026-10-20_cds-44-serenity-report.md`](2026-10-20_cds-44-serenity-report.md) | CDS-44 P6 The published Serenity report | 2026-10-20 | implemented | #119, #120, #121 (`3bdeefe`) |
 | [`2026-10-20_cds-45-phase-5-exit.md`](2026-10-20_cds-45-phase-5-exit.md) | CDS-45 P7 The Phase 5 exit | 2026-10-20 | implemented | #124, #125, #127, gate record DR-067 |
 | [`2026-10-21_cds-47-serenity-json-switch.md`](2026-10-21_cds-47-serenity-json-switch.md) | CDS-47 Only a whole run writes the Serenity JSON | 2026-10-20 | implemented | #127 |
+| [`2026-10-21_cds-48-phase-5-review.md`](2026-10-21_cds-48-phase-5-review.md) | CDS-48 Independent review of the Phase 5 additions | 2026-10-22 | approved | review next |

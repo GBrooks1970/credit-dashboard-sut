@@ -1,0 +1,2 @@
+/* Hides the fixed tab bar for a whole-page photograph (CDS-48 B-04); the bar is photographed on its own. */
+nav.nav-mobile { visibility: hidden !important; }

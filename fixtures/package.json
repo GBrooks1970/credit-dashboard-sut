@@ -5,7 +5,7 @@
   "description": "Schema and rule check for the credit-dashboard-sut persona fixtures (API specification v3, section 9.1)",
   "type": "module",
   "scripts": {
-    "check": "node schema-check.mjs"
+    "check": "node schema-check.mjs && node --test failswith.test.mjs"
   },
   "devDependencies": {
     "ajv": "8.20.0",

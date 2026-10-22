@@ -1,5 +1,5 @@
 ---
-version: 14
+version: 15
 created: 2026-10-09T11:20Z
 project: credit-dashboard-sut
 type: design
@@ -398,6 +398,7 @@ Review findings C-09 to C-15 and C-29.
 
 - **Why.** The Phase 5 gate cites 30 of 30 flags caught in CI, and the `flags` job kept that only in its log, which expires. After the proof step the job now appends `reports/bug-flags.md` to the run summary and uploads `bug-flags.json` and `.md` as the `bug-flag-proof` artifact (14 days). Both steps run when the proof fails or stops early (CDS-46), so a red run shows the flags judged so far.
 - **Not a published page.** The table is in the run and the artifact only; the report on Pages is the scenario runs (DR-066).
+- **Corrected by CDS-48 (review findings A-03 and B-01).** The artifact was kept 14 days, the log 90, so the artifact expired first, the reverse of what this section said; the gate's cited artifact would have gone on 2026-11-03. The artifact is now kept 90 days and holds each catcher's failure line (section 39); a committed copy is added with the gate record.
 
 ## 38. Only a whole run writes the Serenity JSON (CDS-47, 2026-10-21)
 
@@ -405,3 +406,16 @@ Review findings C-09 to C-15 and C-29.
 - **The rule.** `src/report/switch.ts` (pure, two unit tests, one mutation): a run writes the JSON only when `HARNESS_SERENITY_JSON` is exactly `on`. `scripts/run.mjs` sets it to `on` for an `api` or `ui` run with no feature argument and to `off` for everything else (`exit`, `flags`, `visual`, named features). With the switch off `crewFor` returns the console reporter only and neither empties nor writes the folder.
 - **Probed on real runs, each reverted:** a whole `api` run gives 33 files, a whole `ui` run 44; a named feature (`api api/closed-accounts`, 4 scenarios) and a one-flag proof (`plural`) leave both folders untouched, and `check:report` passes (60 and 59 executions). With the switch forced on, the same named run leaves 2 files holding 4 executions and `check:report` fails ("the report holds 4 executions, the suite runs 60"). 54 harness unit tests.
 - **Not proved here:** nothing new on CI. The change is in the harness; CI's whole-suite runs are unchanged, and the pull request's own `Report` job reads the JSON they upload.
+
+## 39. The proof made harder to fool (CDS-48 slice 1, 2026-10-22)
+
+Findings of the independent review of the Phase 5 additions (`.review/2026-10-22_cds-48-phase-5-review.md`), accepted at sign-off.
+
+- **A-01 (Blocker).** The `open-redirect` flag removed the guard, but its address reached `navigate()`, which React Router refuses for an external address, so the defect was "Cancel does nothing" and its catcher failed on a plain 5 s timeout that a broken page prints as well. `followAddress` (`src/safeRedirect.ts`, 7 component tests) hands an address that leaves the site to the browser; the step "Alex is back on the credit card's own page" checks the origin when the header does not come and fails with "the browser left the site: it is at '<address>'", which is the registry's recorded text. With the flag on, 2 of the 5 outline rows fail with that message and 3 still time out (the dot-segment addresses stay inside the app and `javascript:` runs a script, neither leaves the site); with it off all 6 scenarios pass.
+- **A-02, B-08.** `fixtures/failswith.mjs` (4 unit tests, mutation-proved) rejects a recorded failure text that is a bare assertion word, a presence timeout or an image name; `schema-check` applies it to every catcher. The Vitest name is anchored to the end of a test's full name and exactly one test must run (`vitestExecuted`, `verdict.ts`). `verdictOf` reports a flag whose only catch is a visual catcher as `page-changed-only`, which the proof counts as not caught; a visual catcher is a second catcher.
+- **B-01.** The table the proof writes is `bug-flags.md` with a second table: for each catcher, its recorded text and the first line of its output that holds it (`matchedLine`). It is written after every flag, kept as the `bug-flag-proof` artifact for 90 days, and a committed copy goes with the gate record (slice 5).
+- **A-08, B-09.** The `flags` job is pinned to `ubuntu-24.04`, because its visual catchers compare against baselines made there.
+- **A-09, B-10.** The run limits in `run.mjs` (api 8, ui 8, exit 8, visual 10, flags 25 minutes) sit below the job limits and above the measured runs, so a hung run ends with a message and not a cancelled job; the service-log upload also runs on a cancelled job. The process-group kill of a timed-out catcher stays in the backlog.
+- **A-14.** Component catchers run with `--testTimeout=30000`, so a loaded machine does not turn a flag-off run into a false alarm.
+- **Proved:** the new unit tests failed on the missing code first (63 harness unit tests, 7 component tests, 4 fixture tests); one mutation each (a visual catcher counted as a reason, the generic-text rule always null, `followAddress` always navigating) fails them; a forced early stop (the service unreachable after the first flag) leaves a table with that flag; the registry's old open-redirect text is refused by `schema-check` and the new one accepted.
+- **Not proved here:** the `ubuntu-24.04` pin and the cancelled-job log upload, which only CI shows; the first full proof on CI after this change is their test.

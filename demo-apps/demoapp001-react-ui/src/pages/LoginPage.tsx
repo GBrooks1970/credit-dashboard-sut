@@ -4,7 +4,7 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useLocation, useNavigate } from 'react-router';
 import { DemoBanner } from '../layout/Layout.tsx';
-import { safeRedirect } from '../safeRedirect.ts';
+import { followAddress, safeRedirect } from '../safeRedirect.ts';
 import { useSession } from '../session.tsx';
 
 export const NOT_RECOGNISED = 'The sign-in details were not recognised.';
@@ -34,7 +34,7 @@ export function LoginPage() {
       // Back to the address that sent the visitor here, if it is a path on this site; otherwise the default report.
       const from = (location.state as { from?: unknown } | null)?.from;
       // The one guard for every return address (CDS-38 C-20): the same rule as the details form.
-      navigate(safeRedirect(typeof from === 'string' ? from : null, `/credit-health/report/${result.user.defaultBureauId}`), { replace: true });
+      followAddress(navigate, safeRedirect(typeof from === 'string' ? from : null, `/credit-health/report/${result.user.defaultBureauId}`));
     } else {
       setError(result.reason === 'rejected' ? NOT_RECOGNISED : UNAVAILABLE);
     }

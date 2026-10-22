@@ -385,7 +385,7 @@
           "profile": "ui",
           "feature": "security/open-redirect.feature",
           "name": "The return link cannot leave the site",
-          "failsWith": "Timeout of 5s has expired while waiting for <<detail-header>>.isPresent() to equal true"
+          "failsWith": "the browser left the site: it is at '"
         }
       ]
     },

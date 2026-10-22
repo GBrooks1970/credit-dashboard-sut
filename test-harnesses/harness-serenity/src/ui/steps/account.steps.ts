@@ -1,10 +1,11 @@
 import { Given, Then, When } from '@cucumber/cucumber';
 import { Ensure, equals, includes, isFalse, isTrue } from '@serenity-js/assertions';
-import { actorCalled, Wait } from '@serenity-js/core';
+import { actorCalled, LogicError, Wait } from '@serenity-js/core';
 import { By, Click, Enter, isVisible, Page, PageElements, Text } from '@serenity-js/web';
 
 import { theOne, accountsOf } from '../../fixtures/load.js';
 import { scenario } from '../../support/world.js';
+import { uiUrl } from '../hooks.js';
 import { openAddress, poundsAndPence } from '../visit.js';
 import { byTestId } from './login.steps.js';
 
@@ -168,10 +169,17 @@ Then('{actor} is on the page {string}', (name: string, path: string) =>
     actorCalled(name).attemptsTo(Wait.until(Page.current().url().pathname, equals(path))),
 );
 
-Then("{actor} is back on the credit card's own page", (name: string) => {
+Then("{actor} is back on the credit card's own page", async (name: string) => {
     const path = `/credit-health/report/${BUREAU}/account/${cardWithNoRate(name).id}`;
-    return actorCalled(name).attemptsTo(
-        Wait.until(present('detail-header'), isTrue()),
-        Ensure.that(Page.current().url().pathname, equals(path)),
-    );
+    const actor = actorCalled(name);
+    try {
+        await actor.attemptsTo(Wait.until(present('detail-header'), isTrue()));
+    } catch (error) {
+        // An address that leaves the site ends the wait on a page that is not ours. Say that, and not only that the header never came: a
+        // broken Cancel button or a slow service would print the same timeout (CDS-48, review finding A-01).
+        const url = await actor.answer(Page.current().url());
+        if (url.origin !== new URL(uiUrl()).origin) throw new LogicError(`the browser left the site: it is at '${url.href}'`);
+        throw error;
+    }
+    await actor.attemptsTo(Ensure.that(Page.current().url().pathname, equals(path)));
 });

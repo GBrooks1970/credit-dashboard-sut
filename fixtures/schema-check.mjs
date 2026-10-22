@@ -1,10 +1,11 @@
-// version: 7 | created: 2026-10-05T20:28Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 8 | created: 2026-10-05T20:28Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Validates the persona and test-user fixtures against persona.schema.json, which references the
 // OpenAPI contract's component schemas, then runs the rule cross-checks in API specification v8, section 9.1.
 // Also validates the override samples in overrides/ against the contract's PersonaOverrides, applies each to
 // its base persona and re-runs the checks, except the two persona conventions API spec v6 section 6.5 exempts.
 // Also checks bug-flags.json against the contract's BugFlag enum and against the files its catchers name (decision brief 13).
 // Run: npm ci && npm run check   (from this folder). Exit code 0 means every check passed.
+import { whyTooGeneric } from './failswith.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -200,6 +201,8 @@ for (const entry of flagFile.flags) {
   check(Array.isArray(entry.catchers) && entry.catchers.length > 0, where, 'an implemented flag needs at least one catcher');
   for (const c of entry.catchers ?? []) {
     check(typeof c.failsWith === 'string' && c.failsWith.length > 0 && c.failsWith !== 'TBD', where, 'a catcher records the failure it must produce (failsWith)');
+    // Specific enough to tell the flag's defect from a broken page (CDS-48 A-02); a visual check's image name is its own, page-changed, kind.
+    if (typeof c.failsWith === 'string') { const why = whyTooGeneric(c.failsWith, c.kind); check(why === null, where, `failsWith '${c.failsWith}' is too generic: ${why}`); }
     if (typeof c.failsWith === 'string') {
       // Specific to the flag (CDS-38 R2-B-03): no other catcher records the same text, and the text holds a location or a value
       // (a quote, a path or a digit), so a message any other defect could also produce, such as 'must be integer', is refused.

@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import type { components } from '@credit-dashboard-sut/api-client';
 import { SectionState } from '../components/SectionState.tsx';
-import { safeRedirect } from '../safeRedirect.ts';
+import { followAddress, safeRedirect } from '../safeRedirect.ts';
 import { useSession } from '../session.tsx';
 import { useResource } from '../useResource.ts';
 
@@ -89,7 +89,7 @@ export function DetailFormPage() {
   const field = FIELDS[fieldName];
 
   const fallback = `/credit-health/report/${user?.defaultBureauId ?? ''}/account/${accountId}`;
-  const goBack = () => navigate(safeRedirect(redirectUrl, fallback), { replace: true });
+  const goBack = () => followAddress(navigate, safeRedirect(redirectUrl, fallback));
 
   const { state, data, reload } = useResource(async () => (accountId ? (await client.GET('/accounts/{accountId}', { params: { path: { accountId } } })).data : null), [client, accountId]);
 

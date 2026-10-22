@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-22: the proof made harder to fool (CDS-48 slice 1)
+
+- Review findings A-01 (Blocker), A-02, B-08, B-01 (the proof part), A-08, B-09, A-09, B-10, A-14: the `open-redirect` flag really leaves the site and its catcher asserts it; generic recorded failure text is refused; a visual catcher is a page-changed catch, not a reason; one Vitest test, anchored; the proof table keeps each catcher's failure line, is written after every flag and kept 90 days; the `flags` job is pinned to `ubuntu-24.04`; run limits are below the job limits. 63 harness unit tests, 7 component tests, 4 fixture tests. UI specification v37, harness design v15.
+
 ## 2026-10-21: the Phase 5 gate is recorded (CDS-45, P7c; DR-067)
 
 - Decision brief 14 answered (D1 option 2, D2 option 1, D3 option 1, D4 option 1). DR-067 records the Phase 5 exit gate as met on 20 October 2026 with its exceptions; the README Phase 5 row says so; CDS-45 and CDS-37 are Done; CDS-48 (the independent review of the Phase 5 additions) is opened. Decision register v31, backlog v82.

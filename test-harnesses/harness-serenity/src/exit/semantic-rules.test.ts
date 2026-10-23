@@ -1,4 +1,4 @@
-// version: 1 | created: 2026-10-22T16:30Z | project: credit-dashboard-sut | type: test | language: en-GB
+// version: 2 | created: 2026-10-22T16:30Z | project: credit-dashboard-sut | type: test | language: en-GB
 // The semantic rules on hand-made pages (CDS-48, review findings A-05 and A-06): each page is one a reviewer used to show a rule missing a
 // defect its flag models, or flagging something fine. They run in a real browser, so this file runs where one is installed (the `ui` CI
 // job and a developer's machine: `npm run test:rules`), not in `verify`.
@@ -68,6 +68,32 @@ test('a name whose percentage is another number is still a problem: the minor-un
 
 test('a chart table with a number, a money amount or "No score" in every cell has no problem', async () => {
     assert.deepEqual(await problemsOn(table(['650', '£4,236.00', 'No score'])), []);
+});
+
+test('a bar that fills its bordered track is drawn full: the track is measured inside its border (CDS-48 C-05)', async () => {
+    const html = '<main><p>100% used</p><div data-testid="account-util-bar-creditcard" role="progressbar" aria-label="Credit cards utilisation" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" style="display:block;width:60px;height:10px;border:2px solid #000"><div style="display:block;height:10px;width:100%"></div></div></main>';
+    assert.deepEqual(await problemsOn(html), []);
+});
+
+test('a fuller name that also gives a limit is a good name when one of its percentages is the bar\'s own value (CDS-48 C-05)', async () => {
+    assert.deepEqual(await problemsOn(bar({ now: 6, width: 6, name: 'Credit cards utilisation 6%, best kept under 30%' })), []);
+    const problems = await problemsOn(bar({ now: 83, width: 83, name: '423600% of 510000 and under 30%' }));
+    assert.equal(problems.length, 1);
+    assert.match(problems[0], /progress-name-matches-value/);
+});
+
+test('a chart row\'s value is its last cell: a month written in a cell of its own is not a missing value (CDS-48 C-05)', async () => {
+    const html = '<main><table data-testid="history-chart-table"><tbody><tr><td>May</td><td>650</td></tr><tr><td>June</td><td>No score</td></tr></tbody></table></main>';
+    assert.deepEqual(await problemsOn(html), []);
+});
+
+test('an empty value cell and a value cell with no figure are different problems, so a flag can name the first (CDS-48 C-04)', async () => {
+    const empty = await problemsOn(table(['650', '']));
+    assert.equal(empty.length, 1);
+    assert.match(empty[0], /has 1 of its rows with an empty value cell/);
+    const words = await problemsOn(table(['650', 'n/a']));
+    assert.equal(words.length, 1);
+    assert.match(words[0], /has 1 of its rows whose value cell holds no figure/);
 });
 
 test('a chart table with an empty cell or a cell with no figure is a problem (A-05)', async () => {

@@ -1,5 +1,5 @@
 ---
-version: 41
+version: 42
 created: 2026-10-14T09:43Z
 supersedes: v10 (2026-10-07T12:50Z); earlier versions are in git history (DR-040)
 project: credit-dashboard-sut
@@ -13,6 +13,7 @@ language: en-GB
 **Data source:** the API contract only ([`DOCS/.architecture/openapi.yaml`](../.architecture/openapi.yaml)), through a generated typed client
 **Companion:** [API specification](api-specification.md) · [UI feature spec: My Profile](ui-feature-profile.md) · [Page survey](page-survey.md)
 **Changes in v40:** CDS-48 (slice 5): section 9 says that `VISUAL_LOCAL_TRY=1` compares with throw-away images the developer first makes with `--update` (B-12).
+**Changes in v42:** CDS-48 round 2 (slice B): section 9's table describes the rules as they are now (three reasons for a bar, the drawn width inside the track's border, a name with a limit, the value of a chart row as its last cell, two messages for an empty cell and for a cell with no figure), and lists what the rules do not see (C-05).
 **Changes in v41:** CDS-48 round 2 (slice A): section 9 says the visual check is 34 images in which the fixed tab bar is hidden only in the 375 px whole-page shots, and that the bar's own two images are the screen at the top of the overview with the bar at its foot; and what the 0.1 colour distance lets through (a change of one channel by 10 steps; a brightness change of up to about 26 levels in every channel).
 **Changes in v39:** CDS-48 (slice 3): the visual check is 34 images (32 pages with the fixed tab bar hidden, and the tab bar alone at 375 px, light and dark), its colour distance is 0.1 (was 0.2), and the profile tiles put a space and a line break between a label and its value (B-05: the text read "Emailalex.example@example.com"). Section 9 updated.
 **Changes in v38:** CDS-48 (slice 2): every UI flag call is inside a constant `TEST_BUILD && ...` check: `plural` was the last that was not, and survived into the public bundle as an inert call (A-04). The guard now also looks for a plain-word flag name as a quoted string (`plural`), and its test asserts that every UI flag in the registry is covered. Section 9: `progress-value-matches-text` also compares the drawn fill width with the value (a fill stops at full above 100); `progress-name-matches-value` compares only the percentages in a name, so money and other figures in a fuller name are fine; `chart-table-has-values` requires a figure or the documented 'No score' in every cell (A-05, A-06). The exit run adds two targets, the overview with a summary over 280 characters, folded and read in full, with the response changed in the browser because no persona holds one (A-07): 128 axe scans and 294 layout checks.
@@ -313,13 +314,15 @@ Profile-page flags (`nested-button`, `decorative-alt`, `preferred-on-report`, `p
 
 | Rule | A page breaks it when |
 |---|---|
-| `progress-value-matches-text` | a progress bar's `aria-valuenow` differs from the percentage written just before it (the score gauge has none) |
-| `progress-name-matches-value` | a progress bar's name holds a figure that is not its value |
+| `progress-value-matches-text` | a progress bar has no percentage written just before it (the score gauge has none), or its `aria-valuenow` differs from that percentage, or its fill is drawn a different width from the value (a fill stops at full above 100, and the track is measured inside its border). Three different messages, so a flag can name the reason |
+| `progress-name-matches-value` | a progress bar's name holds percentages and none of them is its value (a fuller name may also state a limit) |
 | `no-placeholder-names` | any `aria-label` is a stand-in (`Accessible label`, `label`, `TODO` and the like) |
-| `chart-table-has-values` | a row of a chart's table alternative has an empty cell |
+| `chart-table-has-values` | the value of a row of a chart's table alternative, its last cell, is empty, or holds no figure and is not the documented `No score` (two messages) |
 | `no-button-with-href` | a `button` or `role="button"` carries an `href` |
 | `decorative-image-empty-alt` | an image marked `data-decorative` has any `alt` but the empty one |
 | `form-controls-follow-text-size` | an input, select or textarea has a font size different from the text around it |
+
+**Known limits of the semantic rules (CDS-48 round 2, C-05).** The rules are checks on the pages the application has, not a proof of the properties. They do not see: a wrong value written in words with no percentage sign ("13 percent" for 6); a wrong-width fill that is not the track's first child; a decimal percentage (`6.5%` is read as 5); a placeholder name that only starts like a stand-in (`Accessible label 1`); a descriptive `alt` on an image that is not marked `data-decorative`; a chart value cell that repeats the month; a value cell such as `score 0 of 0`. A defect of one of these kinds would need its own rule.
 
 **Visual-check catchers (CDS-43).** A UI bug flag that changes how a page looks may be caught by one case of the visual check, as a second catcher and never as the only one: an image changes for any cause, so it is a page-changed catch and not a reason (the proof reports a flag with only an image as `page-changed-only`). The flag proof runs that case alone with the flag on (`HARNESS_BUGS`): with the flag off it must pass, with it on it must fail, and the failure must name the image the case writes (`<page>-<width>-<theme>-actual.png`). The baselines are Linux CI images, so the proof runs these catchers on CI (or on a developer's machine with `VISUAL_LOCAL_TRY=1`, after `VISUAL_LOCAL_TRY=1 node scripts/run.mjs visual --update` has made throw-away images to compare with); anywhere else it says they were not run and the flag's other catchers judge it.
 

@@ -1,6 +1,7 @@
 import { Given, Then, When } from '@cucumber/cucumber';
 import { Ensure, equals, includes, isFalse, isTrue } from '@serenity-js/assertions';
 import { actorCalled, LogicError, Wait } from '@serenity-js/core';
+import { BrowseTheWebWithPlaywright, type PlaywrightPage } from '@serenity-js/playwright';
 import { By, Click, Enter, isVisible, Page, PageElements, Text } from '@serenity-js/web';
 
 import { theOne, accountsOf } from '../../fixtures/load.js';
@@ -84,9 +85,17 @@ When('{actor} tries to record an interest rate of {percent}', async (name: strin
     await actorCalled(name).attemptsTo(Wait.until(byTestId('dc-error'), isVisible()));
 });
 
-When('{actor} opens the interest rate form with the return address {string}', (name: string, address: string) => {
+When('{actor} opens the interest rate form with the return address {string}', async (name: string, address: string) => {
     const card = cardWithNoRate(name);
-    return openAddress(actorCalled(name), `/data-capture/interestRate?accountId=${card.id}&redirectUrl=${encodeURIComponent(address)}`, 'dc-prompt');
+    const actor = actorCalled(name);
+    await openAddress(actor, `/data-capture/interestRate?accountId=${card.id}&redirectUrl=${encodeURIComponent(address)}`, 'dc-prompt');
+    // An address that is a script (`javascript:`) shows itself by opening a dialog: note it (the browser driver closes the dialog itself; CDS-48 C-02).
+    scenario.state.pending.scriptDialog = undefined;
+    scenario.state.pending.returnAddress = address;
+    const native = await ((await BrowseTheWebWithPlaywright.as(actor).currentPage()) as PlaywrightPage).nativePage();
+    native.on('dialog', (dialog) => {
+        scenario.state.pending.scriptDialog = dialog.message();
+    });
 });
 
 When('{actor} cancels the form', (name: string) => actorCalled(name).attemptsTo(Click.on(byTestId('dc-cancel'))));
@@ -172,14 +181,20 @@ Then('{actor} is on the page {string}', (name: string, path: string) =>
 Then("{actor} is back on the credit card's own page", async (name: string) => {
     const path = `/credit-health/report/${BUREAU}/account/${cardWithNoRate(name).id}`;
     const actor = actorCalled(name);
+    // One message for every way the return address was followed, whatever the address: it names where the browser is, so the registry's text is
+    // specific to this defect (CDS-48 A-01, C-02). A Cancel that did nothing, or a slow service, leaves the browser on the form and is not this:
+    // that keeps the wait's own message.
+    const followed = (detail: string) => new LogicError(`the redirect was followed to '${String(scenario.state.pending.returnAddress)}': ${detail}`);
     try {
         await actor.attemptsTo(Wait.until(present('detail-header'), isTrue()));
     } catch (error) {
-        // An address that leaves the site ends the wait on a page that is not ours. Say that, and not only that the header never came: a
-        // broken Cancel button or a slow service would print the same timeout (CDS-48, review finding A-01).
         const url = await actor.answer(Page.current().url());
-        if (url.origin !== new URL(uiUrl()).origin) throw new LogicError(`the browser left the site: it is at '${url.href}'`);
-        throw error;
+        if (scenario.state.pending.scriptDialog !== undefined) throw followed(`a script from the address ran in the page (it opened a dialog saying '${String(scenario.state.pending.scriptDialog)}')`);
+        if (url.pathname.startsWith('/data-capture/') && url.origin === new URL(uiUrl()).origin) throw error;
+        const where = url.protocol === 'chrome-error:' ? `the browser is at its own error page '${url.href}'` : `the browser is at '${url.href}'`;
+        throw followed(`${where}, not on the card's own page`);
     }
-    await actor.attemptsTo(Ensure.that(Page.current().url().pathname, equals(path)));
+    const here = await actor.answer(Page.current().url());
+    if (here.pathname !== path) throw followed(`the browser is at '${here.href}', not on the card's own page`);
+    if (scenario.state.pending.scriptDialog !== undefined) throw followed(`a script from the address ran in the page (it opened a dialog saying '${String(scenario.state.pending.scriptDialog)}')`);
 });

@@ -12,9 +12,9 @@ export const MARKERS = ['cds.testControlKey', '__test', 'x-test-control-key', 'd
 
 /**
  * The UI bug flags that no ordinary word of the product could spell, so a defect branch built through `useFlag(name)` that reached the public
- * bundle would carry one of these strings and be found (CDS-38 R2-C-06). A flag named like a word the page may use (`plural`, `double-render`)
- * cannot be a marker without false alarms: those are recorded in the UI specification for P3, where the UI flags are built through a
- * constant `TEST_BUILD && ...` check that the bundler removes.
+ * bundle would carry one of these strings and be found (CDS-38 R2-C-06). A flag named like a word the page may use (`plural`) cannot be a bare
+ * marker without false alarms: it is looked for as a quoted string (QUOTED_FLAG_MARKERS). Every UI flag is built through a constant
+ * `TEST_BUILD && ...` check that the bundler removes.
  */
 export const FLAG_MARKERS = ['duplicate-nav', 'util-mismatch', 'currency-format', 'minor-units-label', 'placeholder-aria', 'chart-no-values', 'range-stale', 'toggle-label', 'like-both', 'truncate-summary', 'negative-balance', 'button-href', 'double-render', 'ph-a11y', 'nested-button', 'decorative-alt', 'open-redirect', 'preferred-on-report', 'pii-in-title', 'lost-edit'];
 

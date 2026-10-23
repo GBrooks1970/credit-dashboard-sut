@@ -1,4 +1,4 @@
-// version: 2 | created: 2026-10-20T09:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 3 | created: 2026-10-20T09:00Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // What the published Serenity report must satisfy before anyone reads it (CDS-44, P6a): every execution of the two suites is in the Serenity
 // JSON, none failed or was skipped, the scenarios are the scenarios of the feature files, by name and by rows per outline (a scenario or a file
 // that silently dropped out would otherwise still end green; CDS-48 B-07), every file parses, and no file holds the run's control key, a token, or
@@ -14,6 +14,8 @@ export interface Recorded {
     text: string;
     /** True when the file is text but too large to be read: the scan reports it, since a file not read is a file not checked. */
     tooLarge?: boolean;
+    /** A problem the reader found with the file itself (its name and its bytes disagree), reported with the scan's own. */
+    problem?: string;
 }
 
 export interface ReportInput {
@@ -27,11 +29,20 @@ export interface ReportInput {
 
 /** A signed token (three base64url parts) or an Authorization header with a bearer token: what a recording of a call might hold. */
 const TOKEN_SHAPES: { label: string; pattern: RegExp }[] = [
-    { label: 'a bearer token', pattern: /Bearer\s+[A-Za-z0-9._~+/-]{6,}/ },
+    { label: 'a bearer token', pattern: /Bearer\s+[A-Za-z0-9._~+/-]{6,}/i },
     { label: 'a signed token', pattern: /eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]*/ },
-    // What the service issues (Control/Authentication.cs: "tok_" and 32 hex characters).
-    { label: 'a service token', pattern: /tok_[0-9a-f]{32}/ },
+    // What the service issues (Control/Authentication.cs: "tok_" and 32 hex characters), in any case (CDS-48 C-06).
+    { label: 'a service token', pattern: /tok_[0-9a-f]{32}/i },
 ];
+
+/** The text as it reads once JSON escapes (\\u0068) and HTML entities (&#104; &#x68; &amp;) are undone: a key written that way is still the key (CDS-48 C-06). */
+function unescaped(text: string): string {
+    return text
+        .replace(/\\u([0-9a-fA-F]{4})/g, (_, hex: string) => String.fromCharCode(parseInt(hex, 16)))
+        .replace(/&#x([0-9a-fA-F]+);/g, (_, hex: string) => String.fromCodePoint(parseInt(hex, 16)))
+        .replace(/&#(\d+);/g, (_, digits: string) => String.fromCodePoint(Number(digits)))
+        .replace(/&(amp|lt|gt|quot|apos);/g, (_, name: string) => ({ amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" })[name] ?? '');
+}
 
 /**
  * The base64 of a secret as it can appear inside longer base64 text: the three alignments, standard and URL-safe, without the characters at
@@ -110,14 +121,21 @@ export function reportProblems(input: ReportInput): string[] {
 export function secretProblems(files: Recorded[], forbidden: string[]): string[] {
     const problems: string[] = [];
     for (const file of files) {
+        if (file.problem) problems.push(file.problem);
         if (file.tooLarge) problems.push(`${file.name} is too large to be looked at for the control key or a token`);
+        const plain = file.text;
+        const readable = unescaped(plain);
+        const lower = plain.toLowerCase();
         for (const secret of forbidden) {
             if (secret.length === 0) continue;
-            if (file.text.includes(secret)) problems.push(`${file.name} holds the run's control key`);
-            else if (base64Forms(secret).some((form) => file.text.includes(form))) problems.push(`${file.name} holds the run's control key, in base64`);
+            const hex = Buffer.from(secret).toString('hex');
+            if (plain.includes(secret)) problems.push(`${file.name} holds the run's control key`);
+            else if (readable.includes(secret)) problems.push(`${file.name} holds the run's control key, escaped`);
+            else if (lower.includes(hex)) problems.push(`${file.name} holds the run's control key, in hex`);
+            else if (base64Forms(secret).some((form) => plain.includes(form))) problems.push(`${file.name} holds the run's control key, in base64`);
         }
         for (const shape of TOKEN_SHAPES) {
-            if (shape.pattern.test(file.text)) problems.push(`${file.name} holds ${shape.label}`);
+            if (shape.pattern.test(readable)) problems.push(`${file.name} holds ${shape.label}`);
         }
     }
     return problems;

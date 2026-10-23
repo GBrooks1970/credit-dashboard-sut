@@ -13,6 +13,8 @@ export interface SiteFile {
     text: string;
     /** True when the file is text but too large to be read. */
     tooLarge?: boolean;
+    /** A problem the reader found with the file itself (its name and its bytes disagree). */
+    problem?: string;
 }
 
 export interface SiteOptions {
@@ -55,6 +57,6 @@ export function siteProblems(files: SiteFile[], options: SiteOptions): string[] 
         }
     }
 
-    problems.push(...secretProblems(files.map((f) => ({ name: f.path, text: f.text, tooLarge: f.tooLarge })), options.forbidden));
+    problems.push(...secretProblems(files.map((f) => ({ name: f.path, text: f.text, tooLarge: f.tooLarge, problem: f.problem })), options.forbidden));
     return problems;
 }

@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-23: the report and the site, again (CDS-48 round 2, slice C)
+
+- C-06: every file is read by its first bytes (an image or a font as bytes), a name that disagrees with its bytes is a problem, and the key is found JSON-escaped, entity-escaped and hex-encoded, `Bearer` and `tok_` in any case. C-13: the baselines workflow checks the PNG signature. C-08: README says 216 component tests. C-09: the time-limit comments and the harness design's claim corrected. Harness design v22.
+
 ## 2026-10-23: the proof and the rules, again (CDS-48 round 2, slice B)
 
 - C-03: the failure-text rule refuses the presence timeout anywhere and a text of generic words and a number. C-02: every row of the open-redirect outline fails with `the redirect was followed to '<address>': ...`. C-04: `util-mismatch` and `chart-no-values` record their reason; an empty chart cell and a cell with no figure are two messages. C-05 (limited): the bar's border, a name with a limit, a chart row's last cell; the rest listed as known limits. C-11: a comment. UI specification v42, harness design v21.

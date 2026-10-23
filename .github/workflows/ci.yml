@@ -132,7 +132,7 @@ jobs:
           if-no-files-found: warn
 
   # The bug-flag proof (CDS-41, decision D4 of the P3 plan): each implemented flag on and off against its catchers. Its own job because it
-  # grows with every flag (about 4 minutes for 19 flags at P3c) and the `ui` job has a 15 minute limit; the two run side by side.
+  # grows with every flag (about 4 minutes for 19 flags at P3c) and the `ui` job has a 25 minute limit; the two run side by side.
   flags:
     name: Bug-flag proof (each implemented flag on and off against its catchers)
     # Pinned, not ubuntu-latest: with CI=true the proof also runs the two visual catchers against the Linux baselines, which are images made on

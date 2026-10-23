@@ -1,0 +1,516 @@
+{
+  "flags": [
+    {
+      "flag": "excluded-in-total",
+      "group": "A",
+      "layer": "service",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "Loans without a limit stay out of the totals",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "+ 1368500",
+          "matched": "+ 1368500"
+        }
+      ]
+    },
+    {
+      "flag": "rounding-down",
+      "group": "A",
+      "layer": "service",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "Utilisation rounds half up",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "49 !== 50",
+          "matched": "49 !== 50"
+        }
+      ]
+    },
+    {
+      "flag": "history-carry-forward",
+      "group": "A",
+      "layer": "service",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "A month with no score is reported as missing, not carried forward",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "642 !== null",
+          "matched": "642 !== null"
+        }
+      ]
+    },
+    {
+      "flag": "idor",
+      "group": "A",
+      "layer": "service",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "Another customer's account cannot be found",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "200 !== 404",
+          "matched": "200 !== 404"
+        }
+      ]
+    },
+    {
+      "flag": "problem-json-missing",
+      "group": "A",
+      "layer": "service",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "Another customer's account cannot be found",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "has content type 'text/plain'",
+          "matched": "✗ Error: getAccount: the 404 response has content type 'text/plain', and the contract documents 'application/problem+json'"
+        }
+      ]
+    },
+    {
+      "flag": "mask-format",
+      "group": "A",
+      "layer": "service",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "Source numbers are masked to their last four characters",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "the 200 response does not match the contract at '/maskedNumber'",
+          "matched": "✗ Error: getAccount: the 200 response does not match the contract at '/maskedNumber': must match pattern \"^\\*[A-Z0-9]{4}$\" (1 error); body: {\"id\":\"acc_ovcc03\",\"type\":\"creditcard\",\"provider\":\"Lender X\",\"logoUrl\":null,\"maskedNumber\":\"12345678\",\"balance\":{\"amountMinor\":0,\"currency\":\"GBP\"},\"limit\":{\"amo"
+        }
+      ]
+    },
+    {
+      "flag": "currency-float",
+      "group": "A",
+      "layer": "service",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "Type totals sum the open accounts of that type",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "at '/balance/amountMinor': must be integer",
+          "matched": "✗ Error: getAccountTotals: the 200 response does not match the contract at '/balance/amountMinor': must be integer (1 error); body: {\"type\":\"creditcard\",\"balance\":{\"amountMinor\":379.6,\"currency\":\"GBP\"},\"limit\":{\"amountMinor\":6100,\"currency\":\"GBP\"},\"utilisation\":6,\"includedCount\":2,\"excluded\":[]}"
+        }
+      ]
+    },
+    {
+      "flag": "duplicate-nav",
+      "group": "B",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "exit check: layouts",
+          "kind": "exit-check",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "found 3 tab(s) and 3 top link(s)",
+          "matched": "FAIL  layout 375px  overview: expected the bottom tab bar only, found 3 tab(s) and 3 top link(s)"
+        }
+      ]
+    },
+    {
+      "flag": "util-mismatch",
+      "group": "B",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "exit check: text equals aria-valuenow",
+          "kind": "exit-check",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "progress-value-matches-text: 'account-util-bar-creditcard'",
+          "matched": "FAIL  layout 375px  overview: progress-value-matches-text: 'account-util-bar-creditcard' has aria-valuenow 13 but the text beside it says 6%; progress-value-matches-text: 'account-util-bar-loan' has aria-valuenow 90 but the text beside it says 83%; progress-value-matches-text: 'account-util-bar-mort"
+        },
+        {
+          "name": "visual check: the credit card list at 1280 px, light",
+          "kind": "visual-check",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "account-list-creditcard-1280-light-actual.png",
+          "matched": "Received: reports/visual-results/visual-1280px-light-account-list-creditcard/account-list-creditcard-1280-light-actual.png"
+        }
+      ]
+    },
+    {
+      "flag": "currency-format",
+      "group": "B",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "Total debt and its trend are shown",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "Received string: 19827960",
+          "matched": "Received string: 19827960"
+        },
+        {
+          "name": "visual check: the overview at 1280 px, light",
+          "kind": "visual-check",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "overview-1280-light-actual.png",
+          "matched": "Received: reports/visual-results/visual-1280px-light-overview/overview-1280-light-actual.png"
+        }
+      ]
+    },
+    {
+      "flag": "minor-units-label",
+      "group": "B",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "exit check: a bar's name matches its value",
+          "kind": "exit-check",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "progress-name-matches-value: 'account-util-bar-creditcard'",
+          "matched": "FAIL  layout 375px  overview: progress-name-matches-value: 'account-util-bar-creditcard' is named '37960% of 610000' but its value is 6; progress-name-matches-value: 'account-util-bar-loan' is named '1252400% of 1500000' but its value is 83; progress-name-matches-value: 'account-util-bar-mortgage' i"
+        }
+      ]
+    },
+    {
+      "flag": "placeholder-aria",
+      "group": "B",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "exit check: no placeholder names",
+          "kind": "exit-check",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "no-placeholder-names: 'account-util-bar-creditcard'",
+          "matched": "FAIL  layout 375px  overview: no-placeholder-names: 'account-util-bar-creditcard' is named 'Accessible label'; no-placeholder-names: 'account-util-bar-loan' is named 'Accessible label'; no-placeholder-names: 'account-util-bar-mortgage' is named 'Accessible label'; no-placeholder-names: 'account-util"
+        }
+      ]
+    },
+    {
+      "flag": "chart-no-values",
+      "group": "B",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "exit check: the table alternative carries values",
+          "kind": "exit-check",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "chart-table-has-values: 'history-chart-table'",
+          "matched": "FAIL  layout 375px  overview: chart-table-has-values: 'history-chart-table' has 6 of its rows without a value"
+        }
+      ]
+    },
+    {
+      "flag": "button-href",
+      "group": "B",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "exit check: no button with href",
+          "kind": "exit-check",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "no-button-with-href: 'tile-hard-searches'",
+          "matched": "FAIL  layout 375px  overview: no-button-with-href: 'tile-hard-searches' is a button with an href; no-button-with-href: 'tile-soft-searches' is a button with an href; no-button-with-href: 'tile-personal-details' is a button with an href; no-button-with-href: 'tile-corrections' is a button with an hre"
+        }
+      ]
+    },
+    {
+      "flag": "double-render",
+      "group": "B",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "Only the three newest changes are shown at first",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "Received number: 6",
+          "matched": "Received number: 6"
+        }
+      ]
+    },
+    {
+      "flag": "ph-a11y",
+      "group": "B",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "The current year is chosen first",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "Expected \"aria-pressed\" attribute of ph-year-2026 to equal \"true\"",
+          "matched": "AssertionError: Expected \"aria-pressed\" attribute of ph-year-2026 to equal \"true\""
+        },
+        {
+          "name": "exit check: axe role-img-alt",
+          "kind": "exit-check",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "role-img-alt (serious): 7 node(s)",
+          "matched": "FAIL  layout 375px  payment history: role-img-alt (serious): 7 node(s), e.g. span[data-testid=\"ph-year-status-2020\"]"
+        }
+      ]
+    },
+    {
+      "flag": "nested-button",
+      "group": "B",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "exit check: axe nested-interactive",
+          "kind": "exit-check",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "nested-interactive (serious): 1 node(s)",
+          "matched": "FAIL  layout 375px  profile: nested-interactive (serious): 1 node(s), e.g. button[data-testid=\"profile-name-info-wrap\"]; target-size (serious): 1 node(s), e.g. button[data-testid=\"profile-name-info-wrap\"]"
+        }
+      ]
+    },
+    {
+      "flag": "decorative-alt",
+      "group": "B",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "exit check: a decorative image has an empty alt",
+          "kind": "exit-check",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "decorative-image-empty-alt: 'profile-header-image'",
+          "matched": "FAIL  layout 375px  profile: decorative-image-empty-alt: 'profile-header-image' is decorative but has alt 'Profile header image'"
+        }
+      ]
+    },
+    {
+      "flag": "range-stale",
+      "group": "C",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "Score history range",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "history-chart-row-\"]') to equal 12",
+          "matched": "AssertionError: Timeout of 5s has expired while waiting for the number of page elements located by css ('[data-testid^=\"history-chart-row-\"]') to equal 12"
+        }
+      ]
+    },
+    {
+      "flag": "toggle-label",
+      "group": "C",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "reads \"Show fewer\" while open and \"Show all 5\" again once closed",
+          "kind": "component-test",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "the label did not flip back to 'Show all 5'",
+          "matched": "::error file=/home/runner/work/credit-dashboard-sut/credit-dashboard-sut/demo-apps/demoapp001-react-ui/src/flags.test.tsx,title=src/flags.test.tsx > the changes toggle flips back (the catcher of toggle-label) > reads \"Show fewer\" while open and \"Show all 5\" again once closed,line=134,column=97::Erro"
+        }
+      ]
+    },
+    {
+      "flag": "like-both",
+      "group": "C",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "Summary feedback is remembered",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "Expected \"aria-pressed\" attribute of btn-dislike to equal \"false\"",
+          "matched": "AssertionError: Expected \"aria-pressed\" attribute of btn-dislike to equal \"false\""
+        }
+      ]
+    },
+    {
+      "flag": "plural",
+      "group": "C",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "Next update wording",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "Received string: Updates in 1 days",
+          "matched": "Received string: Updates in 1 days"
+        },
+        {
+          "name": "says \"1 day\" for one day to the next update",
+          "kind": "component-test",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "Updates in 1 days",
+          "matched": "::error file=/home/runner/work/credit-dashboard-sut/credit-dashboard-sut/demo-apps/demoapp001-react-ui/src/flags.test.tsx,title=src/flags.test.tsx > the bug flags in the UI (brief 13 D1%2C DR-064) > says \"1 day\" for one day to the next update,line=26,column=51::Error: expect(element).not.toHaveTextC"
+        }
+      ]
+    },
+    {
+      "flag": "open-redirect",
+      "group": "C",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "The return link cannot leave the site",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "the browser left the site: it is at '",
+          "matched": "LogicError: the browser left the site: it is at 'chrome-error://chromewebdata/'"
+        }
+      ]
+    },
+    {
+      "flag": "truncate-summary",
+      "group": "C",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "cuts at the last whole word before 280 characters, shows an ellipsis, and Read more shows it all",
+          "kind": "component-test",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "the summary was cut inside a word at the limit of 280",
+          "matched": "::error file=/home/runner/work/credit-dashboard-sut/credit-dashboard-sut/demo-apps/demoapp001-react-ui/src/flags.test.tsx,title=src/flags.test.tsx > a long summary is cut at a word and can be expanded (the catcher of truncate-summary) > cuts at the last whole word before 280 characters%2C shows an e"
+        }
+      ]
+    },
+    {
+      "flag": "negative-balance",
+      "group": "C",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "A card in credit says so",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "Expected the text of row-balance-acc_ddcc02 to equal \"£44.00 in credit\"",
+          "matched": "AssertionError: Expected the text of row-balance-acc_ddcc02 to equal \"£44.00 in credit\""
+        }
+      ]
+    },
+    {
+      "flag": "preferred-on-report",
+      "group": "C",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "Alex sets a preferred name",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "Expected the text of pd-name to equal \"Alex Example\"",
+          "matched": "AssertionError: Expected the text of pd-name to equal \"Alex Example\""
+        }
+      ]
+    },
+    {
+      "flag": "preferred-no-trim",
+      "group": "C",
+      "layer": "service",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "Spaces around a preferred name are removed",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "body: {\"preferredName\":\"  Sam  \"}",
+          "matched": "✗ Error: updatePreferredName: the 200 response does not match the contract at '/preferredName': must match pattern \"^[\\p{L}'-]([\\p{L}' -]*[\\p{L}'-])?$\" (3 errors); body: {\"preferredName\":\"  Sam  \"}"
+        }
+      ]
+    },
+    {
+      "flag": "email-stays-verified",
+      "group": "C",
+      "layer": "service",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "A changed email needs verifying again",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "text of profile-email-badge to equal \"Unverified\"",
+          "matched": "AssertionError: Timeout of 5s has expired while waiting for the text of profile-email-badge to equal \"Unverified\""
+        }
+      ]
+    },
+    {
+      "flag": "pii-in-title",
+      "group": "C",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "Profile details stay out of the page title and address",
+          "kind": "scenario",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "Expected <<current page>>.title() to not include \"Alex Example\"",
+          "matched": "AssertionError: Expected <<current page>>.title() to not include \"Alex Example\""
+        }
+      ]
+    },
+    {
+      "flag": "lost-edit",
+      "group": "C",
+      "layer": "ui",
+      "verdict": "caught",
+      "catchers": [
+        {
+          "name": "asks, and staying keeps the page and the typed name",
+          "kind": "component-test",
+          "off": "passed",
+          "on": "failed-as-stated",
+          "failsWith": "no question was asked about the unsaved 'Ally'",
+          "matched": "::error file=/home/runner/work/credit-dashboard-sut/credit-dashboard-sut/demo-apps/demoapp001-react-ui/src/flags.test.tsx,title=src/flags.test.tsx > leaving with an unsaved preferred name asks first (the catcher of lost-edit) > asks%2C and staying keeps the page and the typed name,line=190,column=71"
+        }
+      ]
+    }
+  ]
+}

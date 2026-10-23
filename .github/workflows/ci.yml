@@ -209,7 +209,7 @@ jobs:
 
   # The Serenity report (CDS-44, P6b): built from the JSON of the two runs that gate this pull request, not from a third run of the suites.
   # Java 21 is for the Serenity BDD CLI, which makes the HTML; `check:report` requires the HTML here (CI=true) and checks every execution,
-  # the counts, and that no file holds the run's control key or a token. Nothing is published by this job (P6c adds `publish`).
+  # the counts, and that no file holds the run's control key or a token. Nothing is published by this job: the `site` and `deploy` jobs below publish it (CDS-44 P6c).
   report:
     name: Report (the Serenity BDD report of the @api and @ui runs, checked)
     needs: [specification, ui]

@@ -4,7 +4,7 @@ version: 1
 created: 2026-10-23T09:30Z
 project: credit-dashboard-sut
 type: implementation-plan
-status: awaiting approval
+status: approved
 language: en-GB
 ---
 

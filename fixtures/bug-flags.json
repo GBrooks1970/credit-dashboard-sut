@@ -140,7 +140,7 @@
           "kind": "exit-check",
           "target": "overview",
           "name": "exit check: text equals aria-valuenow",
-          "failsWith": "progress-value-matches-text: 'account-util-bar-creditcard'"
+          "failsWith": "progress-value-matches-text: 'account-util-bar-creditcard' has aria-valuenow 13 but the text beside it says 6%"
         },
         {
           "kind": "visual-check",
@@ -217,7 +217,7 @@
           "kind": "exit-check",
           "target": "overview",
           "name": "exit check: the table alternative carries values",
-          "failsWith": "chart-table-has-values: 'history-chart-table'"
+          "failsWith": "chart-table-has-values: 'history-chart-table' has 6 of its rows with an empty value cell"
         }
       ]
     },
@@ -385,7 +385,7 @@
           "profile": "ui",
           "feature": "security/open-redirect.feature",
           "name": "The return link cannot leave the site",
-          "failsWith": "the browser left the site: it is at '"
+          "failsWith": "the redirect was followed to '"
         }
       ]
     },

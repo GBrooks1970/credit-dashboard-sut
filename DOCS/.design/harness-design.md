@@ -1,5 +1,5 @@
 ---
-version: 20
+version: 21
 created: 2026-10-09T11:20Z
 project: credit-dashboard-sut
 type: design
@@ -456,3 +456,12 @@ Findings of the independent review of the Phase 5 additions (`.review/2026-10-22
 - **C-07, the limit stated.** The colour distance is 0.1 per pixel (Playwright's measure, which weighs brightness most): a change of one channel by 10 steps (`#0b5cad` to `#0b66ad`, a distance of 0.03) and a brightness change of up to about 26 levels in every channel (the accent and the text together, +20, is 0.08) are inside it and are not seen; +32 (0.12) is, and a shift of 0.15 fails. The figures are computed with Playwright's distance and agree with the reviewer's probe (+20 passed all 35, +32 failed 14). The tests and the seven cases of `cases.test.ts` are the pure part; this limit is the check's stated one.
 - **C-13, in part.** The proof runner's `-g` for a visual catcher is anchored to the end of the title (`visualTitlePattern` in `verdict.ts`, three tests, one mutation), so `overview` cannot also select `overview: tab-bar`; `visual.yml` also runs on `.nvmrc`.
 - **Not proved here:** the two refreshed bar images on Linux, and the visual check on Linux twice running (the CI runs of this change show them).
+
+## 45. The proof and the rules, again (CDS-48 round 2, slice B, 2026-10-23)
+
+- **C-03.** `fixtures/failswith.mjs` v2 refuses the presence-timeout phrase wherever it is in a recorded text (the matcher is a substring test, so a prefixed or shortened text matched the same output), and a text made only of the words of any failure message and a number (`Timeout of 5s`, `Expected 1`, `Error: 5`). `null` and `undefined` are values, not generic words (`642 !== null` is specific). Seven unit tests, the reviewer's texts among them; the registry still passes (868 checks, 0 failures).
+- **C-02.** The open-redirect step now fails every row of the outline with one message, `the redirect was followed to '<the address>': ...`, naming where the browser is (its own error page, or the address) or, for `javascript:`, that a script ran (a dialog opened; the browser driver closes the dialog itself). A Cancel that did nothing, or a slow service, leaves the browser on the form (`/data-capture/`) and keeps the wait's own message. The registry text is `the redirect was followed to '` (the registry's rule that a text names a quote, a path or a digit refused the shorter one). With the flag on all five rows fail with it (before: two with the address, three with the generic timeout); with the flag off all five pass.
+- **C-04.** The registry texts for `util-mismatch` and `chart-no-values` give the reason as well as the rule (`has aria-valuenow 13 but the text beside it says 6%`; `has 6 of its rows with an empty value cell`), and `semantic-rules.ts` v3 prints an empty value cell and a cell with no figure as two messages. Run on the real exit run: both flags are still caught for the stated reason.
+- **C-05, limited.** The track is measured inside its border; a name is a problem only when none of its percentages is the bar's value; the value of a chart row is its last cell. Four new tests in `semantic-rules.test.ts` (12 in all), failing first (4 of 12). What the rules do not see is listed in UI specification section 9.
+- **C-11.** The public-build guard's comment no longer says `double-render` cannot be a marker.
+- **Not proved here:** the whole flag proof on CI with the changed texts (the CI run of this change shows it).

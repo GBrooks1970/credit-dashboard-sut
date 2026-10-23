@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-23: the proof and the rules, again (CDS-48 round 2, slice B)
+
+- C-03: the failure-text rule refuses the presence timeout anywhere and a text of generic words and a number. C-02: every row of the open-redirect outline fails with `the redirect was followed to '<address>': ...`. C-04: `util-mismatch` and `chart-no-values` record their reason; an empty chart cell and a cell with no figure are two messages. C-05 (limited): the bar's border, a name with a limit, a chart row's last cell; the rest listed as known limits. C-11: a comment. UI specification v42, harness design v21.
+
 ## 2026-10-23: the visual check, again (CDS-48 round 2, slice A)
 
 - C-01: the tab bar is hidden only in the 375 px whole-page shots, left at 1280 px, and photographed as the screen at the top of the overview with the bar at its foot (the crop of the bar alone lost its place: a bar moved to the top passed all 35). C-07: the 0.1 limit and what it lets through stated in DR-067, harness design and the configuration. C-13: the proof runner's `-g` anchored, `.nvmrc` in the Visual paths. UI specification v41, harness design v20.

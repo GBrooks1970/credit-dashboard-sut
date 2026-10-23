@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 import http from 'node:http';
 
 import { resetWithRetry } from './reset.js';
-import { exitCheckRan, judgeOff, judgeOn, matchedLine, verdictOf, vitestExecuted, type Outcome, type RunResult, type Verdict } from './verdict.js';
+import { exitCheckRan, judgeOff, judgeOn, matchedLine, verdictOf, visualTitlePattern, vitestExecuted, type Outcome, type RunResult, type Verdict } from './verdict.js';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const harness = path.resolve(here, '..', '..');
@@ -76,9 +76,9 @@ ${result.stderr}`);
     }
     if (catcher.kind === 'visual-check') {
         // One case of the visual checks with the flag set (CDS-43). Its title is the spec's: the describe, then the page.
-        const title = `${catcher.width}px, ${catcher.theme} ${catcher.page}`;
+        const title = visualTitlePattern(catcher.width!, catcher.theme!, catcher.page!);
         const cli = path.join(harness, 'node_modules', '@playwright', 'test', 'cli.js');
-        const result = spawnSync(process.execPath, [cli, 'test', '-c', path.join('src', 'visual', 'playwright.config.ts'), '--update-snapshots=none', '-g', escapeRegExp(title)], { cwd: harness, env, encoding: 'utf8', timeout: TIMEOUT_MS, killSignal: 'SIGKILL', maxBuffer: 64 * 1024 * 1024 });
+        const result = spawnSync(process.execPath, [cli, 'test', '-c', path.join('src', 'visual', 'playwright.config.ts'), '--update-snapshots=none', '-g', title], { cwd: harness, env, encoding: 'utf8', timeout: TIMEOUT_MS, killSignal: 'SIGKILL', maxBuffer: 64 * 1024 * 1024 });
         const output = stripAnsi(`${result.stdout}\n${result.stderr}`);
         const ran = /\b[1-9]\d* (passed|failed)/.test(output);
         return { passed: result.status === 0, ran, timedOut: (result.error as NodeJS.ErrnoException | undefined)?.code === 'ETIMEDOUT', output: ran ? output : `${output}\n(no case ran: check the catcher's page, width and theme)` };

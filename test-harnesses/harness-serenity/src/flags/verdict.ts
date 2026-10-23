@@ -1,6 +1,15 @@
 // How the bug-flag proof judges one catcher run and one flag (CDS-38 F7; findings B-02, B-03, B-07, B-08). It is a pure module, so the
 // ways the proof was found to be fooled are unit tests (verdict.test.ts) and not only probes someone once ran.
 
+/**
+ * The pattern that selects one visual case by its title (`-g`): the describe, then the page, to the end of the title. A pattern that only starts
+ * like a title would also select a case whose title goes on (`overview` and `overview: tab-bar`), and the proof would run both (CDS-48 C-13).
+ */
+export function visualTitlePattern(width: number, theme: string, page: string): string {
+    const literal = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return `${literal(`${width}px, ${theme} ${page}`)}$`;
+}
+
 export interface RunResult {
     /** The catcher's own exit status was 0. */
     passed: boolean;

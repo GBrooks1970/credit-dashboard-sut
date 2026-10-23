@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-23: the visual check, again (CDS-48 round 2, slice A)
+
+- C-01: the tab bar is hidden only in the 375 px whole-page shots, left at 1280 px, and photographed as the screen at the top of the overview with the bar at its foot (the crop of the bar alone lost its place: a bar moved to the top passed all 35). C-07: the 0.1 limit and what it lets through stated in DR-067, harness design and the configuration. C-13: the proof runner's `-g` anchored, `.nvmrc` in the Visual paths. UI specification v41, harness design v20.
+
 ## 2026-10-23: the documents and the durable proof (CDS-48 slice 5)
 
 - B-12: seven documents corrected (README decision range and the `flags` job, the exit-check counts, a duplicate section number, the `publish` job that never existed, the `VISUAL_LOCAL_TRY=1` first step, README image count 34). B-01: the proof table of the CI run on `main` at `393f7b9` is committed under `DOCS/evidence/` (30 caught, with each catcher's failure line), and DR-067 points to it. UI specification v40, harness design v19.

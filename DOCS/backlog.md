@@ -1,5 +1,5 @@
 ---
-version: 84
+version: 85
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
@@ -8,8 +8,10 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 84 (CDS-48 complete: the review, two rounds of fixes and the confirmation pass are merged; DR-068; the closure is next)
-**Last Updated:** 2026-10-06
+**Project closed (2026-10-23).** Every item above is Done (48 of 48, the board agrees). The independent review of the Phase 5 additions (CDS-48), its two rounds of fixes and the confirmation pass are merged (DR-068); the final commit is the one the published site and its report are stamped with. The narrating terminal handover is v22 (FINAL), in `session-notes/` at the portfolio root. **Deferred, with reasons (nothing is open):** the stretch profile pages and the container image (not part of the exit gate, DR-067 D2; each would be a new project phase); the review items A-22, R2-B-13, R2-B-17 and R2-B-19 (recorded as deferred at the Phase 5 gate, DR-067); the process-group kill of timed-out flag-proof catchers (a hung catcher can leave its children running; found by CDS-48, not needed for the evidence); the semantic-rule misses (UI specification section 9, DR-068: they are limits of the rules, and the real pages pass); and the owner's repository settings (protect `main`, Actions may open pull requests, Dependabot alerts), which are not code.
+
+**Version:** 85 (the project is closed, 2026-10-23: terminal handover v22 FINAL)
+**Last Updated:** 2026-10-23
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
 This backlog is the source of truth for status. It moved here from the portfolio's Phase 0 pack when this repository was seeded (CDS-09, 5 October 2026); paths below that name Phase 0 files refer to that pack.
@@ -276,7 +278,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-48: independent review of the Phase 5 additions
 
-**COMPLETE (2026-10-23; DR-068; plans `2026-10-21_cds-48-phase-5-review`, `2026-10-22_cds-48-fixes`, `2026-10-23_cds-48-round-2-fixes`; the review #129 to #131, the fixes #132 to #138 with #136 (CI limits), the confirmation pass and round 2 #139 to #142; every CI job read as `pass` before each merge).** Two fresh-context Opus reviewers read `1f87a06`: 2 Blockers, 15 Changes, 16 Notes; the owner accepted 17 and N-3 and A-14 were fixed. The confirmation pass found a regression of my own (the tab bar's place lost from the visual check), eight Changes and four Notes; fixed in round 2. The known limits that remain are in DR-068. **Next:** the closure with `close-project` (DR-067 D2): the FINAL handover; the stretch profile pages, the container image and the deferred review items A-22, R2-B-13, R2-B-17 and R2-B-19 listed as deferred. **Deferred to the backlog from this review:** the process-group kill of timed-out catchers (a hung catcher can leave its children running); the semantic-rule misses (UI specification section 9); protecting `main` (a repository setting, the owner's); Dependabot alerts (disabled, the owner's). Records: `.review/2026-10-22_cds-48-phase-5-review.md`, `.review/2026-10-23_cds-48-confirmation-report.md`, `.review/2026-10-23_cds-48-confirmation-verification.md`; log `DOCS/implementation-logs/2026-10-23_cds-48-review-and-fixes.md`.
+**COMPLETE (2026-10-23; DR-068; plans `2026-10-21_cds-48-phase-5-review`, `2026-10-22_cds-48-fixes`, `2026-10-23_cds-48-round-2-fixes`; the review #129 to #131, the fixes #132 to #138 with #136 (CI limits), the confirmation pass and round 2 #139 to #142; every CI job read as `pass` before each merge).** Two fresh-context Opus reviewers read `1f87a06`: 2 Blockers, 15 Changes, 16 Notes; the owner accepted 17 and N-3 and A-14 were fixed. The confirmation pass found a regression of my own (the tab bar's place lost from the visual check), eight Changes and four Notes; fixed in round 2. The known limits that remain are in DR-068. **Update (2026-10-23):** the project is closed (see the note at the top); the stretch pages, the container image and the deferred review items are listed there as deferred. **Deferred to the backlog from this review:** the process-group kill of timed-out catchers (a hung catcher can leave its children running); the semantic-rule misses (UI specification section 9); protecting `main` (a repository setting, the owner's); Dependabot alerts (disabled, the owner's). Records: `.review/2026-10-22_cds-48-phase-5-review.md`, `.review/2026-10-23_cds-48-confirmation-report.md`, `.review/2026-10-23_cds-48-confirmation-verification.md`; log `DOCS/implementation-logs/2026-10-23_cds-48-review-and-fixes.md`.
 
 ### CDS-45: P7, the Phase 5 exit
 

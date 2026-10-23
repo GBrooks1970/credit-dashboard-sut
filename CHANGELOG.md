@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-23: the project is closed
+
+- Closed with `close-project` (DR-067 D2): 48 of 48 items Done, the backlog (v85) carries the closure note and the deferred items with their reasons, the README says the project is closed, the registry row is `resting` (portfolio-prompts #128), the terminal handover is v22 (FINAL).
+
 ## 2026-10-23: CDS-48 closed (records)
 
 - DR-068 records the review, the two rounds of fixes and the confirmation pass with their known limits; the plans' Outcomes, the implementation log, the backlog (v84) and the README's decision range (DR-001 to DR-068) are written. The project is closed next.

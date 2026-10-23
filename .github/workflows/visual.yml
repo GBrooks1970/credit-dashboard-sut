@@ -1,7 +1,7 @@
 # The visual checks (CDS-43, Phase 5 P5): eight pages at 375 and 1280 px, light and dark, and the tab bar alone, compared with the committed baselines.
 #
 # A workflow of its own, not a job of ci.yml: it runs only when something that can change how the pages look changes (plan decision D7),
-# and it must not share the `flags` job, which is at 17 of its 30 minutes (decision D6 of the P4 plan). Baselines are Linux images made by
+# and it must not share the `flags` job, which takes 16 to 25 minutes of its 40 (decision D6 of the P4 plan). Baselines are Linux images made by
 # visual-baselines.yml and are compared here and nowhere else (D2).
 #
 # The runner is pinned to ubuntu-24.04, not ubuntu-latest: the baselines are images made with that image's fonts and rendering, and

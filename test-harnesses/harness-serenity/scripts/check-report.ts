@@ -1,4 +1,4 @@
-// version: 2 | created: 2026-10-20T09:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 3 | created: 2026-10-20T09:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Checks the Serenity report before it is published (CDS-44, P6a): the JSON of both suites with src/report/checks.ts (every execution present
 // and successful, the scenarios and the rows of each outline those of the feature files, no control key or token), and the HTML: where Java is
 // available, or in CI, reports/serenity-report/index.html must exist and be more than a stub, and no file of the report may hold the control key
@@ -7,7 +7,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 import { reportProblems, secretProblems, type Recorded } from '../src/report/checks.js';
-import { isBinary, MAX_TEXT_BYTES } from '../src/report/files.js';
+import { MAX_TEXT_BYTES, scanTextOf } from '../src/report/files.js';
 import { manifestOf, type Expected } from '../src/report/manifest.js';
 // The profiles' feature files: the one place the suites' scenarios are listed (cucumber.mjs).
 import { api as apiProfile, ui as uiProfile } from '../cucumber.mjs';
@@ -40,10 +40,12 @@ if (htmlRequired) {
         for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
             const full = path.join(dir, entry.name);
             if (entry.isDirectory()) walk(full);
-            // Every file but a known image or font is read as text; one too large to read is a problem (secretProblems says so).
-            else if (!isBinary(entry.name)) {
-                const tooLarge = fs.statSync(full).size >= MAX_TEXT_BYTES;
-                html.push({ name: path.relative(harness, full), text: tooLarge ? '' : fs.readFileSync(full, 'utf8'), tooLarge });
+            // Every file is read, whatever its name: an image or a font by its bytes, anything else as text; one too large to read is a problem
+            // (secretProblems says so), and so is a name that says image or font on bytes that are not one (CDS-48 C-06).
+            else {
+                const name = path.relative(harness, full);
+                if (fs.statSync(full).size >= MAX_TEXT_BYTES) html.push({ name, text: '', tooLarge: true });
+                else html.push({ name, ...scanTextOf(name, fs.readFileSync(full)) });
             }
         }
     };

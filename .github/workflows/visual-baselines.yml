@@ -100,10 +100,17 @@ jobs:
           IMAGES: ${{ runner.temp }}/images
         run: |
           # Only images may come through: the artifact is made by a job that ran the project's code.
+          # By name and by content: a file the project's code wrote under a .png name is not an image because of it (CDS-48 C-13).
           if find "$IMAGES" -type f ! -name '*.png' | grep -q .; then
             echo "::error::the artifact holds a file that is not a PNG"
             exit 1
           fi
+          for image in "$IMAGES"/*.png; do
+            if [ "$(head -c 8 "$image" | od -An -tx1 | tr -d ' \n')" != "89504e470d0a1a0a" ]; then
+              echo "::error::$image has a .png name but not the PNG signature"
+              exit 1
+            fi
+          done
           rm -rf test-harnesses/harness-serenity/visual-baselines
           mkdir -p test-harnesses/harness-serenity/visual-baselines
           cp "$IMAGES"/*.png test-harnesses/harness-serenity/visual-baselines/

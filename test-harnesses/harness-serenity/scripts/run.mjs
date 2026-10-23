@@ -11,7 +11,7 @@
 // The ui and exit runs also build the UI (demo-apps/demoapp001-react-ui) and have the service serve it (UI_DIRECTORY, brief 11 D2).
 // The Cucumber, exit and flags child runs asynchronously: a SIGINT or SIGTERM is forwarded to it, and each mode has a whole-run limit
 // (api 8 min, ui and exit 8, visual 10, flags 25; HARNESS_TIMEOUT_MS overrides) so a hung run ends with a message, not a cancelled job (CDS-38 R2-B-08).
-// Each limit is below the CI job's own (10, 15, 15, 30 minutes) and above the measured run (47 s, 2 min, 4 min, 15 s, 17 min), or the job would be cancelled
+// Each limit is below the CI job's own (10, 25, 25, 40 minutes) and above the measured run (47 s, 2 min, 4 min, 15 s, 17 min), or the job would be cancelled
 // first and keep nothing (CDS-48 B-10).
 // A run that names a feature file that does not exist, or in which no scenario finished, fails (R2-B-09). The api run type-checks the harness first (R2-B-10).
 // HARNESS_PORT (default 4600) and HARNESS_OFF_PORT (default 4601) override the ports. Anything already answering on

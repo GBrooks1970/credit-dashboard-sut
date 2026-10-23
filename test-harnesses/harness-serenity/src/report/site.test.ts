@@ -91,6 +91,12 @@ test('a file too large to be looked at is a problem (B-06)', () => {
     assert.match(problems[0], /too large/);
 });
 
+test('a file named like an image whose bytes are not one is a problem of the site (CDS-48 C-06)', () => {
+    const problems = siteProblems([...good(), { path: 'report/a.png', text: 'plain text', problem: 'report/a.png is named like an image or a font but is not one' }], { sha: SHA, forbidden: [] });
+    assert.equal(problems.length, 1);
+    assert.match(problems[0], /named like an image/);
+});
+
 test('a stamp that only starts with the commit is a problem: the whole commit, on its own line (N-3)', () => {
     const files = (stamp: string) => good().map((f) => (f.path === 'report/commit.txt' ? { ...f, text: stamp } : f));
     assert.match(siteProblems(files(`commit: ${SHA}0\n`), { sha: SHA, forbidden: [] }).join('\n'), /commit\.txt/);

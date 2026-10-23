@@ -1,4 +1,4 @@
-// version: 2 | created: 2026-10-20T09:00Z | project: credit-dashboard-sut | type: test | language: en-GB
+// version: 3 | created: 2026-10-20T09:00Z | project: credit-dashboard-sut | type: test | language: en-GB
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
@@ -114,4 +114,23 @@ test('a file too large to be looked at is a problem, not a pass (B-06)', () => {
 
 test('the public demo password is not a secret', () => {
     assert.deepEqual(reportProblems(input([file('a.json', plain('a')), file('o.json', outline('o', ['SUCCESS'])), file('b.json', JSON.stringify({ name: 'b', result: 'SUCCESS', step: 'Alex enters "demo-only"' }))], [file('u.json', plain('u'))], { api: [scenario('a'), outlineOf('o', 1), scenario('b')], ui: [scenario('u')] })), []);
+});
+
+test('the control key written in other ways is a problem: JSON-escaped, entity-escaped, hex-encoded (CDS-48 C-06)', () => {
+    assert.equal(secrets('{"k":"\\u0068arness-run-key"}').length, 1);
+    assert.equal(secrets('<p>&#104;arness-run-key</p>').length, 1);
+    assert.equal(secrets('<p>&#x68;arness-run-key</p>').length, 1);
+    assert.equal(secrets('h=' + Buffer.from('harness-run-key').toString('hex')).length, 1);
+    assert.equal(secrets('h=' + Buffer.from('harness-run-key').toString('hex').toUpperCase()).length, 1);
+});
+
+test('a problem the reader found with a file, such as a name that disagrees with its bytes, is reported with the scan (CDS-48 C-06)', () => {
+    const problems = secretProblems([{ name: 'report/a.png', text: 'x', problem: 'report/a.png is named like an image or a font but is not one' }], ['harness-run-key']);
+    assert.deepEqual(problems, ['report/a.png is named like an image or a font but is not one']);
+});
+
+test('a bearer token and a service token are found in any case (CDS-48 C-06)', () => {
+    assert.equal(secrets('authorization: bearer abcdefgh1234').length, 1);
+    assert.equal(secrets('BEARER abcdefgh1234').length, 1);
+    assert.equal(secrets('TOK_0123456789ABCDEF0123456789abcdef').length, 1);
 });

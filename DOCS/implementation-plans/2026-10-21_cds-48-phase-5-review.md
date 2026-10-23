@@ -4,7 +4,7 @@ created: 2026-10-22T06:10Z
 project: credit-dashboard-sut
 type: implementation-plan
 item: CDS-48
-status: approved
+status: implemented
 approved: "2026-10-22, Gary Brooks, 'D1 to D7 as recommended, approved, push the plan PR'; merge authority: per pull request, on request"
 delivered: not yet
 language: en-GB
@@ -100,4 +100,4 @@ Fixing anything the reviewers find that the owner defers (it goes to the backlog
 
 ## Outcome
 
-[Appended after delivery.]
+**Delivered 2026-10-22 to 2026-10-23.** Two fresh-context Opus reviewers (prompts hashed and kept verbatim, reports verbatim) reviewed `1f87a06`; every Blocker and Change was reproduced or confirmed by the author before the owner signed off (record `.review/2026-10-22_cds-48-phase-5-review.md`, #130, #131); the confirmation pass (D4) is `.review/2026-10-23_cds-48-confirmation-report.md` with the author's verification and the owner's sign-off beside it (#139). **Where it departed from the plan.** The plan expected a confirmation pass with no new Blocker as its exit; it found one, caused by my own slice 3 fix, so a second round of fixes was planned and approved (`2026-10-23_cds-48-round-2-fixes.md`). No third pass was run: that was the owner's decision. The process-group kill of timed-out catchers went to the backlog as planned.

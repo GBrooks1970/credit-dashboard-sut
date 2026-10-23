@@ -1,19 +1,25 @@
-// version: 1 | created: 2026-10-20T09:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
+// version: 2 | created: 2026-10-20T09:30Z | project: credit-dashboard-sut | type: tool | language: en-GB
 // Checks the Serenity report before it is published (CDS-44, P6a): the JSON of both suites with src/report/checks.ts (every execution present
-// and successful, the counts, no control key or token), and the HTML: where Java is available, or in CI, reports/serenity-report/index.html
-// must exist and be more than a stub, and no file of the report may hold the control key or a token. Run from test-harnesses/harness-serenity
-// after `npm run report`.
+// and successful, the scenarios and the rows of each outline those of the feature files, no control key or token), and the HTML: where Java is
+// available, or in CI, reports/serenity-report/index.html must exist and be more than a stub, and no file of the report may hold the control key
+// or a token (every file but a known image or font is read; CDS-48 B-06). Run from test-harnesses/harness-serenity after `npm run report`.
 import fs from 'node:fs';
 import path from 'node:path';
 
 import { reportProblems, secretProblems, type Recorded } from '../src/report/checks.js';
-
-/** The executions each suite runs (60 `@api`, 59 `@ui`). Change them with the scenarios, in the same pull request. */
-const EXPECTED = { api: 60, ui: 59 };
+import { isBinary, MAX_TEXT_BYTES } from '../src/report/files.js';
+import { manifestOf, type Expected } from '../src/report/manifest.js';
+// The profiles' feature files: the one place the suites' scenarios are listed (cucumber.mjs).
+import { api as apiProfile, ui as uiProfile } from '../cucumber.mjs';
 /** The synthetic key scripts/run.mjs gives the service of a run. HARNESS_CONTROL_KEY overrides it where a run used another. */
 const CONTROL_KEY = process.env.HARNESS_CONTROL_KEY || 'harness-run-key';
 
 const harness = path.resolve(import.meta.dirname, '..');
+/** The scenarios a profile runs, read from the feature files its paths name (B-07): never a number kept by hand. */
+const scenariosOf = (profile: { paths: string[] }): Expected[] =>
+    manifestOf(profile.paths.flatMap((pattern) => fs.globSync(pattern, { cwd: harness })).map((feature) => fs.readFileSync(path.join(harness, feature), 'utf8')));
+const EXPECTED = { api: scenariosOf(apiProfile), ui: scenariosOf(uiProfile) };
+const executionsOf = (list: Expected[]) => list.reduce((sum, s) => sum + (s.outline ? s.rows : 1), 0);
 const read = (profile: string): Recorded[] => {
     const folder = path.join(harness, 'reports', 'serenity', profile);
     if (!fs.existsSync(folder)) return [];
@@ -34,7 +40,11 @@ if (htmlRequired) {
         for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
             const full = path.join(dir, entry.name);
             if (entry.isDirectory()) walk(full);
-            else if (/\.(html|json|js|css|txt|csv|xml)$/i.test(entry.name) && fs.statSync(full).size < 20_000_000) html.push({ name: path.relative(harness, full), text: fs.readFileSync(full, 'utf8') });
+            // Every file but a known image or font is read as text; one too large to read is a problem (secretProblems says so).
+            else if (!isBinary(entry.name)) {
+                const tooLarge = fs.statSync(full).size >= MAX_TEXT_BYTES;
+                html.push({ name: path.relative(harness, full), text: tooLarge ? '' : fs.readFileSync(full, 'utf8'), tooLarge });
+            }
         }
     };
     if (fs.existsSync(report)) walk(report);
@@ -60,4 +70,4 @@ if (problems.length > 0) {
     console.error(`check-report: ${problems.length} problem(s)`);
     process.exit(1);
 }
-console.log(`check-report: ${EXPECTED.api} @api and ${EXPECTED.ui} @ui executions, all successful, no key or token`);
+console.log(`check-report: ${EXPECTED.api.length} @api scenarios (${executionsOf(EXPECTED.api)} executions) and ${EXPECTED.ui.length} @ui (${executionsOf(EXPECTED.ui)}) are those of the feature files, all successful, no key or token`);

@@ -4,7 +4,7 @@ version: 1
 created: 2026-10-23T09:30Z
 project: credit-dashboard-sut
 type: implementation-plan
-status: approved
+status: implemented
 language: en-GB
 ---
 
@@ -79,4 +79,4 @@ The process-group kill of timed-out catchers (backlog); protecting `main`; the o
 
 ## Outcome
 
-[Appended after delivery.]
+**Delivered 2026-10-23** in three pull requests, each merged on the owner's word after every CI job showed `pass`: slice A #140 (the visual check: `hideBar` only at 375 px, the bar as the screen, the 0.1 limit stated, the anchored `-g`), slice B #141 (the failure-text rule, the open-redirect catcher on every row, exit-check reasons, the semantic rules' false positives), slice C #142 (every file read by its bytes, the encodings, the PNG signature, the README count, the comments), with #138 and #139 first. The owner accepted the two new tab-bar baselines. **Where it departed from the plan.** (a) The registry text for the open-redirect catcher had to carry a quote, a path or a digit (a rule of `schema-check`), so it became `the redirect was followed to '` and the step names the address. (b) A real PNG named `report/serenity-resources` has no extension: the allow-list now names it (found on the real site, in round 1). (c) `check:report` on real JSON found that Serenity writes `&apos;` for an apostrophe in a name; covered by a test. (d) One of eleven mutations of slice C was first missed (a loosened PNG signature) and a test was added. (e) GitHub showed #141 as conflicting for some minutes after its base moved to `main`; a local test merge was clean and an empty commit refreshed it. **Not fixed, by decision:** the semantic-rule misses (listed in UI specification section 9 and DR-068).

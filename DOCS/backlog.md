@@ -1,5 +1,5 @@
 ---
-version: 83
+version: 84
 created: 2026-10-14T15:28Z
 project: credit-dashboard-sut
 type: backlog
@@ -8,7 +8,7 @@ language: en-GB
 
 # Credit Dashboard SUT: Backlog
 
-**Version:** 83 (CDS-48: the two reviews are held and signed off; the fixes plan is next)
+**Version:** 84 (CDS-48 complete: the review, two rounds of fixes and the confirmation pass are merged; DR-068; the closure is next)
 **Last Updated:** 2026-10-06
 **Based on:** the Phase 0 pack in this folder and the first session handover (`session-notes/credit-dashboard-sut_session-notes_v1_*`)
 
@@ -95,7 +95,7 @@ This backlog is the source of truth for status. It moved here from the portfolio
 | `CDS-44` | P6 the published Serenity report on Pages beside the board; DR-060 amended | Tooling | — | MEDIUM | `CDS-43` | Done 2026-10-20 |
 | `CDS-45` | P7 Phase 5 exit: 30 of 30 flags caught for the stated reason in CI, the report linked, the gate brief | UI | — | HIGH | `CDS-44` | Done 2026-10-20 |
 | `CDS-46` | The flag proof's reset call crashed on a dropped connection (main CI red twice, 2026-10-19); retry on a new connection, a named stop, service logs kept on failure | Tooling | — | HIGH | — | Done 2026-10-20 |
-| `CDS-48` | Independent review of the Phase 5 additions (P3 to P6: the UI flags, the visual check, the report and site jobs) by a fresh-context agent, findings handled as CDS-38 was (decision brief 14 D1 option 2); the project is closed after it (D2) | Tooling | — | HIGH | `CDS-45` | Open |
+| `CDS-48` | Independent review of the Phase 5 additions (P3 to P6: the UI flags, the visual check, the report and site jobs) by a fresh-context agent, findings handled as CDS-38 was (decision brief 14 D1 option 2); the project is closed after it (D2) | Tooling | — | HIGH | `CDS-45` | Done 2026-10-23 |
 | `CDS-47` | The Serenity JSON is overwritten by any other Cucumber run (the flag proof, a named-feature run): only a whole `api` or `ui` run should write it (found by the Phase 5 gate's full run; decision brief 14 D4) | Tooling | — | MEDIUM | — | Done 2026-10-21 |
 
 ## Items
@@ -276,7 +276,7 @@ Found 2026-10-04 while building the step glossary. Five Given patterns, mostly S
 
 ### CDS-48: independent review of the Phase 5 additions
 
-**IN PROGRESS (plan `DOCS/implementation-plans/2026-10-21_cds-48-phase-5-review.md`, #129).** Two fresh-context reviewers on the Opus model reviewed `1f87a06` (record `.review/2026-10-22_cds-48-phase-5-review.md`, #130): 2 Blockers, 15 Changes (after four duplicates) and 16 Notes; every Blocker and Change reproduced or confirmed by the author. The owner signed off on 2026-10-22: all 17 accepted and to be fixed (variants: a fixtures and exit-target fix for A-07, limits and table writing before process groups for A-09 and B-10, a lower colour threshold for B-02), no finding rejected; N-3 and A-14 also fixed. **Next:** the fixes plan, then the fixes, a confirmation pass, DR-068, and the closure (`close-project`). Deferred to the backlog from this review: the process-group kill of timed-out catchers.
+**COMPLETE (2026-10-23; DR-068; plans `2026-10-21_cds-48-phase-5-review`, `2026-10-22_cds-48-fixes`, `2026-10-23_cds-48-round-2-fixes`; the review #129 to #131, the fixes #132 to #138 with #136 (CI limits), the confirmation pass and round 2 #139 to #142; every CI job read as `pass` before each merge).** Two fresh-context Opus reviewers read `1f87a06`: 2 Blockers, 15 Changes, 16 Notes; the owner accepted 17 and N-3 and A-14 were fixed. The confirmation pass found a regression of my own (the tab bar's place lost from the visual check), eight Changes and four Notes; fixed in round 2. The known limits that remain are in DR-068. **Next:** the closure with `close-project` (DR-067 D2): the FINAL handover; the stretch profile pages, the container image and the deferred review items A-22, R2-B-13, R2-B-17 and R2-B-19 listed as deferred. **Deferred to the backlog from this review:** the process-group kill of timed-out catchers (a hung catcher can leave its children running); the semantic-rule misses (UI specification section 9); protecting `main` (a repository setting, the owner's); Dependabot alerts (disabled, the owner's). Records: `.review/2026-10-22_cds-48-phase-5-review.md`, `.review/2026-10-23_cds-48-confirmation-report.md`, `.review/2026-10-23_cds-48-confirmation-verification.md`; log `DOCS/implementation-logs/2026-10-23_cds-48-review-and-fixes.md`.
 
 ### CDS-45: P7, the Phase 5 exit
 

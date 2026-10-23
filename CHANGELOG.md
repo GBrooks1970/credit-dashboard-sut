@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-23: CDS-48 closed (records)
+
+- DR-068 records the review, the two rounds of fixes and the confirmation pass with their known limits; the plans' Outcomes, the implementation log, the backlog (v84) and the README's decision range (DR-001 to DR-068) are written. The project is closed next.
+
 ## 2026-10-23: the report and the site, again (CDS-48 round 2, slice C)
 
 - C-06: every file is read by its first bytes (an image or a font as bytes), a name that disagrees with its bytes is a problem, and the key is found JSON-escaped, entity-escaped and hex-encoded, `Bearer` and `tok_` in any case. C-13: the baselines workflow checks the PNG signature. C-08: README says 216 component tests. C-09: the time-limit comments and the harness design's claim corrected. Harness design v22.

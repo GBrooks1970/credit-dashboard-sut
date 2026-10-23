@@ -27,7 +27,7 @@ service validates every request against the contract (CDS-19) and serves all 36 
 | [`DOCS/.design/ui-feature-profile.md`](DOCS/.design/ui-feature-profile.md) | My Profile feature spec: rules PR-01 to PR-11 |
 | [`DOCS/.design/harness-design.md`](DOCS/.design/harness-design.md) | Harness design: layout, abilities, contract validation, service lifecycle, clock-and-token rule, where each step pattern lands (CDS-22) |
 | [`DOCS/.design/page-survey.md`](DOCS/.design/page-survey.md) | Structure survey that informed the specifications (input, not a specification) |
-| [`DOCS/decision-register.md`](DOCS/decision-register.md) | Decisions DR-001 to DR-067 |
+| [`DOCS/decision-register.md`](DOCS/decision-register.md) | Decisions DR-001 to DR-068 |
 | [`DOCS/decision-briefs/`](DOCS/decision-briefs/_index.md) | The reasoning behind decisions: options, a recommendation and the argument against |
 | [`DOCS/glossary.md`](DOCS/glossary.md), [`DOCS/step-glossary.md`](DOCS/step-glossary.md) | Normative vocabulary and agreed Gherkin steps |
 | [`DOCS/backlog.md`](DOCS/backlog.md) | Backlog: the source of truth for status |

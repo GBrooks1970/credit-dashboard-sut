@@ -2,6 +2,10 @@
 
 All notable changes to this project. Dates are UTC.
 
+## 2026-10-23: the documents and the durable proof (CDS-48 slice 5)
+
+- B-12: seven documents corrected (README decision range and the `flags` job, the exit-check counts, a duplicate section number, the `publish` job that never existed, the `VISUAL_LOCAL_TRY=1` first step, README image count 34). B-01: the proof table of the CI run on `main` at `393f7b9` is committed under `DOCS/evidence/` (30 caught, with each catcher's failure line), and DR-067 points to it. UI specification v40, harness design v19.
+
 ## 2026-10-23: the report, the site and the workflow, from the review (CDS-48 slice 4)
 
 - Findings B-06, B-07, B-11 and N-3: the secret scans read every file but an image or a font, accept only the kinds of file a Serenity report holds under `report/`, and know the service token and the key in base64; the report check compares scenario names and the rows of each outline with a manifest read from the feature files (no hand-kept count); the commit stamp is the whole commit on its own line; `visual-baselines.yml` makes the images with no write token and a second job pushes them. 37 unit tests, twelve mutations. Harness design v18.

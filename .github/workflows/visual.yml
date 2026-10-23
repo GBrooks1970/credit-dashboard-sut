@@ -17,6 +17,7 @@ on:
       - test-harnesses/harness-serenity/**
       - fixtures/**
       - packages/api-client/**
+      - .nvmrc
       - .github/workflows/visual.yml
   pull_request:
     paths:
@@ -25,6 +26,7 @@ on:
       - test-harnesses/harness-serenity/**
       - fixtures/**
       - packages/api-client/**
+      - .nvmrc
       - .github/workflows/visual.yml
   workflow_dispatch:
 

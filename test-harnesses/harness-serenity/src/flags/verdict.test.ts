@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { exitCheckRan, judgeOff, judgeOn, matchedLine, verdictOf, vitestExecuted, type RunResult } from './verdict.js';
+import { exitCheckRan, judgeOff, judgeOn, matchedLine, verdictOf, visualTitlePattern, vitestExecuted, type RunResult } from './verdict.js';
 
 // The ways the review (CDS-38) fooled the flag proof, each as a case it must now refuse (B-02, B-03, B-07, B-08).
 
@@ -122,5 +122,21 @@ describe('the line that shows what a catcher failed with (CDS-48 B-01: kept in t
 
     it('is null when the text is not there', () => {
         assert.equal(matchedLine('nothing here', 'absent'), null);
+    });
+});
+
+describe('the title of a visual case, as a pattern for `-g` (CDS-48 C-13)', () => {
+    it('selects its own case', () => {
+        assert.equal(new RegExp(visualTitlePattern(375, 'light', 'overview')).test('375px, light overview'), true);
+    });
+
+    it('does not select another case that only starts with the same words', () => {
+        assert.equal(new RegExp(visualTitlePattern(375, 'light', 'overview')).test('375px, light overview: tab-bar'), false);
+        assert.equal(new RegExp(visualTitlePattern(375, 'light', 'account list: creditcard')).test('375px, light account list: creditcard 2'), false);
+    });
+
+    it('takes the page name literally, whatever characters it holds', () => {
+        assert.equal(new RegExp(visualTitlePattern(1280, 'dark', 'account list: creditcard')).test('1280px, dark account list: creditcard'), true);
+        assert.equal(new RegExp(visualTitlePattern(1280, 'dark', 'a.c')).test('1280px, dark abc'), false);
     });
 });

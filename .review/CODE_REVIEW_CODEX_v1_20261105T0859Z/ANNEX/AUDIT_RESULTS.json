@@ -1,0 +1,894 @@
+{
+  "source": "563977edcffbe881d7ee1683eb2179c9cd3f3c32",
+  "audits": {
+    "0": {
+      "auditReportVersion": 2,
+      "vulnerabilities": {
+        "@faker-js/faker": {
+          "name": "@faker-js/faker",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1158500,
+              "name": "@faker-js/faker",
+              "dependency": "@faker-js/faker",
+              "title": "Faker: helpers.fake exploitable into arbritary code execution",
+              "url": "https://github.com/advisories/GHSA-qxc2-j82w-r537",
+              "severity": "high",
+              "cwe": [
+                "CWE-95"
+              ],
+              "cvss": {
+                "score": 7.8,
+                "vectorString": "CVSS:3.1/AV:L/AC:L/PR:L/UI:N/S:U/C:H/I:H/A:H"
+              },
+              "range": "<=10.4.0"
+            }
+          ],
+          "effects": [
+            "postman-collection"
+          ],
+          "range": "<=10.4.0",
+          "nodes": [
+            "node_modules/postman-collection/node_modules/@faker-js/faker"
+          ],
+          "fixAvailable": {
+            "name": "@stoplight/prism-cli",
+            "version": "5.6.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@stoplight/http-spec": {
+          "name": "@stoplight/http-spec",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "postman-collection"
+          ],
+          "effects": [
+            "@stoplight/prism-http"
+          ],
+          "range": "5.1.3 - 7.2.0-alpha",
+          "nodes": [
+            "node_modules/@stoplight/http-spec"
+          ],
+          "fixAvailable": {
+            "name": "@stoplight/prism-cli",
+            "version": "5.6.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@stoplight/prism-cli": {
+          "name": "@stoplight/prism-cli",
+          "severity": "high",
+          "isDirect": true,
+          "via": [
+            "@stoplight/prism-http",
+            "@stoplight/prism-http-server"
+          ],
+          "effects": [],
+          "range": ">=5.7.0",
+          "nodes": [
+            "node_modules/@stoplight/prism-cli"
+          ],
+          "fixAvailable": {
+            "name": "@stoplight/prism-cli",
+            "version": "5.6.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@stoplight/prism-http": {
+          "name": "@stoplight/prism-http",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "@stoplight/http-spec"
+          ],
+          "effects": [
+            "@stoplight/prism-cli",
+            "@stoplight/prism-http-server"
+          ],
+          "range": ">=5.7.0",
+          "nodes": [
+            "node_modules/@stoplight/prism-http"
+          ],
+          "fixAvailable": {
+            "name": "@stoplight/prism-cli",
+            "version": "5.6.0",
+            "isSemVerMajor": true
+          }
+        },
+        "@stoplight/prism-http-server": {
+          "name": "@stoplight/prism-http-server",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "@stoplight/prism-http"
+          ],
+          "effects": [],
+          "range": ">=5.7.0",
+          "nodes": [
+            "node_modules/@stoplight/prism-http-server"
+          ],
+          "fixAvailable": true
+        },
+        "fast-uri": {
+          "name": "fast-uri",
+          "severity": "moderate",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1243098,
+              "name": "fast-uri",
+              "dependency": "fast-uri",
+              "title": "fast-uri vulnerable to URI scheme spoofing via percent-encoded scheme decoding",
+              "url": "https://github.com/advisories/GHSA-w74x-v6f9-j3xg",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-172",
+                "CWE-180"
+              ],
+              "cvss": {
+                "score": 6.1,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+              },
+              "range": ">=3.0.0 <3.1.9"
+            },
+            {
+              "source": 1243101,
+              "name": "fast-uri",
+              "dependency": "fast-uri",
+              "title": "fast-uri vulnerable to improper path equivalence in relative reference normalization",
+              "url": "https://github.com/advisories/GHSA-xhq7-xmqj-769h",
+              "severity": "low",
+              "cwe": [
+                "CWE-41"
+              ],
+              "cvss": {
+                "score": 3.7,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N"
+              },
+              "range": ">=3.0.0 <3.1.9"
+            },
+            {
+              "source": 1243104,
+              "name": "fast-uri",
+              "dependency": "fast-uri",
+              "title": "fast-uri vulnerable to host confusion via unchecked WHATWG host canonicalization",
+              "url": "https://github.com/advisories/GHSA-wjr9-j795-jxcr",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-20",
+                "CWE-436"
+              ],
+              "cvss": {
+                "score": 4.8,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N"
+              },
+              "range": ">=3.1.3 <3.1.9"
+            },
+            {
+              "source": 1243107,
+              "name": "fast-uri",
+              "dependency": "fast-uri",
+              "title": "fast-uri vulnerable to scheme injection via an unescaped first-segment colon in suffix references",
+              "url": "https://github.com/advisories/GHSA-333x-w4r6-6crp",
+              "severity": "low",
+              "cwe": [
+                "CWE-41",
+                "CWE-116"
+              ],
+              "cvss": {
+                "score": 3.7,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N"
+              },
+              "range": ">=3.0.0 <3.1.9"
+            }
+          ],
+          "effects": [],
+          "range": "3.0.0 - 3.1.8",
+          "nodes": [
+            "node_modules/fast-uri"
+          ],
+          "fixAvailable": true
+        },
+        "lodash": {
+          "name": "lodash",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1115806,
+              "name": "lodash",
+              "dependency": "lodash",
+              "title": "lodash vulnerable to Code Injection via `_.template` imports key names",
+              "url": "https://github.com/advisories/GHSA-r5fr-rjxr-66jc",
+              "severity": "high",
+              "cwe": [
+                "CWE-94"
+              ],
+              "cvss": {
+                "score": 8.1,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:H"
+              },
+              "range": ">=4.0.0 <=4.17.23"
+            },
+            {
+              "source": 1244531,
+              "name": "lodash",
+              "dependency": "lodash",
+              "title": "Lodash has Prototype Pollution Vulnerability in `_.unset`, `_.omit`, and `_.pullAt` functions",
+              "url": "https://github.com/advisories/GHSA-xxjr-mmjv-4gpg",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-1321"
+              ],
+              "cvss": {
+                "score": 6.5,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:L/A:L"
+              },
+              "range": ">=4.0.0 <=4.17.22"
+            }
+          ],
+          "effects": [
+            "postman-collection"
+          ],
+          "range": "4.0.0 - 4.17.23",
+          "nodes": [
+            "node_modules/postman-collection/node_modules/lodash"
+          ],
+          "fixAvailable": {
+            "name": "@stoplight/prism-cli",
+            "version": "5.6.0",
+            "isSemVerMajor": true
+          }
+        },
+        "postman-collection": {
+          "name": "postman-collection",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            "@faker-js/faker",
+            "lodash",
+            "uuid"
+          ],
+          "effects": [
+            "@stoplight/http-spec"
+          ],
+          "range": ">=0.5.1",
+          "nodes": [
+            "node_modules/postman-collection"
+          ],
+          "fixAvailable": {
+            "name": "@stoplight/prism-cli",
+            "version": "5.6.0",
+            "isSemVerMajor": true
+          }
+        },
+        "qs": {
+          "name": "qs",
+          "severity": "moderate",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1243687,
+              "name": "qs",
+              "dependency": "qs",
+              "title": "qs : qs.stringify with arrayFormat 'comma' throws an uncaught TypeError on array elements carrying a non-callable own toString (DoS)",
+              "url": "https://github.com/advisories/GHSA-6pq8-jhm2-2vcw",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-248",
+                "CWE-704"
+              ],
+              "cvss": {
+                "score": 5.3,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:L"
+              },
+              "range": ">=6.7.0 <=6.16.0"
+            }
+          ],
+          "effects": [],
+          "range": "6.7.0 - 6.16.0",
+          "nodes": [
+            "node_modules/qs"
+          ],
+          "fixAvailable": true
+        },
+        "uuid": {
+          "name": "uuid",
+          "severity": "moderate",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1119441,
+              "name": "uuid",
+              "dependency": "uuid",
+              "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+              "url": "https://github.com/advisories/GHSA-w5hq-g745-h8pq",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-787",
+                "CWE-1285"
+              ],
+              "cvss": {
+                "score": 7.5,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
+              },
+              "range": "<11.1.1"
+            }
+          ],
+          "effects": [
+            "postman-collection"
+          ],
+          "range": "<11.1.1",
+          "nodes": [
+            "node_modules/uuid"
+          ],
+          "fixAvailable": {
+            "name": "@stoplight/prism-cli",
+            "version": "5.6.0",
+            "isSemVerMajor": true
+          }
+        }
+      },
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 3,
+          "high": 7,
+          "critical": 0,
+          "total": 10
+        },
+        "dependencies": {
+          "prod": 1,
+          "dev": 215,
+          "optional": 1,
+          "peer": 0,
+          "peerOptional": 0,
+          "total": 215
+        }
+      }
+    },
+    "1": {
+      "auditReportVersion": 2,
+      "vulnerabilities": {
+        "fast-uri": {
+          "name": "fast-uri",
+          "severity": "moderate",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1243098,
+              "name": "fast-uri",
+              "dependency": "fast-uri",
+              "title": "fast-uri vulnerable to URI scheme spoofing via percent-encoded scheme decoding",
+              "url": "https://github.com/advisories/GHSA-w74x-v6f9-j3xg",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-172",
+                "CWE-180"
+              ],
+              "cvss": {
+                "score": 6.1,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+              },
+              "range": ">=3.0.0 <3.1.9"
+            },
+            {
+              "source": 1243101,
+              "name": "fast-uri",
+              "dependency": "fast-uri",
+              "title": "fast-uri vulnerable to improper path equivalence in relative reference normalization",
+              "url": "https://github.com/advisories/GHSA-xhq7-xmqj-769h",
+              "severity": "low",
+              "cwe": [
+                "CWE-41"
+              ],
+              "cvss": {
+                "score": 3.7,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N"
+              },
+              "range": ">=3.0.0 <3.1.9"
+            },
+            {
+              "source": 1243104,
+              "name": "fast-uri",
+              "dependency": "fast-uri",
+              "title": "fast-uri vulnerable to host confusion via unchecked WHATWG host canonicalization",
+              "url": "https://github.com/advisories/GHSA-wjr9-j795-jxcr",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-20",
+                "CWE-436"
+              ],
+              "cvss": {
+                "score": 4.8,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N"
+              },
+              "range": ">=3.1.3 <3.1.9"
+            },
+            {
+              "source": 1243107,
+              "name": "fast-uri",
+              "dependency": "fast-uri",
+              "title": "fast-uri vulnerable to scheme injection via an unescaped first-segment colon in suffix references",
+              "url": "https://github.com/advisories/GHSA-333x-w4r6-6crp",
+              "severity": "low",
+              "cwe": [
+                "CWE-41",
+                "CWE-116"
+              ],
+              "cvss": {
+                "score": 3.7,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N"
+              },
+              "range": ">=3.0.0 <3.1.9"
+            }
+          ],
+          "effects": [],
+          "range": "3.0.0 - 3.1.8",
+          "nodes": [
+            "node_modules/fast-uri"
+          ],
+          "fixAvailable": true
+        }
+      },
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 1,
+          "high": 0,
+          "critical": 0,
+          "total": 1
+        },
+        "dependencies": {
+          "prod": 1,
+          "dev": 7,
+          "optional": 0,
+          "peer": 0,
+          "peerOptional": 0,
+          "total": 7
+        }
+      }
+    },
+    "2": {
+      "auditReportVersion": 2,
+      "vulnerabilities": {},
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 0,
+          "critical": 0,
+          "total": 0
+        },
+        "dependencies": {
+          "prod": 3,
+          "dev": 33,
+          "optional": 0,
+          "peer": 0,
+          "peerOptional": 0,
+          "total": 35
+        }
+      }
+    },
+    "3": {
+      "auditReportVersion": 2,
+      "vulnerabilities": {
+        "undici": {
+          "name": "undici",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1243077,
+              "name": "undici",
+              "dependency": "undici",
+              "title": "undici vulnerable to Denial of Service via unbounded memory in the EventSource parser",
+              "url": "https://github.com/advisories/GHSA-4qv8-2p9j-2685",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-770"
+              ],
+              "cvss": {
+                "score": 5.9,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              "range": ">=8.0.0 <8.12.2"
+            },
+            {
+              "source": 1243080,
+              "name": "undici",
+              "dependency": "undici",
+              "title": "undici vulnerable to Subresource Integrity bypass via non-lowercase algorithm tokens",
+              "url": "https://github.com/advisories/GHSA-f72v-6w45-q472",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-178"
+              ],
+              "cvss": {
+                "score": 5.9,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:H/A:N"
+              },
+              "range": ">=8.0.0 <8.12.2"
+            },
+            {
+              "source": 1243112,
+              "name": "undici",
+              "dependency": "undici",
+              "title": "undici vulnerable to Denial of Service via unhandled error on excessive content-encodings",
+              "url": "https://github.com/advisories/GHSA-xjj6-f33q-929c",
+              "severity": "high",
+              "cwe": [
+                "CWE-248",
+                "CWE-459"
+              ],
+              "cvss": {
+                "score": 7.5,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              "range": ">=8.0.0 <8.12.2"
+            },
+            {
+              "source": 1243472,
+              "name": "undici",
+              "dependency": "undici",
+              "title": "undici vulnerable to cache poisoning and cross-user disclosure via cross-origin redirects",
+              "url": "https://github.com/advisories/GHSA-4w7w-5xrc-9h26",
+              "severity": "high",
+              "cwe": [
+                "CWE-346",
+                "CWE-524"
+              ],
+              "cvss": {
+                "score": 7.4,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N"
+              },
+              "range": ">=8.0.0 <8.12.2"
+            },
+            {
+              "source": 1243474,
+              "name": "undici",
+              "dependency": "undici",
+              "title": "undici vulnerable to TLS certificate validation bypass via dropped tls options in Agent",
+              "url": "https://github.com/advisories/GHSA-2m5v-pch6-74hx",
+              "severity": "high",
+              "cwe": [
+                "CWE-295"
+              ],
+              "cvss": {
+                "score": 7.4,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:H/A:N"
+              },
+              "range": ">=8.0.0 <8.12.2"
+            },
+            {
+              "source": 1243477,
+              "name": "undici",
+              "dependency": "undici",
+              "title": "undici vulnerable to Denial of Service via TLS 1.2 certificate-changing renegotiation",
+              "url": "https://github.com/advisories/GHSA-qrxm-fqhp-jwvm",
+              "severity": "high",
+              "cwe": [
+                "CWE-248",
+                "CWE-617"
+              ],
+              "cvss": {
+                "score": 7.5,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              "range": ">=8.0.0 <8.12.2"
+            },
+            {
+              "source": 1243480,
+              "name": "undici",
+              "dependency": "undici",
+              "title": "undici WebSocket client vulnerable to Denial of Service via unbounded automatic PONG buffering",
+              "url": "https://github.com/advisories/GHSA-9fm3-97px-rjf6",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-400",
+                "CWE-405",
+                "CWE-770"
+              ],
+              "cvss": {
+                "score": 5.9,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              "range": ">=8.0.0 <8.12.2"
+            },
+            {
+              "source": 1243483,
+              "name": "undici",
+              "dependency": "undici",
+              "title": "undici vulnerable to Denial of Service via unhandled exception in the decompress interceptor",
+              "url": "https://github.com/advisories/GHSA-55wc-3pg8-jfw6",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-248"
+              ],
+              "cvss": {
+                "score": 5.9,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:N/A:H"
+              },
+              "range": ">=8.0.0 <8.12.2"
+            }
+          ],
+          "effects": [],
+          "range": "8.0.0 - 8.12.1",
+          "nodes": [
+            "node_modules/undici"
+          ],
+          "fixAvailable": true
+        }
+      },
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 0,
+          "high": 1,
+          "critical": 0,
+          "total": 1
+        },
+        "dependencies": {
+          "prod": 9,
+          "dev": 124,
+          "optional": 27,
+          "peer": 11,
+          "peerOptional": 0,
+          "total": 132
+        }
+      }
+    },
+    "4": {
+      "auditReportVersion": 2,
+      "vulnerabilities": {
+        "fast-uri": {
+          "name": "fast-uri",
+          "severity": "moderate",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1243098,
+              "name": "fast-uri",
+              "dependency": "fast-uri",
+              "title": "fast-uri vulnerable to URI scheme spoofing via percent-encoded scheme decoding",
+              "url": "https://github.com/advisories/GHSA-w74x-v6f9-j3xg",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-172",
+                "CWE-180"
+              ],
+              "cvss": {
+                "score": 6.1,
+                "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
+              },
+              "range": ">=3.0.0 <3.1.9"
+            },
+            {
+              "source": 1243101,
+              "name": "fast-uri",
+              "dependency": "fast-uri",
+              "title": "fast-uri vulnerable to improper path equivalence in relative reference normalization",
+              "url": "https://github.com/advisories/GHSA-xhq7-xmqj-769h",
+              "severity": "low",
+              "cwe": [
+                "CWE-41"
+              ],
+              "cvss": {
+                "score": 3.7,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N"
+              },
+              "range": ">=3.0.0 <3.1.9"
+            },
+            {
+              "source": 1243104,
+              "name": "fast-uri",
+              "dependency": "fast-uri",
+              "title": "fast-uri vulnerable to host confusion via unchecked WHATWG host canonicalization",
+              "url": "https://github.com/advisories/GHSA-wjr9-j795-jxcr",
+              "severity": "moderate",
+              "cwe": [
+                "CWE-20",
+                "CWE-436"
+              ],
+              "cvss": {
+                "score": 4.8,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:L/I:L/A:N"
+              },
+              "range": ">=3.1.3 <3.1.9"
+            },
+            {
+              "source": 1243107,
+              "name": "fast-uri",
+              "dependency": "fast-uri",
+              "title": "fast-uri vulnerable to scheme injection via an unescaped first-segment colon in suffix references",
+              "url": "https://github.com/advisories/GHSA-333x-w4r6-6crp",
+              "severity": "low",
+              "cwe": [
+                "CWE-41",
+                "CWE-116"
+              ],
+              "cvss": {
+                "score": 3.7,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:N/I:L/A:N"
+              },
+              "range": ">=3.0.0 <3.1.9"
+            }
+          ],
+          "effects": [],
+          "range": "3.0.0 - 3.1.8",
+          "nodes": [
+            "node_modules/fast-uri"
+          ],
+          "fixAvailable": true
+        },
+        "follow-redirects": {
+          "name": "follow-redirects",
+          "severity": "high",
+          "isDirect": false,
+          "via": [
+            {
+              "source": 1244003,
+              "name": "follow-redirects",
+              "dependency": "follow-redirects",
+              "title": "follow-redirects: Cross-realm sensitiveHeaders arrays are discarded and custom credentials can follow redirects",
+              "url": "https://github.com/advisories/GHSA-mrwp-f3q8-3g9p",
+              "severity": "high",
+              "cwe": [
+                "CWE-201"
+              ],
+              "cvss": {
+                "score": 5.9,
+                "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:U/C:H/I:N/A:N"
+              },
+              "range": ">=1.16.0 <=1.16.1"
+            }
+          ],
+          "effects": [],
+          "range": "1.16.0 - 1.16.1",
+          "nodes": [
+            "node_modules/follow-redirects"
+          ],
+          "fixAvailable": true
+        }
+      },
+      "metadata": {
+        "vulnerabilities": {
+          "info": 0,
+          "low": 0,
+          "moderate": 1,
+          "high": 1,
+          "critical": 0,
+          "total": 2
+        },
+        "dependencies": {
+          "prod": 1,
+          "dev": 223,
+          "optional": 28,
+          "peer": 0,
+          "peerOptional": 0,
+          "total": 223
+        }
+      }
+    },
+    "production": {
+      "0": {
+        "auditReportVersion": 2,
+        "vulnerabilities": {},
+        "metadata": {
+          "vulnerabilities": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 0,
+            "critical": 0,
+            "total": 0
+          },
+          "dependencies": {
+            "prod": 1,
+            "dev": 215,
+            "optional": 1,
+            "peer": 0,
+            "peerOptional": 0,
+            "total": 215
+          }
+        }
+      },
+      "1": {
+        "auditReportVersion": 2,
+        "vulnerabilities": {},
+        "metadata": {
+          "vulnerabilities": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 0,
+            "critical": 0,
+            "total": 0
+          },
+          "dependencies": {
+            "prod": 1,
+            "dev": 7,
+            "optional": 0,
+            "peer": 0,
+            "peerOptional": 0,
+            "total": 7
+          }
+        }
+      },
+      "2": {
+        "auditReportVersion": 2,
+        "vulnerabilities": {},
+        "metadata": {
+          "vulnerabilities": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 0,
+            "critical": 0,
+            "total": 0
+          },
+          "dependencies": {
+            "prod": 3,
+            "dev": 33,
+            "optional": 0,
+            "peer": 0,
+            "peerOptional": 0,
+            "total": 35
+          }
+        }
+      },
+      "3": {
+        "auditReportVersion": 2,
+        "vulnerabilities": {},
+        "metadata": {
+          "vulnerabilities": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 0,
+            "critical": 0,
+            "total": 0
+          },
+          "dependencies": {
+            "prod": 9,
+            "dev": 124,
+            "optional": 27,
+            "peer": 11,
+            "peerOptional": 0,
+            "total": 132
+          }
+        }
+      },
+      "4": {
+        "auditReportVersion": 2,
+        "vulnerabilities": {},
+        "metadata": {
+          "vulnerabilities": {
+            "info": 0,
+            "low": 0,
+            "moderate": 0,
+            "high": 0,
+            "critical": 0,
+            "total": 0
+          },
+          "dependencies": {
+            "prod": 1,
+            "dev": 223,
+            "optional": 28,
+            "peer": 0,
+            "peerOptional": 0,
+            "total": 223
+          }
+        }
+      }
+    }
+  }
+}
